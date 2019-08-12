@@ -1,0 +1,24 @@
+/*
+ ============================================================================
+ Name		: S60Maps.hrh
+ Author	  : artem78
+ Copyright   : 
+ Description : This file contains declarations for constants of S60Maps.
+ The file can be included in C++ or resource file.
+ ============================================================================
+ */
+#ifndef __S60MAPS_HRH__
+#define __S60MAPS_HRH__
+
+#define _UID3 0xED689B88
+
+// S60Maps enumerate command codes
+enum TS60MapsIds
+	{
+	ECommand1 = 0x6001, // start value must not be 0
+	ECommand2,
+	EHelp,
+	EAbout
+	};
+
+#endif // __S60MAPS_HRH__

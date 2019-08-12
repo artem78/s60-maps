@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE cshproj SYSTEM "/epoc32/tools/cshlpcmp/dtd/cshproj.dtd">
+<?xml:stylesheet href="/epoc32/tools/cshlpcmp/xsl/CSHproj.xsl" title="CS-Help project" type="text/xsl"?>
+<cshproj>
+<helpfileUID>0xED689B88</helpfileUID>
+<directories>
+	<input></input>
+	<output></output>
+	<graphics></graphics>
+	<working>temp\</working>
+</directories>
+<files>
+	<source>
+	<xmlfile>S60Maps.xml</xmlfile>
+	</source>
+	<destination>S60Maps_0xED689B88.hlp</destination>
+	<customization>custom.xml</customization>
+	</files>
+</cshproj>

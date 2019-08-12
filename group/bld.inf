@@ -1,0 +1,46 @@
+/*
+============================================================================
+ Name		: bld.inf
+ Author	  : artem78
+ Copyright   : 
+ Description : This file provides the information required for building the
+				whole of a S60Maps.
+============================================================================
+*/
+
+
+PRJ_PLATFORMS
+WINSCW ARMV5 GCCE
+
+
+#ifdef SBSV2
+
+PRJ_EXTENSIONS
+	
+	START EXTENSION s60/mifconv
+	OPTION TARGETFILE s60maps_0xED689B88.mif
+	OPTION HEADERFILE s60maps_0xED689B88.mbg
+	OPTION SOURCEDIR ../gfx
+	OPTION SOURCES -c32 qgn_menu_S60Maps
+	END
+	
+	// help compiler is not always available; see similar comment in *.pkg file
+	START EXTENSION techview/bldhelp
+	OPTION HELPPROJECTFILE S60Maps.cshlp
+	OPTION HELPTOOLTARGETNAME s60maps_0xED689B88.hlp
+	END
+
+#else
+
+PRJ_MMPFILES
+
+	gnumakefile icons_scalable_dc.mk
+
+	// help compiler is not always available; see similar comment in *.pkg file
+	gnumakefile ../help/build_help.mk
+
+#endif
+
+PRJ_MMPFILES
+
+S60Maps.mmp

@@ -1,0 +1,64 @@
+/*
+============================================================================
+ Name		: S60Maps.mmp
+ Author	  : artem78
+ Copyright   : 
+ Description : This is the project specification file for S60Maps.
+============================================================================
+*/
+
+MACRO _HELP_AVAILABLE_
+
+TARGET			S60Maps_0xED689B88.exe
+TARGETTYPE		exe
+UID		  0x100039CE 0xED689B88
+
+SOURCEPATH		..\src
+SOURCE			S60Maps.cpp
+SOURCE			S60MapsApplication.cpp
+SOURCE			S60MapsAppView.cpp
+SOURCE			S60MapsAppUi.cpp
+SOURCE			S60MapsDocument.cpp
+
+SOURCEPATH		..\data
+
+START RESOURCE	S60Maps.rss
+HEADER
+TARGET S60Maps_0xED689B88
+TARGETPATH resource\apps
+END //RESOURCE
+
+START RESOURCE	S60Maps_reg.rss
+TARGET S60Maps_0xED689B88_reg
+TARGETPATH 	  \private\10003a3f\apps
+END //RESOURCE
+
+
+
+USERINCLUDE	   ..\inc
+USERINCLUDE    ..\help
+
+SYSTEMINCLUDE	 \epoc32\include
+
+LIBRARY		   euser.lib
+LIBRARY		   apparc.lib
+LIBRARY		   cone.lib
+LIBRARY		   eikcore.lib
+LIBRARY		   avkon.lib
+LIBRARY		   commonengine.lib
+LIBRARY		   efsrv.lib 
+LIBRARY		   estor.lib
+LIBRARY        aknnotify.lib
+LIBRARY        hlplch.lib
+ 
+
+LANG SC
+
+VENDORID	  	  0
+SECUREID		  0xED689B88
+CAPABILITY	  	  ReadUserData
+
+#ifdef ENABLE_ABIV2_MODE
+  DEBUGGABLE_UDEBONLY
+#endif
+// End of File
