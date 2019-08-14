@@ -27,8 +27,6 @@
 #include "S60MapsAppUi.h"
 #include "S60MapsAppView.h"
 
-_LIT( KFileName, "C:\\private\\ED689B88\\S60Maps.txt" );
-_LIT( KText, "text");
 
 // ============================ MEMBER FUNCTIONS ===============================
 
@@ -43,31 +41,14 @@ void CS60MapsAppUi::ConstructL()
 	// Initialise app UI with standard value.
 	BaseConstructL(CAknAppUi::EAknEnableSkin);
 
+	// Set initial map position
+	// ToDo: Restore last saved position
+	TCoordinate position = TCoordinate(47.100, 5.361); // Center of Europe
+	TInt zoom = 2;	
+	
 	// Create view object
-	iAppView = CS60MapsAppView::NewL(ClientRect());
-
-	// Create a file to write the text to
-	TInt err = CCoeEnv::Static()->FsSession().MkDirAll(KFileName);
-	if ((KErrNone != err) && (KErrAlreadyExists != err))
-		{
-		return;
-		}
-
-	RFile file;
-	err = file.Replace(CCoeEnv::Static()->FsSession(), KFileName, EFileWrite);
-	CleanupClosePushL(file);
-	if (KErrNone != err)
-		{
-		CleanupStack::PopAndDestroy(1); // file
-		return;
-		}
-
-	RFileWriteStream outputFileStream(file);
-	CleanupClosePushL(outputFileStream);
-	outputFileStream << KText;
-
-	CleanupStack::PopAndDestroy(2); // outputFileStream, file
-
+	iAppView = CS60MapsAppView::NewL(ClientRect(), position, zoom);
+	AddToStackL(iAppView);
 	}
 // -----------------------------------------------------------------------------
 // CS60MapsAppUi::CS60MapsAppUi()
@@ -105,51 +86,11 @@ void CS60MapsAppUi::HandleCommandL(TInt aCommand)
 		{
 		case EEikCmdExit:
 		case EAknSoftkeyExit:
+			// ToDo: Ask before exit
 			Exit();
 			break;
-
-		case ECommand1:
-			{
-
-			// Load a string from the resource file and display it
-			HBufC* textResource = StringLoader::LoadLC(R_COMMAND1_TEXT);
-			CAknInformationNote* informationNote;
-
-			informationNote = new (ELeave) CAknInformationNote;
-
-			// Show the information Note with
-			// textResource loaded with StringLoader.
-			informationNote->ExecuteLD(*textResource);
-
-			// Pop HBuf from CleanUpStack and Destroy it.
-			CleanupStack::PopAndDestroy(textResource);
-			}
-			break;
-		case ECommand2:
-			{
-			RFile rFile;
-
-			//Open file where the stream text is
-			User::LeaveIfError(rFile.Open(CCoeEnv::Static()->FsSession(),
-					KFileName, EFileStreamText));//EFileShareReadersOnly));// EFileStreamText));
-			CleanupClosePushL(rFile);
-
-			// copy stream from file to RFileStream object
-			RFileReadStream inputFileStream(rFile);
-			CleanupClosePushL(inputFileStream);
-
-			// HBufC descriptor is created from the RFileStream object.
-			HBufC* fileData = HBufC::NewLC(inputFileStream, 32);
-
-			CAknInformationNote* informationNote;
-
-			informationNote = new (ELeave) CAknInformationNote;
-			// Show the information Note
-			informationNote->ExecuteLD(*fileData);
-
-			// Pop loaded resources from the cleanup stack
-			CleanupStack::PopAndDestroy(3); // filedata, inputFileStream, rFile
-			}
+		case EFindMe:
+			// ToDo: make this...
 			break;
 		case EHelp:
 			{

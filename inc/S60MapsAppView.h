@@ -13,6 +13,13 @@
 // INCLUDES
 #include <coecntrl.h>
 
+#include <lbsposition.h>
+#include "MapMath.h"
+#include "Map.h"
+
+// Constants
+const TUint KMapDefaultMoveStep = 20; // In pixels
+
 // CLASS DECLARATION
 class CS60MapsAppView : public CCoeControl
 	{
@@ -26,7 +33,8 @@ public:
 	 * @param aRect The rectangle this view will be drawn to.
 	 * @return a pointer to the created instance of CS60MapsAppView.
 	 */
-	static CS60MapsAppView* NewL(const TRect& aRect);
+	static CS60MapsAppView* NewL(const TRect& aRect,
+			const TCoordinate &aInitialPosition, /*TUint8*/ TInt aInitialZoom);
 
 	/**
 	 * NewLC.
@@ -36,7 +44,8 @@ public:
 	 * @param aRect Rectangle this view will be drawn to.
 	 * @return A pointer to the created instance of CS60MapsAppView.
 	 */
-	static CS60MapsAppView* NewLC(const TRect& aRect);
+	static CS60MapsAppView* NewLC(const TRect& aRect,
+			const TCoordinate &aInitialPosition, /*TUint8*/ TInt aInitialZoom);
 
 	/**
 	 * ~CS60MapsAppView
@@ -67,7 +76,10 @@ public:
 	 * it will not be called in SDKs without Touch support.
 	 * @param aPointerEvent the information about this event
 	 */
-	virtual void HandlePointerEventL(const TPointerEvent& aPointerEvent);
+	//virtual void HandlePointerEventL(const TPointerEvent& aPointerEvent);
+	
+	/*virtual*/ TKeyResponse OfferKeyEventL(const TKeyEvent &aKeyEvent,
+			TEventCode aType);
 
 private:
 	// Constructors
@@ -85,9 +97,37 @@ private:
 	 * CS60MapsAppView.
 	 * C++ default constructor.
 	 */
-	CS60MapsAppView();
+	CS60MapsAppView(const TCoordinate &aInitialPosition,
+			/*TUint8*/ TInt aInitialZoom);
+
+
+// Custom properties and methods
+private:
+	TCoordinate iPosition; // Coordinates of control`s center
+	/*TUint8*/ TInt iZoom; // Zoom level from KMinZoomLevel to KMaxZoomLevel
+	// ToDo: Implement type for zoom level
+	TFixedArray<CMapLayerBase*, 1> iLayers;
+	
+	void Move(const TCoordinate &aPos);
+	void Move(const TCoordinate &aPos, /*TUint8*/ TInt aZoom);
+	void Move(TReal64 aLat, TReal64 aLon);
+	void Move(TReal64 aLat, TReal64 aLon, /*TUint8*/ TInt aZoom);
+	void SetZoom(/*TUint8*/ TInt aZoom);
+	void ZoomIn();
+	void ZoomOut();
+	void MoveUp(	TUint aPixels = KMapDefaultMoveStep);
+	void MoveDown(	TUint aPixels = KMapDefaultMoveStep);
+	void MoveLeft(	TUint aPixels = KMapDefaultMoveStep);
+	void MoveRight(	TUint aPixels = KMapDefaultMoveStep);
+	
+public:
+	/*inline*/ /*TUint8*/ TInt GetZoom();
+	TCoordinate GetCenterCoordinate();
+	TBool CheckPointVisibility(const TCoordinate &aPoint);
+	TPoint GeoCoordsToScreenCoords(const TCoordinate &aCoord);
+	TCoordinate ScreenCoordsToGeoCoords(const TPoint &aPoint);
 
 	};
-
+	
 #endif // __S60MAPSAPPVIEW_h__
 // End of File

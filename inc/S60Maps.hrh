@@ -15,8 +15,7 @@
 // S60Maps enumerate command codes
 enum TS60MapsIds
 	{
-	ECommand1 = 0x6001, // start value must not be 0
-	ECommand2,
+	EFindMe = 0x6001, // start value must not be 0
 	EHelp,
 	EAbout
 	};

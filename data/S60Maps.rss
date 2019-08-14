@@ -84,13 +84,8 @@ RESOURCE MENU_PANE r_menu
 		// added the new Options menu command here
 		MENU_ITEM
 				{
-				command = ECommand1;
-				txt = qtn_command1;
-				},
-		MENU_ITEM
-				{
-				command = ECommand2;
-				txt = qtn_command2;
+				command = EFindMe;
+				txt = qtn_find_me;
 				},
 		MENU_ITEM
 				{

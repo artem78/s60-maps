@@ -27,9 +27,10 @@
 <ARGUMENTS_DATA_ID ABLDFREEZEARGSSTORAGE="-r"/>
 <ROM_BUILDER_DATA_ID ROMBUILDWORKINGDIRECTORYSTORAGE="C:\"/>
 </storageModule>
-<storageModule filesCache="C:\Symbian\Carbide\workspace\S60Maps\group\bld.inf;C:\Symbian\Carbide\workspace\S60Maps\group\S60Maps.mmp;" includesCache="C:/Symbian/Carbide/workspace/S60Maps/inc[LOCAL];C:/Symbian/Carbide/workspace/S60Maps/help[LOCAL];C:/Symbian/9.2/S60_3rd_FP1/Epoc32/include;" macrosCache="_UNICODE;__SYMBIAN32__;__SERIES60_31__;__SUPPORT_CPP_EXCEPTIONS__;__EXE__;__SERIES60_3X__;_HELP_AVAILABLE_;__CW32__;__WINS__;__WINSCW__;_DEBUG;" moduleId="configDataCache" sourcesCache="/S60Maps/data;/S60Maps/help;/S60Maps/inc;/S60Maps/src;" timestampCache="1565610789911" useMmpMacrosCache="true"/>
+<storageModule filesCache="C:\Symbian\Carbide\workspace\S60Maps\group\bld.inf;C:\Symbian\Carbide\workspace\S60Maps\group\S60Maps.mmp;" includesCache="C:/Symbian/Carbide/workspace/S60Maps/inc[LOCAL];C:/Symbian/Carbide/workspace/S60Maps/help[LOCAL];C:/Symbian/9.2/S60_3rd_FP1/Epoc32/include;" macrosCache="_UNICODE;__SYMBIAN32__;__SERIES60_31__;__SUPPORT_CPP_EXCEPTIONS__;__EXE__;__SERIES60_3X__;_HELP_AVAILABLE_;__CW32__;__WINS__;__WINSCW__;_DEBUG;" moduleId="configDataCache" sourcesCache="/S60Maps/data;/S60Maps/help;/S60Maps/inc;/S60Maps/src;" timestampCache="1565809323290" useMmpMacrosCache="true"/>
 <storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 <storageModule moduleId="org.eclipse.cdt.core.language.mapping"/>
+<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 </cconfiguration>
 <cconfiguration id="Phone Debug (ARMV5) [S60_3rd_FP1]">
 <storageModule buildSystemId="com.nokia.carbide.cdt.builder.CarbideConfigurationDataProvider" id="Phone Debug (ARMV5) [S60_3rd_FP1]" moduleId="org.eclipse.cdt.core.settings" name="Phone Debug (ARMV5) [S60_3rd_FP1]">
@@ -55,9 +56,10 @@
 <ARGUMENTS_DATA_ID ABLDFREEZEARGSSTORAGE="-r"/>
 <ROM_BUILDER_DATA_ID ROMBUILDWORKINGDIRECTORYSTORAGE="C:\"/>
 </storageModule>
-<storageModule filesCache="C:\Symbian\Carbide\workspace\S60Maps\group\bld.inf;C:\Symbian\Carbide\workspace\S60Maps\group\S60Maps.mmp;" includesCache="C:/Symbian/Carbide/workspace/S60Maps/inc[LOCAL];C:/Symbian/Carbide/workspace/S60Maps/help[LOCAL];C:/Symbian/9.2/S60_3rd_FP1/Epoc32/include;" macrosCache="_UNICODE;__SUPPORT_CPP_EXCEPTIONS__;__SERIES60_31__;_HELP_AVAILABLE_;__MARM_ARMV5__;__ARMCC__;__ARMCC_2_2__;__SYMBIAN32__;__MARM__;__EXE__;__SERIES60_3X__;__EPOC32__;__GENERIC_MARM__;__EABI__;_DEBUG;" moduleId="configDataCache" sourcesCache="/S60Maps/data;/S60Maps/help;/S60Maps/inc;/S60Maps/src;" timestampCache="1565610789921" useMmpMacrosCache="true"/>
+<storageModule filesCache="C:\Symbian\Carbide\workspace\S60Maps\group\bld.inf;C:\Symbian\Carbide\workspace\S60Maps\group\S60Maps.mmp;" includesCache="C:/Symbian/Carbide/workspace/S60Maps/inc[LOCAL];C:/Symbian/Carbide/workspace/S60Maps/help[LOCAL];C:/Symbian/9.2/S60_3rd_FP1/Epoc32/include;" macrosCache="_UNICODE;__SUPPORT_CPP_EXCEPTIONS__;__SERIES60_31__;_HELP_AVAILABLE_;__MARM_ARMV5__;__ARMCC__;__ARMCC_2_2__;__SYMBIAN32__;__MARM__;__EXE__;__SERIES60_3X__;__EPOC32__;__GENERIC_MARM__;__EABI__;_DEBUG;" moduleId="configDataCache" sourcesCache="/S60Maps/data;/S60Maps/help;/S60Maps/inc;/S60Maps/src;" timestampCache="1565809323300" useMmpMacrosCache="true"/>
 <storageModule moduleId="org.eclipse.cdt.core.language.mapping"/>
 <storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 </cconfiguration>
 <cconfiguration id="Phone Release (ARMV5) [S60_3rd_FP1]">
 <storageModule buildSystemId="com.nokia.carbide.cdt.builder.CarbideConfigurationDataProvider" id="Phone Release (ARMV5) [S60_3rd_FP1]" moduleId="org.eclipse.cdt.core.settings" name="Phone Release (ARMV5) [S60_3rd_FP1]">
@@ -83,9 +85,10 @@
 <ARGUMENTS_DATA_ID ABLDFREEZEARGSSTORAGE="-r"/>
 <ROM_BUILDER_DATA_ID ROMBUILDWORKINGDIRECTORYSTORAGE="C:\"/>
 </storageModule>
-<storageModule filesCache="C:\Symbian\Carbide\workspace\S60Maps\group\bld.inf;C:\Symbian\Carbide\workspace\S60Maps\group\S60Maps.mmp;" includesCache="C:/Symbian/Carbide/workspace/S60Maps/inc[LOCAL];C:/Symbian/Carbide/workspace/S60Maps/help[LOCAL];C:/Symbian/9.2/S60_3rd_FP1/Epoc32/include;" macrosCache="_UNICODE;__SUPPORT_CPP_EXCEPTIONS__;__SERIES60_31__;_HELP_AVAILABLE_;__MARM_ARMV5__;NDEBUG;__ARMCC__;__ARMCC_2_2__;__SYMBIAN32__;__MARM__;__EXE__;__SERIES60_3X__;__EPOC32__;__GENERIC_MARM__;__EABI__;" moduleId="configDataCache" sourcesCache="/S60Maps/data;/S60Maps/help;/S60Maps/inc;/S60Maps/src;" timestampCache="1565610789931" useMmpMacrosCache="true"/>
+<storageModule filesCache="C:\Symbian\Carbide\workspace\S60Maps\group\bld.inf;C:\Symbian\Carbide\workspace\S60Maps\group\S60Maps.mmp;" includesCache="C:/Symbian/Carbide/workspace/S60Maps/inc[LOCAL];C:/Symbian/Carbide/workspace/S60Maps/help[LOCAL];C:/Symbian/9.2/S60_3rd_FP1/Epoc32/include;" macrosCache="_UNICODE;__SUPPORT_CPP_EXCEPTIONS__;__SERIES60_31__;_HELP_AVAILABLE_;__MARM_ARMV5__;NDEBUG;__ARMCC__;__ARMCC_2_2__;__SYMBIAN32__;__MARM__;__EXE__;__SERIES60_3X__;__EPOC32__;__GENERIC_MARM__;__EABI__;" moduleId="configDataCache" sourcesCache="/S60Maps/data;/S60Maps/help;/S60Maps/inc;/S60Maps/src;" timestampCache="1565809323310" useMmpMacrosCache="true"/>
 <storageModule moduleId="org.eclipse.cdt.core.language.mapping"/>
 <storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 </cconfiguration>
 <cconfiguration id="Phone Debug (GCCE) [S60_3rd_FP1]">
 <storageModule buildSystemId="com.nokia.carbide.cdt.builder.CarbideConfigurationDataProvider" id="Phone Debug (GCCE) [S60_3rd_FP1]" moduleId="org.eclipse.cdt.core.settings" name="Phone Debug (GCCE) [S60_3rd_FP1]">
@@ -111,9 +114,10 @@
 <ARGUMENTS_DATA_ID ABLDFREEZEARGSSTORAGE="-r"/>
 <ROM_BUILDER_DATA_ID ROMBUILDWORKINGDIRECTORYSTORAGE="C:\"/>
 </storageModule>
-<storageModule filesCache="C:\Symbian\Carbide\workspace\S60Maps\group\bld.inf;C:\Symbian\Carbide\workspace\S60Maps\group\S60Maps.mmp;" includesCache="C:/Symbian/Carbide/workspace/S60Maps/inc[LOCAL];C:/Symbian/Carbide/workspace/S60Maps/help[LOCAL];C:/Symbian/9.2/S60_3rd_FP1/Epoc32/include;" macrosCache="_UNICODE;__SUPPORT_CPP_EXCEPTIONS__;__SERIES60_31__;_HELP_AVAILABLE_;__MARM_ARMV5__;__SYMBIAN32__;__GCCE__;__MARM__;__EXE__;__SERIES60_3X__;__GENERIC_MARM__;__EPOC32__;__EABI__;_DEBUG;" moduleId="configDataCache" sourcesCache="/S60Maps/data;/S60Maps/help;/S60Maps/inc;/S60Maps/src;" timestampCache="1565610789931" useMmpMacrosCache="true"/>
+<storageModule filesCache="C:\Symbian\Carbide\workspace\S60Maps\group\bld.inf;C:\Symbian\Carbide\workspace\S60Maps\group\S60Maps.mmp;" includesCache="C:/Symbian/Carbide/workspace/S60Maps/inc[LOCAL];C:/Symbian/Carbide/workspace/S60Maps/help[LOCAL];C:/Symbian/9.2/S60_3rd_FP1/Epoc32/include;" macrosCache="_UNICODE;__SUPPORT_CPP_EXCEPTIONS__;__SERIES60_31__;_HELP_AVAILABLE_;__MARM_ARMV5__;__SYMBIAN32__;__GCCE__;__MARM__;__EXE__;__SERIES60_3X__;__GENERIC_MARM__;__EPOC32__;__EABI__;_DEBUG;" moduleId="configDataCache" sourcesCache="/S60Maps/data;/S60Maps/help;/S60Maps/inc;/S60Maps/src;" timestampCache="1565809323320" useMmpMacrosCache="true"/>
 <storageModule moduleId="org.eclipse.cdt.core.language.mapping"/>
 <storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 </cconfiguration>
 <cconfiguration id="Phone Release (GCCE) [S60_3rd_FP1]">
 <storageModule buildSystemId="com.nokia.carbide.cdt.builder.CarbideConfigurationDataProvider" id="Phone Release (GCCE) [S60_3rd_FP1]" moduleId="org.eclipse.cdt.core.settings" name="Phone Release (GCCE) [S60_3rd_FP1]">
@@ -139,9 +143,10 @@
 <ARGUMENTS_DATA_ID ABLDFREEZEARGSSTORAGE="-r"/>
 <ROM_BUILDER_DATA_ID ROMBUILDWORKINGDIRECTORYSTORAGE="C:\"/>
 </storageModule>
-<storageModule filesCache="C:\Symbian\Carbide\workspace\S60Maps\group\bld.inf;C:\Symbian\Carbide\workspace\S60Maps\group\S60Maps.mmp;" includesCache="C:/Symbian/Carbide/workspace/S60Maps/inc[LOCAL];C:/Symbian/Carbide/workspace/S60Maps/help[LOCAL];C:/Symbian/9.2/S60_3rd_FP1/Epoc32/include;" macrosCache="_UNICODE;__SUPPORT_CPP_EXCEPTIONS__;__SERIES60_31__;_HELP_AVAILABLE_;__MARM_ARMV5__;NDEBUG;__SYMBIAN32__;__GCCE__;__MARM__;__EXE__;__SERIES60_3X__;__GENERIC_MARM__;__EPOC32__;__EABI__;" moduleId="configDataCache" sourcesCache="/S60Maps/data;/S60Maps/help;/S60Maps/inc;/S60Maps/src;" timestampCache="1565610789941" useMmpMacrosCache="true"/>
+<storageModule filesCache="C:\Symbian\Carbide\workspace\S60Maps\group\bld.inf;C:\Symbian\Carbide\workspace\S60Maps\group\S60Maps.mmp;" includesCache="C:/Symbian/Carbide/workspace/S60Maps/inc[LOCAL];C:/Symbian/Carbide/workspace/S60Maps/help[LOCAL];C:/Symbian/9.2/S60_3rd_FP1/Epoc32/include;" macrosCache="_UNICODE;__SUPPORT_CPP_EXCEPTIONS__;__SERIES60_31__;_HELP_AVAILABLE_;__MARM_ARMV5__;NDEBUG;__SYMBIAN32__;__GCCE__;__MARM__;__EXE__;__SERIES60_3X__;__GENERIC_MARM__;__EPOC32__;__EABI__;" moduleId="configDataCache" sourcesCache="/S60Maps/data;/S60Maps/help;/S60Maps/inc;/S60Maps/src;" timestampCache="1565809323330" useMmpMacrosCache="true"/>
 <storageModule moduleId="org.eclipse.cdt.core.language.mapping"/>
 <storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 </cconfiguration>
 </storageModule>
 </cproject>
