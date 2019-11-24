@@ -69,6 +69,8 @@ CS60MapsAppUi::~CS60MapsAppUi()
 	{
 	if (iAppView)
 		{
+		//if (IsControlOnStack(iAppView))
+			RemoveFromStack(iAppView);
 		delete iAppView;
 		iAppView = NULL;
 		}
