@@ -63,7 +63,7 @@ void CMapLayerStub::ConstructL()
 
 void CMapLayerStub::LoadBackgroundImageL()
 	{
-	_LIT(KImagePath, "c:\\map.png");
+	_LIT(KImagePath, "c:\\map_stub.png");
 	//_LIT(KImageMime, "image/png");
 	
 	TSize size(KStubImageSize, KStubImageSize);
