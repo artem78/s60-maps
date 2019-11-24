@@ -106,7 +106,7 @@ private:
 	TCoordinate iPosition; // Coordinates of control`s center
 	/*TUint8*/ TInt iZoom; // Zoom level from KMinZoomLevel to KMaxZoomLevel
 	// ToDo: Implement type for zoom level
-	TFixedArray<CMapLayerBase*, 1> iLayers;
+	TFixedArray<CMapLayerBase*, 2> iLayers;
 	
 	void Move(const TCoordinate &aPos);
 	void Move(const TCoordinate &aPos, /*TUint8*/ TInt aZoom);
@@ -123,7 +123,8 @@ private:
 public:
 	/*inline*/ /*TUint8*/ TInt GetZoom();
 	TCoordinate GetCenterCoordinate();
-	TBool CheckPointVisibility(const TCoordinate &aPoint);
+	TBool CheckCoordVisibility(const TCoordinate &aCoord);
+	TBool CheckPointVisibility(const TPoint &aPoint);
 	TPoint GeoCoordsToScreenCoords(const TCoordinate &aCoord);
 	TCoordinate ScreenCoordsToGeoCoords(const TPoint &aPoint);
 

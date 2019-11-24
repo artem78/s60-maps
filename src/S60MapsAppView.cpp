@@ -53,7 +53,8 @@ CS60MapsAppView* CS60MapsAppView::NewLC(const TRect& aRect,
 void CS60MapsAppView::ConstructL(const TRect& aRect)
 	{
 	// Create layers
-	iLayers[0] = new (ELeave) CMapLayerStub(this);
+	iLayers[0] = CMapLayerStub::NewL(this, iCoeEnv->FsSession()); 
+	iLayers[1] = new (ELeave) CMapLayerDebugInfo(this);
 	
 	// Create a window for this application view
 	CreateWindowL();
@@ -106,10 +107,12 @@ void CS60MapsAppView::Draw(const TRect& /*aRect*/) const
 	gc.Clear(drawRect);
 	
 	// Draw layers
-	// ToDo: Reset styles to default for each layers
 	TInt i;
 	for (i = 0; i < iLayers.Count(); i++)
+		{
+		gc.Reset();
 		iLayers[i]->Draw(gc);
+		}
 	}
 
 // -----------------------------------------------------------------------------
@@ -300,7 +303,7 @@ TCoordinate CS60MapsAppView::GetCenterCoordinate()
 	return iPosition;
 	}
 
-TBool CS60MapsAppView::CheckPointVisibility(const TCoordinate &aCoord)
+TBool CS60MapsAppView::CheckCoordVisibility(const TCoordinate &aCoord)
 	{
 	TRect rect = Rect();
 	TCoordinate topLeftCoord = ScreenCoordsToGeoCoords(rect.iTl);
@@ -310,6 +313,19 @@ TBool CS60MapsAppView::CheckPointVisibility(const TCoordinate &aCoord)
 		aCoord.Longitude() > topLeftCoord.Longitude() &&
 		aCoord.Longitude() < bottomRightCoord.Longitude())
 		
+		return ETrue;
+	else
+		return EFalse;
+	}
+
+TBool CS60MapsAppView::CheckPointVisibility(const TPoint &aPoint)
+	{
+	TRect rect = Rect();
+	if (rect.iTl.iX <= aPoint.iX &&
+		rect.iTl.iY <= aPoint.iY &&
+		rect.iBr.iX >= aPoint.iX &&
+		rect.iBr.iY >= aPoint.iY)
+
 		return ETrue;
 	else
 		return EFalse;

@@ -62,7 +62,10 @@ CAPABILITY	  	  ReadUserData
 DEBUGGABLE_UDEBONLY
 #endif
 // End of File
-STATICLIBRARY lbs.lib
+STATICLIBRARY lbs.lib gdi.lib imageconversion.lib fbscli.lib
 
 SOURCEPATH ..\src
 SOURCE MapMath.cpp Map.cpp
+
+// ToDo: Need to be increased in the future
+//EPOCHEAPSIZE 0x1000 0x1000000
