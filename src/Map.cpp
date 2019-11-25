@@ -183,6 +183,7 @@ void CMapLayerDebugInfo::Draw(CWindowGc &aGc)
 	TInt baselineOffset = area.Height() - font->AscentInPixels();
 	aGc.DrawText(buff, area, baselineOffset);
 	aGc.DiscardFont();
+	CEikonEnv::Static()->ScreenDevice()->ReleaseFont(font);
 	};
 
 
