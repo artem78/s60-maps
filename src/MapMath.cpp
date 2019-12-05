@@ -21,8 +21,8 @@ void MapMath::PixelsToMeters(const TReal64 &aLatitude, /*TUint8*/ TInt aZoom, TU
 	//TInt p = 2 ** (aZoom + 8);
 	TReal p;
 	Math::Pow(p, 2, aZoom + 8);
-	aHorizontalDistance =	aPixels * 40075016.686 * c / p;	
-	aVerticalDistance =		aPixels * 40075016.686 / p; // ToDo: Check formula
+	aHorizontalDistance =	aPixels * 40075016.686 / p;	
+	aVerticalDistance =		aPixels * 40075016.686 * c / p;
 	}
 
 void MapMath::PixelsToDegrees(const TReal64 &aLatitude, /*TUint8*/ TInt aZoom, TUint aPixels,
