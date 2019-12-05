@@ -49,7 +49,7 @@ LIBRARY		   commonengine.lib
 LIBRARY		   efsrv.lib 
 LIBRARY		   estor.lib
 LIBRARY        aknnotify.lib
-LIBRARY        hlplch.lib
+LIBRARY        hlplch.lib lbs.lib gdi.lib imageconversion.lib fbscli.lib
  
 
 LANG SC
@@ -62,7 +62,6 @@ CAPABILITY	  	  ReadUserData
 DEBUGGABLE_UDEBONLY
 #endif
 // End of File
-STATICLIBRARY lbs.lib gdi.lib imageconversion.lib fbscli.lib
 
 SOURCEPATH ..\src
 SOURCE MapMath.cpp Map.cpp
