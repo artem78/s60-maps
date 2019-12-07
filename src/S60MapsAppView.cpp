@@ -201,10 +201,46 @@ TKeyResponse CS60MapsAppView::OfferKeyEventL(const TKeyEvent &aKeyEvent,
 
 void CS60MapsAppView::Move(const TCoordinate &aPos)
 	{
+	// Check that position has changed
 	if (iPosition.Latitude() != aPos.Latitude() ||
-			iPosition.Longitude() != aPos.Longitude()) // Altitude not needed
+			iPosition.Longitude() != aPos.Longitude()) // Altitude not used
 		{
+		
 		iPosition = aPos;
+		TCoordinate topLeftCoord = ScreenCoordsToGeoCoords(Rect().iTl);
+		TCoordinate bottomRightCoord = ScreenCoordsToGeoCoords(Rect().iBr);
+		
+		// Correct longitude when it goes out of bounds
+		if (topLeftCoord.Longitude() > bottomRightCoord.Longitude()) // Because when lon > 180 or
+											// lon < -180 it`s automaticaly normalized to range
+			{
+			TReal64 horAngle, vertAngle;
+			MapMath::PixelsToDegrees(aPos.Latitude(), iZoom, Rect().Width()/* / 2*/, horAngle, vertAngle);
+			TReal64 lon = aPos.Longitude();
+			if (lon > 0.0)
+				lon = KMaxLongitudeMapBound - horAngle / 2.0;
+			else
+				lon = KMinLongitudeMapBound + horAngle / 2.0;
+			iPosition.SetCoordinate(iPosition.Latitude(), lon);
+			}
+		
+		// Correct latitude when it goes out of bounds
+		if (topLeftCoord.Latitude() < bottomRightCoord.Latitude() || // Because when lat > 90 or
+										// lat < -90 it`s automaticaly normalized to range
+				topLeftCoord.Latitude() > KMaxLatitudeMapBound ||
+				bottomRightCoord.Latitude() < KMinLatitudeMapBound)
+			{
+			TReal64 horAngle, vertAngle;
+			MapMath::PixelsToDegrees(aPos.Latitude(), iZoom, Rect().Height()/* / 2*/, horAngle, vertAngle);
+			TReal64 lat = aPos.Latitude();
+			if (lat > 0.0)
+				lat = KMaxLatitudeMapBound - vertAngle / 2.0;
+			else
+				lat = KMinLatitudeMapBound + vertAngle / 2.0;
+			iPosition.SetCoordinate(lat, iPosition.Longitude());
+			}
+		
+		
 		DrawNow();
 		}
 	}
