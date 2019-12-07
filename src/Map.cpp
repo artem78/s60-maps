@@ -89,8 +89,8 @@ void CMapLayerStub::Draw(CWindowGc &aGc)
 
 void CMapLayerStub::DrawMap(CWindowGc &aGc)
 	{
-	TCoordinate imageTopLeftCoord(90, -180);
-	TCoordinate imageBottomRightCoord(-90, 180);
+	TCoordinate imageTopLeftCoord(KMaxLatitudeMapBound, KMinLongitudeMapBound);
+	TCoordinate imageBottomRightCoord(KMinLatitudeMapBound, KMaxLongitudeMapBound);
 	TPoint topLeft;
 	TPoint bottomRight;
 	if (iMapView->CheckCoordVisibility(imageTopLeftCoord))

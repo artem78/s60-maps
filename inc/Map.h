@@ -16,6 +16,13 @@
 #include <imageconversion.h>
 
 
+// Constants
+const TReal64 KMinLatitudeMapBound = -85;
+const TReal64 KMaxLatitudeMapBound = 85;
+const TReal64 KMinLongitudeMapBound = -180;
+const TReal64 KMaxLongitudeMapBound = 180;
+
+
 // Forward declaration
 class CS60MapsAppView;
 //class MImageReaderObserver;
