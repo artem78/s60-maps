@@ -13,8 +13,9 @@
 #include <e32math.h>
 
 // Constants
-const /*TUInt8*/ TInt KMinZoomLevel = 0;
-const /*TUInt8*/ TInt KMaxZoomLevel = 19;
+const /*TUInt8*/ TInt KMinZoomLevel = /*0*/ 1;
+const /*TUInt8*/ TInt KMaxZoomLevel = 19;	// Note: 19 for default osm layer.
+											// Other layers often have max 18 level.
 
 // ============================ MEMBER FUNCTIONS ===============================
 
