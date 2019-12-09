@@ -115,7 +115,7 @@ void CMapLayerStub::DrawMap(CWindowGc &aGc)
 	TReal srcRectBrX = bottomRightTileReal.iX * KStubImageSize;
 	Math::Round(srcRectBrX, srcRectBrX, 0); // ToDo: Check possible errors
 	TReal srcRectBrY = bottomRightTileReal.iY * KStubImageSize;
-	Math::Round(srcRectBrX, srcRectBrX, 0); // ToDo: Check possible errors
+	Math::Round(srcRectBrY, srcRectBrY, 0); // ToDo: Check possible errors
 	TRect srcRect = TRect(
 		srcRectTlX,
 		srcRectTlY,
