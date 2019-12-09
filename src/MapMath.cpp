@@ -11,7 +11,7 @@
 #include "MapMath.h"
 #include <e32math.h>
 
-void MapMath::PixelsToMeters(const TReal64 &aLatitude, /*TUint8*/ TInt aZoom, TUint aPixels,
+void MapMath::PixelsToMeters(const TReal64 &aLatitude, TZoom aZoom, TUint aPixels,
 			TReal32 &aHorizontalDistance, TReal32 &aVerticalDistance)
 	{
 	TReal c;
@@ -25,7 +25,7 @@ void MapMath::PixelsToMeters(const TReal64 &aLatitude, /*TUint8*/ TInt aZoom, TU
 	aVerticalDistance =		aPixels * 40075016.686 * c / p;
 	}
 
-void MapMath::PixelsToDegrees(const TReal64 &aLatitude, /*TUint8*/ TInt aZoom, TUint aPixels,
+void MapMath::PixelsToDegrees(const TReal64 &aLatitude, TZoom aZoom, TUint aPixels,
 			/*TReal32*/ TReal64 &aHorizontalAngle, /*TReal32*/ TReal64 &aVerticalAngle)
 	{
 	TReal32 horizontalDistance;
@@ -35,7 +35,7 @@ void MapMath::PixelsToDegrees(const TReal64 &aLatitude, /*TUint8*/ TInt aZoom, T
 	aVerticalAngle =	verticalDistance   / (40075696.0 / 360.0);
 	}
 
-TTile MapMath::GeoCoordsToTile(const TCoordinate &aCoord, /*TUint8*/ TInt aZoom)
+TTile MapMath::GeoCoordsToTile(const TCoordinate &aCoord, TZoom aZoom)
 	{
 	TTileReal tileReal = GeoCoordsToTileReal(aCoord, aZoom);
 	TTile tile;
@@ -45,7 +45,7 @@ TTile MapMath::GeoCoordsToTile(const TCoordinate &aCoord, /*TUint8*/ TInt aZoom)
 	return tile;
 	}
 
-TTileReal MapMath::GeoCoordsToTileReal(const TCoordinate &aCoord, /*TUint8*/ TInt aZoom)
+TTileReal MapMath::GeoCoordsToTileReal(const TCoordinate &aCoord, TZoom aZoom)
 	{
 	// https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#Lon..2Flat._to_tile_numbers_2
 	
@@ -75,7 +75,7 @@ TTileReal MapMath::GeoCoordsToTileReal(const TCoordinate &aCoord, /*TUint8*/ TIn
 	return tile;
 	}
 
-TCoordinate MapMath::TileToGeoCoords(const TTileReal &aTile, /*TUint8*/ TInt aZoom)
+TCoordinate MapMath::TileToGeoCoords(const TTileReal &aTile, TZoom aZoom)
 	{
 	/*double tilex2long(int x, int z) 
 	{
@@ -102,7 +102,7 @@ TCoordinate MapMath::TileToGeoCoords(const TTileReal &aTile, /*TUint8*/ TInt aZo
 	return coord;	
 	}
 
-TCoordinate MapMath::TileToGeoCoords(const TTile &aTile, /*TUint8*/ TInt aZoom)
+TCoordinate MapMath::TileToGeoCoords(const TTile &aTile, TZoom aZoom)
 	{
 	TTileReal tileReal;
 	tileReal.iX = aTile.iX;

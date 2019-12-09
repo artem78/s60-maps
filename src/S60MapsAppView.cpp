@@ -11,11 +11,12 @@
 #include <coemain.h>
 #include "S60MapsAppView.h"
 #include <e32math.h>
+#include "Defs.h"
 
 // Constants
-const /*TUInt8*/ TInt KMinZoomLevel = /*0*/ 1;
-const /*TUInt8*/ TInt KMaxZoomLevel = 19;	// Note: 19 for default osm layer.
-											// Other layers often have max 18 level.
+const TZoom KMinZoomLevel = /*0*/ 1;
+const TZoom KMaxZoomLevel = 19;	// Note: 19 for default osm layer.
+								// Other layers often have max 18 level.
 
 // ============================ MEMBER FUNCTIONS ===============================
 
@@ -25,7 +26,7 @@ const /*TUInt8*/ TInt KMaxZoomLevel = 19;	// Note: 19 for default osm layer.
 // -----------------------------------------------------------------------------
 //
 CS60MapsAppView* CS60MapsAppView::NewL(const TRect& aRect,
-		const TCoordinate &aInitialPosition, /*TUint8*/ TInt aInitialZoom)
+		const TCoordinate &aInitialPosition, TZoom aInitialZoom)
 	{
 	CS60MapsAppView* self = CS60MapsAppView::NewLC(aRect, aInitialPosition, aInitialZoom);
 	CleanupStack::Pop(self);
@@ -38,7 +39,7 @@ CS60MapsAppView* CS60MapsAppView::NewL(const TRect& aRect,
 // -----------------------------------------------------------------------------
 //
 CS60MapsAppView* CS60MapsAppView::NewLC(const TRect& aRect,
-		const TCoordinate &aInitialPosition, /*TUint8*/ TInt aInitialZoom)
+		const TCoordinate &aInitialPosition, TZoom aInitialZoom)
 	{
 	CS60MapsAppView* self = new (ELeave) CS60MapsAppView(aInitialPosition, aInitialZoom);
 	CleanupStack::PushL(self);
@@ -73,7 +74,7 @@ void CS60MapsAppView::ConstructL(const TRect& aRect)
 // -----------------------------------------------------------------------------
 //
 CS60MapsAppView::CS60MapsAppView(const TCoordinate &aInitialPosition,
-		/*TUint8*/ TInt aInitialZoom) :
+		TZoom aInitialZoom) :
 	iPosition(aInitialPosition),
 	iZoom(aInitialZoom)
 	{
@@ -246,7 +247,7 @@ void CS60MapsAppView::Move(const TCoordinate &aPos)
 		}
 	}
 
-void CS60MapsAppView::Move(const TCoordinate &aPos, /*TUint8*/ TInt aZoom)
+void CS60MapsAppView::Move(const TCoordinate &aPos, TZoom aZoom)
 	{
 	// FixMe: Redrawing called twice
 	Move(aPos);
@@ -258,13 +259,13 @@ void CS60MapsAppView::Move(TReal64 aLat, TReal64 aLon)
 	Move(aLat, aLon, iZoom);
 	}
 
-void CS60MapsAppView::Move(TReal64 aLat, TReal64 aLon, /*TUint8*/ TInt aZoom)
+void CS60MapsAppView::Move(TReal64 aLat, TReal64 aLon, TZoom aZoom)
 	{
 	TCoordinate coord(aLat, aLon);
 	Move(coord, aZoom);
 	}
 
-void CS60MapsAppView::SetZoom(/*TUint8*/ TInt aZoom)
+void CS60MapsAppView::SetZoom(TZoom aZoom)
 	{
 	// ToDo: Return error code KErrArgument or panic if zoom out of bounds
 	if (aZoom >= KMinZoomLevel and aZoom <= KMaxZoomLevel)
@@ -330,7 +331,7 @@ void CS60MapsAppView::MoveRight(TUint aPixels)
 			iPosition.Longitude() + horizontalAngle);
 	}
 
-/*TUint8*/ TInt CS60MapsAppView::GetZoom()
+TZoom CS60MapsAppView::GetZoom()
 	{
 	return iZoom;
 	}

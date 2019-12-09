@@ -169,7 +169,7 @@ void CMapLayerDebugInfo::Draw(CWindowGc &aGc)
 	TBuf<100> buff;
 	TCoordinate center = iMapView->GetCenterCoordinate();
 	_LIT(KInfoText, "pos: %f %f   zoom: %d");
-	buff.Format(KInfoText, center.Latitude(), center.Longitude(), iMapView->GetZoom());
+	buff.Format(KInfoText, center.Latitude(), center.Longitude(), (TInt) iMapView->GetZoom());
 	
 	_LIT(KFontName, "Series 60 Sans");
 	TFontSpec fontSpec(KFontName, 100);

@@ -26,6 +26,7 @@
 #include "S60MapsApplication.h"
 #include "S60MapsAppUi.h"
 #include "S60MapsAppView.h"
+#include "Defs.h"
 
 
 // ============================ MEMBER FUNCTIONS ===============================
@@ -44,7 +45,7 @@ void CS60MapsAppUi::ConstructL()
 	// Set initial map position
 	// ToDo: Restore last saved position
 	TCoordinate position = TCoordinate(47.100, 5.361); // Center of Europe
-	TInt zoom = 2;	
+	TZoom zoom = 2;	
 	
 	// Create view object
 	iAppView = CS60MapsAppView::NewL(ClientRect(), position, zoom);

@@ -16,6 +16,7 @@
 #include <lbsposition.h>
 #include "MapMath.h"
 #include "Map.h"
+#include "Defs.h"
 
 // Constants
 const TUint KMapDefaultMoveStep = 20; // In pixels
@@ -34,7 +35,7 @@ public:
 	 * @return a pointer to the created instance of CS60MapsAppView.
 	 */
 	static CS60MapsAppView* NewL(const TRect& aRect,
-			const TCoordinate &aInitialPosition, /*TUint8*/ TInt aInitialZoom);
+			const TCoordinate &aInitialPosition, TZoom aInitialZoom);
 
 	/**
 	 * NewLC.
@@ -45,7 +46,7 @@ public:
 	 * @return A pointer to the created instance of CS60MapsAppView.
 	 */
 	static CS60MapsAppView* NewLC(const TRect& aRect,
-			const TCoordinate &aInitialPosition, /*TUint8*/ TInt aInitialZoom);
+			const TCoordinate &aInitialPosition, TZoom aInitialZoom);
 
 	/**
 	 * ~CS60MapsAppView
@@ -98,21 +99,20 @@ private:
 	 * C++ default constructor.
 	 */
 	CS60MapsAppView(const TCoordinate &aInitialPosition,
-			/*TUint8*/ TInt aInitialZoom);
+			TZoom aInitialZoom);
 
 
 // Custom properties and methods
 private:
 	TCoordinate iPosition; // Coordinates of control`s center
-	/*TUint8*/ TInt iZoom; // Zoom level from KMinZoomLevel to KMaxZoomLevel
-	// ToDo: Implement type for zoom level
+	TZoom iZoom; // Zoom level from KMinZoomLevel to KMaxZoomLevel
 	TFixedArray<CMapLayerBase*, 2> iLayers;
 	
 	void Move(const TCoordinate &aPos);
-	void Move(const TCoordinate &aPos, /*TUint8*/ TInt aZoom);
+	void Move(const TCoordinate &aPos, TZoom aZoom);
 	void Move(TReal64 aLat, TReal64 aLon);
-	void Move(TReal64 aLat, TReal64 aLon, /*TUint8*/ TInt aZoom);
-	void SetZoom(/*TUint8*/ TInt aZoom);
+	void Move(TReal64 aLat, TReal64 aLon, TZoom aZoom);
+	void SetZoom(TZoom aZoom);
 	void ZoomIn();
 	void ZoomOut();
 	void MoveUp(	TUint aPixels = KMapDefaultMoveStep);
@@ -121,7 +121,7 @@ private:
 	void MoveRight(	TUint aPixels = KMapDefaultMoveStep);
 	
 public:
-	/*inline*/ /*TUint8*/ TInt GetZoom();
+	/*inline*/ TZoom GetZoom();
 	TCoordinate GetCenterCoordinate();
 	TBool CheckCoordVisibility(const TCoordinate &aCoord);
 	TBool CheckPointVisibility(const TPoint &aPoint);
