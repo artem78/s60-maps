@@ -17,8 +17,8 @@
 
 
 // Constants
-const TReal64 KMinLatitudeMapBound = -85;
-const TReal64 KMaxLatitudeMapBound = 85;
+const TReal64 KMinLatitudeMapBound = -85.051129;
+const TReal64 KMaxLatitudeMapBound = 85.051129;
 const TReal64 KMinLongitudeMapBound = -180;
 const TReal64 KMaxLongitudeMapBound = 180;
 
