@@ -41,9 +41,9 @@ CS60MapsAppView* CS60MapsAppView::NewL(const TRect& aRect,
 CS60MapsAppView* CS60MapsAppView::NewLC(const TRect& aRect,
 		const TCoordinate &aInitialPosition, TZoom aInitialZoom)
 	{
-	CS60MapsAppView* self = new (ELeave) CS60MapsAppView(aInitialPosition, aInitialZoom);
+	CS60MapsAppView* self = new (ELeave) CS60MapsAppView(aInitialZoom);
 	CleanupStack::PushL(self);
-	self->ConstructL(aRect);
+	self->ConstructL(aRect, aInitialPosition);
 	return self;
 	}
 
@@ -52,7 +52,7 @@ CS60MapsAppView* CS60MapsAppView::NewLC(const TRect& aRect,
 // Symbian 2nd phase constructor can leave.
 // -----------------------------------------------------------------------------
 //
-void CS60MapsAppView::ConstructL(const TRect& aRect)
+void CS60MapsAppView::ConstructL(const TRect& aRect, const TCoordinate &aInitialPosition)
 	{
 	// Create layers
 	iLayers[0] = CMapLayerStub::NewL(this, iCoeEnv->FsSession()); 
@@ -64,6 +64,9 @@ void CS60MapsAppView::ConstructL(const TRect& aRect)
 	// Set the windows size
 	SetRect(aRect);
 
+	// Set initial displayed position
+	Move(aInitialPosition);
+	
 	// Activate the window, which makes it ready to be drawn
 	ActivateL();
 	}
@@ -73,10 +76,9 @@ void CS60MapsAppView::ConstructL(const TRect& aRect)
 // C++ default constructor can NOT contain any code, that might leave.
 // -----------------------------------------------------------------------------
 //
-CS60MapsAppView::CS60MapsAppView(const TCoordinate &aInitialPosition,
-		TZoom aInitialZoom) :
-	iPosition(aInitialPosition),
+CS60MapsAppView::CS60MapsAppView(TZoom aInitialZoom) :
 	iZoom(aInitialZoom)
+	// Position will be set later in ConstructL
 	{
 	// No implementation required
 	}
@@ -220,50 +222,47 @@ TKeyResponse CS60MapsAppView::OfferKeyEventL(const TKeyEvent &aKeyEvent,
 	return EKeyWasNotConsumed;
 	}
 
-void CS60MapsAppView::Move(const TCoordinate &aPos)
+void CS60MapsAppView::Move(const TPoint &aPoint)
 	{
 	// Check that position has changed
-	if (iPosition.Latitude() != aPos.Latitude() ||
-			iPosition.Longitude() != aPos.Longitude()) // Altitude not used
+	if (iTopLeftPosition != aPoint)
 		{
+		iTopLeftPosition = aPoint;
 		
-		iPosition = aPos;
-		TCoordinate topLeftCoord = ScreenCoordsToGeoCoords(Rect().iTl);
-		TCoordinate bottomRightCoord = ScreenCoordsToGeoCoords(Rect().iBr);
+		TReal tmp;
+		Math::Pow(tmp, 2, iZoom);
+		TInt maxXY = 256 * (int) tmp - 1;
+		//TRect mapRect;
+		//mapRect.SetSize(TSize(maxXY, maxXY));
+		
+		TRect viewRect;
+		viewRect.SetRect(Rect().iTl, Rect().iBr);
+		viewRect.Move(iTopLeftPosition);
 		
 		// Correct longitude when it goes out of bounds
-		if (topLeftCoord.Longitude() > bottomRightCoord.Longitude()) // Because when lon > 180 or
-											// lon < -180 it`s automaticaly normalized to range
-			{
-			TReal64 horAngle, vertAngle;
-			MapMath::PixelsToDegrees(aPos.Latitude(), iZoom, Rect().Width()/* / 2*/, horAngle, vertAngle);
-			TReal64 lon = aPos.Longitude();
-			if (lon > 0.0)
-				lon = KMaxLongitudeMapBound - horAngle / 2.0;
-			else
-				lon = KMinLongitudeMapBound + horAngle / 2.0;
-			iPosition.SetCoordinate(iPosition.Latitude(), lon);
-			}
+		if (viewRect.iTl.iY < 0)
+			iTopLeftPosition.iY = 0;
+		else if (viewRect.iBr.iY > maxXY)
+			iTopLeftPosition.iY = maxXY - viewRect.Height();
 		
 		// Correct latitude when it goes out of bounds
-		if (topLeftCoord.Latitude() < bottomRightCoord.Latitude() || // Because when lat > 90 or
-										// lat < -90 it`s automaticaly normalized to range
-				topLeftCoord.Latitude() > KMaxLatitudeMapBound ||
-				bottomRightCoord.Latitude() < KMinLatitudeMapBound)
-			{
-			TReal64 horAngle, vertAngle;
-			MapMath::PixelsToDegrees(aPos.Latitude(), iZoom, Rect().Height()/* / 2*/, horAngle, vertAngle);
-			TReal64 lat = aPos.Latitude();
-			if (lat > 0.0)
-				lat = KMaxLatitudeMapBound - vertAngle / 2.0;
-			else
-				lat = KMinLatitudeMapBound + vertAngle / 2.0;
-			iPosition.SetCoordinate(lat, iPosition.Longitude());
-			}
+		if (viewRect.iTl.iX < 0)
+			iTopLeftPosition.iX = 0;
+		else if (viewRect.iBr.iX > maxXY)
+			iTopLeftPosition.iX = maxXY - viewRect.Width();
 		
 		
 		DrawNow();
 		}
+	}
+
+void CS60MapsAppView::Move(const TCoordinate &aPos)
+	{	
+	TPoint point = MapMath::GeoCoordsToProjectionPoint(aPos, iZoom);
+	// Convert from center to top left
+	point.iX -= Rect().Width() / 2;
+	point.iY -= Rect().Height() / 2;
+	Move(point);
 	}
 
 void CS60MapsAppView::Move(const TCoordinate &aPos, TZoom aZoom)
@@ -291,7 +290,9 @@ void CS60MapsAppView::SetZoom(TZoom aZoom)
 		{
 		if (iZoom != aZoom)
 			{
+			TCoordinate coord = GetCenterCoordinate();
 			iZoom = aZoom;
+			Move(coord);
 			DrawNow();
 			}
 		}
@@ -309,45 +310,32 @@ void CS60MapsAppView::ZoomOut()
 		SetZoom(iZoom - 1);
 	}
 
-// ToDo: Reduce repetiotion of code
 void CS60MapsAppView::MoveUp(TUint aPixels)
 	{
-	TReal64 horizontalAngle;
-	TReal64 verticalAngle;
-	MapMath::PixelsToDegrees(iPosition.Latitude(), iZoom, aPixels,
-			horizontalAngle, verticalAngle);
-	Move(iPosition.Latitude() + verticalAngle,
-			iPosition.Longitude());
+	TPoint point = iTopLeftPosition;
+	point.iY -= aPixels;
+	Move(point);
 	}
 
 void CS60MapsAppView::MoveDown(TUint aPixels)
 	{
-	TReal64 horizontalAngle;
-	TReal64 verticalAngle;
-	MapMath::PixelsToDegrees(iPosition.Latitude(), iZoom, aPixels,
-			horizontalAngle, verticalAngle);
-	Move(iPosition.Latitude() - verticalAngle,
-			iPosition.Longitude());
+	TPoint point = iTopLeftPosition;
+	point.iY += aPixels;
+	Move(point);
 	}
 
 void CS60MapsAppView::MoveLeft(TUint aPixels)
 	{
-	TReal64 horizontalAngle;
-	TReal64 verticalAngle;
-	MapMath::PixelsToDegrees(iPosition.Latitude(), iZoom, aPixels,
-			horizontalAngle, verticalAngle);
-	Move(iPosition.Latitude(),
-			iPosition.Longitude() - horizontalAngle);
+	TPoint point = iTopLeftPosition;
+	point.iX -= aPixels;
+	Move(point);
 	}
 
 void CS60MapsAppView::MoveRight(TUint aPixels)
 	{
-	TReal64 horizontalAngle;
-	TReal64 verticalAngle;
-	MapMath::PixelsToDegrees(iPosition.Latitude(), iZoom, aPixels,
-			horizontalAngle, verticalAngle);
-	Move(iPosition.Latitude(),
-			iPosition.Longitude() + horizontalAngle);
+	TPoint point = iTopLeftPosition;
+	point.iX += aPixels;
+	Move(point);
 	}
 
 TZoom CS60MapsAppView::GetZoom() const
@@ -357,66 +345,46 @@ TZoom CS60MapsAppView::GetZoom() const
 
 TCoordinate CS60MapsAppView::GetCenterCoordinate() const
 	{
-	return iPosition;
+	TPoint point = iTopLeftPosition;
+	point.iX += Rect().Width() / 2;
+	point.iY += Rect().Height() / 2;
+	return MapMath::ProjectionPointToGeoCoords(point, iZoom);
 	}
 
 TBool CS60MapsAppView::CheckCoordVisibility(const TCoordinate &aCoord) const
-	{
-	TRect rect = Rect();
-	TCoordinate topLeftCoord = ScreenCoordsToGeoCoords(rect.iTl);
-	TCoordinate bottomRightCoord = ScreenCoordsToGeoCoords(rect.iBr);
-	if (aCoord.Latitude() < topLeftCoord.Latitude() &&
-		aCoord.Latitude() > bottomRightCoord.Latitude() &&
-		aCoord.Longitude() > topLeftCoord.Longitude() &&
-		aCoord.Longitude() < bottomRightCoord.Longitude())
-		
-		return ETrue;
-	else
-		return EFalse;
+	{	
+	TPoint projectionPoint = MapMath::GeoCoordsToProjectionPoint(aCoord, iZoom);
+	TPoint screenPoint = ProjectionCoordsToScreenCoords(projectionPoint);
+	return CheckPointVisibility(screenPoint);
 	}
 
 TBool CS60MapsAppView::CheckPointVisibility(const TPoint &aPoint) const
 	{
-	TRect rect = Rect();
-	if (rect.iTl.iX <= aPoint.iX &&
-		rect.iTl.iY <= aPoint.iY &&
-		rect.iBr.iX >= aPoint.iX &&
-		rect.iBr.iY >= aPoint.iY)
-
-		return ETrue;
-	else
-		return EFalse;
+	TRect screenRect = Rect();
+	screenRect.Resize(1, 1);
+	return screenRect.Contains(aPoint);
 	}
 
 TPoint CS60MapsAppView::GeoCoordsToScreenCoords(const TCoordinate &aCoord) const
 	{
-	// ToDo: Check screen coords bounds
-	
-	TTileReal centerTileReal = MapMath::GeoCoordsToTileReal(iPosition, iZoom);
-	TTileReal tileReal = MapMath::GeoCoordsToTileReal(aCoord, iZoom);
-	
-	TRect rect = Rect();
-	
-	TPoint point;
-	TReal x = rect.Width() / 2.0 + (tileReal.iX - centerTileReal.iX) * 256.0; // ToDo: Use rect.Center()
-	Math::Round(x, x, 0);
-	point.iX = x;
-	TReal y = rect.Height() / 2.0 + (tileReal.iY - centerTileReal.iY) * 256.0; // ToDo: Use rect.Center()
-	Math::Round(y, y, 0);
-	point.iY = y;
-	
-	return point;
+	TPoint point = MapMath::GeoCoordsToProjectionPoint(aCoord, iZoom);
+	return ProjectionCoordsToScreenCoords(point);
 	}
 
 TCoordinate CS60MapsAppView::ScreenCoordsToGeoCoords(const TPoint &aPoint) const
+	{	
+	TPoint point = ScreenCoordsToProjectionCoords(aPoint);
+	return MapMath::ProjectionPointToGeoCoords(point, iZoom);
+	}
+
+TPoint CS60MapsAppView::ProjectionCoordsToScreenCoords(const TPoint &aPoint) const
 	{
-	TRect rect = Rect();
-	TTileReal centralTileReal = MapMath::GeoCoordsToTileReal(iPosition, iZoom);
-	TTileReal tileReal;
-	tileReal.iX = (rect.Width() / 2.0 - centralTileReal.iX * 256.0 - aPoint.iX) / -256.0; // ToDo: Use rect.Center()
-	tileReal.iY = (rect.Height() / 2.0 - centralTileReal.iY * 256.0 - aPoint.iY) / -256.0; // ToDo: Use rect.Center()
-	
-	return MapMath::TileToGeoCoords(tileReal, iZoom);
+	return aPoint - iTopLeftPosition;
+	}
+
+TPoint CS60MapsAppView::ScreenCoordsToProjectionCoords(const TPoint &aPoint) const
+	{
+	return aPoint + iTopLeftPosition;
 	}
 
 // End of File

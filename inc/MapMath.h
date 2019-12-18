@@ -28,6 +28,8 @@ public:
 	static TTileReal GeoCoordsToTileReal(const TCoordinate &aCoord, TZoom aZoom);
 	static TCoordinate TileToGeoCoords(const TTileReal &aTile, TZoom aZoom);
 	static TCoordinate TileToGeoCoords(const TTile &aTile, TZoom aZoom);
+	static TPoint GeoCoordsToProjectionPoint(const TCoordinate &aCoord, TZoom aZoom);
+	static TCoordinate ProjectionPointToGeoCoords(const TPoint &aPoint, TZoom aZoom);
 	};
 
 class TTile

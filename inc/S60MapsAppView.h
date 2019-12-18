@@ -96,22 +96,24 @@ private:
 	 * CS60MapsAppView object.
 	 * @param aRect The rectangle this view will be drawn to.
 	 */
-	void ConstructL(const TRect& aRect);
+	void ConstructL(const TRect& aRect, const TCoordinate &aInitialPosition);
 
 	/**
 	 * CS60MapsAppView.
 	 * C++ default constructor.
 	 */
-	CS60MapsAppView(const TCoordinate &aInitialPosition,
-			TZoom aInitialZoom);
+	CS60MapsAppView(TZoom aInitialZoom);
 
 
 // Custom properties and methods
 private:
-	TCoordinate iPosition; // Coordinates of control`s center
+	TPoint iTopLeftPosition; // Mercators coordinates of control`s top left corner in pixels
+							 // Note: Do not directly change this value! Use Move() instead.
 	TZoom iZoom; // Zoom level from KMinZoomLevel to KMaxZoomLevel
+				 // Note: Do not directly change this value! Use SetZoom() instead.
 	TFixedArray<CMapLayerBase*, 2> iLayers;
 	
+	void Move(const TPoint &aPoint);
 	void Move(const TCoordinate &aPos);
 	void Move(const TCoordinate &aPos, TZoom aZoom);
 	void Move(TReal64 aLat, TReal64 aLon);
@@ -123,6 +125,8 @@ private:
 	void MoveDown(	TUint aPixels = KMapDefaultMoveStep);
 	void MoveLeft(	TUint aPixels = KMapDefaultMoveStep);
 	void MoveRight(	TUint aPixels = KMapDefaultMoveStep);
+	/*inline*/ TPoint ProjectionCoordsToScreenCoords(const TPoint &aPoint) const;
+	/*inline*/ TPoint ScreenCoordsToProjectionCoords(const TPoint &aPoint) const;
 	
 public:
 	/*inline*/ TZoom GetZoom() const;

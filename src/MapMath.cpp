@@ -110,3 +110,23 @@ TCoordinate MapMath::TileToGeoCoords(const TTile &aTile, TZoom aZoom)
 	tileReal.iZ = aTile.iZ;
 	return TileToGeoCoords(tileReal, aZoom);
 	}
+
+TPoint MapMath::GeoCoordsToProjectionPoint(const TCoordinate &aCoord, TZoom aZoom)
+	{
+	TTileReal tileReal = GeoCoordsToTileReal(aCoord, aZoom);
+	TReal x, y;
+	x = tileReal.iX * 256;
+	Math::Round(x, x, 0);
+	y = tileReal.iY * 256;
+	Math::Round(y, y, 0);
+	return TPoint(x, y);
+	}
+
+TCoordinate MapMath::ProjectionPointToGeoCoords(const TPoint &aPoint, TZoom aZoom)
+	{
+	TTileReal tileReal;
+	tileReal.iX = aPoint.iX / 256.0;
+	tileReal.iY = aPoint.iY / 256.0;
+	tileReal.iZ = aZoom;
+	return TileToGeoCoords(tileReal, aZoom);
+	}
