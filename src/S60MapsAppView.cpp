@@ -222,12 +222,17 @@ TKeyResponse CS60MapsAppView::OfferKeyEventL(const TKeyEvent &aKeyEvent,
 	return EKeyWasNotConsumed;
 	}
 
-void CS60MapsAppView::Move(const TPoint &aPoint)
+void CS60MapsAppView::Move(const TPoint &aPoint, TBool savePos)
 	{
 	// Check that position has changed
 	if (iTopLeftPosition != aPoint)
 		{
-		iTopLeftPosition = aPoint;
+		iTopLeftPosition = aPoint;	
+		if (savePos)
+			{
+			TPoint center = aPoint + Rect().Center();
+			iCenterPosition = MapMath::ProjectionPointToGeoCoords(center, iZoom); // Store new position
+			}
 		
 		TReal tmp;
 		Math::Pow(tmp, 2, iZoom);
@@ -257,12 +262,13 @@ void CS60MapsAppView::Move(const TPoint &aPoint)
 	}
 
 void CS60MapsAppView::Move(const TCoordinate &aPos)
-	{	
+	{
+	iCenterPosition = aPos; // Store new position
 	TPoint point = MapMath::GeoCoordsToProjectionPoint(aPos, iZoom);
 	// Convert from center to top left
 	point.iX -= Rect().Width() / 2;
 	point.iY -= Rect().Height() / 2;
-	Move(point);
+	Move(point, EFalse);
 	}
 
 void CS60MapsAppView::Move(const TCoordinate &aPos, TZoom aZoom)
@@ -290,9 +296,8 @@ void CS60MapsAppView::SetZoom(TZoom aZoom)
 		{
 		if (iZoom != aZoom)
 			{
-			TCoordinate coord = GetCenterCoordinate();
 			iZoom = aZoom;
-			Move(coord);
+			Move(iCenterPosition);
 			DrawNow();
 			}
 		}

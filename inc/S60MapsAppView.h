@@ -111,9 +111,12 @@ private:
 							 // Note: Do not directly change this value! Use Move() instead.
 	TZoom iZoom; // Zoom level from KMinZoomLevel to KMaxZoomLevel
 				 // Note: Do not directly change this value! Use SetZoom() instead.
+	TCoordinate iCenterPosition; // Similar to iTopLeftPosition, but used for
+				// more accurate moving to position when zoom changed
+				// ToDo: Any ideas how to make it without additional property? 
 	TFixedArray<CMapLayerBase*, 2> iLayers;
 	
-	void Move(const TPoint &aPoint); // Used by all another Move methods
+	void Move(const TPoint &aPoint, TBool savePos = ETrue); // Used by all another Move methods
 	void Move(const TCoordinate &aPos);
 	void Move(const TCoordinate &aPos, TZoom aZoom);
 	void Move(TReal64 aLat, TReal64 aLon);
