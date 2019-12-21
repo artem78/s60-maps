@@ -89,8 +89,19 @@ void CS60MapsAppUi::HandleCommandL(TInt aCommand)
 		{
 		case EEikCmdExit:
 		case EAknSoftkeyExit:
-			// ToDo: Ask before exit
-			Exit();
+			{
+			CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
+			dlg->PrepareLC(R_CONFIRM_EXIT_QUERY_DIALOG);
+			HBufC* title = iEikonEnv->AllocReadResourceLC(R_CONFIRM_EXIT_DIALOG_TITLE);
+			dlg->QueryHeading()->SetTextL(*title);
+			CleanupStack::PopAndDestroy(); //title
+			HBufC* msg = iEikonEnv->AllocReadResourceLC(R_CONFIRM_EXIT_DIALOG_TEXT);
+			dlg->SetMessageTextL(*msg);
+			CleanupStack::PopAndDestroy(); //msg
+			TInt res = dlg->RunLD();
+			if (res == 3005 /*Yes*/) // ToDo: Replace by constant name
+				Exit();
+			}
 			break;
 		case EFindMe:
 			// ToDo: make this...
