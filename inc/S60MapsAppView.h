@@ -113,7 +113,7 @@ private:
 				 // Note: Do not directly change this value! Use SetZoom() instead.
 	TFixedArray<CMapLayerBase*, 2> iLayers;
 	
-	void Move(const TPoint &aPoint);
+	void Move(const TPoint &aPoint); // Used by all another Move methods
 	void Move(const TCoordinate &aPos);
 	void Move(const TCoordinate &aPos, TZoom aZoom);
 	void Move(TReal64 aLat, TReal64 aLon);
