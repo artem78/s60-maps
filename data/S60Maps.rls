@@ -16,7 +16,7 @@
 
 #define qtn_find_me "Go to current position"
 
-#define qtn_help "Help"
+//#define qtn_help "Help"
 
 #define qtn_about "About"
 

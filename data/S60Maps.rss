@@ -87,11 +87,12 @@ RESOURCE MENU_PANE r_menu
 				command = EFindMe;
 				txt = qtn_find_me;
 				},
-		MENU_ITEM
+		// Maybe I will add help in the future
+		/*MENU_ITEM
 				{
 				command = EHelp;
 				txt = qtn_help;
-				},
+				},*/
 		MENU_ITEM
 				{
 				command = EAbout;
