@@ -331,17 +331,17 @@ void CS60MapsAppView::MoveRight(TUint aPixels)
 			iPosition.Longitude() + horizontalAngle);
 	}
 
-TZoom CS60MapsAppView::GetZoom()
+TZoom CS60MapsAppView::GetZoom() const
 	{
 	return iZoom;
 	}
 
-TCoordinate CS60MapsAppView::GetCenterCoordinate()
+TCoordinate CS60MapsAppView::GetCenterCoordinate() const
 	{
 	return iPosition;
 	}
 
-TBool CS60MapsAppView::CheckCoordVisibility(const TCoordinate &aCoord)
+TBool CS60MapsAppView::CheckCoordVisibility(const TCoordinate &aCoord) const
 	{
 	TRect rect = Rect();
 	TCoordinate topLeftCoord = ScreenCoordsToGeoCoords(rect.iTl);
@@ -356,7 +356,7 @@ TBool CS60MapsAppView::CheckCoordVisibility(const TCoordinate &aCoord)
 		return EFalse;
 	}
 
-TBool CS60MapsAppView::CheckPointVisibility(const TPoint &aPoint)
+TBool CS60MapsAppView::CheckPointVisibility(const TPoint &aPoint) const
 	{
 	TRect rect = Rect();
 	if (rect.iTl.iX <= aPoint.iX &&
@@ -369,7 +369,7 @@ TBool CS60MapsAppView::CheckPointVisibility(const TPoint &aPoint)
 		return EFalse;
 	}
 
-TPoint CS60MapsAppView::GeoCoordsToScreenCoords(const TCoordinate &aCoord)
+TPoint CS60MapsAppView::GeoCoordsToScreenCoords(const TCoordinate &aCoord) const
 	{
 	// ToDo: Check screen coords bounds
 	
@@ -389,7 +389,7 @@ TPoint CS60MapsAppView::GeoCoordsToScreenCoords(const TCoordinate &aCoord)
 	return point;
 	}
 
-TCoordinate CS60MapsAppView::ScreenCoordsToGeoCoords(const TPoint &aPoint)
+TCoordinate CS60MapsAppView::ScreenCoordsToGeoCoords(const TPoint &aPoint) const
 	{
 	TRect rect = Rect();
 	TTileReal centralTileReal = MapMath::GeoCoordsToTileReal(iPosition, iZoom);

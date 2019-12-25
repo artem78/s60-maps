@@ -121,12 +121,12 @@ private:
 	void MoveRight(	TUint aPixels = KMapDefaultMoveStep);
 	
 public:
-	/*inline*/ TZoom GetZoom();
-	TCoordinate GetCenterCoordinate();
-	TBool CheckCoordVisibility(const TCoordinate &aCoord);
-	TBool CheckPointVisibility(const TPoint &aPoint);
-	TPoint GeoCoordsToScreenCoords(const TCoordinate &aCoord);
-	TCoordinate ScreenCoordsToGeoCoords(const TPoint &aPoint);
+	/*inline*/ TZoom GetZoom() const;
+	TCoordinate GetCenterCoordinate() const;
+	TBool CheckCoordVisibility(const TCoordinate &aCoord) const;
+	TBool CheckPointVisibility(const TPoint &aPoint) const;
+	TPoint GeoCoordsToScreenCoords(const TCoordinate &aCoord) const;
+	TCoordinate ScreenCoordsToGeoCoords(const TPoint &aPoint) const;
 
 	};
 	
