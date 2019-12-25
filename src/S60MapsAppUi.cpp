@@ -100,7 +100,10 @@ void CS60MapsAppUi::HandleCommandL(TInt aCommand)
 			CleanupStack::PopAndDestroy(); //msg
 			TInt res = dlg->RunLD();
 			if (res == 3005 /*Yes*/) // ToDo: Replace by constant name
+				{
+				SaveL();
 				Exit();
+				}
 			}
 			break;
 		case EFindMe:
@@ -165,5 +168,35 @@ CArrayFix<TCoeHelpContext>* CS60MapsAppUi::HelpContextL() const
 	return NULL;
 #endif
 	}
+
+TStreamId CS60MapsAppUi::StoreL(CStreamStore& aStore) const
+	{
+	RStoreWriteStream stream;
+	TStreamId id = stream.CreateLC(aStore);
+	stream << *this;
+	stream.CommitL() ;
+	CleanupStack::PopAndDestroy(&stream);
+	return id;
+	}
+
+void CS60MapsAppUi::RestoreL(const CStreamStore& aStore,
+		TStreamId aStreamId)
+	{
+	RStoreReadStream stream;
+	stream.OpenLC(aStore, aStreamId);
+	stream >> *this;
+	CleanupStack::PopAndDestroy(&stream);
+	}
+
+void CS60MapsAppUi::ExternalizeL(RWriteStream& aStream) const
+	{
+	aStream << *iAppView;
+	}
+
+void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
+	{
+	aStream >> *iAppView;
+	}
+
 
 // End of File

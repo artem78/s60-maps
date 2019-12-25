@@ -79,6 +79,11 @@ private:
 	 */
 	CS60MapsAppView* iAppView;
 
+public:
+	TStreamId StoreL(CStreamStore& aStore) const;
+	void RestoreL(const CStreamStore& aStore, TStreamId aStreamId);
+	void ExternalizeL(RWriteStream& aStream) const;
+	void InternalizeL(RReadStream& aStream);
 	};
 
 #endif // __S60MAPSAPPUI_h__

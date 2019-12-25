@@ -68,6 +68,10 @@ public:
 	 * @return Pointer to created instance of AppUi.
 	 */
 	CEikAppUi* CreateAppUiL();
+	
+	virtual CFileStore* OpenFileL(TBool aDoOpen,
+			const TDesC& aFilename, RFs& aFs);
+
 
 private:
 	// Constructors
@@ -84,6 +88,13 @@ private:
 	 * @param aApp Application creating this document.
 	 */
 	CS60MapsDocument(CEikApplication& aApp);
+
+	
+public:
+	void StoreL(CStreamStore& aStore,
+			CStreamDictionary& aStreamDic) const;
+	void RestoreL(const CStreamStore& aStore,
+			const CStreamDictionary& aStreamDic);
 
 	};
 

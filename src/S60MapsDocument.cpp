@@ -10,6 +10,8 @@
 // INCLUDE FILES
 #include "S60MapsAppUi.h"
 #include "S60MapsDocument.h"
+#include <e32base.h>
+#include "S60MapsApplication.h"
 
 // ============================ MEMBER FUNCTIONS ===============================
 
@@ -80,6 +82,26 @@ CEikAppUi* CS60MapsDocument::CreateAppUiL()
 	// Create the application user interface, and return a pointer to it;
 	// the framework takes ownership of this object
 	return new (ELeave) CS60MapsAppUi;
+	}
+
+CFileStore* CS60MapsDocument::OpenFileL(TBool aDoOpen,
+		const TDesC& aFilename, RFs& aFs)
+	{
+	return CEikDocument::OpenFileL(aDoOpen, aFilename, aFs);
+	}
+
+void CS60MapsDocument::StoreL(CStreamStore& aStore,
+		CStreamDictionary& aStreamDic) const
+	{
+	TStreamId id = ((CS60MapsAppUi*)iAppUi)->StoreL(aStore);
+	aStreamDic.AssignL(KUidS60MapsApp, id);
+	}
+
+void CS60MapsDocument::RestoreL(const CStreamStore& aStore,
+		const CStreamDictionary& aStreamDic)
+	{
+	TStreamId id = aStreamDic.At(KUidS60MapsApp);
+	((CS60MapsAppUi*)iAppUi)->RestoreL(aStore, id);
 	}
 
 // End of File
