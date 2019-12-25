@@ -43,7 +43,6 @@ void CS60MapsAppUi::ConstructL()
 	BaseConstructL(CAknAppUi::EAknEnableSkin);
 
 	// Set initial map position
-	// ToDo: Restore last saved position
 	TCoordinate position = TCoordinate(47.100, 5.361); // Center of Europe
 	TZoom zoom = 2;	
 	
