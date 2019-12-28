@@ -382,7 +382,7 @@ void CImageReader::RunL()
 
 // MImageReaderObserver
 
-void MImageReaderObserver::OnImageReadingFailed(TInt aErr)
+void MImageReaderObserver::OnImageReadingFailed(TInt /*aErr*/)
 	{
 	// No any action by default
 	}
