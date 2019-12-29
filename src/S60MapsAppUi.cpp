@@ -49,6 +49,13 @@ void CS60MapsAppUi::ConstructL()
 	// Create view object
 	iAppView = CS60MapsAppView::NewL(ClientRect(), position, zoom);
 	AddToStackL(iAppView);
+	
+	// Make fullscreen
+	SetFullScreenApp(ETrue); // Seems no effect
+	StatusPane()->MakeVisible(EFalse); // ToDo: Why if call it before creating
+									   // app view panic KERN-EXEC 3 happens?
+	//Cba()->MakeVisible(EFalse); // Softkeys not work after this
+	iAppView->SetRect(ApplicationRect()); // Need to resize the view to fullscreen
 	}
 // -----------------------------------------------------------------------------
 // CS60MapsAppUi::CS60MapsAppUi()
@@ -142,7 +149,8 @@ void CS60MapsAppUi::HandleCommandL(TInt aCommand)
 //
 void CS60MapsAppUi::HandleStatusPaneSizeChange()
 	{
-	iAppView->SetRect(ClientRect());
+	//iAppView->SetRect(ClientRect());
+	iAppView->SetRect(ApplicationRect());
 	}
 
 CArrayFix<TCoeHelpContext>* CS60MapsAppUi::HelpContextL() const
