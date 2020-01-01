@@ -222,13 +222,13 @@ TKeyResponse CS60MapsAppView::OfferKeyEventL(const TKeyEvent &aKeyEvent,
 	return EKeyWasNotConsumed;
 	}
 
-void CS60MapsAppView::Move(const TPoint &aPoint, TBool savePos)
+void CS60MapsAppView::Move(const TPoint &aPoint, TBool aSavePos)
 	{
 	// Check that position has changed
 	if (iTopLeftPosition != aPoint)
 		{
 		iTopLeftPosition = aPoint;	
-		if (savePos)
+		if (aSavePos)
 			{
 			TPoint center = aPoint + Rect().Center();
 			iCenterPosition = MapMath::ProjectionPointToGeoCoords(center, iZoom); // Store new position
