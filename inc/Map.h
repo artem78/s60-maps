@@ -49,29 +49,29 @@ public:
 	virtual void OnImageReadingFailed(TInt aErr);
 	};
 
-// Stub layer (for testing)
-class CMapLayerStub : public CMapLayerBase, public MImageReaderObserver
-	{
-private:
-	TFixedArray<TCoordinate, 6> iCoords;
-	RFs iFs;
-	CFbsBitmap* iBackgroundBitmap;
-	CImageReader* iImgReader;
-	
-	CMapLayerStub(/*const*/ CS60MapsAppView* aMapView, RFs &aFs);
-	void ConstructL();
-	
-	void DrawMap(CWindowGc &aGc);
-	void DrawMarks(CWindowGc &aGc);
-	void LoadBackgroundImageL();
-public:
-	~CMapLayerStub();
-	static CMapLayerStub* NewL(/*const*/ CS60MapsAppView* aMapView, RFs &aFs);
-	static CMapLayerStub* NewLC(/*const*/ CS60MapsAppView* aMapView, RFs &aFs);
-	
-	void Draw(CWindowGc &aGc);
-	void OnImageReaded();
-	};
+// Stub layer (just for testing, currently not nedeed more)
+//class CMapLayerStub : public CMapLayerBase, public MImageReaderObserver
+//	{
+//private:
+//	TFixedArray<TCoordinate, 6> iCoords;
+//	RFs iFs;
+//	CFbsBitmap* iBackgroundBitmap;
+//	CImageReader* iImgReader;
+//	
+//	CMapLayerStub(/*const*/ CS60MapsAppView* aMapView, RFs &aFs);
+//	void ConstructL();
+//	
+//	void DrawMap(CWindowGc &aGc);
+//	void DrawMarks(CWindowGc &aGc);
+//	void LoadBackgroundImageL();
+//public:
+//	~CMapLayerStub();
+//	static CMapLayerStub* NewL(/*const*/ CS60MapsAppView* aMapView, RFs &aFs);
+//	static CMapLayerStub* NewLC(/*const*/ CS60MapsAppView* aMapView, RFs &aFs);
+//	
+//	void Draw(CWindowGc &aGc);
+//	void OnImageReaded();
+//	};
 
 // Debug layer with zoom, lat and lon info
 class CMapLayerDebugInfo : public CMapLayerBase
