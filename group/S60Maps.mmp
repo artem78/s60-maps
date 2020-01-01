@@ -49,7 +49,7 @@ LIBRARY		   commonengine.lib
 LIBRARY		   efsrv.lib 
 LIBRARY		   estor.lib
 LIBRARY        aknnotify.lib
-LIBRARY        hlplch.lib lbs.lib gdi.lib imageconversion.lib fbscli.lib
+LIBRARY        hlplch.lib lbs.lib gdi.lib imageconversion.lib fbscli.lib bitgdi.lib
  
 
 LANG SC

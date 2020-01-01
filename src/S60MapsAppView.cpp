@@ -55,7 +55,7 @@ CS60MapsAppView* CS60MapsAppView::NewLC(const TRect& aRect,
 void CS60MapsAppView::ConstructL(const TRect& aRect, const TCoordinate &aInitialPosition)
 	{
 	// Create layers
-	iLayers[0] = CMapLayerStub::NewL(this, iCoeEnv->FsSession()); 
+	iLayers[0] = CMapLayerOSM::NewL(this); 
 	iLayers[1] = new (ELeave) CMapLayerDebugInfo(this);
 	
 	// Create a window for this application view
@@ -390,6 +390,28 @@ TPoint CS60MapsAppView::ProjectionCoordsToScreenCoords(const TPoint &aPoint) con
 TPoint CS60MapsAppView::ScreenCoordsToProjectionCoords(const TPoint &aPoint) const
 	{
 	return aPoint + iTopLeftPosition;
+	}
+
+void CS60MapsAppView::Bounds(TCoordinate &aTopLeftCoord, TCoordinate &aBottomRightCoord) const
+	{
+	aTopLeftCoord = ScreenCoordsToGeoCoords(Rect().iTl);
+	aBottomRightCoord = ScreenCoordsToGeoCoords(Rect().iBr);
+	}
+
+void CS60MapsAppView::Bounds(TTile &aTopLeftTile, TTile &aBottomRightTile) const
+	{
+	TCoordinate topLeftCoord, bottomRightCoord;
+	Bounds(topLeftCoord, bottomRightCoord);
+	aTopLeftTile = MapMath::GeoCoordsToTile(topLeftCoord, GetZoom());
+	aBottomRightTile = MapMath::GeoCoordsToTile(bottomRightCoord, GetZoom());
+	}
+
+void CS60MapsAppView::Bounds(TTileReal &aTopLeftTile, TTileReal &aBottomRightTile) const
+	{
+	TCoordinate topLeftCoord, bottomRightCoord;
+	Bounds(topLeftCoord, bottomRightCoord);
+	aTopLeftTile = MapMath::GeoCoordsToTileReal(topLeftCoord, GetZoom());
+	aBottomRightTile = MapMath::GeoCoordsToTileReal(bottomRightCoord, GetZoom());
 	}
 
 // End of File

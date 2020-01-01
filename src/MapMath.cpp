@@ -130,3 +130,17 @@ TCoordinate MapMath::ProjectionPointToGeoCoords(const TPoint &aPoint, TZoom aZoo
 	tileReal.iZ = aZoom;
 	return TileToGeoCoords(tileReal, aZoom);
 	}
+
+
+// TTile
+
+TBool operator== (const TTile &aTile1, const TTile &aTile2)
+	{
+	return (aTile1.iX == aTile2.iX) &&
+		   (aTile1.iY == aTile2.iY) &&
+		   (aTile1.iZ == aTile2.iZ);
+	}
+TBool operator!= (const TTile &aTile1, const TTile &aTile2)
+	{
+	return !(aTile1 == aTile2);
+	}

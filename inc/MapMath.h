@@ -38,6 +38,9 @@ public:
 	TUint iX;
 	TUint iY;
 	TZoom iZ;
+	
+    friend TBool operator== (const TTile &aTile1, const TTile &aTile2);
+    friend TBool operator!= (const TTile &aTile1, const TTile &aTile2);
 	};
 
 class TTileReal

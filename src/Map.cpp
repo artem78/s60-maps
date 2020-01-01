@@ -11,6 +11,7 @@
 #include <gdi.h>
 #include <imageconversion.h>
 #include <e32math.h>
+#include <bitstd.h>
 
 CMapLayerBase::CMapLayerBase(/*const*/ CS60MapsAppView* aMapView) :
 		iMapView(aMapView)
@@ -186,6 +187,97 @@ void CMapLayerDebugInfo::Draw(CWindowGc &aGc)
 	CEikonEnv::Static()->ScreenDevice()->ReleaseFont(font);
 	};
 
+// CMapLayerOSM
+
+CMapLayerOSM::CMapLayerOSM(CS60MapsAppView* aMapView) :
+	CMapLayerBase(aMapView)
+	{
+	}
+
+CMapLayerOSM::~CMapLayerOSM()
+	{
+	delete iImgMgr;
+	}
+
+CMapLayerOSM* CMapLayerOSM::NewL(CS60MapsAppView* aMapView)
+	{
+	CMapLayerOSM* self = CMapLayerOSM::NewLC(aMapView);
+	CleanupStack::Pop(); // self;
+	return self;
+	}
+
+CMapLayerOSM* CMapLayerOSM::NewLC(CS60MapsAppView* aMapView)
+	{
+	CMapLayerOSM* self = new (ELeave) CMapLayerOSM(aMapView);
+	CleanupStack::PushL(self);
+	self->ConstructL();
+	return self;
+	}
+
+void CMapLayerOSM::ConstructL()
+	{
+	iImgMgr = CTileImageManager::NewL(this);
+	}
+
+void CMapLayerOSM::Draw(CWindowGc &aGc)
+	{
+	RArray<TTile> tiles(10);
+	VisibleTiles(tiles);
+	iImgMgr->GetTileImages(tiles);
+	}
+
+void CMapLayerOSM::VisibleTiles(RArray<TTile> &aTiles)
+	{
+	TTile topLeftTile, bottomRightTile;
+	iMapView->Bounds(topLeftTile, bottomRightTile);
+	TUint x, y;
+	for (y = topLeftTile.iY; y <= bottomRightTile.iY; y++)
+		{
+		for (x = topLeftTile.iX; x <= bottomRightTile.iX; x++)
+			{
+			TTile tile;
+			tile.iX = x;
+			tile.iY = y;
+			tile.iZ = iMapView->GetZoom();
+			aTiles.Append/*L*/(tile); // ToDo: Check error code
+			}
+		}
+	aTiles.Compress();
+	}
+
+void CMapLayerOSM::DrawTile(CWindowGc &aGc, const TTile &aTile, const CFbsBitmap *aBitmap)
+	{
+	TCoordinate coord = MapMath::TileToGeoCoords(aTile, iMapView->GetZoom());
+	TPoint point = iMapView->GeoCoordsToScreenCoords(coord);
+	TRect destRect;
+	destRect.iTl = point;
+	destRect.SetSize(TSize(256, 256));
+	TRect screenRect = iMapView->Rect();
+	if (!screenRect.Intersects(destRect)) // Check if tile is visible
+		return;
+	
+	destRect.Intersection(screenRect);
+	
+	/*TRect srcRect;
+	srcRect.iTl = point;
+	srcRect.SetSize(TSize(256, 256));
+	srcRect.Intersection(screenRect);*/
+	
+	TRect srcRect = destRect;
+	srcRect.Move(-point);
+
+	
+	aGc.DrawBitmap(destRect, aBitmap, srcRect);
+	//aGc.DrawBitmap(/*point*/ srcRect.iTl, aBitmap);
+	}
+
+void CMapLayerOSM::OnTileLoaded(const TTile &aTile, const CFbsBitmap *aBitmap)
+	{
+	//CWindowGc* gc = iMapView->GetGc();
+	//DrawTile(*gc, aTile, aBitmap);
+	DrawTile(iMapView->SystemGc(), aTile, aBitmap);
+	}
+
 
 // CImageReader
 
@@ -264,3 +356,198 @@ void MImageReaderObserver::OnImageReadingFailed(TInt aErr)
 	{
 	// No any action by default
 	}
+
+
+// CTileImageManager
+
+CTileImageManager::CTileImageManager(MTileImageManagerObserver *aObserver) :
+		iObserver(aObserver)
+	{
+	// No implementation required
+	}
+
+CTileImageManager::~CTileImageManager()
+	{
+	delete iCache;
+	}
+
+CTileImageManager* CTileImageManager::NewLC(MTileImageManagerObserver *aObserver)
+	{
+	CTileImageManager* self = new (ELeave) CTileImageManager(aObserver);
+	CleanupStack::PushL(self);
+	self->ConstructL();
+	return self;
+	}
+
+CTileImageManager* CTileImageManager::NewL(MTileImageManagerObserver *aObserver)
+	{
+	CTileImageManager* self = CTileImageManager::NewLC(aObserver);
+	CleanupStack::Pop(); // self;
+	return self;
+	}
+
+void CTileImageManager::ConstructL()
+	{
+	iCache = CTileImagesCache::NewL();
+	}
+
+void CTileImageManager::GetTileImage/*L*/(const TTile &aTile)
+	{
+	CFbsBitmap* bitmap = iCache->Find(aTile);
+	if (bitmap != NULL)
+		iObserver->OnTileLoaded(aTile, bitmap);
+	else
+		{
+		bitmap = new (ELeave) CFbsBitmap();
+		//TSize size(255, 255);
+		TSize size(256, 256);
+		TDisplayMode mode = EColor16M;
+		/*User::LeaveIfError(*/bitmap->Create(size, mode)/*)*/;
+		DrawStubTileL(aTile, bitmap);
+		iCache->Append(aTile, bitmap);
+		iObserver->OnTileLoaded(aTile, bitmap);
+		}
+	}
+
+void CTileImageManager::GetTileImages/*L*/(const RArray<TTile> &aTilesArray)
+	{
+	for (TInt idx = 0; idx < aTilesArray.Count(); idx++)
+		GetTileImage(aTilesArray[idx]);
+	}
+
+void CTileImageManager::DrawStubTileL(const TTile &aTile, CFbsBitmap* aBitmap)
+	{
+	CFbsBitmapDevice* bdev = CFbsBitmapDevice::NewL(aBitmap);
+	CleanupStack::PushL(bdev);
+	
+	CFbsBitGc* bgc = CFbsBitGc::NewL();
+	CleanupStack::PushL(bgc);
+	
+	TRect rect = TRect(aBitmap->SizeInPixels());
+	
+	bgc->Activate(bdev);
+	
+	// Background and border
+	/*bgc->SetBrushColor(KRgbDitheredLightGray);
+	bgc->SetBrushStyle(CGraphicsContext::EDiamondCrossHatchBrush);*/
+	bgc->SetPenColor(KRgbDarkBlue);
+	bgc->SetPenStyle(CGraphicsContext::EDashedPen);
+	bgc->SetPenSize(TSize(1, 1));
+	bgc->DrawRect(rect);
+	
+	// Text
+	_LIT(KStubTileTextFormat, "x=%d y=%d z=%d");
+	TBuf<30> buff;
+	buff.Format(KStubTileTextFormat, aTile.iX, aTile.iY, aTile.iZ);
+	const CFont* font = CEikonEnv::Static()->SymbolFont();
+	bgc->UseFont(font);
+	TInt baseline = rect.Height() / 2 + font->AscentInPixels() / 2;
+	bgc->DrawText(buff, rect, baseline, CGraphicsContext::ECenter);
+	bgc->DiscardFont();
+	
+	CleanupStack::PopAndDestroy(2, bdev);
+	}
+
+
+// TPair
+
+template <class T1, class T2>
+TPair<T1, T2>::TPair()
+	{
+	// No implementation required
+	}
+
+template <class T1, class T2>
+TPair<T1, T2>::TPair(const T1 &aItem1, const T2 &aItem2) :
+	iA(aItem1),
+	iB(aItem2)
+	{
+	// No implementation required
+	}
+
+// CTileImagesCache
+
+CTileImagesCache::CTileImagesCache()
+	{
+	// No implementation required
+	}
+
+CTileImagesCache::~CTileImagesCache()
+	{
+	iItems.Close();
+	}
+
+CTileImagesCache* CTileImagesCache::NewLC()
+	{
+	CTileImagesCache* self = new (ELeave) CTileImagesCache();
+	CleanupStack::PushL(self);
+	self->ConstructL();
+	return self;
+	}
+
+CTileImagesCache* CTileImagesCache::NewL()
+	{
+	CTileImagesCache* self = CTileImagesCache::NewLC();
+	CleanupStack::Pop(); // self;
+	return self;
+	}
+
+void CTileImagesCache::ConstructL()
+	{
+	iItems = RArray<TTileBitmapPair>(50);
+	}
+
+TInt CTileImagesCache::Append(const TTile &aTile, /*const*/ CFbsBitmap *aBitmap)
+	{
+	if (iItems.Count() >= 50)
+		iItems.Remove(iItems.Count() - 1);
+	
+	//iItems.Append(TTileBitmapPair(aTile, aBitmap));
+	
+	TTileBitmapPair pair;
+	pair.iA = aTile;
+	pair.iB = aBitmap;
+	iItems.Append(pair);
+	}
+
+CFbsBitmap* CTileImagesCache::Find(const TTile &aTile) const
+	{
+	for (TInt idx = 0; idx < iItems.Count(); idx++)
+		{
+		if (iItems[idx].iA == aTile)
+			return iItems[idx].iB;
+		}
+
+	return NULL;
+	}
+
+
+//// CDictionary
+//
+//CDictionary::CDictionary()
+//	{
+//	}
+//
+//CDictionary::~CDictionary()
+//	{
+//	}
+//
+//CDictionary* CDictionary::NewLC()
+//	{
+//	CDictionary* self = new (ELeave) CDictionary();
+//	CleanupStack::PushL(self);
+//	self->ConstructL();
+//	return self;
+//	}
+//
+//CDictionary* CDictionary::NewL()
+//	{
+//	CDictionary* self = CDictionary::NewLC();
+//	CleanupStack::Pop(); // self;
+//	return self;
+//	}
+//
+//void CClassName::ConstructL()
+//	{
+//  // ... Add your code here ...
+//	}
