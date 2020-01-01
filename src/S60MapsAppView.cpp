@@ -248,13 +248,13 @@ void CS60MapsAppView::Move(const TPoint &aPoint, TBool aSavePos)
 		if (viewRect.iTl.iY < 0)
 			iTopLeftPosition.iY = 0;
 		else if (viewRect.iBr.iY > maxXY)
-			iTopLeftPosition.iY = maxXY - viewRect.Height();
+			iTopLeftPosition.iY = maxXY - viewRect.Height() + 1;
 		
 		// Correct latitude when it goes out of bounds
 		if (viewRect.iTl.iX < 0)
 			iTopLeftPosition.iX = 0;
 		else if (viewRect.iBr.iX > maxXY)
-			iTopLeftPosition.iX = maxXY - viewRect.Width();
+			iTopLeftPosition.iX = maxXY - viewRect.Width() + 1;
 		
 		
 		DrawNow();
@@ -400,10 +400,10 @@ void CS60MapsAppView::Bounds(TCoordinate &aTopLeftCoord, TCoordinate &aBottomRig
 
 void CS60MapsAppView::Bounds(TTile &aTopLeftTile, TTile &aBottomRightTile) const
 	{
-	TCoordinate topLeftCoord, bottomRightCoord;
-	Bounds(topLeftCoord, bottomRightCoord);
-	aTopLeftTile = MapMath::GeoCoordsToTile(topLeftCoord, GetZoom());
-	aBottomRightTile = MapMath::GeoCoordsToTile(bottomRightCoord, GetZoom());
+	TPoint topLeftProjection = ScreenCoordsToProjectionCoords(Rect().iTl);
+	TPoint bottomRightProjection = ScreenCoordsToProjectionCoords(Rect().iBr);
+	aTopLeftTile = MapMath::ProjectionPointToTile(topLeftProjection, GetZoom());
+	aBottomRightTile = MapMath::ProjectionPointToTile(bottomRightProjection, GetZoom());
 	}
 
 void CS60MapsAppView::Bounds(TTileReal &aTopLeftTile, TTileReal &aBottomRightTile) const

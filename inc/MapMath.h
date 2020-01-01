@@ -30,6 +30,8 @@ public:
 	static TCoordinate TileToGeoCoords(const TTile &aTile, TZoom aZoom);
 	static TPoint GeoCoordsToProjectionPoint(const TCoordinate &aCoord, TZoom aZoom);
 	static TCoordinate ProjectionPointToGeoCoords(const TPoint &aPoint, TZoom aZoom);
+	static TTile ProjectionPointToTile(const TPoint &aPoint, TZoom aZoom);
+	static TPoint TileToProjectionPoint(const TTile &aTile);
 	};
 
 class TTile

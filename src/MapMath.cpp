@@ -131,6 +131,22 @@ TCoordinate MapMath::ProjectionPointToGeoCoords(const TPoint &aPoint, TZoom aZoo
 	return TileToGeoCoords(tileReal, aZoom);
 	}
 
+TTile MapMath::ProjectionPointToTile(const TPoint &aPoint, TZoom aZoom)
+	{
+	TTile tile;
+	tile.iX = aPoint.iX / 256;
+	tile.iY = aPoint.iY / 256;
+	tile.iZ = aZoom;
+	return tile;
+	}
+
+TPoint MapMath::TileToProjectionPoint(const TTile &aTile)
+	{
+	TPoint projectionPoint;
+	projectionPoint.iX = aTile.iX * 256;
+	projectionPoint.iY = aTile.iY * 256;
+	return projectionPoint;
+	}
 
 // TTile
 
