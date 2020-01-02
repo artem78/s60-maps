@@ -475,6 +475,8 @@ CTileImagesCache::CTileImagesCache(TInt aLimit) :
 
 CTileImagesCache::~CTileImagesCache()
 	{
+	for (TInt idx = 0; idx < iItems.Count(); idx++)
+		delete iItems[idx].iB; // Delete CFbsBitmap objects
 	iItems.Close();
 	}
 
@@ -501,14 +503,13 @@ void CTileImagesCache::ConstructL()
 TInt CTileImagesCache::Append(const TTile &aTile, /*const*/ CFbsBitmap *aBitmap)
 	{
 	if (iItems.Count() >= iLimit)
-		iItems.Remove(iItems.Count() - 1);
+		{
+		// Delete oldest item
+		delete iItems[0].iB;
+		iItems.Remove(0);
+		}
 	
-	//iItems.Append(TTileBitmapPair(aTile, aBitmap));
-	
-	TTileBitmapPair pair;
-	pair.iA = aTile;
-	pair.iB = aBitmap;
-	iItems.Append(pair);
+	iItems.Append(TTileBitmapPair(aTile, aBitmap));
 	}
 
 CFbsBitmap* CTileImagesCache::Find(const TTile &aTile) const
