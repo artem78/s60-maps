@@ -200,7 +200,10 @@ public:
 
 typedef TPair<TTile, CFbsBitmap*> TTileBitmapPair;
 
+// Stores pointers to tile bitmaps in size limited array. When overflow,
+// deletes oldest items before insert new one.
 class CTileImagesCache : public CBase
+// ToDo: Make more effective
 	{
 // Base methods
 public:
@@ -213,7 +216,7 @@ private:
 	
 // Custom properties and methods
 private:
-	TInt iLimit;
+	TInt iLimit; // Maximum items cache can store
 	RArray<TTileBitmapPair> iItems;
 public:
 	TInt Append(const TTile &aTile, /*const*/ CFbsBitmap *Bitmap); 
