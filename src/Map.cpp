@@ -467,7 +467,8 @@ TPair<T1, T2>::TPair(const T1 &aItem1, const T2 &aItem2) :
 
 // CTileImagesCache
 
-CTileImagesCache::CTileImagesCache()
+CTileImagesCache::CTileImagesCache(TInt aLimit) :
+		iLimit(aLimit)
 	{
 	// No implementation required
 	}
@@ -477,29 +478,29 @@ CTileImagesCache::~CTileImagesCache()
 	iItems.Close();
 	}
 
-CTileImagesCache* CTileImagesCache::NewLC()
+CTileImagesCache* CTileImagesCache::NewLC(TInt aLimit)
 	{
-	CTileImagesCache* self = new (ELeave) CTileImagesCache();
+	CTileImagesCache* self = new (ELeave) CTileImagesCache(aLimit);
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	return self;
 	}
 
-CTileImagesCache* CTileImagesCache::NewL()
+CTileImagesCache* CTileImagesCache::NewL(TInt aLimit)
 	{
-	CTileImagesCache* self = CTileImagesCache::NewLC();
+	CTileImagesCache* self = CTileImagesCache::NewLC(aLimit);
 	CleanupStack::Pop(); // self;
 	return self;
 	}
 
 void CTileImagesCache::ConstructL()
 	{
-	iItems = RArray<TTileBitmapPair>(50);
+	iItems = RArray<TTileBitmapPair>(iLimit);
 	}
 
 TInt CTileImagesCache::Append(const TTile &aTile, /*const*/ CFbsBitmap *aBitmap)
 	{
-	if (iItems.Count() >= 50)
+	if (iItems.Count() >= iLimit)
 		iItems.Remove(iItems.Count() - 1);
 	
 	//iItems.Append(TTileBitmapPair(aTile, aBitmap));

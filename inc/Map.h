@@ -205,14 +205,15 @@ class CTileImagesCache : public CBase
 // Base methods
 public:
 	~CTileImagesCache();
-	static CTileImagesCache* NewL();
-	static CTileImagesCache* NewLC();
+	static CTileImagesCache* NewL(TInt aLimit = 50);
+	static CTileImagesCache* NewLC(TInt aLimit = 50);
 private:
-	CTileImagesCache();
+	CTileImagesCache(TInt aLimit);
 	void ConstructL();
 	
 // Custom properties and methods
 private:
+	TInt iLimit;
 	RArray<TTileBitmapPair> iItems;
 public:
 	TInt Append(const TTile &aTile, /*const*/ CFbsBitmap *Bitmap); 
