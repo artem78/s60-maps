@@ -26,7 +26,7 @@
 
 #define qtn_about_dialog_title "About"
 
-#define qtn_about_dialog_text "S60Maps Version 0.1.0\n\nAuthor: artem78\n\nSupport: megabyte1024@ya.ru\n\n(c) "
+#define qtn_about_dialog_text "S60Maps Version 0.1.0\n\nBuild: " __DATE__ " " __TIME__ "\n\nAuthor: artem78\n\nSupport: megabyte1024@ya.ru\n\n(c) "
 
 #define qtn_confirm_exit_dialog_title "Confirm exit"
 
