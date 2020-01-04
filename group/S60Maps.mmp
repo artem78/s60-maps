@@ -64,7 +64,7 @@ DEBUGGABLE_UDEBONLY
 // End of File
 
 SOURCEPATH ..\src
-SOURCE MapMath.cpp Map.cpp
+SOURCE MapMath.cpp Map.cpp Logger.cpp
 
 // ToDo: Need to be increased in the future
 //EPOCHEAPSIZE 0x1000 0x1000000

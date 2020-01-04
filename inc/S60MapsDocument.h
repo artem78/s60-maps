@@ -10,6 +10,12 @@
 #ifndef __S60MAPSDOCUMENT_h__
 #define __S60MAPSDOCUMENT_h__
 
+#ifdef _DEBUG
+#define LOGGING_ENABLED 1
+#else
+#define LOGGING_ENABLED 0
+#endif
+
 // INCLUDES
 #include <akndoc.h>
 
@@ -95,6 +101,13 @@ public:
 			CStreamDictionary& aStreamDic) const;
 	void RestoreL(const CStreamStore& aStore,
 			const CStreamDictionary& aStreamDic);
+	
+	
+	// Custom properties and methods
+private:
+#if LOGGING_ENABLED
+	RFile iLogFile;
+#endif
 
 	};
 

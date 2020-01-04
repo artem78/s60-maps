@@ -12,6 +12,8 @@
 #include "S60MapsDocument.h"
 #include <e32base.h>
 #include "S60MapsApplication.h"
+#include <eikenv.h>
+#include "Logger.h"
 
 // ============================ MEMBER FUNCTIONS ===============================
 
@@ -48,7 +50,12 @@ CS60MapsDocument* CS60MapsDocument::NewLC(CEikApplication& aApp)
 //
 void CS60MapsDocument::ConstructL()
 	{
-	// No implementation required
+#if LOGGING_ENABLED
+	_LIT(KLogFileName, "log.txt");
+	iLogFile.Replace(CEikonEnv::Static()->FsSession(), KLogFileName, EFileWrite);
+	LOG_CONFIGURE(iLogFile);
+	LOG(_L8("Log started"));
+#endif
 	}
 
 // -----------------------------------------------------------------------------
@@ -69,7 +76,10 @@ CS60MapsDocument::CS60MapsDocument(CEikApplication& aApp) :
 //
 CS60MapsDocument::~CS60MapsDocument()
 	{
-	// No implementation required
+#if LOGGING_ENABLED
+	LOG(_L8("Log ended"));
+	iLogFile.Close();
+#endif
 	}
 
 // ---------------------------------------------------------------------------
