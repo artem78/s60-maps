@@ -15,6 +15,8 @@
 #include <fbs.h>
 #include <imageconversion.h>
 #include "MapMath.h"
+#include <e32base.h>
+#include <e32std.h>		// For RTimer
 
 
 // Constants
@@ -82,39 +84,40 @@ public:
 	void Draw(CWindowGc &aGc);
 	};
 
-class CTileImageManager;
-//class MTileImageManagerObserver;
+class CTileBitmapManager;
+//class MTileBitmapManagerObserver;
 
-class MTileImageManagerObserver
+class MTileBitmapManagerObserver
 	{
 public:
 	virtual void OnTileLoaded(const TTile &aTile, const CFbsBitmap *aBitmap) = 0;
+	virtual void OnTileLoadingFailed(const TTile &aTile, TInt aErrCode);
 	};
 
-// OpenStreetMap layer
-class CMapLayerOSM : public CMapLayerBase, public MTileImageManagerObserver
+// Class for drawing map tiles
+class CTiledMapLayer : public CMapLayerBase, public MTileBitmapManagerObserver
 	{
 // Base methods
 public:
-	~CMapLayerOSM();
-	static CMapLayerOSM* NewL(CS60MapsAppView* aMapView);
-	static CMapLayerOSM* NewLC(CS60MapsAppView* aMapView);
+	~CTiledMapLayer();
+	static CTiledMapLayer* NewL(CS60MapsAppView* aMapView);
+	static CTiledMapLayer* NewLC(CS60MapsAppView* aMapView);
 
 private:
-	CMapLayerOSM(CS60MapsAppView* aMapView);
+	CTiledMapLayer(CS60MapsAppView* aMapView);
 	void ConstructL();
 	
 // From CMapLayerBase
 public:
 	void Draw(CWindowGc &aGc);
 	
-// From MTileImageManagerObserver
+// From MTileBitmapManagerObserver
 public:
 	void OnTileLoaded(const TTile &aTile, const CFbsBitmap *aBitmap);
 	
 // Custom properties and methods
 private:
-	CTileImageManager *iImgMgr;
+	CTileBitmapManager *iBitmapMgr;
 	void VisibleTiles(RArray<TTile> &aTiles); // Return list of visible tiles
 	void DrawTile(CWindowGc &aGc, const TTile &aTile, const CFbsBitmap *aBitmap);
 	
@@ -156,98 +159,81 @@ private:
 //	};
 
 
-//class MTileImageManagerObserver
+//class MTileBitmapManagerObserver
 //	{
 //public:
 //	void OnTileLoaded(const TTile &aTile, const CFbsBitmap *aBitmap);
 //	};
 
-class CTileImagesCache;
+class CTileBitmapManagerItem;
 
-class CTileImageManager : public CBase
+// Stores and loads bitmaps for tiles. When count of stored bitmaps
+// reach maximum limit, oldest one will be deleted before insert new.
+class CTileBitmapManager : public CBase
 	{
 // Base methods
 public:
-	~CTileImageManager();
-	static CTileImageManager* NewL(MTileImageManagerObserver *aObserver);
-	static CTileImageManager* NewLC(MTileImageManagerObserver *aObserver);
+	~CTileBitmapManager();
+	static CTileBitmapManager* NewL(MTileBitmapManagerObserver *aObserver, TInt aLimit = 50);
+	static CTileBitmapManager* NewLC(MTileBitmapManagerObserver *aObserver, TInt aLimit = 50);
 
 private:
-	CTileImageManager(MTileImageManagerObserver *aObserver);
+	CTileBitmapManager(MTileBitmapManagerObserver *aObserver, TInt aLimit);
 	void ConstructL();
 
 // Custom properties and methods
 private:
-	MTileImageManagerObserver *iObserver;
-	CTileImagesCache *iCache;
-	void DrawStubTileL(const TTile &aTile, CFbsBitmap* aBitmap);
+	MTileBitmapManagerObserver *iObserver;
+	TInt iLimit;
+	RPointerArray<CTileBitmapManagerItem> iItems;
+	/*TInt*/ void Append/*L*/(const TTile &aTile); 
+	
+	// @return Pointer to CTileBitmapManagerItem object or NULL if not found
+	CTileBitmapManagerItem* Find(const TTile &aTile) const;
 	
 public:
-	void GetTileImage/*L*/(const TTile &aTile);
-	void GetTileImages/*L*/(const RArray<TTile> &aTilesArray);
+	// @return Error codes: KErrNotFound, KErrNotReady or KErrNone
+	TInt GetTileBitmap(const TTile &aTile, CFbsBitmap* &aBitmap);
+	void AddToLoading(const TTile &aTile);
 	};
 
 
-template <class T1, class T2>
-class TPair
-	{
-public:
-	TPair();
-	TPair(const T1 &aItem1, const T2 &aItem2);
-	T1 iA;
-	T2 iB;
-	};
-
-typedef TPair<TTile, CFbsBitmap*> TTileBitmapPair;
-
-// Stores pointers to tile bitmaps in size limited array. When overflow,
-// deletes oldest items before insert new one.
-class CTileImagesCache : public CBase
-// ToDo: Make more effective
+class CTileBitmapManagerItem : public CActive
 	{
 // Base methods
 public:
-	~CTileImagesCache();
-	static CTileImagesCache* NewL(TInt aLimit = 50);
-	static CTileImagesCache* NewLC(TInt aLimit = 50);
+	~CTileBitmapManagerItem();
+	static CTileBitmapManagerItem* NewL(const TTile &aTile, MTileBitmapManagerObserver *aObserver);
+	static CTileBitmapManagerItem* NewLC(const TTile &aTile, MTileBitmapManagerObserver *aObserver);
+
 private:
-	CTileImagesCache(TInt aLimit);
+	CTileBitmapManagerItem(const TTile &aTile, MTileBitmapManagerObserver *aObserver);
 	void ConstructL();
+
+// From CActive
+private:
+	void RunL();
+	void DoCancel();
+	//TInt RunError(TInt aError);
 	
 // Custom properties and methods
 private:
-	TInt iLimit; // Maximum items cache can store
-	RArray<TTileBitmapPair> iItems;
+	MTileBitmapManagerObserver* iObserver;
+	TTile iTile;
+	CFbsBitmap* iBitmap;
+	void StartLoadL();
+	void DrawStubBitmapL();
+	void CreateBitmapIfNotExistL();
+	
+	RTimer iTimer;
+
 public:
-	TInt Append(const TTile &aTile, /*const*/ CFbsBitmap *Bitmap); 
-	CFbsBitmap* Find(const TTile &aTile) const;
+	// Getters
+	inline TTile Tile() const;
+	
+	// @return Pointer to bitmap or NULL if it`s not loaded yet.
+	inline CFbsBitmap* Bitmap() const;
 	};
 
-
-//// Array of key-value pairs
-//template <class K, class V>
-//class CDictionary : public CBase
-//	{
-//// Base methods
-//public:
-//	~CDictionary();
-//	static CDictionary* NewL();
-//	static CDictionary* NewLC();
-//
-//private:
-//	CDictionary();
-//	void ConstructL();
-//	
-//// Custom properties and methods
-//private:
-//	RArray<K> iKeysArray;
-//	RArray<V> iValuesArray;
-//public:
-//	TInt Append(const K &aKey, const &V &aValue);
-//	V Find(const K &aKey): const;
-//	void Remove(const K &aKey);
-//	void Clear();
-//	TInt Count(): const;
-//	};
 
 #endif /* MAP_H_ */

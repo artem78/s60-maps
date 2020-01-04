@@ -55,7 +55,7 @@ CS60MapsAppView* CS60MapsAppView::NewLC(const TRect& aRect,
 void CS60MapsAppView::ConstructL(const TRect& aRect, const TCoordinate &aInitialPosition)
 	{
 	// Create layers
-	iLayers[0] = CMapLayerOSM::NewL(this); 
+	iLayers[0] = CTiledMapLayer::NewL(this); 
 	iLayers[1] = new (ELeave) CMapLayerDebugInfo(this);
 	
 	// Create a window for this application view
@@ -133,8 +133,10 @@ void CS60MapsAppView::Draw(const TRect& /*aRect*/) const
 	TInt i;
 	for (i = 0; i < iLayers.Count(); i++)
 		{
+		//Window().BeginRedraw();
 		gc.Reset();
 		iLayers[i]->Draw(gc);
+		//Window().EndRedraw();
 		}
 	}
 
