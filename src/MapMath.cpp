@@ -160,3 +160,31 @@ TBool operator!= (const TTile &aTile1, const TTile &aTile2)
 	{
 	return !(aTile1 == aTile2);
 	}
+
+void TTile::AsDes(TDes &aDes) const
+	{
+	_LIT(KFormat, "TTile(x=%d, y=%d, z=%d)");
+	aDes.Format(KFormat, (TInt) iX, (TInt) iY, (TInt) iZ);
+	}
+
+void TTile::AsDes(TDes8 &aDes) const
+	{
+	_LIT8(KFormat, "TTile(x=%d, y=%d, z=%d)");
+	aDes.Format(KFormat, (TInt) iX, (TInt) iY, (TInt) iZ);
+	}
+
+const TBufC<32> TTile::AsDes() const
+	{
+	TBuf<32> buff;
+	_LIT(KFormat, "TTile(x=%d, y=%d, z=%d)");
+	buff.Format(KFormat, (TInt) iX, (TInt) iY, (TInt) iZ);
+	return buff;
+	}
+
+const TBufC8<32> TTile::AsDes8() const
+	{
+	TBuf8<32> buff8;
+	_LIT8(KFormat, "TTile(x=%d, y=%d, z=%d)");
+	buff8.Format(KFormat, (TInt) iX, (TInt) iY, (TInt)iZ);
+	return buff8;
+	}
