@@ -1,3 +1,6 @@
 #.cproject
 sis/*.sis
 sis/*.sisx
+sis/**/*.sis
+sis/**/*.sisx
+*.bak
