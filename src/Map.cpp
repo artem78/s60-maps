@@ -450,6 +450,7 @@ void CTileBitmapManager::AddToLoading(const TTile &aTile)
 	if (iItems.Count() >= iLimit)
 		{
 		// Delete oldest item
+		LOG(_L8("Delete old bitmap of %S from cache"), &iItems[0]->Tile().AsDes8());
 		delete iItems[0];
 		iItems.Remove(0);
 		}
@@ -457,6 +458,7 @@ void CTileBitmapManager::AddToLoading(const TTile &aTile)
 	// Add new one
 	CTileBitmapManagerItem* item = CTileBitmapManagerItem::NewL(aTile, iObserver);
 	iItems.Append(item);
+	LOG(_L8("Now %d items in bitmap cache"), iItems.Count());
 	}
 
 CTileBitmapManagerItem* CTileBitmapManager::Find(const TTile &aTile) const
@@ -485,7 +487,10 @@ CTileBitmapManagerItem::~CTileBitmapManagerItem()
 	// FixMe: Bitmap pointer maybe still used outside when deleting
 	delete iBitmap; // iBitmap may be NULL
 	
-	LOG(_L8("Item with %S destroyed"), &iTile.AsDes8());
+	if (iBitmap != NULL)
+		LOG(_L8("Bitmap of %S destroyed"), &iTile.AsDes8());
+	
+	LOG(_L8("Bitmap manager item of %S destroyed"), &iTile.AsDes8());
 	}
 
 CTileBitmapManagerItem* CTileBitmapManagerItem::NewL(const TTile &aTile, MTileBitmapManagerObserver *aObserver)
@@ -500,7 +505,7 @@ CTileBitmapManagerItem* CTileBitmapManagerItem::NewLC(const TTile &aTile, MTileB
 	CTileBitmapManagerItem* self = new (ELeave) CTileBitmapManagerItem(aTile, aObserver);
 	CleanupStack::PushL(self);
 	self->ConstructL();
-	LOG(_L8("Item with %S created"), &self->iTile.AsDes8());
+	LOG(_L8("Bitmap manager item of %S created"), &self->iTile.AsDes8());
 	return self;
 	}
 
@@ -530,12 +535,12 @@ void CTileBitmapManagerItem::RunL()
 			
 			if (r == KErrNone)
 				{
-				LOG(_L8("%S bitmap successfuly loaded"), &iTile.AsDes8());
+				LOG(_L8("Bitmap of %S successfuly loaded"), &iTile.AsDes8());
 				iObserver->OnTileLoaded(iTile, iBitmap);
 				}
 			else
 				{
-				LOG(_L8("%S bitmap loading failed (error=%d)"), &iTile.AsDes8(), r);
+				LOG(_L8("Bitmap of %S loading failed (error=%d)"), &iTile.AsDes8(), r);
 				iObserver->OnTileLoadingFailed(iTile, r);
 				}
 			break;
@@ -543,13 +548,13 @@ void CTileBitmapManagerItem::RunL()
 	
 		case KErrCancel:
 			{
-			LOG(_L8("%S bitmap loading cancelled"), &iTile.AsDes8());
+			LOG(_L8("Bitmap of %S loading cancelled"), &iTile.AsDes8());
 			break;
 			}
 			
 		default:
 			{
-			LOG(_L8("%S bitmap loading failed (active object, error=%d)"), &iTile.AsDes8(), iStatus.Int());
+			LOG(_L8("Bitmap of %S loading failed (active object error=%d)"), &iTile.AsDes8(), iStatus.Int());
 			break;
 			}
 		}
@@ -567,7 +572,7 @@ void CTileBitmapManagerItem::DoCancel()
 
 void CTileBitmapManagerItem::StartLoadL()
 	{
-	LOG(_L8("Start loading item with %S"), &iTile.AsDes8());
+	LOG(_L8("Start loading bitmap for %S"), &iTile.AsDes8());
 	
 	Cancel();
 	
