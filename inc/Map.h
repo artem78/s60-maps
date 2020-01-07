@@ -228,6 +228,8 @@ private:
 	RTimer iTimer;
 
 public:
+	TBool IsBitmapLoaded() const;
+	
 	// Getters
 	inline TTile Tile() const;
 	

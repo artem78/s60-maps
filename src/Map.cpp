@@ -430,7 +430,7 @@ TInt CTileBitmapManager::GetTileBitmap(const TTile &aTile, CFbsBitmap* &aBitmap)
 	if (item == NULL)
 		return KErrNotFound;
 	
-	if (item->Bitmap() == NULL)
+	if (!item->IsBitmapLoaded())
 		return KErrNotReady;
 	
 	aBitmap = item->Bitmap();
@@ -632,6 +632,11 @@ void CTileBitmapManagerItem::CreateBitmapIfNotExistL()
 	TSize size(256, 256);
 	TDisplayMode mode = EColor16M;
 	User::LeaveIfError(iBitmap->Create(size, mode));
+	}
+
+TBool CTileBitmapManagerItem::IsBitmapLoaded() const
+	{
+	return iBitmap != NULL;
 	}
 
 inline TTile CTileBitmapManagerItem::Tile() const
