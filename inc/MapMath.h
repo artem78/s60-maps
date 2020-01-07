@@ -37,8 +37,8 @@ public:
 class TTile
 	{
 public:
-	TUint iX;
-	TUint iY;
+	TUint32 iX;
+	TUint32 iY;
 	TZoom iZ;
 	
     friend TBool operator== (const TTile &aTile1, const TTile &aTile2);
