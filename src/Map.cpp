@@ -13,6 +13,7 @@
 #include <e32math.h>
 #include <bitstd.h>
 #include "Logger.h"
+#include "S60Maps.pan"
 
 CMapLayerBase::CMapLayerBase(/*const*/ CS60MapsAppView* aMapView) :
 		iMapView(aMapView)
@@ -447,17 +448,24 @@ void CTileBitmapManager::AddToLoading(const TTile &aTile)
 
 /*TInt*/ void CTileBitmapManager::Append/*L*/(const TTile &aTile)
 	{
+	CTileBitmapManagerItem* item = CTileBitmapManagerItem::NewL(aTile, iObserver);
+	
 	if (iItems.Count() >= iLimit)
 		{
-		// Delete oldest item
-		LOG(_L8("Delete old bitmap of %S from cache"), &iItems[0]->Tile().AsDes8());
-		delete iItems[0];
-		iItems.Remove(0);
+		// Replace item which not used for a long time with new one
+		TInt oldestIdx = OldestItemIdx();
+		__ASSERT_DEBUG(oldestIdx != KErrNotFound, Panic(ES60MapsGeneralPanic));
+		LOG(_L8("Replaced old bitmap of %S with new of %S in cache"),
+				&iItems[oldestIdx]->Tile().AsDes8(), &item->Tile().AsDes8());
+		delete iItems[oldestIdx];
+		iItems[oldestIdx] = item;
 		}
+	else
+		{
+		// Add new one
+		iItems.Append(item);
+		}	
 	
-	// Add new one
-	CTileBitmapManagerItem* item = CTileBitmapManagerItem::NewL(aTile, iObserver);
-	iItems.Append(item);
 	LOG(_L8("Now %d items in bitmap cache"), iItems.Count());
 	}
 
@@ -474,6 +482,26 @@ CTileBitmapManagerItem* CTileBitmapManager::Find(const TTile &aTile) const
 		}
 	
 	return NULL;
+	}
+
+TInt CTileBitmapManager::OldestItemIdx()
+	{
+	if (!iItems.Count())
+		return KErrNotFound;
+	
+	TInt oldestIdx = 0;
+	TTime oldestTime = iItems[oldestIdx]->LastAccess();
+	
+	for (TInt idx = 1; idx < iItems.Count(); idx++)
+		{
+		if (iItems[idx]->LastAccess() < oldestTime)
+			{
+			oldestIdx = idx;
+			oldestTime = iItems[idx]->LastAccess();
+			}
+		}
+	
+	return oldestIdx;
 	}
 
 
@@ -514,7 +542,7 @@ CTileBitmapManagerItem::CTileBitmapManagerItem(const TTile &aTile, MTileBitmapMa
 		iTile(aTile),
 		iObserver(aObserver)
 	{
-	// No implementation required
+	iLastAccess.UniversalTime();
 	}
 
 void CTileBitmapManagerItem::ConstructL()
@@ -644,7 +672,13 @@ inline TTile CTileBitmapManagerItem::Tile() const
 	return iTile;
 	}
 
-inline CFbsBitmap* CTileBitmapManagerItem::Bitmap() const
+inline CFbsBitmap* CTileBitmapManagerItem::Bitmap()
 	{
+	iLastAccess.UniversalTime(); // Remember last access time
 	return iBitmap;
+	}
+
+inline TTime CTileBitmapManagerItem::LastAccess() const
+	{
+	return iLastAccess;
 	}

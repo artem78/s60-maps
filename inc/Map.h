@@ -16,7 +16,7 @@
 #include <imageconversion.h>
 #include "MapMath.h"
 #include <e32base.h>
-#include <e32std.h>		// For RTimer
+#include <e32std.h>		// For RTimer and TTime
 
 
 // Constants
@@ -190,6 +190,7 @@ private:
 	
 	// @return Pointer to CTileBitmapManagerItem object or NULL if not found
 	CTileBitmapManagerItem* Find(const TTile &aTile) const;
+	TInt OldestItemIdx();
 	
 public:
 	// @return Error codes: KErrNotFound, KErrNotReady or KErrNone
@@ -221,6 +222,7 @@ private:
 	MTileBitmapManagerObserver* iObserver;
 	TTile iTile;
 	CFbsBitmap* iBitmap;
+	TTime iLastAccess;
 	void StartLoadL();
 	void DrawStubBitmapL();
 	void CreateBitmapIfNotExistL();
@@ -234,7 +236,9 @@ public:
 	inline TTile Tile() const;
 	
 	// @return Pointer to bitmap or NULL if it`s not loaded yet.
-	inline CFbsBitmap* Bitmap() const;
+	inline CFbsBitmap* Bitmap();
+	
+	inline TTime LastAccess() const;
 	};
 
 

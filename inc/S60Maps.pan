@@ -13,8 +13,8 @@
 /** S60Maps application panic codes */
 enum TS60MapsPanics
 	{
-	ES60MapsUi = 1
-	// add further panics here
+	ES60MapsUi = 1,
+	ES60MapsGeneralPanic = 100
 	};
 
 inline void Panic(TS60MapsPanics aReason)
