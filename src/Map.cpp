@@ -421,7 +421,8 @@ CTileBitmapManager* CTileBitmapManager::NewL(MTileBitmapManagerObserver *aObserv
 
 void CTileBitmapManager::ConstructL()
 	{
-	iItems = RPointerArray<CTileBitmapManagerItem>(iLimit);
+	iItems = RPtrHashMap<TTile, CTileBitmapManagerItem>();
+	iItems.ReserveL(iLimit);
 	}
 
 TInt CTileBitmapManager::GetTileBitmap(const TTile &aTile, CFbsBitmap* &aBitmap)
@@ -452,19 +453,22 @@ void CTileBitmapManager::AddToLoading(const TTile &aTile)
 	
 	if (iItems.Count() >= iLimit)
 		{
-		// Replace item which not used for a long time with new one
-		TInt oldestIdx = OldestItemIdx();
-		__ASSERT_DEBUG(oldestIdx != KErrNotFound, Panic(ES60MapsGeneralPanic));
-		LOG(_L8("Replaced old bitmap of %S with new of %S in cache"),
-				&iItems[oldestIdx]->Tile().AsDes8(), &item->Tile().AsDes8());
-		delete iItems[oldestIdx];
-		iItems[oldestIdx] = item;
+//		// Replace item which not used for a long time with new one
+//		TInt oldestIdx = OldestItemIdx();
+//		__ASSERT_DEBUG(oldestIdx != KErrNotFound, Panic(ES60MapsGeneralPanic));
+//		LOG(_L8("Replaced old bitmap of %S with new of %S in cache"),
+//				&iItems[oldestIdx]->Tile().AsDes8(), &item->Tile().AsDes8());
+//		delete iItems[oldestIdx];
+//		iItems[oldestIdx] = item;
+		TTile* oldestTile;
+		int r = OldestItemTile(oldestTile);
+		__ASSERT_DEBUG(r == KErrNone, Panic(ES60MapsGeneralPanic));
+		iItems.Remove(oldestTile);
+		LOG(_L8("Deleted old bitmap of %S"), &oldestTile.AsDes8());
 		}
-	else
-		{
-		// Add new one
-		iItems.Append(item);
-		}	
+
+	// Add new one
+	iItems.Insert/*L*/(aTile, item);
 	
 	LOG(_L8("Now %d items in bitmap cache"), iItems.Count());
 	}
@@ -473,35 +477,29 @@ CTileBitmapManagerItem* CTileBitmapManager::Find(const TTile &aTile) const
 	{
 	if (!iItems.Count())
 		return NULL;
-	
-	for (TInt idx = iItems.Count() - 1; idx >= 0; idx--) // Needed items more often
-											// located at the end of array (newest)
-		{
-		if (iItems[idx]->Tile() == aTile)
-			return iItems[idx];
-		}
-	
-	return NULL;
+
+	return iItems.Find(aTile);
 	}
 
-TInt CTileBitmapManager::OldestItemIdx()
+TInt CTileBitmapManager::OldestItemTile(TTile &aTile) const
 	{
 	if (!iItems.Count())
 		return KErrNotFound;
 	
-	TInt oldestIdx = 0;
-	TTime oldestTime = iItems[oldestIdx]->LastAccess();
+	TTime oldestTime = TTime(0);
 	
-	for (TInt idx = 1; idx < iItems.Count(); idx++)
+	TPtrHashMapIter<TTile, CTileBitmapManagerItem> iter;
+	iter.Reset();
+	for (iter.NextValue(); iter.CurrentValue(); iter.NextValue())
 		{
-		if (iItems[idx]->LastAccess() < oldestTime)
+		if (iter.CurrentValue()->LastAccess() < oldestTime || oldestTime.Int64() == 0)
 			{
-			oldestIdx = idx;
-			oldestTime = iItems[idx]->LastAccess();
+			aTile = iter.CurrentKey();
+			oldestTime = iter.CurrentValue()->LastAccess();
 			}
 		}
 	
-	return oldestIdx;
+	return KErrNone;
 	}
 
 

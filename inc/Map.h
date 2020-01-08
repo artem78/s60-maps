@@ -17,6 +17,7 @@
 #include "MapMath.h"
 #include <e32base.h>
 #include <e32std.h>		// For RTimer and TTime
+#include "e32hashtab.h"
 
 
 // Constants
@@ -185,12 +186,12 @@ private:
 private:
 	MTileBitmapManagerObserver *iObserver;
 	TInt iLimit;
-	RPointerArray<CTileBitmapManagerItem> iItems;
+	RPtrHashMap<TTile, CTileBitmapManagerItem> iItems;
 	/*TInt*/ void Append/*L*/(const TTile &aTile); 
 	
 	// @return Pointer to CTileBitmapManagerItem object or NULL if not found
 	CTileBitmapManagerItem* Find(const TTile &aTile) const;
-	TInt OldestItemIdx();
+	TInt OldestItemTile(TTile* aTile) const;
 	
 public:
 	// @return Error codes: KErrNotFound, KErrNotReady or KErrNone
@@ -220,7 +221,6 @@ private:
 // Custom properties and methods
 private:
 	MTileBitmapManagerObserver* iObserver;
-	TTile iTile;
 	CFbsBitmap* iBitmap;
 	TTime iLastAccess;
 	void StartLoadL();
