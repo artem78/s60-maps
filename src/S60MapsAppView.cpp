@@ -397,13 +397,13 @@ TPoint CS60MapsAppView::ScreenCoordsToProjectionCoords(const TPoint &aPoint) con
 void CS60MapsAppView::Bounds(TCoordinate &aTopLeftCoord, TCoordinate &aBottomRightCoord) const
 	{
 	aTopLeftCoord = ScreenCoordsToGeoCoords(Rect().iTl);
-	aBottomRightCoord = ScreenCoordsToGeoCoords(Rect().iBr);
+	aBottomRightCoord = ScreenCoordsToGeoCoords(Rect().iBr - TPoint(1, 1));
 	}
 
 void CS60MapsAppView::Bounds(TTile &aTopLeftTile, TTile &aBottomRightTile) const
 	{
 	TPoint topLeftProjection = ScreenCoordsToProjectionCoords(Rect().iTl);
-	TPoint bottomRightProjection = ScreenCoordsToProjectionCoords(Rect().iBr);
+	TPoint bottomRightProjection = ScreenCoordsToProjectionCoords(Rect().iBr - TPoint(1, 1));
 	aTopLeftTile = MapMath::ProjectionPointToTile(topLeftProjection, GetZoom());
 	aBottomRightTile = MapMath::ProjectionPointToTile(bottomRightProjection, GetZoom());
 	}
