@@ -256,9 +256,11 @@ private:
 	TTile iTile;
 	CFbsBitmap* iBitmap;
 	void StartLoadL();
-//	void DrawStubBitmapL();
 	TBool iIsReady; // True when image completely created and ready to use
 public:
+#ifdef _DEBUG
+	void DrawTileBorderAndNumbersL();
+#endif
 	void CreateBitmapIfNotExistL();
 	inline TBool IsReady();
 	inline void SetReady();

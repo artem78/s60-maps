@@ -551,6 +551,10 @@ void CTileBitmapManager::RunL()
 		__ASSERT_DEBUG(item != NULL, Panic(ES60MapsTileBitmapManagerItemNotFoundPanic));
 		__ASSERT_DEBUG(item->Bitmap() != NULL, Panic(ES60MapsTileBitmapIsNullPanic));
 		
+#ifdef _DEBUG
+		item->DrawTileBorderAndNumbersL();
+#endif
+		
 		item->SetReady();
 		
 		LOG(_L8("Tile %S downloaded and decoded"), &iLoadingTile.AsDes8());
@@ -725,7 +729,7 @@ void CTileBitmapManagerItem::ConstructL()
 //		{
 //		case KErrNone:
 //			{
-//			TRAPD(r, DrawStubBitmapL());
+//			TRAPD(r, DrawTileBorderAndNumbersL());
 //			
 //			if (r == KErrNone)
 //				{
@@ -780,45 +784,48 @@ void CTileBitmapManagerItem::ConstructL()
 //	SetActive();
 //	}
 
-//void CTileBitmapManagerItem::DrawStubBitmapL()
-//	{
-//	LOG(_L8("Start drawing bitmap of %S"), &iTile.AsDes8());
-//	
-//	CreateBitmapIfNotExistL();
-//	
-//	CFbsBitmapDevice* bdev = CFbsBitmapDevice::NewL(iBitmap);
-//	CleanupStack::PushL(bdev);
-//	
-//	CFbsBitGc* bgc = CFbsBitGc::NewL();
-//	CleanupStack::PushL(bgc);	
-//	bgc->Activate(bdev);
-//	
-//	TRect rect = TRect(iBitmap->SizeInPixels());
-//	
-//	// Background and border
-//	bgc->SetPenColor(KRgbDarkBlue);
-//	bgc->SetPenStyle(CGraphicsContext::ENullPen);
-//	bgc->SetBrushColor(KRgbDarkBlue);
-//	bgc->SetBrushStyle(CGraphicsContext::ESolidBrush);
-//	bgc->DrawRect(rect);
-//	rect.Shrink(1, 1);
-//	bgc->SetBrushColor(TRgb(226, 238, 253));
-//	bgc->DrawRect(rect);
-//	
-//	// Text
-//	_LIT(KStubTileTextFormat, "x=%d y=%d z=%d");
-//	TBuf<30> buff;
-//	buff.Format(KStubTileTextFormat, iTile.iX, iTile.iY, iTile.iZ);
-//	const CFont* font = CEikonEnv::Static()->SymbolFont();
-//	bgc->UseFont(font);
-//	TInt baseline = rect.Height() / 2 + font->AscentInPixels() / 2;
-//	bgc->DrawText(buff, rect, baseline, CGraphicsContext::ECenter);
-//	bgc->DiscardFont();
-//	
-//	CleanupStack::PopAndDestroy(2, bdev);
-//	
-//	LOG(_L8("End drawing bitmap of %S"), &iTile.AsDes8());
-//	}
+#ifdef _DEBUG
+void CTileBitmapManagerItem::DrawTileBorderAndNumbersL()
+	{
+	//LOG(_L8("Start drawing bitmap of %S"), &iTile.AsDes8());
+	
+	CreateBitmapIfNotExistL();
+	
+	CFbsBitmapDevice* bdev = CFbsBitmapDevice::NewL(iBitmap);
+	CleanupStack::PushL(bdev);
+	
+	CFbsBitGc* bgc = CFbsBitGc::NewL();
+	CleanupStack::PushL(bgc);	
+	bgc->Activate(bdev);
+	
+	TRect rect = TRect(iBitmap->SizeInPixels());
+	
+	// /*Background and*/ border
+	bgc->SetPenColor(KRgbDarkBlue);
+	bgc->SetPenStyle(CGraphicsContext::EDottedPen);
+	bgc->SetPenSize(TSize(1, 1));
+	//bgc->SetBrushColor(KRgbDarkBlue);
+	bgc->SetBrushStyle(CGraphicsContext::ENullBrush);
+	bgc->DrawRect(rect);
+	/*rect.Shrink(1, 1);
+	bgc->SetBrushColor(TRgb(226, 238, 253));
+	bgc->DrawRect(rect);*/
+	
+	// Text
+	_LIT(KStubTileTextFormat, "x=%d y=%d z=%d");
+	TBuf<30> buff;
+	buff.Format(KStubTileTextFormat, iTile.iX, iTile.iY, iTile.iZ);
+	const CFont* font = CEikonEnv::Static()->SymbolFont();
+	bgc->UseFont(font);
+	TInt baseline = rect.Height() / 2 + font->AscentInPixels() / 2;
+	bgc->DrawText(buff, rect, baseline, CGraphicsContext::ECenter);
+	bgc->DiscardFont();
+	
+	CleanupStack::PopAndDestroy(2, bdev);
+	
+	//LOG(_L8("End drawing bitmap of %S"), &iTile.AsDes8());
+	}
+#endif
 
 void CTileBitmapManagerItem::CreateBitmapIfNotExistL()
 	{
