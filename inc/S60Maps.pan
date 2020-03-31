@@ -13,8 +13,10 @@
 /** S60Maps application panic codes */
 enum TS60MapsPanics
 	{
-	ES60MapsUi = 1
-	// add further panics here
+	ES60MapsUi = 1,
+	ES60MapsTileBitmapManagerItemNotFoundPanic = 100,
+	ES60MapsTileBitmapIsNullPanic,
+	ES60MapsNoRequiredHeaderInResponse
 	};
 
 inline void Panic(TS60MapsPanics aReason)

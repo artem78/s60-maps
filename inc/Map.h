@@ -17,6 +17,7 @@
 #include "MapMath.h"
 #include <e32base.h>
 #include <e32std.h>		// For RTimer
+#include "HttpClient.h"
 
 
 // Constants
@@ -165,22 +166,39 @@ private:
 //	void OnTileLoaded(const TTile &aTile, const CFbsBitmap *aBitmap);
 //	};
 
+class TTileProviderBase;
+
 class CTileBitmapManagerItem;
 
 // Stores and loads bitmaps for tiles. When count of stored bitmaps
 // reach maximum limit, oldest one will be deleted before insert new.
-class CTileBitmapManager : public CBase
+class CTileBitmapManager : public CActive, public MHTTPClientObserver
 	{
 // Base methods
 public:
 	~CTileBitmapManager();
-	static CTileBitmapManager* NewL(MTileBitmapManagerObserver *aObserver, TInt aLimit = 50);
-	static CTileBitmapManager* NewLC(MTileBitmapManagerObserver *aObserver, TInt aLimit = 50);
+	static CTileBitmapManager* NewL(MTileBitmapManagerObserver *aObserver,
+			RFs aFs, TInt aLimit = 50);
+	static CTileBitmapManager* NewLC(MTileBitmapManagerObserver *aObserver,
+			RFs aFs, TInt aLimit = 50);
 
 private:
-	CTileBitmapManager(MTileBitmapManagerObserver *aObserver, TInt aLimit);
+	CTileBitmapManager(MTileBitmapManagerObserver *aObserver, RFs aFs, TInt aLimit);
 	void ConstructL();
+	
+// From CActive
+	void RunL();
+	void DoCancel();
+	//TInt RunError(TInt aError);
 
+// From MHTTPClientObserver
+public:
+	virtual void OnHTTPResponseDataChunkRecieved(const RHTTPTransaction aTransaction,
+			const TDesC8 &aDataChunk, TInt anOverallDataSize, TBool anIsLastChunk);
+	virtual void OnHTTPResponse(const RHTTPTransaction aTransaction);
+	virtual void OnHTTPError(TInt aError, const RHTTPTransaction aTransaction);
+	virtual void OnHTTPHeadersRecieved(const RHTTPTransaction aTransaction);
+	
 // Custom properties and methods
 private:
 	MTileBitmapManagerObserver *iObserver;
@@ -188,8 +206,24 @@ private:
 	RPointerArray<CTileBitmapManagerItem> iItems;
 	/*TInt*/ void Append/*L*/(const TTile &aTile); 
 	
+	RArray<TTile> /*iItemsForLoading*/ iItemsLoadingQueue;
+	CHTTPClient* iHTTPClient;
+	TTileProviderBase* iTileProvider;
+	//TBool iIsLoading;
+	enum TProcessingState
+		{
+		EIdle,
+		EDownloading,
+		EDecoding
+		};
+	TProcessingState iState;
+	CBufferedImageDecoder* iImgDecoder;
+	RFs iFs;
+	TTile iLoadingTile;
+	
 	// @return Pointer to CTileBitmapManagerItem object or NULL if not found
 	CTileBitmapManagerItem* Find(const TTile &aTile) const;
+	void StartDownloadTileL(const TTile &aTile);
 	
 public:
 	// @return Error codes: KErrNotFound, KErrNotReady or KErrNone
@@ -198,7 +232,7 @@ public:
 	};
 
 
-class CTileBitmapManagerItem : public CActive
+class CTileBitmapManagerItem : public CBase //: public CActive
 	{
 // Base methods
 public:
@@ -210,29 +244,54 @@ private:
 	CTileBitmapManagerItem(const TTile &aTile, MTileBitmapManagerObserver *aObserver);
 	void ConstructL();
 
-// From CActive
-private:
-	void RunL();
-	void DoCancel();
-	//TInt RunError(TInt aError);
+//// From CActive
+//private:
+//	void RunL();
+//	void DoCancel();
+//	//TInt RunError(TInt aError);
 	
 // Custom properties and methods
 private:
-	MTileBitmapManagerObserver* iObserver;
+	MTileBitmapManagerObserver* iObserver;  // ToDo; уже не нужно???
 	TTile iTile;
 	CFbsBitmap* iBitmap;
 	void StartLoadL();
-	void DrawStubBitmapL();
+//	void DrawStubBitmapL();
+	TBool iIsReady; // True when image completely created and ready to use
+public:
 	void CreateBitmapIfNotExistL();
+	inline TBool IsReady();
+	inline void SetReady();
 	
-	RTimer iTimer;
+//	RTimer iTimer;
 
 public:
 	// Getters
 	inline TTile Tile() const;
 	
 	// @return Pointer to bitmap or NULL if it`s not loaded yet.
-	inline CFbsBitmap* Bitmap() const;
+	inline CFbsBitmap* Bitmap() /*const*/;
+	};
+
+
+class TTileProviderBase
+	{
+/*private:
+	TileProviderBase() {};
+	~TileProviderBase() {};*/
+	
+public:
+	//virtual static void ID(TDes &aDes);
+	//virtual static void Title(TDes &aDes);
+	// Prefer not to use HTTPS protocol because unfortunately 
+	// at the present time SSL works not on all Symbian based phones
+	virtual void TileUrl(TDes8 &aUrl, const TTile &aTile) = 0;
+	};
+
+class TOsmStandardTileProvider : public TTileProviderBase
+	{
+public:
+	virtual void TileUrl(TDes8 &aUrl, const TTile &aTile);
 	};
 
 
