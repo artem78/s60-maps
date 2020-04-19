@@ -28,6 +28,10 @@
 
 #define qtn_about_dialog_text "S60Maps Version 0.1.0\n\nBuild: " __DATE__ " " __TIME__ "\n\nAuthor: artem78\n\nSupport: megabyte1024@ya.ru\n\n(c) "
 
+//#ifdef _DEBUG
+#define qtn_about_dialog_git_text "\n\nGit: commit %S (branch %S)\n\n"
+//#endif
+
 #define qtn_confirm_exit_dialog_title "Confirm exit"
 
 #define qtn_confirm_exit_dialog_text "Do you really want to exit?"

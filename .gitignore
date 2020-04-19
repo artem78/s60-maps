@@ -4,3 +4,6 @@ sis/*.sisx
 sis/**/*.sis
 sis/**/*.sisx
 *.bak
+
+# Autocreated:
+inc/GitInfo.h

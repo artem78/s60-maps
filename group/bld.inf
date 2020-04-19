@@ -44,3 +44,4 @@ PRJ_MMPFILES
 PRJ_MMPFILES
 
 S60Maps.mmp
+gnumakefile git_info.mk

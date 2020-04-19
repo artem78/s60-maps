@@ -27,6 +27,9 @@
 #include "S60MapsAppUi.h"
 #include "S60MapsAppView.h"
 #include "Defs.h"
+#ifdef _DEBUG
+#include "GitInfo.h"
+#endif
 
 
 // ============================ MEMBER FUNCTIONS ===============================
@@ -130,10 +133,24 @@ void CS60MapsAppUi::HandleCommandL(TInt aCommand)
 			HBufC* title = iEikonEnv->AllocReadResourceLC(R_ABOUT_DIALOG_TITLE);
 			dlg->QueryHeading()->SetTextL(*title);
 			CleanupStack::PopAndDestroy(); //title
+#ifdef _DEBUG
+			HBufC* msg = iEikonEnv->AllocReadResourceLC(R_ABOUT_DIALOG_TEXT);
+			HBufC* gitMsg = iEikonEnv->AllocReadResourceLC(R_ABOUT_DIALOG_GIT_TEXT);
+			RBuf buff;
+			buff.CreateL(msg->Length() + gitMsg->Length() + 100);
+			buff.CleanupClosePushL();
+			buff.Zero();
+			buff.Append(*msg);
+			buff.AppendFormat(*gitMsg, &KGITCommit, &KGITBranch);
+			dlg->SetMessageTextL(buff);
+			CleanupStack::PopAndDestroy(3, msg);
+			dlg->RunLD();
+#else
 			HBufC* msg = iEikonEnv->AllocReadResourceLC(R_ABOUT_DIALOG_TEXT);
 			dlg->SetMessageTextL(*msg);
 			CleanupStack::PopAndDestroy(); //msg
 			dlg->RunLD();
+#endif
 			}
 			break;
 		default:

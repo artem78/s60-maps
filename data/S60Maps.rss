@@ -176,6 +176,9 @@ RESOURCE DIALOG r_confirm_exit_query_dialog
 RESOURCE TBUF32 r_caption_string { buf=qtn_caption_string; }
 RESOURCE TBUF32 r_about_dialog_title { buf=qtn_about_dialog_title; }
 RESOURCE TBUF r_about_dialog_text { buf=qtn_about_dialog_text; }
+//#ifdef _DEBUG
+RESOURCE TBUF r_about_dialog_git_text { buf=qtn_about_dialog_git_text; }
+//#endif
 RESOURCE TBUF32 r_confirm_exit_dialog_title { buf=qtn_confirm_exit_dialog_title; }
 RESOURCE TBUF r_confirm_exit_dialog_text { buf=qtn_confirm_exit_dialog_text; }
 RESOURCE TBUF r_command1_text { buf=qtn_command1_text; }
