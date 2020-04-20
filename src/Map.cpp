@@ -866,5 +866,5 @@ void TOsmStandardTileProvider::TileUrl(TDes8 &aUrl, const TTile &aTile)
 	_LIT8(KUrlFmt, "http://%c.tile.openstreetmap.org/%u/%u/%u.png");
 	TChar chr('a');
 	chr += Math::Random() % 3; // a-c
-	aUrl.Format(KUrlFmt, chr, (TUint) aTile.iZ, aTile.iX, aTile.iY);
+	aUrl.Format(KUrlFmt, (TUint) chr, (TUint) aTile.iZ, aTile.iX, aTile.iY);
 	}
