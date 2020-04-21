@@ -616,6 +616,9 @@ void CTileBitmapManager::OnHTTPResponseDataChunkRecieved(
 	if (!iImgDecoder->ValidDecoder())
 		iImgDecoder->ContinueOpenL();
 	
+	if (!iImgDecoder->ValidDecoder())
+		return; // Next function will leave if decoder not created
+	
 	if (!iImgDecoder->IsImageHeaderProcessingComplete())
 		iImgDecoder->ContinueProcessingHeaderL();
 	
