@@ -50,6 +50,18 @@ protected:
 	 * @return A pointer to the created document object.
 	 */
 	CApaDocument* CreateDocumentL();
+	
+	// From CEikApplication
+private:
+	void GetDefaultDocumentFileName(TFileName& aDocumentName) const;
+	
+	
+	// Custom properties and methods
+public:
+	// Return path to program root data directory
+	void DataDir(TFileName &aDataDir) const;
+	// Transform relative path to absolute from program root data directory
+	void RelPathToAbsFromDataDir(const TDesC &aRelPath, TFileName &anAbsPath) const;
 	};
 
 #endif // __S60MAPSAPPLICATION_H__

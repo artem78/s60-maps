@@ -11,6 +11,8 @@
 #include "S60Maps.hrh"
 #include "S60MapsDocument.h"
 #include "S60MapsApplication.h"
+#include "f32file.h"
+//#include "Logger.h"
 
 // ============================ MEMBER FUNCTIONS ===============================
 
@@ -34,6 +36,42 @@ TUid CS60MapsApplication::AppDllUid() const
 	{
 	// Return the UID for the S60Maps application
 	return KUidS60MapsApp;
+	}
+
+void CS60MapsApplication::GetDefaultDocumentFileName(TFileName& aDocumentName) const
+	{
+	aDocumentName.Zero();
+	DataDir(aDocumentName);
+	_LIT(KDocFileName, "store.dat");
+	RelPathToAbsFromDataDir(KDocFileName, aDocumentName);	
+	}
+
+void CS60MapsApplication::DataDir(TFileName &aDataDir) const
+	{
+	// ToDo: Make sure data directory already has been created
+	
+#ifdef __WINSCW__
+	// Emulator do not have E drive, use C instead
+	_LIT(KProgramDataDir, "c:\\data\\S60Maps\\");
+#else
+	// Change data directory to e:\data\S60Maps
+	// Note: program data need to be stored on E drive
+	// regardless of on which drive program installed
+	// because tiles cache will be use much space
+	_LIT(KProgramDataDir, "e:\\data\\S60Maps\\");
+#endif
+	aDataDir.Copy(KProgramDataDir);
+	}
+
+void CS60MapsApplication::RelPathToAbsFromDataDir(const TDesC &aRelPath, TFileName &anAbsPath) const
+	{
+	TFileName dataDir;
+	DataDir(dataDir);
+	
+	TParse parser;
+	parser.Set/*NoWild*/(aRelPath, NULL, &dataDir);
+	anAbsPath.Copy(parser.FullName());
+	//LOG(_L8("%S --> %S"), &aRelPath, &anAbsPath);
 	}
 
 // End of File

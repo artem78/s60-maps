@@ -52,7 +52,9 @@ void CS60MapsDocument::ConstructL()
 	{
 #if LOGGING_ENABLED
 	_LIT(KLogFileName, "log.txt");
-	iLogFile.Replace(CEikonEnv::Static()->FsSession(), KLogFileName, EFileWrite);
+	TFileName logFilePath;
+	static_cast<CS60MapsApplication *>(Application())->RelPathToAbsFromDataDir(KLogFileName, logFilePath);
+	iLogFile.Replace(CEikonEnv::Static()->FsSession(), logFilePath, EFileWrite);
 	LOG_CONFIGURE(iLogFile);
 	LOG(_L8("Log started"));
 #endif
