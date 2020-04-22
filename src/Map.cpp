@@ -864,6 +864,18 @@ inline CFbsBitmap* CTileBitmapManagerItem::Bitmap() /*const*/
 
 // OsmStandardTileProvider
 
+void TOsmStandardTileProvider::ID(TDes &aDes)
+	{
+	_LIT(KProviderID, "osm");
+	aDes.Copy(KProviderID);
+	}
+
+void TOsmStandardTileProvider::Title(TDes &aDes)
+	{
+	_LIT(KProviderTitle, "OpenStreetMap");
+	aDes.Copy(KProviderTitle);
+	}
+
 void TOsmStandardTileProvider::TileUrl(TDes8 &aUrl, const TTile &aTile)
 	{
 	_LIT8(KUrlFmt, "http://%c.tile.openstreetmap.org/%u/%u/%u.png");

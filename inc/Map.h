@@ -283,9 +283,15 @@ class TTileProviderBase
 	~TileProviderBase() {};*/
 	
 public:
-	//virtual static void ID(TDes &aDes);
-	//virtual static void Title(TDes &aDes);
-	// Prefer not to use HTTPS protocol because unfortunately 
+	// Short string identifier of tile provider. Used in cache subdir name.
+	// Must be unique. 
+	virtual /*static*/ void ID/*Name*/(TDes &aDes) = 0;
+	
+	// Readable name of tile provider. Will be display in settings.
+	virtual /*static*/ void Title(TDes &aDes) = 0;
+	
+	// Create and return URL for specified tile
+	// Note: prefer not to use HTTPS protocol because unfortunately 
 	// at the present time SSL works not on all Symbian based phones
 	virtual void TileUrl(TDes8 &aUrl, const TTile &aTile) = 0;
 	};
@@ -293,6 +299,8 @@ public:
 class TOsmStandardTileProvider : public TTileProviderBase
 	{
 public:
+	virtual void ID(TDes &aDes);
+	virtual void Title(TDes &aDes);
 	virtual void TileUrl(TDes8 &aUrl, const TTile &aTile);
 	};
 
