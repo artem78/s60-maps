@@ -208,6 +208,7 @@ CTiledMapLayer::CTiledMapLayer(CS60MapsAppView* aMapView) :
 CTiledMapLayer::~CTiledMapLayer()
 	{
 	delete iBitmapMgr;
+	delete iTileProvider;
 	}
 
 CTiledMapLayer* CTiledMapLayer::NewL(CS60MapsAppView* aMapView)
@@ -227,7 +228,9 @@ CTiledMapLayer* CTiledMapLayer::NewLC(CS60MapsAppView* aMapView)
 
 void CTiledMapLayer::ConstructL()
 	{
-	iBitmapMgr = CTileBitmapManager::NewL(this, iMapView->ControlEnv()->FsSession());
+	iTileProvider = new (ELeave) TOsmStandardTileProvider; 
+	iBitmapMgr = CTileBitmapManager::NewL(this, iMapView->ControlEnv()->FsSession(),
+			iTileProvider);
 	}
 
 void CTiledMapLayer::Draw(CWindowGc &aGc)
@@ -392,12 +395,13 @@ void MImageReaderObserver::OnImageReadingFailed(TInt /*aErr*/)
 // CTileBitmapManager
 
 CTileBitmapManager::CTileBitmapManager(MTileBitmapManagerObserver *aObserver,
-		RFs aFs, TInt aLimit) :
+		RFs aFs, TTileProviderBase* aTileProvider, TInt aLimit) :
 		CActive(EPriorityStandard),
 		iObserver(aObserver),
 		iLimit(aLimit),
 		iState(/*TProcessingState::*/EIdle),
-		iFs(aFs)
+		iFs(aFs),
+		iTileProvider(aTileProvider)
 	{
 	// No implementation required
 	}
@@ -412,18 +416,18 @@ CTileBitmapManager::~CTileBitmapManager()
 	}
 
 CTileBitmapManager* CTileBitmapManager::NewLC(MTileBitmapManagerObserver *aObserver,
-		RFs aFs, TInt aLimit)
+		RFs aFs, TTileProviderBase* aTileProvider, TInt aLimit)
 	{
-	CTileBitmapManager* self = new (ELeave) CTileBitmapManager(aObserver, aFs, aLimit);
+	CTileBitmapManager* self = new (ELeave) CTileBitmapManager(aObserver, aFs, aTileProvider, aLimit);
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	return self;
 	}
 
 CTileBitmapManager* CTileBitmapManager::NewL(MTileBitmapManagerObserver *aObserver,
-		RFs aFs, TInt aLimit)
+		RFs aFs, TTileProviderBase* aTileProvider, TInt aLimit)
 	{
-	CTileBitmapManager* self = CTileBitmapManager::NewLC(aObserver, aFs, aLimit);
+	CTileBitmapManager* self = CTileBitmapManager::NewLC(aObserver, aFs, aTileProvider, aLimit);
 	CleanupStack::Pop(); // self;
 	return self;
 	}
@@ -440,8 +444,7 @@ void CTileBitmapManager::ConstructL()
 	
 	iItems = RPointerArray<CTileBitmapManagerItem>(iLimit);
 	iItemsLoadingQueue = RArray<TTile>(20); // ToDo: Move 20 to constant
-	
-	iTileProvider = new (ELeave) TOsmStandardTileProvider;
+
 	
 	iImgDecoder = CBufferedImageDecoder::NewL(iFs);
 	

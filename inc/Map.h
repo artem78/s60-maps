@@ -87,6 +87,7 @@ public:
 
 class CTileBitmapManager;
 //class MTileBitmapManagerObserver;
+class TTileProviderBase;
 
 class MTileBitmapManagerObserver
 	{
@@ -119,6 +120,7 @@ public:
 // Custom properties and methods
 private:
 	CTileBitmapManager *iBitmapMgr;
+	TTileProviderBase *iTileProvider;
 	void VisibleTiles(RArray<TTile> &aTiles); // Return list of visible tiles
 	void DrawTile(CWindowGc &aGc, const TTile &aTile, const CFbsBitmap *aBitmap);
 	
@@ -178,12 +180,13 @@ class CTileBitmapManager : public CActive, public MHTTPClientObserver
 public:
 	~CTileBitmapManager();
 	static CTileBitmapManager* NewL(MTileBitmapManagerObserver *aObserver,
-			RFs aFs, TInt aLimit = 50);
+			RFs aFs, TTileProviderBase* aTileProvider, TInt aLimit = 50);
 	static CTileBitmapManager* NewLC(MTileBitmapManagerObserver *aObserver,
-			RFs aFs, TInt aLimit = 50);
+			RFs aFs, TTileProviderBase* aTileProvider, TInt aLimit = 50);
 
 private:
-	CTileBitmapManager(MTileBitmapManagerObserver *aObserver, RFs aFs, TInt aLimit);
+	CTileBitmapManager(MTileBitmapManagerObserver *aObserver, RFs aFs,
+			TTileProviderBase* aTileProvider, TInt aLimit);
 	void ConstructL();
 	
 // From CActive
