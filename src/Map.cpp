@@ -228,14 +228,30 @@ CTiledMapLayer* CTiledMapLayer::NewLC(CS60MapsAppView* aMapView)
 
 void CTiledMapLayer::ConstructL()
 	{
-	/////////////////
-	// ToDo: Get cache path as:
-	// CS60MapsApplication::CacheDir + \ + TTileProviderBase::ID 
-	_LIT(KCacheDirectory, "\\data\\S60maps\\cache\\osm\\");
-	/////////////////////
-	iTileProvider = new (ELeave) TOsmStandardTileProvider; 
-	iBitmapMgr = CTileBitmapManager::NewL(this, iMapView->ControlEnv()->FsSession(),
-			iTileProvider, KCacheDirectory);
+	iTileProvider = new (ELeave) TOsmStandardTileProvider;
+	TBuf<32> tileProviderID;
+	iTileProvider->ID(tileProviderID);
+	
+	TFileName cacheDir;
+	//////////
+	// ToDo: Get base cache dir from CS60MapsApplication::CacheDir()
+#ifdef __WINSCW__
+	cacheDir.Append(_L("c:\\data\\s60maps\\cache\\"));
+#else
+	cacheDir.Append(_L("e:\\data\\s60maps\\cache\\"));
+#endif
+	/////////
+	cacheDir.Append(tileProviderID);
+	cacheDir.Append(KPathDelimiter);
+	
+	RFs fs = iMapView->ControlEnv()->FsSession();
+	
+	// Create cache dir (if not exists)
+	TInt r = fs.MkDirAll(cacheDir);
+	if (r != KErrAlreadyExists)
+		User::LeaveIfError(r);
+	
+	iBitmapMgr = CTileBitmapManager::NewL(this, fs, iTileProvider, cacheDir);
 	}
 
 void CTiledMapLayer::Draw(CWindowGc &aGc)
