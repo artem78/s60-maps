@@ -228,9 +228,14 @@ CTiledMapLayer* CTiledMapLayer::NewLC(CS60MapsAppView* aMapView)
 
 void CTiledMapLayer::ConstructL()
 	{
+	/////////////////
+	// ToDo: Get cache path as:
+	// CS60MapsApplication::CacheDir + \ + TTileProviderBase::ID 
+	_LIT(KCacheDirectory, "\\data\\S60maps\\cache\\osm\\");
+	/////////////////////
 	iTileProvider = new (ELeave) TOsmStandardTileProvider; 
 	iBitmapMgr = CTileBitmapManager::NewL(this, iMapView->ControlEnv()->FsSession(),
-			iTileProvider);
+			iTileProvider, KCacheDirectory);
 	}
 
 void CTiledMapLayer::Draw(CWindowGc &aGc)
@@ -416,23 +421,23 @@ CTileBitmapManager::~CTileBitmapManager()
 	}
 
 CTileBitmapManager* CTileBitmapManager::NewLC(MTileBitmapManagerObserver *aObserver,
-		RFs aFs, TTileProviderBase* aTileProvider, TInt aLimit)
+		RFs aFs, TTileProviderBase* aTileProvider, const TDesC &aCacheDir, TInt aLimit)
 	{
 	CTileBitmapManager* self = new (ELeave) CTileBitmapManager(aObserver, aFs, aTileProvider, aLimit);
 	CleanupStack::PushL(self);
-	self->ConstructL();
+	self->ConstructL(aCacheDir);
 	return self;
 	}
 
 CTileBitmapManager* CTileBitmapManager::NewL(MTileBitmapManagerObserver *aObserver,
-		RFs aFs, TTileProviderBase* aTileProvider, TInt aLimit)
+		RFs aFs, TTileProviderBase* aTileProvider, const TDesC &aCacheDir, TInt aLimit)
 	{
-	CTileBitmapManager* self = CTileBitmapManager::NewLC(aObserver, aFs, aTileProvider, aLimit);
+	CTileBitmapManager* self = CTileBitmapManager::NewLC(aObserver, aFs, aTileProvider, aCacheDir, aLimit);
 	CleanupStack::Pop(); // self;
 	return self;
 	}
 
-void CTileBitmapManager::ConstructL()
+void CTileBitmapManager::ConstructL(const TDesC &aCacheDir)
 	{
 #ifdef __WINSCW__
 	// Add some delay for network services have been started on the emulator,
@@ -445,6 +450,7 @@ void CTileBitmapManager::ConstructL()
 	iItems = RPointerArray<CTileBitmapManagerItem>(iLimit);
 	iItemsLoadingQueue = RArray<TTile>(20); // ToDo: Move 20 to constant
 
+	iCacheDir.Copy(aCacheDir);
 	
 	iImgDecoder = CBufferedImageDecoder::NewL(iFs);
 	
@@ -489,11 +495,18 @@ void CTileBitmapManager::AddToLoading(const TTile &aTile)
 	CTileBitmapManagerItem* item = CTileBitmapManagerItem::NewL(aTile, iObserver);
 	iItems.Append(item);
 	
-	// ToDo: Try to find on disk cache first
 	if (iState == EIdle)
 		{
-		// Start download now
-		StartDownloadTileL(aTile);
+		// Try to find on disk first
+		if (IsTileFileExist(aTile))
+			{
+			item->CreateBitmapIfNotExistL();
+			LoadBitmapL(aTile, item->Bitmap());
+			item->SetReady();
+			}
+		else
+			// Start download now
+			StartDownloadTileL(aTile);
 		}
 	else
 		{
@@ -562,6 +575,8 @@ void CTileBitmapManager::RunL()
 		
 		LOG(_L8("Tile %S downloaded and decoded"), &iLoadingTile.AsDes8());
 		iObserver->OnTileLoaded(iLoadingTile, item->Bitmap());
+		
+		SaveBitmapL(iLoadingTile, item->Bitmap());
 		}
 	else
 		{
@@ -678,6 +693,71 @@ void CTileBitmapManager::OnHTTPHeadersRecieved(
 	iImgDecoder->Reset();
 	_LIT8(KPNGMimeType, "image/png");
 	iImgDecoder->OpenL(KNullDesC8, KPNGMimeType);
+	}
+
+void CTileBitmapManager::SaveBitmapL(const TTile &aTile, /*const*/ CFbsBitmap *aBitmap/*, TBool aRewrite*/)
+	{
+	TFileName tileFileName;
+	TileFileName(aTile, tileFileName);
+	
+	RFile file;
+	/*if (aRewrite)
+		{*/
+		User::LeaveIfError(file.Replace(iFs, tileFileName, EFileWrite));
+		CleanupClosePushL(file);
+	/*	}
+	else
+		{
+		TInt r = file.Create(iFs, tileFileName, EFileWrite);
+		CleanupClosePushL(file);
+		if (r != KErrAlreadyExists)
+			User::LeaveIfError(r);
+		}*/
+	User::LeaveIfError(aBitmap->Save(file));	
+	CleanupStack::PopAndDestroy(&file);
+	LOG(_L8("Bitmap for %S sucessfully saved to file \"%S\""), &aTile.AsDes8(), &tileFileName);
+	}
+
+void CTileBitmapManager::LoadBitmapL(const TTile &aTile, CFbsBitmap *aBitmap)
+	{	
+	TFileName tileFileName;
+	TileFileName(aTile, tileFileName);
+	
+	RFile file;
+	User::LeaveIfError(file.Open(iFs, tileFileName, EFileRead));
+	CleanupClosePushL(file);
+	User::LeaveIfError(aBitmap->Load(file));	
+	CleanupStack::PopAndDestroy(&file);
+	LOG(_L8("Bitmap for %S sucessfully loaded from file \"%S\""), &aTile.AsDes8(), &tileFileName);
+	}
+
+TBool CTileBitmapManager::IsTileFileExist(const TTile &aTile) /*const*/
+	{
+	TFileName tileFileName;
+	TileFileName(aTile, tileFileName);
+	
+	// ToDo: Can we make this check without opening file?
+	
+	RFile file;
+	TInt r = file.Open(iFs, tileFileName, EFileRead);
+	if (r == KErrNone)
+		file.Close();
+	
+	return r == KErrNone;
+	}
+
+void CTileBitmapManager::TileFileName(const TTile &aTile, TFileName &aFileName) const
+	{
+	_LIT(KUnderline, "_");
+	_LIT(KMBMExtension, ".mbm");
+	
+	aFileName.Copy(iCacheDir);
+	aFileName.AppendNum(aTile.iZ);
+	aFileName.Append(KUnderline);
+	aFileName.AppendNum(aTile.iX);
+	aFileName.Append(KUnderline);
+	aFileName.AppendNum(aTile.iY);
+	aFileName.Append(KMBMExtension);
 	}
 
 

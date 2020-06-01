@@ -68,10 +68,18 @@ void CS60MapsApplication::RelPathToAbsFromDataDir(const TDesC &aRelPath, TFileNa
 	TFileName dataDir;
 	DataDir(dataDir);
 	
-	TParse parser;
+	TParse /*TParsePtrC*/ parser;
 	parser.Set/*NoWild*/(aRelPath, NULL, &dataDir);
 	anAbsPath.Copy(parser.FullName());
 	//LOG(_L8("%S --> %S"), &aRelPath, &anAbsPath);
+	}
+
+void CS60MapsApplication::CacheDir(TFileName &aCacheDir) const
+	{
+	// ToDo: Make sure this directory already has been created
+	
+	_LIT(KCacheDirRel, "cache/");
+	RelPathToAbsFromDataDir(KCacheDirRel, aCacheDir);
 	}
 
 // End of File
