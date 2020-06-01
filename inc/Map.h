@@ -245,47 +245,43 @@ public:
 	};
 
 
-class CTileBitmapManagerItem : public CBase //: public CActive
+/* Links Tile`s x,y,z with CFbsBitmap loaded to image server.
+ * Used in CTileBitmapManager class.
+ * 
+ * Initially bitmap pointer is NULL. You need to call CreateBitmapIfNotExistL()
+ * before start drawing bitmap. After drawing complete, you need to call SetReady().
+ */
+class CTileBitmapManagerItem : public CBase
 	{
 // Base methods
 public:
 	~CTileBitmapManagerItem();
-	static CTileBitmapManagerItem* NewL(const TTile &aTile, MTileBitmapManagerObserver *aObserver);
-	static CTileBitmapManagerItem* NewLC(const TTile &aTile, MTileBitmapManagerObserver *aObserver);
+	static CTileBitmapManagerItem* NewL(const TTile &aTile);
+	static CTileBitmapManagerItem* NewLC(const TTile &aTile);
 
 private:
-	CTileBitmapManagerItem(const TTile &aTile, MTileBitmapManagerObserver *aObserver);
+	CTileBitmapManagerItem(const TTile &aTile);
 	void ConstructL();
 
-//// From CActive
-//private:
-//	void RunL();
-//	void DoCancel();
-//	//TInt RunError(TInt aError);
-	
 // Custom properties and methods
 private:
-	MTileBitmapManagerObserver* iObserver;  // ToDo; уже не нужно???
 	TTile iTile;
 	CFbsBitmap* iBitmap;
-	void StartLoadL();
-	TBool iIsReady; // True when image completely created and ready to use
+	TBool iIsReady; // ETrue when image completely drawn and ready to use
 public:
 #ifdef _DEBUG
 	void DrawTileBorderAndNumbersL();
 #endif
 	void CreateBitmapIfNotExistL();
-	inline TBool IsReady();
-	inline void SetReady();
+	inline TBool IsReady() { return iIsReady && iBitmap != NULL; };
+	inline void SetReady() { iIsReady = ETrue; };
 	
-//	RTimer iTimer;
-
+// Getters
 public:
-	// Getters
-	inline TTile Tile() const;
+	inline TTile Tile() const { return iTile; };
 	
 	// @return Pointer to bitmap or NULL if it`s not loaded yet.
-	inline CFbsBitmap* Bitmap() /*const*/;
+	inline CFbsBitmap* Bitmap() /*const*/ { return iBitmap; };
 	};
 
 
