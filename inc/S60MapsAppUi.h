@@ -84,6 +84,11 @@ public:
 	void RestoreL(const CStreamStore& aStore, TStreamId aStreamId);
 	void ExternalizeL(RWriteStream& aStream) const;
 	void InternalizeL(RReadStream& aStream);
+
+
+	// Custom properties and methods
+private:
+	void ClearTilesCache();
 	};
 
 #endif // __S60MAPSAPPUI_h__

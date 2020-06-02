@@ -17,7 +17,8 @@ enum TS60MapsIds
 	{
 	EFindMe = 0x6001, // start value must not be 0
 	EHelp,
-	EAbout
+	EAbout,
+	EResetTilesCache
 	};
 
 #endif // __S60MAPS_HRH__

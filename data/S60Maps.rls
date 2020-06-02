@@ -24,6 +24,11 @@
 
 #define qtn_loc_resource_file_1 "\\resource\\apps\\S60Maps_0xED689B88"
 
+#define qtn_service_title "Service"
+#define qtn_reset_tiles_cache "Clear map cache"
+#define qtn_confirm_reset_tiles_cache_dialog_title "Confirm clear cache"
+#define qtn_confirm_reset_tiles_cache_dialog_text "This action will delete all of your maps cache. Are you sure?"
+
 #define qtn_about_dialog_title "About"
 
 #define qtn_about_dialog_text "S60Maps Version 0.1.0\n\nBuild: " __DATE__ " " __TIME__ "\n\nAuthor: artem78\n\nSupport: megabyte1024@ya.ru\n\n(c) "

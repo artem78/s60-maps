@@ -118,6 +118,23 @@ void CS60MapsAppUi::HandleCommandL(TInt aCommand)
 		case EFindMe:
 			// ToDo: make this...
 			break;
+		case EResetTilesCache:
+			{
+			CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
+			dlg->PrepareLC(R_CONFIRM_RESET_TILES_CACHE_DIALOG);
+			HBufC* title = iEikonEnv->AllocReadResourceLC(R_CONFIRM_RESET_TILES_CACHE_DIALOG_TITLE);
+			dlg->QueryHeading()->SetTextL(*title);
+			CleanupStack::PopAndDestroy(); //title
+			HBufC* msg = iEikonEnv->AllocReadResourceLC(R_CONFIRM_RESET_TILES_CACHE_DIALOG_TEXT);
+			dlg->SetMessageTextL(*msg);
+			CleanupStack::PopAndDestroy(); //msg
+			TInt res = dlg->RunLD();
+			if (res == 3005 /*Yes*/) // ToDo: Replace by constant name
+				{
+				ClearTilesCache();
+				}
+			}
+			break;
 		case EHelp:
 			{
 
@@ -220,6 +237,23 @@ void CS60MapsAppUi::ExternalizeL(RWriteStream& aStream) const
 void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 	{
 	aStream >> *iAppView;
+	}
+
+void CS60MapsAppUi::ClearTilesCache()
+	{
+	TFileName path;
+	static_cast<CS60MapsApplication *>(Application())->CacheDir(path);
+	//_LIT(KFileMask, "*.mbm");
+	_LIT(KFileMask, "*.*");
+	path.Append(KFileMask);
+	
+	CFileMan* fMan = CFileMan::NewL(CCoeEnv::Static()->FsSession());
+	// ToDo: Make asynchronous with loading bar and success/fail message
+	// (how many files/mbytes deleted)
+	fMan->Delete(path, CFileMan::ERecurse); // ToDo: check error code
+	
+	delete fMan;
+	
 	}
 
 
