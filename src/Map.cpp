@@ -429,7 +429,7 @@ CTileBitmapManager::CTileBitmapManager(MTileBitmapManagerObserver *aObserver,
 
 CTileBitmapManager::~CTileBitmapManager()
 	{
-	delete iTileProvider;
+	delete iImgDecoder;
 	iItemsLoadingQueue.Close();
 	iItems.ResetAndDestroy();
 	iItems.Close();
@@ -641,7 +641,11 @@ void CTileBitmapManager::OnHTTPResponseDataChunkRecieved(
 	_LIT8(KPNGMimeType, "image/png");
 	RStringF pngMimeType = strP.OpenFStringL(KPNGMimeType);
 	if (fieldVal.StrF() != pngMimeType)
+		{
+		pngMimeType.Close();
 		return; // Skip other types exept PNG
+		}
+	pngMimeType.Close();
 	
 	
 	// Append data to decoder`s buffer
