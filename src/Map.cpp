@@ -14,6 +14,8 @@
 #include <bitstd.h>
 #include "Logger.h"
 #include "S60Maps.pan"
+#include "S60MapsAppUi.h"
+#include "S60MapsApplication.h"
 
 CMapLayerBase::CMapLayerBase(/*const*/ CS60MapsAppView* aMapView) :
 		iMapView(aMapView)
@@ -103,14 +105,9 @@ void CTiledMapLayer::ConstructL()
 	iTileProvider->ID(tileProviderID);
 	
 	TFileName cacheDir;
-	//////////
-	// ToDo: Get base cache dir from CS60MapsApplication::CacheDir()
-#ifdef __WINSCW__
-	cacheDir.Append(_L("c:\\data\\s60maps\\cache\\"));
-#else
-	cacheDir.Append(_L("e:\\data\\s60maps\\cache\\"));
-#endif
-	/////////
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
+	CS60MapsApplication* app = static_cast<CS60MapsApplication*>(appUi->Application());
+	app->CacheDir(cacheDir);
 	cacheDir.Append(tileProviderID);
 	cacheDir.Append(KPathDelimiter);
 	
