@@ -12,7 +12,6 @@
 #include <aknmessagequerydialog.h>
 #include <aknnotewrappers.h>
 #include <stringloader.h>
-#include <f32file.h>
 #include <s32file.h>
 #include <hlplch.h>
 
@@ -44,6 +43,8 @@ void CS60MapsAppUi::ConstructL()
 	{
 	// Initialise app UI with standard value.
 	BaseConstructL(CAknAppUi::EAknEnableSkin);
+	
+	iFileMan = CFileMan::NewL(CCoeEnv::Static()->FsSession(), this);
 
 	// Set initial map position
 	TCoordinate position = TCoordinate(47.100, 5.361); // Center of Europe
@@ -84,7 +85,8 @@ CS60MapsAppUi::~CS60MapsAppUi()
 		delete iAppView;
 		iAppView = NULL;
 		}
-
+	
+	delete iFileMan;
 	}
 
 // -----------------------------------------------------------------------------
@@ -239,6 +241,24 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 	aStream >> *iAppView;
 	}
 
+MFileManObserver::TControl CS60MapsAppUi::NotifyFileManStarted()
+	{
+	return EContinue;
+	}
+
+MFileManObserver::TControl CS60MapsAppUi::NotifyFileManOperation()
+	{
+	return EContinue;
+	}
+
+MFileManObserver::TControl CS60MapsAppUi::NotifyFileManEnded()
+	{
+	_LIT(KMsg, "Done!");
+	CEikonEnv::Static()->AlertWin(KMsg);
+		
+	return EContinue;
+	}
+
 void CS60MapsAppUi::ClearTilesCache()
 	{
 	TFileName path;
@@ -246,13 +266,9 @@ void CS60MapsAppUi::ClearTilesCache()
 	//_LIT(KFileMask, "*.mbm");
 	_LIT(KFileMask, "*.*");
 	path.Append(KFileMask);
-	
-	CFileMan* fMan = CFileMan::NewL(CCoeEnv::Static()->FsSession());
-	// ToDo: Make asynchronous with loading bar and success/fail message
-	// (how many files/mbytes deleted)
-	fMan->Delete(path, CFileMan::ERecurse); // ToDo: check error code
-	
-	delete fMan;
+
+	// ToDo: Show loading/progress bar during operation
+	iFileMan->Delete(path, CFileMan::ERecurse); // ToDo: check error code
 	
 	}
 

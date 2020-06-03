@@ -12,6 +12,7 @@
 
 // INCLUDES
 #include <aknappui.h>
+#include "f32file.h"
 
 // FORWARD DECLARATIONS
 class CS60MapsAppView;
@@ -22,7 +23,7 @@ class CS60MapsAppView;
  * Interacts with the user through the UI and request message processing
  * from the handler class
  */
-class CS60MapsAppUi : public CAknAppUi
+class CS60MapsAppUi : public CAknAppUi, public MFileManObserver
 	{
 public:
 	// Constructors and destructor
@@ -85,9 +86,16 @@ public:
 	void ExternalizeL(RWriteStream& aStream) const;
 	void InternalizeL(RReadStream& aStream);
 
-
+	// MFileManObserver
+public:
+	MFileManObserver::TControl NotifyFileManStarted();
+	MFileManObserver::TControl NotifyFileManOperation();
+	MFileManObserver::TControl NotifyFileManEnded();
+	
 	// Custom properties and methods
 private:
+	CFileMan* iFileMan;
+	
 	void ClearTilesCache();
 	};
 
