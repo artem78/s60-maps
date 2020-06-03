@@ -12,7 +12,7 @@
 
 // INCLUDES
 #include <aknappui.h>
-#include "f32file.h"
+#include <f32file.h>
 
 // FORWARD DECLARATIONS
 class CS60MapsAppView;
