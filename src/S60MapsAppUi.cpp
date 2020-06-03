@@ -54,6 +54,11 @@ void CS60MapsAppUi::ConstructL()
 	iAppView = CS60MapsAppView::NewL(ClientRect(), position, zoom);
 	AddToStackL(iAppView);
 	
+	// Position requestor
+	_LIT(KPosRequestorName, "S60 Maps"); // ToDo: Move to global const
+	iPosRequestor = CPositionRequestor::NewL(this, KPosRequestorName);
+	iPosRequestor->Start(); // Must be started after view created
+	
 	// Make fullscreen
 	SetFullScreenApp(ETrue); // Seems no effect
 	StatusPane()->MakeVisible(EFalse); // ToDo: Why if call it before creating
@@ -78,6 +83,8 @@ CS60MapsAppUi::CS60MapsAppUi()
 //
 CS60MapsAppUi::~CS60MapsAppUi()
 	{
+	delete iPosRequestor;
+	
 	if (iAppView)
 		{
 		//if (IsControlOnStack(iAppView))
@@ -269,6 +276,34 @@ void CS60MapsAppUi::ClearTilesCache()
 
 	// ToDo: Show loading/progress bar during operation
 	iFileMan->Delete(path, CFileMan::ERecurse); // ToDo: check error code
+	
+	}
+
+void CS60MapsAppUi::OnPositionUpdated()
+	{
+	const TPositionInfo* posInfo = iPosRequestor->LastKnownPositionInfo();
+	TPosition pos;
+	posInfo->GetPosition(pos);
+	iAppView->SetUserPosition(pos);
+	}
+
+void CS60MapsAppUi::OnPositionPartialUpdated()
+	{
+	
+	}
+
+void CS60MapsAppUi::OnPositionRestored()
+	{
+	iAppView->ShowUserPosition();
+	}
+
+void CS60MapsAppUi::OnPositionLost()
+	{
+	iAppView->HideUserPosition();
+	}
+
+void CS60MapsAppUi::OnPositionError(TInt /*aErrCode*/)
+	{
 	
 	}
 

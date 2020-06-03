@@ -39,7 +39,7 @@ END //RESOURCE
 
 
 USERINCLUDE	   ..\inc
-USERINCLUDE    ..\help
+USERINCLUDE    ..\help ..\modules\Positioning
 
 SYSTEMINCLUDE	 \epoc32\include ..\modules\Logger
 
@@ -59,7 +59,7 @@ LANG SC
 
 VENDORID	  	  0
 SECUREID		  0xED689B88
-CAPABILITY	  	  NetworkServices ReadUserData
+CAPABILITY	  	  Location NetworkServices ReadUserData
 
 #ifdef ENABLE_ABIV2_MODE
 DEBUGGABLE_UDEBONLY
@@ -71,5 +71,9 @@ SOURCE MapMath.cpp Map.cpp HTTPClient.cpp
 
 // ToDo: Need to be increased in the future
 //EPOCHEAPSIZE 0x1000 0x1000000
+
 SOURCEPATH ..\modules\Logger
 SOURCE Logger.cpp
+
+SOURCEPATH ..\modules\Positioning
+SOURCE Positioning.cpp

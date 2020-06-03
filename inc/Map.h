@@ -127,6 +127,16 @@ private:
 	};
 
 
+// Displays user location
+class CUserPositionLayer : public CMapLayerBase
+	{
+// From CMapLayerBase
+public:
+	CUserPositionLayer(/*const*/ CS60MapsAppView* aMapView);
+	void Draw(CWindowGc &aGc);
+	};
+
+
 // Class for asynchronous image reading from file
 class CImageReader : public CActive
 	{

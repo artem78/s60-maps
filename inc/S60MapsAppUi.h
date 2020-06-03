@@ -13,6 +13,7 @@
 // INCLUDES
 #include <aknappui.h>
 #include <f32file.h>
+#include "Positioning.h"
 
 // FORWARD DECLARATIONS
 class CS60MapsAppView;
@@ -23,7 +24,7 @@ class CS60MapsAppView;
  * Interacts with the user through the UI and request message processing
  * from the handler class
  */
-class CS60MapsAppUi : public CAknAppUi, public MFileManObserver
+class CS60MapsAppUi : public CAknAppUi, public MFileManObserver, public MPositionListener
 	{
 public:
 	// Constructors and destructor
@@ -92,9 +93,18 @@ public:
 	MFileManObserver::TControl NotifyFileManOperation();
 	MFileManObserver::TControl NotifyFileManEnded();
 	
+	// MPositionListener
+public:
+	void OnPositionUpdated();
+	void OnPositionPartialUpdated();
+	void OnPositionRestored();
+	void OnPositionLost();
+	void OnPositionError(TInt aErrCode);
+	
 	// Custom properties and methods
 private:
 	CFileMan* iFileMan;
+	CPositionRequestor* iPosRequestor;
 	
 	void ClearTilesCache();
 	};

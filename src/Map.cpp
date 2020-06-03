@@ -201,6 +201,33 @@ void CTiledMapLayer::OnTileLoaded(const TTile &/*aTile*/, const CFbsBitmap */*aB
 	}
 
 
+
+// CUserPositionLayer
+
+CUserPositionLayer::CUserPositionLayer(/*const*/ CS60MapsAppView* aMapView) :
+		CMapLayerBase(aMapView)
+	{
+	
+	}
+
+void CUserPositionLayer::Draw(CWindowGc &aGc)
+	{
+	TPosition pos;
+	TInt r = iMapView->UserPosition(pos);
+	if (r == KErrNone && iMapView->CheckCoordVisibility(pos))
+		{
+		const TInt KMarkSize = 10;
+		TSize penSize(KMarkSize, KMarkSize);
+		aGc.SetBrushStyle(CGraphicsContext::ENullBrush);
+		aGc.SetPenColor(KRgbRed);
+		aGc.SetPenSize(penSize);
+			
+		TPoint point;
+		point = iMapView->GeoCoordsToScreenCoords(pos);
+		aGc.Plot(point);
+		}
+	}
+
 // CImageReader
 
 CImageReader::CImageReader(MImageReaderObserver* aObserver, CFbsBitmap* aBitmap) :

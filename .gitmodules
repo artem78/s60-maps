@@ -1,3 +1,7 @@
 [submodule "modules/Logger"]
 	path = modules/Logger
 	url = git@github.com:artem78/s60-logger.git
+
+[submodule "modules/Positioning"]
+	path = modules/Positioning
+	url = git@github.com:artem78/s60-positioning.git
