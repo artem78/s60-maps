@@ -124,10 +124,12 @@ private:
 	TBool iIsUserPositionRecieved;
 	
 	void Move(const TPoint &aPoint, TBool savePos = ETrue); // Used by all another Move methods
+public:
 	void Move(const TCoordinate &aPos);
 	void Move(const TCoordinate &aPos, TZoom aZoom);
 	void Move(TReal64 aLat, TReal64 aLon);
 	void Move(TReal64 aLat, TReal64 aLon, TZoom aZoom);
+private:
 	void SetZoom(TZoom aZoom);
 	void ZoomIn();
 	void ZoomOut();

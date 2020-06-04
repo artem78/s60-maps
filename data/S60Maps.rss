@@ -82,11 +82,11 @@ RESOURCE MENU_PANE r_menu
 	items =
 		{
 		// added the new Options menu command here
-		/*MENU_ITEM
+		MENU_ITEM
 				{
 				command = EFindMe;
 				txt = qtn_find_me;
-				},*/
+				},
 		// Maybe I will add help in the future
 		/*MENU_ITEM
 				{

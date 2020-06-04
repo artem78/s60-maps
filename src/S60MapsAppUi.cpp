@@ -125,7 +125,12 @@ void CS60MapsAppUi::HandleCommandL(TInt aCommand)
 			}
 			break;
 		case EFindMe:
-			// ToDo: make this...
+			{
+			TCoordinate pos;
+			TInt r = iAppView->UserPosition(pos);
+			if (r == KErrNone)
+				iAppView->Move(pos, 16);
+			}
 			break;
 		case EResetTilesCache:
 			{
