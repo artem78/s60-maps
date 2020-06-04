@@ -78,8 +78,9 @@ void CS60MapsApplication::CacheDir(TFileName &aCacheDir) const
 	{
 	// ToDo: Make sure this directory already has been created
 	
-	_LIT(KCacheDirRel, "cache\\");
+	_LIT(KCacheDirRel, "cache");
 	RelPathToAbsFromDataDir(KCacheDirRel, aCacheDir);
+	aCacheDir.Append(KPathDelimiter);
 	}
 
 // End of File
