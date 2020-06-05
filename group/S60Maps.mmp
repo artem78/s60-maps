@@ -41,7 +41,7 @@ END //RESOURCE
 USERINCLUDE	   ..\inc
 USERINCLUDE    ..\help
 
-SYSTEMINCLUDE	 \epoc32\include
+SYSTEMINCLUDE	 \epoc32\include ..\modules\Logger
 
 LIBRARY		   euser.lib
 LIBRARY		   apparc.lib
@@ -67,7 +67,9 @@ DEBUGGABLE_UDEBONLY
 // End of File
 
 SOURCEPATH ..\src
-SOURCE MapMath.cpp Map.cpp Logger.cpp HTTPClient.cpp
+SOURCE MapMath.cpp Map.cpp HTTPClient.cpp
 
 // ToDo: Need to be increased in the future
 //EPOCHEAPSIZE 0x1000 0x1000000
+SOURCEPATH ..\modules\Logger
+SOURCE Logger.cpp
