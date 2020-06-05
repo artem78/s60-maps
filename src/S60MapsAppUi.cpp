@@ -126,10 +126,7 @@ void CS60MapsAppUi::HandleCommandL(TInt aCommand)
 			break;
 		case EFindMe:
 			{
-			TCoordinate pos;
-			TInt r = iAppView->UserPosition(pos);
-			if (r == KErrNone)
-				iAppView->Move(pos, 16);
+			iAppView->SetFollowUser(ETrue);
 			}
 			break;
 		case EResetTilesCache:

@@ -122,6 +122,7 @@ private:
 	
 	TCoordinate iUserPosition;
 	TBool iIsUserPositionRecieved;
+	TBool iIsFollowUser;
 	
 	void Move(const TPoint &aPoint, TBool savePos = ETrue); // Used by all another Move methods
 public:
@@ -157,6 +158,7 @@ public:
 	TInt UserPosition(TCoordinate& aPos);
 	void ShowUserPosition();
 	void HideUserPosition();
+	void SetFollowUser(TBool anEnabled = ETrue);
 
 	};
 	

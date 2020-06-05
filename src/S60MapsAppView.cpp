@@ -181,6 +181,7 @@ TKeyResponse CS60MapsAppView::OfferKeyEventL(const TKeyEvent &aKeyEvent,
 			case /*EKeyUpArrow*/ EStdKeyUpArrow:
 			case 50: // ToDo: Replace number to constant
 				{
+				SetFollowUser(EFalse);
 				MoveUp();
 				return EKeyWasConsumed;
 				//break;
@@ -189,6 +190,7 @@ TKeyResponse CS60MapsAppView::OfferKeyEventL(const TKeyEvent &aKeyEvent,
 			case /*EKeyDownArrow*/ EStdKeyDownArrow:
 			case 56: // ToDo: Replace number to constant
 				{
+				SetFollowUser(EFalse);
 				MoveDown();
 				return EKeyWasConsumed;
 				//break;
@@ -197,6 +199,7 @@ TKeyResponse CS60MapsAppView::OfferKeyEventL(const TKeyEvent &aKeyEvent,
 			case /*EKeyLeftArrow*/ EStdKeyLeftArrow:
 			case 52: // ToDo: Replace number to constant
 				{
+				SetFollowUser(EFalse);
 				MoveLeft();
 				return EKeyWasConsumed;
 				//break;
@@ -205,6 +208,7 @@ TKeyResponse CS60MapsAppView::OfferKeyEventL(const TKeyEvent &aKeyEvent,
 			case /*EKeyRightArrow*/ EStdKeyRightArrow:
 			case 54: // ToDo: Replace number to constant
 				{
+				SetFollowUser(EFalse);
 				MoveRight();
 				return EKeyWasConsumed;
 				//break;
@@ -425,7 +429,10 @@ void CS60MapsAppView::Bounds(TTileReal &aTopLeftTile, TTileReal &aBottomRightTil
 
 void CS60MapsAppView::UpdateUserPosition()
 	{
-	DrawNow();
+	if (iIsFollowUser)
+		Move(iUserPosition);
+	else
+		DrawNow();
 	}
 
 void CS60MapsAppView::SetUserPosition(const TCoordinate& aPos)
@@ -452,6 +459,22 @@ void CS60MapsAppView::ShowUserPosition()
 void CS60MapsAppView::HideUserPosition()
 	{
 	iIsUserPositionRecieved = EFalse;
+	UpdateUserPosition();
+	}
+
+void CS60MapsAppView::SetFollowUser(TBool anEnabled)
+	{
+	if (anEnabled && iIsUserPositionRecieved)
+		iIsFollowUser = ETrue;
+	else
+		iIsFollowUser = EFalse;	
+	
+	if (iIsFollowUser)
+		{
+		const TZoom minZoom = 16;
+		if (GetZoom() < minZoom)
+			SetZoom(minZoom);
+		}
 	UpdateUserPosition();
 	}
 
