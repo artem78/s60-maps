@@ -153,6 +153,24 @@ private:
 	CImageDecoder* iDecoder;
 	};
 
+#if DISPLAY_TILE_BORDER_AND_XYZ
+// Debug layer for drawing tile`s border and x/y/z values.
+// May be used as stub.
+class CTileBorderAndXYZLayer : public CMapLayerBase
+	{
+// From CMapLayerBase
+public:
+	CTileBorderAndXYZLayer(CS60MapsAppView* aMapView);
+	void Draw(CWindowGc &aGc);
+
+// Custom properties and methods
+private:
+	void VisibleTiles(RArray<TTile> &aTiles); // Return list of visible tiles
+	void DrawTile(CWindowGc &aGc, const TTile &aTile);
+	
+	};
+#endif
+
 //// Observer class for image reader
 //class MImageReaderObserver
 //	{
@@ -269,9 +287,6 @@ private:
 	CFbsBitmap* iBitmap;
 	TBool iIsReady; // ETrue when image completely drawn and ready to use
 public:
-#ifdef _DEBUG
-	void DrawTileBorderAndNumbersL();
-#endif
 	void CreateBitmapIfNotExistL();
 	inline TBool IsReady() { return iIsReady && iBitmap != NULL; };
 	inline void SetReady() { iIsReady = ETrue; };

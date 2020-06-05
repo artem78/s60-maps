@@ -114,7 +114,11 @@ private:
 	TCoordinate iCenterPosition; // Similar to iTopLeftPosition, but used for
 				// more accurate moving to position when zoom changed
 				// ToDo: Any ideas how to make it without additional property? 
+#if DISPLAY_TILE_BORDER_AND_XYZ
+	TFixedArray<CMapLayerBase*, 3> iLayers;
+#else
 	TFixedArray<CMapLayerBase*, 2> iLayers;
+#endif
 	
 	void Move(const TPoint &aPoint, TBool savePos = ETrue); // Used by all another Move methods
 	void Move(const TCoordinate &aPos);

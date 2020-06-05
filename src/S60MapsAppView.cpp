@@ -56,7 +56,12 @@ void CS60MapsAppView::ConstructL(const TRect& aRect, const TCoordinate &aInitial
 	{
 	// Create layers
 	iLayers[0] = CTiledMapLayer::NewL(this); 
+#if DISPLAY_TILE_BORDER_AND_XYZ
+	iLayers[1] = new (ELeave) CTileBorderAndXYZLayer(this);
+	iLayers[2] = new (ELeave) CMapLayerDebugInfo(this);
+#else
 	iLayers[1] = new (ELeave) CMapLayerDebugInfo(this);
+#endif
 	
 	// Create a window for this application view
 	CreateWindowL();

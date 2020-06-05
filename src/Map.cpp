@@ -280,6 +280,71 @@ void MImageReaderObserver::OnImageReadingFailed(TInt /*aErr*/)
 	}
 
 
+#if DISPLAY_TILE_BORDER_AND_XYZ
+
+// CTileBorderAndNumbersLayer
+
+CTileBorderAndXYZLayer::CTileBorderAndXYZLayer(CS60MapsAppView* aMapView) :
+		CMapLayerBase(aMapView)
+	{
+	}
+	
+void CTileBorderAndXYZLayer::Draw(CWindowGc &aGc)
+	{
+	RArray<TTile> tiles(10);
+	VisibleTiles(tiles);
+	for (TInt idx = 0; idx < tiles.Count(); idx++)
+		DrawTile(aGc, tiles[idx]);
+	
+	tiles.Close();
+	}
+
+void CTileBorderAndXYZLayer::VisibleTiles(RArray<TTile> &aTiles)
+	{
+	TTile topLeftTile, bottomRightTile;
+	iMapView->Bounds(topLeftTile, bottomRightTile);
+	TUint x, y;
+	for (y = topLeftTile.iY; y <= bottomRightTile.iY; y++)
+		{
+		for (x = topLeftTile.iX; x <= bottomRightTile.iX; x++)
+			{
+			TTile tile;
+			tile.iX = x;
+			tile.iY = y;
+			tile.iZ = iMapView->GetZoom();
+			aTiles.Append/*L*/(tile); // ToDo: Check error code
+			}
+		}
+	aTiles.Compress();
+	}
+
+void CTileBorderAndXYZLayer::DrawTile(CWindowGc &aGc, const TTile &aTile)
+	{
+	// Calculate tile position
+	TCoordinate coord = MapMath::TileToGeoCoords(aTile, iMapView->GetZoom());
+	TPoint point = iMapView->GeoCoordsToScreenCoords(coord);
+	TRect rect(TSize(256, 256));
+	rect.Move(point);
+	
+	// Draw tile boundary
+	aGc.SetPenColor(KRgbDarkBlue);
+	aGc.SetPenStyle(CGraphicsContext::EDottedPen);
+	aGc.SetPenSize(TSize(1, 1));
+	aGc.SetBrushStyle(CGraphicsContext::ENullBrush);
+	aGc.DrawRect(rect);
+	
+	// Draw tile numbers
+	_LIT(KTextFormat, "x=%d y=%d z=%d");
+	TBuf<30> buff;
+	buff.Format(KTextFormat, aTile.iX, aTile.iY, aTile.iZ);
+	const CFont* font = CEikonEnv::Static()->SymbolFont();
+	aGc.UseFont(font);
+	TInt baseline = rect.Height() / 2 + font->AscentInPixels() / 2;
+	aGc.DrawText(buff, rect, baseline, CGraphicsContext::ECenter);
+	aGc.DiscardFont();
+	}
+#endif
+
 // CTileBitmapManager
 
 CTileBitmapManager::CTileBitmapManager(MTileBitmapManagerObserver *aObserver,
@@ -449,10 +514,6 @@ void CTileBitmapManager::RunL()
 		CTileBitmapManagerItem* item = Find(iLoadingTile);
 		__ASSERT_DEBUG(item != NULL, Panic(ES60MapsTileBitmapManagerItemNotFoundPanic));
 		__ASSERT_DEBUG(item->Bitmap() != NULL, Panic(ES60MapsTileBitmapIsNullPanic));
-		
-#ifdef _DEBUG
-		item->DrawTileBorderAndNumbersL();
-#endif
 		
 		item->SetReady();
 		
@@ -687,45 +748,6 @@ void CTileBitmapManagerItem::ConstructL()
 	{
 	// Second phase construction is not used at the moment
 	}
-
-#ifdef _DEBUG
-void CTileBitmapManagerItem::DrawTileBorderAndNumbersL()
-	{
-	//LOG(_L8("Start drawing bitmap of %S"), &iTile.AsDes8());
-	
-	CreateBitmapIfNotExistL();
-	
-	CFbsBitmapDevice* bdev = CFbsBitmapDevice::NewL(iBitmap);
-	CleanupStack::PushL(bdev);
-	
-	CFbsBitGc* bgc = CFbsBitGc::NewL();
-	CleanupStack::PushL(bgc);	
-	bgc->Activate(bdev);
-	
-	TRect rect = TRect(iBitmap->SizeInPixels());
-	
-	// Draw tiles`s boundary
-	bgc->SetPenColor(KRgbDarkBlue);
-	bgc->SetPenStyle(CGraphicsContext::EDottedPen);
-	bgc->SetPenSize(TSize(1, 1));
-	bgc->SetBrushStyle(CGraphicsContext::ENullBrush);
-	bgc->DrawRect(rect);
-	
-	// Draw tile`s numbers
-	_LIT(KTextFormat, "x=%d y=%d z=%d");
-	TBuf<30> buff;
-	buff.Format(KTextFormat, iTile.iX, iTile.iY, iTile.iZ);
-	const CFont* font = CEikonEnv::Static()->SymbolFont();
-	bgc->UseFont(font);
-	TInt baseline = rect.Height() / 2 + font->AscentInPixels() / 2;
-	bgc->DrawText(buff, rect, baseline, CGraphicsContext::ECenter);
-	bgc->DiscardFont();
-	
-	CleanupStack::PopAndDestroy(2, bdev);
-	
-	//LOG(_L8("End drawing bitmap of %S"), &iTile.AsDes8());
-	}
-#endif
 
 void CTileBitmapManagerItem::CreateBitmapIfNotExistL()
 	{
