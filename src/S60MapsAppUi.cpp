@@ -169,7 +169,7 @@ void CS60MapsAppUi::HandleCommandL(TInt aCommand)
 			buff.CleanupClosePushL();
 			buff.Zero();
 			buff.Append(*msg);
-			buff.AppendFormat(*gitMsg, &KGITCommit, &KGITBranch);
+			buff.AppendFormat(*gitMsg, &KGITBranch, &KGITCommit);
 			dlg->SetMessageTextL(buff);
 			CleanupStack::PopAndDestroy(3, msg);
 			dlg->RunLD();

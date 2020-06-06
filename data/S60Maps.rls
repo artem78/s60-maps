@@ -31,10 +31,10 @@
 
 #define qtn_about_dialog_title "About"
 
-#define qtn_about_dialog_text "S60Maps Version 0.1.0\n\nBuild: " __DATE__ " " __TIME__ "\n\nAuthor: artem78\n\nSupport: megabyte1024@ya.ru\n\n(c) "
+#define qtn_about_dialog_text "S60Maps Version 0.9.0-beta\nBuild: " __DATE__ " " __TIME__ "\nAuthor: artem78 (megabyte1024@ya.ru)\nWeb: https://github.com/artem78/s60-maps"
 
 //#ifdef _DEBUG
-#define qtn_about_dialog_git_text "\n\nGit: commit %S (branch %S)\n\n"
+#define qtn_about_dialog_git_text "\nGit: %S %S"
 //#endif
 
 #define qtn_confirm_exit_dialog_title "Confirm exit"
