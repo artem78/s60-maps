@@ -1,7 +1,29 @@
 # S60Maps
 
-Simple maps for Symbian OS. Show OpenStreetMap and your location.
+Simple map for Symbian 9.X.
 
 ![](images/moving_animation.gif)
 
-***ToDo: Write more info...***
+## Features
+* Show map from default [OpenStreetMap](https://www.openstreetmap.org/) layer
+* Retrieve phone location using internal GPS
+
+## Keys
+* Move: `arrows` or `2`, `4`, `6`, `8`
+* Zoom: `1` and `3`
+
+## Download
+Download and install `sis` or `sisx` package from [release page](../../../releases/latest/).
+
+## Task list
+- [ ] Add support for other map layers/services (like OSM bicycle, OSM humanitarian, OpenTopoMap, etc...) and add ability to define custom providing tile\`s URLs
+- [ ] Update old cached tiles
+
+## Testing
+Tested on:
+* Nokia N95 8GB
+
+If you can test it works (or not) on other phones, let me know.
+
+## License
+[GNU GPL v3.0](/LICENSE.txt)
