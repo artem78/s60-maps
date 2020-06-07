@@ -55,7 +55,7 @@ TTileReal MapMath::GeoCoordsToTileReal(const TCoordinate &aCoord, TZoom aZoom)
 	// (int)(floor((lon + 180.0) / 360.0 * (1 << z))); 
 	tile.iX = (aCoord.Longitude() + 180.0) / 360.0 * (1 << aZoom);
 	
-    //double latrad = lat * M_PI/180.0;
+	//double latrad = lat * M_PI/180.0;
 	//return (int)(floor((1.0 - asinh(tan(latrad)) / M_PI) / 2.0 * (1 << z)));
 	//TReal latrad = aCoord.Latitude() * KPi;
 	//tile.iY = (TUint) (1.0 - asinh(tan(latrad)) / KPi) / 2.0 * (1 << aZoom));

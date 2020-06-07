@@ -41,13 +41,13 @@ public:
 	TUint32 iY;
 	TZoom iZ;
 	
-    friend TBool operator== (const TTile &aTile1, const TTile &aTile2);
-    friend TBool operator!= (const TTile &aTile1, const TTile &aTile2);
-    
-    void AsDes(TDes &aDes) const;
-    void AsDes(TDes8 &aDes) const;
-    const TBufC<32> AsDes() const;
-    const TBufC8<32> AsDes8() const;
+	friend TBool operator== (const TTile &aTile1, const TTile &aTile2);
+	friend TBool operator!= (const TTile &aTile1, const TTile &aTile2);
+	
+	void AsDes(TDes &aDes) const;
+	void AsDes(TDes8 &aDes) const;
+	const TBufC<32> AsDes() const;
+	const TBufC8<32> AsDes8() const;
 	};
 
 class TTileReal
