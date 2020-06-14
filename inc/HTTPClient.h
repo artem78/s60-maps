@@ -64,6 +64,8 @@ class MHTTPClientObserver : public MHTTPTransactionCallback
 	{
 	// Inherited from MHTTPTransactionCallback
 private:
+	TInt iLastError;
+	
 	virtual void MHFRunL(RHTTPTransaction aTransaction,
 			const THTTPEvent& aEvent);
 	virtual TInt MHFRunError(TInt aError, RHTTPTransaction aTransaction,
@@ -74,6 +76,7 @@ public:
 	virtual void OnHTTPResponseDataChunkRecieved(const RHTTPTransaction aTransaction,
 			const TDesC8 &aDataChunk, TInt anOverallDataSize, TBool anIsLastChunk) = 0;
 	virtual void OnHTTPResponse(const RHTTPTransaction aTransaction) = 0;
+	// @param aError Code of the last error. Equals to 0 if it is HTTP error (ex: 404 Not Found).
 	virtual void OnHTTPError(TInt aError, const RHTTPTransaction aTransaction) /*= 0*/;
 	virtual void OnHTTPHeadersRecieved(const RHTTPTransaction aTransaction) = 0;
 	};

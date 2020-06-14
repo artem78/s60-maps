@@ -103,7 +103,7 @@ void CHTTPClient::SendRequestL(THTTPMethod aMethod, const TDesC8 &aUrl)
 	}
 
 void MHTTPClientObserver::MHFRunL(RHTTPTransaction aTransaction, const THTTPEvent &aEvent)
-	{	
+	{
 	switch (aEvent.iStatus)
 		{
 		case THTTPEvent::EGotResponseHeaders:
@@ -143,7 +143,8 @@ void MHTTPClientObserver::MHFRunL(RHTTPTransaction aTransaction, const THTTPEven
 			
 		case THTTPEvent::EFailed:
 			{
-			OnHTTPError(aEvent.iStatus, aTransaction);
+			OnHTTPError(iLastError, aTransaction);
+			iLastError = 0; // Reset last error code
 			aTransaction.Close();
 			} 
 			break;
@@ -156,6 +157,8 @@ void MHTTPClientObserver::MHFRunL(RHTTPTransaction aTransaction, const THTTPEven
 			
 		default:
 			{
+			iLastError = aEvent.iStatus;
+			
 			if (aEvent.iStatus < 0) // Any error
 				{
 				//OnHTTPError(aEvent.iStatus, aTransaction);
