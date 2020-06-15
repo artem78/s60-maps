@@ -511,6 +511,9 @@ CTileBitmapManagerItem* CTileBitmapManager::Find(const TTile &aTile) const
 
 void CTileBitmapManager::StartDownloadTileL(const TTile &aTile)
 	{
+	if (iIsOfflineMode)
+		return;
+	
 	if (iState != /*TProcessingState::*/EIdle)
 		return;
 	
@@ -651,13 +654,28 @@ void CTileBitmapManager::OnHTTPError(TInt aError,
 	iImgDecoder->Reset();
 	iState = /*TProcessingState::*/EIdle;
 	
-	// Start download next tile in queue
-	if (iItemsLoadingQueue.Count())
+	
+	if (aError == -3) // ToDo: "magic" number - find constant for it
 		{
-		TTile tile = iItemsLoadingQueue[0]; 
-		iItemsLoadingQueue.Remove(0);
+		// If access point not provoded switch to offline mode
 		
-		StartDownloadTileL(tile);
+		// FixMe: Access point choosing dialog appears several times in a row
+		// (in my case: 2 in emulator, 5-6 on the phone) and only after that
+		// we can catch cancel in this callback
+		iIsOfflineMode = ETrue;
+		LOG(_L8("Switched to Offline Mode"));
+		iItemsLoadingQueue.Reset(); // Clear queue of loading tiles
+		}
+	else
+		{	
+		// Start download next tile in queue
+		if (iItemsLoadingQueue.Count())
+			{
+			TTile tile = iItemsLoadingQueue[0]; 
+			iItemsLoadingQueue.Remove(0);
+			
+			StartDownloadTileL(tile);
+			}
 		}
 	}
 void CTileBitmapManager::OnHTTPHeadersRecieved(

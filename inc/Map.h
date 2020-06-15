@@ -252,6 +252,7 @@ private:
 	CBufferedImageDecoder* iImgDecoder;
 	RFs iFs;
 	TTile iLoadingTile;
+	TBool iIsOfflineMode;
 	
 	// @return Pointer to CTileBitmapManagerItem object or NULL if not found
 	CTileBitmapManagerItem* Find(const TTile &aTile) const;
