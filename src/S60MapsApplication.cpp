@@ -65,12 +65,9 @@ void CS60MapsApplication::DataDir(TFileName &aDataDir) const
 
 void CS60MapsApplication::RelPathToAbsFromDataDir(const TDesC &aRelPath, TFileName &anAbsPath) const
 	{
-	TFileName dataDir;
-	DataDir(dataDir);
+	DataDir(anAbsPath);
+	anAbsPath.Append(aRelPath);
 	
-	TParse /*TParsePtrC*/ parser;
-	parser.Set/*NoWild*/(aRelPath, NULL, &dataDir);
-	anAbsPath.Copy(parser.FullName());
 	//LOG(_L8("%S --> %S"), &aRelPath, &anAbsPath);
 	}
 
@@ -78,12 +75,8 @@ void CS60MapsApplication::CacheDir(TFileName &aCacheDir) const
 	{
 	// ToDo: Make sure this directory already has been created
 	
-	_LIT(KCacheDirRel, "cache\\_PAlbTN");
-	// ToDo: Fix RelPathToAbsFromDataDir
-	//RelPathToAbsFromDataDir(KCacheDirRel, aCacheDir);
-	DataDir(aCacheDir);
-	aCacheDir.Append(KCacheDirRel);
-	aCacheDir.Append(KPathDelimiter);
+	_LIT(KCacheDirRel, "cache\\_PAlbTN\\");
+	RelPathToAbsFromDataDir(KCacheDirRel, aCacheDir);
 	}
 
 // End of File
