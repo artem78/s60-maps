@@ -78,8 +78,11 @@ void CS60MapsApplication::CacheDir(TFileName &aCacheDir) const
 	{
 	// ToDo: Make sure this directory already has been created
 	
-	_LIT(KCacheDirRel, "cache");
-	RelPathToAbsFromDataDir(KCacheDirRel, aCacheDir);
+	_LIT(KCacheDirRel, "cache\\_PAlbTN");
+	// ToDo: Fix RelPathToAbsFromDataDir
+	//RelPathToAbsFromDataDir(KCacheDirRel, aCacheDir);
+	DataDir(aCacheDir);
+	aCacheDir.Append(KCacheDirRel);
 	aCacheDir.Append(KPathDelimiter);
 	}
 
