@@ -15,6 +15,12 @@
 #include <f32file.h>
 #include "Positioning.h"
 
+// For media keys handling
+#include <remconcoreapitargetobserver.h>
+#include <remconcoreapitarget.h>
+#include <remconinterfaceselector.h>
+
+
 // FORWARD DECLARATIONS
 class CS60MapsAppView;
 
@@ -24,7 +30,8 @@ class CS60MapsAppView;
  * Interacts with the user through the UI and request message processing
  * from the handler class
  */
-class CS60MapsAppUi : public CAknAppUi, public MFileManObserver, public MPositionListener
+class CS60MapsAppUi : public CAknAppUi, public MFileManObserver,
+		public MPositionListener, public MRemConCoreApiTargetObserver
 	{
 public:
 	// Constructors and destructor
@@ -101,10 +108,18 @@ public:
 	void OnPositionLost();
 	void OnPositionError(TInt aErrCode);
 	
+	// MRemConCoreApiTargetObserver
+public:
+	void MrccatoCommand(TRemConCoreApiOperationId aOperationId,
+			TRemConCoreApiButtonAction aButtonAct);
+	
 	// Custom properties and methods
 private:
 	CFileMan* iFileMan;
 	CPositionRequestor* iPosRequestor;
+	
+	CRemConInterfaceSelector* iInterfaceSelector;
+	CRemConCoreApiTarget* iCoreTarget;
 	
 	void ClearTilesCache();
 	};

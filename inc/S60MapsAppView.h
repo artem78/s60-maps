@@ -132,8 +132,10 @@ public:
 	void Move(TReal64 aLat, TReal64 aLon, TZoom aZoom);
 private:
 	void SetZoom(TZoom aZoom);
+public:
 	void ZoomIn();
 	void ZoomOut();
+private:
 	void MoveUp(	TUint aPixels = KMapDefaultMoveStep);
 	void MoveDown(	TUint aPixels = KMapDefaultMoveStep);
 	void MoveLeft(	TUint aPixels = KMapDefaultMoveStep);

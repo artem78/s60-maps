@@ -59,6 +59,11 @@ void CS60MapsAppUi::ConstructL()
 	iPosRequestor = CPositionRequestor::NewL(this, KPosRequestorName);
 	iPosRequestor->Start(); // Must be started after view created
 	
+	// Media keys catching
+	iInterfaceSelector = CRemConInterfaceSelector::NewL();
+	iCoreTarget = CRemConCoreApiTarget::NewL(*iInterfaceSelector, *this);
+	iInterfaceSelector->OpenTargetL();
+	
 	// Make fullscreen
 	SetFullScreenApp(ETrue); // Seems no effect
 	StatusPane()->MakeVisible(EFalse); // ToDo: Why if call it before creating
@@ -83,6 +88,12 @@ CS60MapsAppUi::CS60MapsAppUi()
 //
 CS60MapsAppUi::~CS60MapsAppUi()
 	{
+	//delete iCoreTarget;
+	/* Panic KERN-EXEC 3 - Seems that there are no need to manually destroy core target,
+	 because interface selector brings ownership and will delete target by itself. */
+	
+	delete iInterfaceSelector;
+	
 	delete iPosRequestor;
 	
 	if (iAppView)
@@ -307,6 +318,41 @@ void CS60MapsAppUi::OnPositionLost()
 void CS60MapsAppUi::OnPositionError(TInt /*aErrCode*/)
 	{
 	
+	}
+
+void CS60MapsAppUi::MrccatoCommand(TRemConCoreApiOperationId aOperationId,
+		TRemConCoreApiButtonAction aButtonAct)
+	{
+	//TRequestStatus status;
+	
+	if (aButtonAct == ERemConCoreApiButtonClick)
+		{
+		switch (aOperationId)
+			{
+			case ERemConCoreApiVolumeUp:
+				{
+				//LOG(_L8("VolumeUp pressed\n"));
+				iAppView->ZoomIn();
+				
+				/*iCoreTarget->VolumeUpResponse(status, KErrNone);
+				User::WaitForRequest(status);*/
+				}
+			break;
+			
+			case ERemConCoreApiVolumeDown:
+				{
+				//LOG(_L8("VolumeDown pressed\n"));
+				iAppView->ZoomOut();
+				
+				/*iCoreTarget->VolumeDownResponse(status, KErrNone);
+				User::WaitForRequest(status);*/
+				}
+			break;
+			
+			default:
+			break;
+			}
+		}
 	}
 
 

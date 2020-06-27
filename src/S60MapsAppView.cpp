@@ -214,7 +214,6 @@ TKeyResponse CS60MapsAppView::OfferKeyEventL(const TKeyEvent &aKeyEvent,
 				//break;
 				}
 				
-			case EStdKeyIncVolume:
 			case 51: // ToDo: Replace number to constant
 				{
 				ZoomIn();
@@ -222,7 +221,6 @@ TKeyResponse CS60MapsAppView::OfferKeyEventL(const TKeyEvent &aKeyEvent,
 				//break;
 				}
 				
-			case EStdKeyDecVolume:
 			case 49: // ToDo: Replace number to constant
 				{
 				ZoomOut();

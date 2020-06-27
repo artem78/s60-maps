@@ -52,7 +52,7 @@ LIBRARY		   commonengine.lib
 LIBRARY		   efsrv.lib 
 LIBRARY		   estor.lib
 LIBRARY        aknnotify.lib
-LIBRARY        hlplch.lib lbs.lib gdi.lib imageconversion.lib fbscli.lib bitgdi.lib http.lib bafl.lib inetprotutil.lib
+LIBRARY        hlplch.lib lbs.lib gdi.lib imageconversion.lib fbscli.lib bitgdi.lib http.lib bafl.lib inetprotutil.lib remconcoreapi.lib remconinterfacebase.lib
  
 
 LANG SC
