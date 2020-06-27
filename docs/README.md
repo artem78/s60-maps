@@ -10,7 +10,7 @@ Simple map for Symbian 9.X.
 
 ## Keys
 * Move: `arrows` or `2`, `4`, `6`, `8`
-* Zoom: `1` and `3`
+* Zoom: `1` and `3` or volume keys
 
 ## Download
 Download and install `sis` or `sisx` package from [release page](../../../releases/latest/).
