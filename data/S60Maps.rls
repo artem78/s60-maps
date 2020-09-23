@@ -31,7 +31,7 @@
 
 #define qtn_about_dialog_title "About"
 
-#define qtn_about_dialog_text "S60Maps Version 0.9.0-beta\nBuild: " __DATE__ " " __TIME__ "\nAuthor: artem78 (megabyte1024@ya.ru)\nWeb: https://github.com/artem78/s60-maps"
+#define qtn_about_dialog_text "S60Maps Version 0.9.0-beta\nBuild: " __DATE__ " " __TIME__ "\nAuthor: artem78 (megabyte1024@ya.ru)\nWeb: https://github.com/artem78/s60-maps\nThanks to:\n   baranovskiykonstantin"
 
 //#ifdef _DEBUG
 #define qtn_about_dialog_git_text "\nGit: %S %S"
