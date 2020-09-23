@@ -26,6 +26,16 @@ const TUint KMapDefaultMoveStep = 20; // In pixels
 class CS60MapsAppView : public CCoeControl
 	{
 public:
+	enum S60MapsMovement
+		{
+		EMoveNone,
+		EMoveUp,
+		EMoveDown,
+		EMoveLeft,
+		EMoveRight
+		};
+
+public:
 	// New methods
 
 	/**
@@ -81,7 +91,7 @@ public:
 	 * it will not be called in SDKs without Touch support.
 	 * @param aPointerEvent the information about this event
 	 */
-	//virtual void HandlePointerEventL(const TPointerEvent& aPointerEvent);
+	/*virtual*/ void HandlePointerEventL(const TPointerEvent& aPointerEvent);
 	
 	/*virtual*/ TKeyResponse OfferKeyEventL(const TKeyEvent &aKeyEvent,
 			TEventCode aType);
@@ -123,6 +133,20 @@ private:
 	TCoordinate iUserPosition;
 	TBool iIsUserPositionRecieved;
 	TBool iIsFollowUser;
+
+	/*
+	 * iPointerDownPosition
+	 * is used to distinguish touchings
+	 * from swipes.
+	 */
+	TPoint iPointerDownPosition;
+	/*
+	 * iMovement, iMovementRepeater
+	 * are used to repeat the movement
+	 * at long touching (holding).
+	 */
+	S60MapsMovement iMovement;
+	CPeriodic* iMovementRepeater;
 	
 	void Move(const TPoint &aPoint, TBool savePos = ETrue); // Used by all another Move methods
 public:
@@ -130,6 +154,10 @@ public:
 	void Move(const TCoordinate &aPos, TZoom aZoom);
 	void Move(TReal64 aLat, TReal64 aLon);
 	void Move(TReal64 aLat, TReal64 aLon, TZoom aZoom);
+
+	static TInt MovementRepeaterCallback(TAny* aObject);
+	void ExecuteMovement();
+
 private:
 	void SetZoom(TZoom aZoom);
 public:

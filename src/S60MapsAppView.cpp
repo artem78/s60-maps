@@ -12,11 +12,13 @@
 #include "S60MapsAppView.h"
 #include <e32math.h>
 #include "Defs.h"
+#include <aknappui.h> 
 
 // Constants
 const TZoom KMinZoomLevel = /*0*/ 1;
 const TZoom KMaxZoomLevel = 19;	// Note: 19 for default osm layer.
 								// Other layers often have max 18 level.
+const TInt KMovementRepeaterInterval = 200000;
 
 // ============================ MEMBER FUNCTIONS ===============================
 
@@ -64,6 +66,9 @@ void CS60MapsAppView::ConstructL(const TRect& aRect, const TCoordinate &aInitial
 	iLayers[1] = new (ELeave) CUserPositionLayer(this);
 	iLayers[2] = new (ELeave) CMapLayerDebugInfo(this);
 #endif
+
+	// Periodic timer for repeating the movement at holding (touch interface)
+	iMovementRepeater = CPeriodic::NewL(0); // neutral priority
 	
 	// Create a window for this application view
 	CreateWindowL();
@@ -99,6 +104,10 @@ CS60MapsAppView::~CS60MapsAppView()
 	{
 	// Destroy all layers
 	iLayers.DeleteAll();
+
+	iMovementRepeater->Cancel();
+	delete iMovementRepeater;
+	iMovementRepeater = NULL;
 	}
 
 void CS60MapsAppView::ExternalizeL(RWriteStream &aStream) const
@@ -164,12 +173,123 @@ void CS60MapsAppView::SizeChanged()
 // it will not be called in SDKs without Touch support.
 // -----------------------------------------------------------------------------
 //
-/*void CS60MapsAppView::HandlePointerEventL(const TPointerEvent& aPointerEvent)
+void CS60MapsAppView::HandlePointerEventL(const TPointerEvent& aPointerEvent)
 	{
+	const TInt KSwipingThreshold = 100; // px
+	const TInt KTouchingThreshold = 15; // px
+
+	if (aPointerEvent.iType == TPointerEvent::EButton1Down)
+		{
+		iMovementRepeater->Cancel();
+		iPointerDownPosition = aPointerEvent.iPosition;
+		// Request drag events
+		Window().PointerFilter(EPointerFilterDrag, 0);
+
+		/*
+		 * +---------------------+ 
+		 * |                     |
+		 * |       MoveUp        | 1/4
+		 * |                     |
+		 * +----------+----------+ 
+		 * |          |          |
+		 * |          |          |
+		 * |  Move    |   Move   | 2/4
+		 * |  Left    |   Right  |
+		 * |          |          |
+		 * |          |          |
+		 * +---1/2----+---1/2----+
+		 * |                     |
+		 * |      MoveDown       | 1/4
+		 * |                     |
+		 * +---------------------+
+		 */
+		TRect upRect(Rect());
+		upRect.SetHeight(Size().iHeight / 4);
+		TRect downRect(upRect);
+		downRect.Move(0, Size().iHeight * 3 / 4);
+		TRect leftRect(upRect);
+		leftRect.SetWidth(Size().iWidth / 2);
+		leftRect.SetHeight(Size().iHeight / 2);
+		leftRect.Move(0, Size().iHeight / 4);
+		TRect rightRect(leftRect);
+		rightRect.Move(Size().iWidth / 2, 0);
+		
+		if (upRect.Contains(aPointerEvent.iPosition))
+			{
+			iMovement = EMoveUp;
+			}
+		else if (downRect.Contains(aPointerEvent.iPosition))
+			{
+			iMovement = EMoveDown;
+			}
+		else if (leftRect.Contains(aPointerEvent.iPosition))
+			{
+			iMovement = EMoveLeft;
+			}
+		else if (rightRect.Contains(aPointerEvent.iPosition))
+			{
+			iMovement = EMoveRight;
+			}
+		else
+			{
+			iMovement = EMoveNone;
+			}
+
+		iMovementRepeater->Start(
+				KMovementRepeaterInterval * 2,
+				KMovementRepeaterInterval,
+				TCallBack(MovementRepeaterCallback, this));
+		}
+	else if (aPointerEvent.iType == TPointerEvent::EDrag)
+		{
+		TPoint posDelta = aPointerEvent.iPosition - iPointerDownPosition;
+		if (Max(Abs(posDelta.iX), Abs(posDelta.iY)) > KTouchingThreshold)
+			{
+			iMovementRepeater->Cancel();
+			iMovement = EMoveNone;
+			}
+		}
+	else if (aPointerEvent.iType == TPointerEvent::EButton1Up)
+		{
+		iMovementRepeater->Cancel();
+		// Cancel the request for drag events
+		Window().PointerFilter(EPointerFilterDrag, EPointerFilterDrag);
+
+		TPoint posDelta = aPointerEvent.iPosition - iPointerDownPosition;
+		if (Abs(posDelta.iX) > KSwipingThreshold)
+			{
+			// swiping left/right -> zoom out/in
+			if (posDelta.iX < 0)
+				{
+				ZoomOut();
+				}
+			else
+				{
+				ZoomIn();
+				}
+			}
+		else if (Abs(posDelta.iY) > KSwipingThreshold)
+			{
+			// swiping up/down -> show/hide softkeys
+			if (posDelta.iY < 0)
+				{
+				SetRect(iAvkonAppUi->ClientRect());
+				}
+			else
+				{
+				SetRect(iAvkonAppUi->ApplicationRect());
+				}
+			}
+		else
+			{
+			// touching
+			ExecuteMovement();
+			}
+		}
 
 	// Call base class HandlePointerEventL()
 	CCoeControl::HandlePointerEventL(aPointerEvent);
-	}*/
+	}
 
 TKeyResponse CS60MapsAppView::OfferKeyEventL(const TKeyEvent &aKeyEvent,
 		TEventCode aType)
@@ -474,6 +594,45 @@ void CS60MapsAppView::SetFollowUser(TBool anEnabled)
 			SetZoom(minZoom);
 		}
 	UpdateUserPosition();
+	}
+
+TInt CS60MapsAppView::MovementRepeaterCallback(TAny* aObject)
+	{
+	((CS60MapsAppView*)aObject)->ExecuteMovement();
+	return 1;
+	}
+
+void CS60MapsAppView::ExecuteMovement()
+	{
+	switch(iMovement)
+		{
+		case EMoveUp:
+			{
+			SetFollowUser(EFalse);
+			MoveUp();
+			break;
+			}
+		case EMoveDown:
+			{
+			SetFollowUser(EFalse);
+			MoveDown();
+			break;
+			}
+		case EMoveLeft:
+			{
+			SetFollowUser(EFalse);
+			MoveLeft();
+			break;
+			}
+		case EMoveRight:
+			{
+			SetFollowUser(EFalse);
+			MoveRight();
+			break;
+			}
+		case EMoveNone:
+			break;
+		}
 	}
 
 // End of File

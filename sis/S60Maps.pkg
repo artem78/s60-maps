@@ -21,6 +21,9 @@
 ;Supports Series 60 v 3.0
 [0x101F7961], 0, 0, 0, {"Series60ProductID"}
 
+;Supports Series 60 v 5.0
+[0x1028315F], 0, 0, 0, {"Series60ProductID"}
+
 ;Files to install
 ;You should change the source paths to match that of your environment
 ;<source> <destination>
