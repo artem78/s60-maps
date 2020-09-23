@@ -14,6 +14,7 @@
 #include "S60MapsApplication.h"
 #include <eikenv.h>
 #include "Logger.h"
+#include <bautils.h>
 
 // ============================ MEMBER FUNCTIONS ===============================
 
@@ -54,6 +55,9 @@ void CS60MapsDocument::ConstructL()
 	_LIT(KLogFileName, "log.txt");
 	TFileName logFilePath;
 	static_cast<CS60MapsApplication *>(Application())->RelPathToAbsFromDataDir(KLogFileName, logFilePath);
+	TParse pathParser;
+	pathParser.Set(logFilePath, NULL, NULL);
+	BaflUtils::EnsurePathExistsL(CEikonEnv::Static()->FsSession(), pathParser.DriveAndPath());
 	iLogFile.Replace(CEikonEnv::Static()->FsSession(), logFilePath, EFileWrite);
 	LOG_CONFIGURE(iLogFile);
 	LOG(_L8("Log started"));
