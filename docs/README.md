@@ -1,6 +1,6 @@
 # S60Maps
 
-Simple map for Symbian 9.X.
+Simple map for Symbian phones. Supports s60v3 and s60v5.
 
 ![](images/moving_animation.gif)
 
@@ -8,9 +8,18 @@ Simple map for Symbian 9.X.
 * Show map from default [OpenStreetMap](https://www.openstreetmap.org/) layer
 * Retrieve phone location using internal GPS
 
-## Keys
+## Controls
+
+### Keys
 * Move: `arrows` or `2`, `4`, `6`, `8`
 * Zoom: `1` and `3` or volume keys
+
+### Touchscreen
+* Touch top/bottom/left/right side of the screen
+to move up/down/left/right
+* Touch and hold to move continuously
+* Swipe left/right to zoom out/in
+* Swipe up/down to show/hide softkeys (Options | Exit)
 
 ## Download
 Download and install `sis` or `sisx` package from [release page](../../../releases/latest/).
@@ -24,6 +33,7 @@ Must be signed or installed on unlocked phone.
 ## Testing
 Tested on:
 * Nokia N95 8GB
+* Nokia 5530 XM (thanks to [baranovskiykonstantin](https://github.com/baranovskiykonstantin))
 
 If you can test it works (or not) on other s60-based phones, let me know.
 
