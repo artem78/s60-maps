@@ -16,6 +16,7 @@
 #include "S60Maps.pan"
 #include "S60MapsAppUi.h"
 #include "S60MapsApplication.h"
+#include <bautils.h>
 
 CMapLayerBase::CMapLayerBase(/*const*/ CS60MapsAppView* aMapView) :
 		iMapView(aMapView)
@@ -473,7 +474,7 @@ void CTileBitmapManager::AddToLoading(const TTile &aTile)
 	if (iState == EIdle)
 		{
 		// Try to find on disk first
-		if (IsTileFileExist(aTile))
+		if (IsTileFileExists(aTile))
 			{
 			item->CreateBitmapIfNotExistL();
 			LoadBitmapL(aTile, item->Bitmap());
@@ -724,19 +725,11 @@ void CTileBitmapManager::LoadBitmapL(const TTile &aTile, CFbsBitmap *aBitmap)
 	LOG(_L8("Bitmap for %S sucessfully loaded from file \"%S\""), &aTile.AsDes8(), &tileFileName);
 	}
 
-TBool CTileBitmapManager::IsTileFileExist(const TTile &aTile) /*const*/
+TBool CTileBitmapManager::IsTileFileExists(const TTile &aTile) /*const*/
 	{
 	TFileName tileFileName;
 	TileFileName(aTile, tileFileName);
-	
-	// ToDo: Can we make this check without opening file?
-	
-	RFile file;
-	TInt r = file.Open(iFs, tileFileName, EFileRead);
-	if (r == KErrNone)
-		file.Close();
-	
-	return r == KErrNone;
+	return BaflUtils::FileExists(iFs, tileFileName);
 	}
 
 void CTileBitmapManager::TileFileName(const TTile &aTile, TFileName &aFileName) const

@@ -265,7 +265,7 @@ private:
 	void LoadBitmapL(const TTile &aTile, CFbsBitmap *aBitmap) /*const*/;
 	
 	void TileFileName(const TTile &aTile, TFileName &aFileName) const;
-	TBool IsTileFileExist(const TTile &aTile) /*const*/;
+	TBool IsTileFileExists(const TTile &aTile) /*const*/;
 	
 public:
 	// @return Error codes: KErrNotFound, KErrNotReady or KErrNone
