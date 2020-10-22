@@ -39,9 +39,9 @@ END //RESOURCE
 
 
 USERINCLUDE	   ..\inc
-USERINCLUDE    ..\help ..\modules\Positioning
+USERINCLUDE    ..\help ..\modules\Logger ..\modules\Positioning
 
-SYSTEMINCLUDE	 \epoc32\include ..\modules\Logger
+SYSTEMINCLUDE	 \epoc32\include
 
 LIBRARY		   euser.lib
 LIBRARY		   apparc.lib
