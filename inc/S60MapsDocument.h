@@ -18,6 +18,7 @@
 
 // INCLUDES
 #include <akndoc.h>
+#include "Logger.h"
 
 // FORWARD DECLARATIONS
 class CS60MapsAppUi;
@@ -107,6 +108,7 @@ public:
 private:
 #if LOGGING_ENABLED
 	RFile iLogFile;
+	CLogger* iLogger;
 #endif
 
 	};

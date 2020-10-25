@@ -13,7 +13,6 @@
 #include <e32base.h>
 #include "S60MapsApplication.h"
 #include <eikenv.h>
-#include "Logger.h"
 #include <bautils.h>
 
 // ============================ MEMBER FUNCTIONS ===============================
@@ -59,7 +58,7 @@ void CS60MapsDocument::ConstructL()
 	pathParser.Set(logFilePath, NULL, NULL);
 	BaflUtils::EnsurePathExistsL(CEikonEnv::Static()->FsSession(), pathParser.DriveAndPath());
 	iLogFile.Replace(CEikonEnv::Static()->FsSession(), logFilePath, EFileWrite);
-	LOG_CONFIGURE(iLogFile);
+	iLogger = CLogger::NewL(iLogFile, CLogger::ELevelAll, CLogger::EUtf8);
 	LOG(_L8("Log started"));
 #endif
 	}
@@ -84,6 +83,7 @@ CS60MapsDocument::~CS60MapsDocument()
 	{
 #if LOGGING_ENABLED
 	LOG(_L8("Log ended"));
+	delete iLogger;
 	iLogFile.Close();
 #endif
 	}
