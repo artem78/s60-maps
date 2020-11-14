@@ -367,7 +367,7 @@ void CS60MapsAppView::Move(const TPoint &aPoint, TBool aSavePos)
 		
 		TReal tmp;
 		Math::Pow(tmp, 2, iZoom);
-		TInt maxXY = 256 * (int) tmp - 1;
+		TInt maxXY = KTileSize * (int) tmp - 1;
 		//TRect mapRect;
 		//mapRect.SetSize(TSize(maxXY, maxXY));
 		

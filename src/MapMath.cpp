@@ -5,11 +5,15 @@
  *      Author: user
  */
 
-// ToDo: Define constants
 // Formulas source: https://wiki.openstreetmap.org/wiki/Zoom_levels
 
 #include "MapMath.h"
 #include <e32math.h>
+
+
+// Constants
+const TReal KEquatorLength = 40075016.686; // Equatorial circumference of the Earth in meters
+
 
 void MapMath::PixelsToMeters(const TReal64 &aLatitude, TZoom aZoom, TUint aPixels,
 			TReal32 &aHorizontalDistance, TReal32 &aVerticalDistance)
@@ -21,8 +25,8 @@ void MapMath::PixelsToMeters(const TReal64 &aLatitude, TZoom aZoom, TUint aPixel
 	//TInt p = 2 ** (aZoom + 8);
 	TReal p;
 	Math::Pow(p, 2, aZoom + 8);
-	aHorizontalDistance =	aPixels * 40075016.686 / p;	
-	aVerticalDistance =		aPixels * 40075016.686 * c / p;
+	aHorizontalDistance =	aPixels * KEquatorLength / p;	
+	aVerticalDistance =		aPixels * KEquatorLength * c / p;
 	}
 
 void MapMath::PixelsToDegrees(const TReal64 &aLatitude, TZoom aZoom, TUint aPixels,
@@ -31,8 +35,8 @@ void MapMath::PixelsToDegrees(const TReal64 &aLatitude, TZoom aZoom, TUint aPixe
 	TReal32 horizontalDistance;
 	TReal32 verticalDistance;
 	PixelsToMeters(aLatitude, aZoom, aPixels, horizontalDistance, verticalDistance);
-	aHorizontalAngle =	horizontalDistance / (40075696.0 / 360.0);
-	aVerticalAngle =	verticalDistance   / (40075696.0 / 360.0);
+	aHorizontalAngle =	horizontalDistance / (KEquatorLength / 360.0);
+	aVerticalAngle =	verticalDistance   / (KEquatorLength / 360.0);
 	}
 
 TTile MapMath::GeoCoordsToTile(const TCoordinate &aCoord, TZoom aZoom)
@@ -97,7 +101,7 @@ TCoordinate MapMath::TileToGeoCoords(const TTileReal &aTile, TZoom aZoom)
 	Math::Exp(ne, -n);
 	TReal64 at;
 	Math::ATan(at, 0.5 * (pe - ne));
-	TReal64 lat = 180.0 / KPi * at;
+	TReal64 lat = KRadToDeg * at;
 	coord.SetCoordinate(lat, lon);
 	return coord;	
 	}
@@ -115,9 +119,9 @@ TPoint MapMath::GeoCoordsToProjectionPoint(const TCoordinate &aCoord, TZoom aZoo
 	{
 	TTileReal tileReal = GeoCoordsToTileReal(aCoord, aZoom);
 	TReal x, y;
-	x = tileReal.iX * 256;
+	x = tileReal.iX * KTileSize;
 	Math::Round(x, x, 0);
-	y = tileReal.iY * 256;
+	y = tileReal.iY * KTileSize;
 	Math::Round(y, y, 0);
 	return TPoint(x, y);
 	}
@@ -125,8 +129,8 @@ TPoint MapMath::GeoCoordsToProjectionPoint(const TCoordinate &aCoord, TZoom aZoo
 TCoordinate MapMath::ProjectionPointToGeoCoords(const TPoint &aPoint, TZoom aZoom)
 	{
 	TTileReal tileReal;
-	tileReal.iX = aPoint.iX / 256.0;
-	tileReal.iY = aPoint.iY / 256.0;
+	tileReal.iX = aPoint.iX / TReal(KTileSize);
+	tileReal.iY = aPoint.iY / TReal(KTileSize);
 	tileReal.iZ = aZoom;
 	return TileToGeoCoords(tileReal, aZoom);
 	}
@@ -134,8 +138,8 @@ TCoordinate MapMath::ProjectionPointToGeoCoords(const TPoint &aPoint, TZoom aZoo
 TTile MapMath::ProjectionPointToTile(const TPoint &aPoint, TZoom aZoom)
 	{
 	TTile tile;
-	tile.iX = aPoint.iX / 256;
-	tile.iY = aPoint.iY / 256;
+	tile.iX = aPoint.iX / KTileSize;
+	tile.iY = aPoint.iY / KTileSize;
 	tile.iZ = aZoom;
 	return tile;
 	}
@@ -143,8 +147,8 @@ TTile MapMath::ProjectionPointToTile(const TPoint &aPoint, TZoom aZoom)
 TPoint MapMath::TileToProjectionPoint(const TTile &aTile)
 	{
 	TPoint projectionPoint;
-	projectionPoint.iX = aTile.iX * 256;
-	projectionPoint.iY = aTile.iY * 256;
+	projectionPoint.iX = aTile.iX * KTileSize;
+	projectionPoint.iY = aTile.iY * KTileSize;
 	return projectionPoint;
 	}
 

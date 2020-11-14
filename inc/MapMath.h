@@ -14,6 +14,11 @@
 #include <lbsposition.h>
 #include "Defs.h"
 
+
+// Constants
+const TInt KTileSize = 256; // Standard tile height and width in pixels
+
+
 class TTile;
 class TTileReal;
 

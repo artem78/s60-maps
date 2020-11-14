@@ -181,7 +181,7 @@ void CTiledMapLayer::DrawTile(CWindowGc &aGc, const TTile &aTile, const CFbsBitm
 	TPoint point = iMapView->GeoCoordsToScreenCoords(coord);
 	TRect destRect;
 	destRect.iTl = point;
-	destRect.SetSize(TSize(256, 256));
+	destRect.SetSize(TSize(KTileSize, KTileSize));
 	TRect screenRect = iMapView->Rect();
 	if (!screenRect.Intersects(destRect)) // Check if tile is visible
 		return;
@@ -244,8 +244,8 @@ void CUserPositionLayer::DrawDirectionMarkL(CWindowGc &aGc, const TPoint &aScree
 	points->AppendL(TPoint(0, 13));
 	
 	// Rotation
-	//TReal rad = aRotation * KPi / 180.0; // Rotation in radians
-	TReal rad = (aRotation + 180.0) * KPi / 180.0; // Rotation in radians
+	//TReal rad = aRotation * KDegToRad; // Rotation in radians
+	TReal rad = (aRotation + 180.0) * KDegToRad; // Rotation in radians
 	for (TInt i = 0; i < points->Count(); i++)
 		{
 		TReal x = points->At(i).iX;
@@ -419,7 +419,7 @@ void CTileBorderAndXYZLayer::DrawTile(CWindowGc &aGc, const TTile &aTile)
 	// Calculate tile position
 	TCoordinate coord = MapMath::TileToGeoCoords(aTile, iMapView->GetZoom());
 	TPoint point = iMapView->GeoCoordsToScreenCoords(coord);
-	TRect rect(TSize(256, 256));
+	TRect rect(TSize(KTileSize, KTileSize));
 	rect.Move(point);
 	
 	// Draw tile boundary
@@ -486,7 +486,7 @@ void CTileBitmapManager::ConstructL(const TDesC &aCacheDir)
 #ifdef __WINSCW__
 	// Add some delay for network services have been started on the emulator,
 	// otherwise CEcmtServer: 3 panic will be raised.
-	User::After(10 * 1000 * 1000);
+	User::After(10 * KSecond);
 #endif
 	iHTTPClient = CHTTPClient::NewL(this);
 	iHTTPClient->SetUserAgentL(_L8("S60Maps")); // ToDo: Move to constant
@@ -861,7 +861,7 @@ void CTileBitmapManagerItem::CreateBitmapIfNotExistL()
 		return;
 	
 	iBitmap = new (ELeave) CFbsBitmap();
-	TSize size(256, 256);
+	TSize size(KTileSize, KTileSize);
 	TDisplayMode mode = EColor16M;
 	User::LeaveIfError(iBitmap->Create(size, mode));
 	}
