@@ -134,6 +134,10 @@ class CUserPositionLayer : public CMapLayerBase
 public:
 	CUserPositionLayer(/*const*/ CS60MapsAppView* aMapView);
 	void Draw(CWindowGc &aGc);
+	
+// Own methods
+private:
+	void DrawDirectionMarkL(CWindowGc &aGc, const TPoint &aScreenPos, TReal aRotation);
 	};
 
 

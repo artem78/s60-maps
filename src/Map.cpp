@@ -217,16 +217,75 @@ void CUserPositionLayer::Draw(CWindowGc &aGc)
 	TInt r = iMapView->UserPosition(pos);
 	if (r == KErrNone && iMapView->CheckCoordVisibility(pos))
 		{
-		const TInt KMarkSize = 10;
-		TSize penSize(KMarkSize, KMarkSize);
-		aGc.SetBrushStyle(CGraphicsContext::ENullBrush);
-		aGc.SetPenColor(KRgbRed);
-		aGc.SetPenSize(penSize);
-			
-		TPoint point;
-		point = iMapView->GeoCoordsToScreenCoords(pos);
-		aGc.Plot(point);
+		TPoint screenPoint = iMapView->GeoCoordsToScreenCoords(pos);
+		
+		if (!Math::IsNaN(pos.Course()))
+			{ // Draw direction mark
+			TRAP_IGNORE(DrawDirectionMarkL(aGc, screenPoint, pos.Course()));
+			}
+		else
+			{
+			// If there is no course information available, draw circle
+			const TInt KMarkSize = 10;
+			TSize penSize(KMarkSize, KMarkSize);
+			aGc.SetBrushStyle(CGraphicsContext::ENullBrush);
+			aGc.SetPenColor(KRgbRed);
+			aGc.SetPenSize(penSize);
+
+			aGc.Plot(screenPoint);
+			}
 		}
+	}
+
+void CUserPositionLayer::DrawDirectionMarkL(CWindowGc &aGc, const TPoint &aScreenPos, TReal aRotation)
+	{
+	// Points
+	CArrayFix<TPoint>* points = new CArrayFixFlat<TPoint>(3);
+	CleanupStack::PushL(points);
+	
+	points->AppendL(TPoint(-6, -5));
+	//points->AppendL(TPoint(0, 0));
+	points->AppendL(TPoint(6, -5));
+	points->AppendL(TPoint(0, 13));
+	
+	// Rotation
+	//TReal rad = aRotation * KPi / 180.0; // Rotation in radians
+	TReal rad = (aRotation + 180.0) * KPi / 180.0; // Rotation in radians
+	for (TInt i = 0; i < points->Count(); i++)
+		{
+		TReal x = points->At(i).iX;
+		TReal y = points->At(i).iY;
+		TReal c, s;
+		TInt ret;
+		ret = Math::Cos(c, rad);
+		User::LeaveIfError(ret);
+		ret = Math::Sin(s, rad);
+		User::LeaveIfError(ret);
+		TReal newX = x * c - y * s;
+		TReal newY = x * s + y * c;
+		ret = Math::Round(newX, newX, 0);
+		User::LeaveIfError(ret);
+		ret = Math::Round(newY, newY, 0);
+		User::LeaveIfError(ret);
+		points->At(i).iX = newX;
+		points->At(i).iY = newY;
+		}
+	
+	// Add drawing offset
+	for (TInt i = 0; i < points->Count(); i++)
+		points->At(i) += aScreenPos;
+	
+	// Drawing
+	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
+	aGc.SetBrushColor(KRgbRed);
+	aGc.SetPenStyle(CGraphicsContext::ESolidPen);
+	aGc.SetPenSize(TSize(1, 1));
+	aGc.SetPenColor(KRgbBlack);
+	//aGc.DrawPolyLine(points);
+	aGc.DrawPolygon(points);
+	
+	// Cleaning
+	CleanupStack::PopAndDestroy(points);
 	}
 
 // CImageReader
