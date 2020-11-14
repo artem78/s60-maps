@@ -219,20 +219,15 @@ void CUserPositionLayer::Draw(CWindowGc &aGc)
 		{
 		TPoint screenPoint = iMapView->GeoCoordsToScreenCoords(pos);
 		
+		// ToDo: Do not draw direction mark when speed is too low (about < 3 kph)
 		if (!Math::IsNaN(pos.Course()))
 			{ // Draw direction mark
 			TRAP_IGNORE(DrawDirectionMarkL(aGc, screenPoint, pos.Course()));
 			}
 		else
 			{
-			// If there is no course information available, draw circle
-			const TInt KMarkSize = 10;
-			TSize penSize(KMarkSize, KMarkSize);
-			aGc.SetBrushStyle(CGraphicsContext::ENullBrush);
-			aGc.SetPenColor(KRgbRed);
-			aGc.SetPenSize(penSize);
-
-			aGc.Plot(screenPoint);
+			// If there is no course information available, draw circle mark
+			DrawRoundMark(aGc, screenPoint);
 			}
 		}
 	}
@@ -286,6 +281,20 @@ void CUserPositionLayer::DrawDirectionMarkL(CWindowGc &aGc, const TPoint &aScree
 	
 	// Cleaning
 	CleanupStack::PopAndDestroy(points);
+	}
+
+void CUserPositionLayer::DrawRoundMark(CWindowGc &aGc, const TPoint &aScreenPos)
+	{
+	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
+	aGc.SetBrushColor(KRgbRed);
+	aGc.SetPenStyle(CGraphicsContext::ESolidPen);
+	aGc.SetPenSize(TSize(1, 1));
+	aGc.SetPenColor(KRgbBlack);
+	
+	TSize size(10, 10);
+	TRect rect(aScreenPos, size);
+	rect.Move(-size.iWidth / 2, -size.iHeight / 2); // Correct offset from figure center
+	aGc.DrawEllipse(rect);
 	}
 
 // CImageReader

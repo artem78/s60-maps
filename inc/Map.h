@@ -138,6 +138,7 @@ public:
 // Own methods
 private:
 	void DrawDirectionMarkL(CWindowGc &aGc, const TPoint &aScreenPos, TReal aRotation);
+	void DrawRoundMark(CWindowGc &aGc, const TPoint &aScreenPos);
 	};
 
 
