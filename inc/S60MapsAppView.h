@@ -130,7 +130,7 @@ private:
 	TFixedArray<CMapLayerBase*, 3> iLayers;
 #endif
 	
-	TCoordinate iUserPosition;
+	TCoordinateEx iUserPosition;
 	TBool iIsUserPositionRecieved;
 	TBool iIsFollowUser;
 
@@ -184,8 +184,8 @@ public:
 	void Bounds(TTile &aTopLeftTile, TTile &aBottomRightTile) const;
 	void Bounds(TTileReal &aTopLeftTile, TTileReal &aBottomRightTile) const;
 	
-	void SetUserPosition(const TCoordinate& aPos);
-	TInt UserPosition(TCoordinate& aPos);
+	void SetUserPosition(const TCoordinateEx& aPos);
+	TInt UserPosition(TCoordinateEx& aPos);
 	void ShowUserPosition();
 	void HideUserPosition();
 	void SetFollowUser(TBool anEnabled = ETrue);

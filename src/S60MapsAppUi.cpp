@@ -297,7 +297,18 @@ void CS60MapsAppUi::OnPositionUpdated()
 	const TPositionInfo* posInfo = iPosRequestor->LastKnownPositionInfo();
 	TPosition pos;
 	posInfo->GetPosition(pos);
-	iAppView->SetUserPosition(pos);
+	TCoordinateEx coord = pos;
+	coord.SetCourse(KNaN);
+	if (posInfo->PositionClassType() & EPositionCourseInfoClass)
+		{
+		const TPositionCourseInfo* courseInfo =
+				static_cast<const TPositionCourseInfo*>(posInfo);
+		TCourse course;
+		courseInfo->GetCourse(course);
+		
+		coord.SetCourse(course.Heading());
+		}
+	iAppView->SetUserPosition(coord);
 	}
 
 void CS60MapsAppUi::OnPositionPartialUpdated()

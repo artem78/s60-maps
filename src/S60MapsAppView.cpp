@@ -553,13 +553,13 @@ void CS60MapsAppView::UpdateUserPosition()
 		DrawNow();
 	}
 
-void CS60MapsAppView::SetUserPosition(const TCoordinate& aPos)
+void CS60MapsAppView::SetUserPosition(const TCoordinateEx& aPos)
 	{
 	iUserPosition = aPos;
 	ShowUserPosition();
 	}
 
-TInt CS60MapsAppView::UserPosition(TCoordinate& aPos)
+TInt CS60MapsAppView::UserPosition(TCoordinateEx& aPos)
 	{
 	if (!iIsUserPositionRecieved)
 		return KErrNotFound;

@@ -340,4 +340,21 @@ public:
 	};
 
 
+class TCoordinateEx : public TCoordinate
+	{
+protected:
+	TReal32 iCourse;
+public:
+	TCoordinateEx();
+	TCoordinateEx(const TCoordinateEx &aCoordEx);
+	TCoordinateEx(const TCoordinate &aCoord);
+	
+	inline TReal32 Course() const
+		{ return iCourse; };
+	inline void SetCourse(TReal32 aCourse)
+		{ iCourse = aCourse; };
+	//operator TCoordinate() const;
+	};
+
+
 #endif /* MAP_H_ */

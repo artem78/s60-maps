@@ -213,7 +213,7 @@ CUserPositionLayer::CUserPositionLayer(/*const*/ CS60MapsAppView* aMapView) :
 
 void CUserPositionLayer::Draw(CWindowGc &aGc)
 	{
-	TPosition pos;
+	TCoordinateEx pos;
 	TInt r = iMapView->UserPosition(pos);
 	if (r == KErrNone && iMapView->CheckCoordVisibility(pos))
 		{
@@ -819,4 +819,43 @@ void TOsmStandardTileProvider::TileUrl(TDes8 &aUrl, const TTile &aTile)
 	TChar chr('a');
 	chr += Math::Random() % 3; // a-c
 	aUrl.Format(KUrlFmt, (TUint) chr, (TUint) aTile.iZ, aTile.iX, aTile.iY);
+	}
+
+
+// TCoordinateEx
+
+TCoordinateEx::TCoordinateEx() /*:
+		iLatitude(KNaN),
+		iLongitude(KNaN),
+		iAltitude(KNaN),
+		iCourse(KNaN)*/
+	{
+	iLatitude  = KNaN;
+	iLongitude = KNaN;
+	iAltitude  = KNaN;
+	iCourse    = KNaN;
+	}
+
+TCoordinateEx::TCoordinateEx(const TCoordinateEx &aCoordEx) /*:
+		iLatitude(aCoordEx.Latitude()),
+		iLongitude(aCoordEx.Longitude()),
+		iAltitude(aCoordEx.Altitude()),
+		iCourse(aCoordEx.Course())*/
+	{
+	iLatitude  = aCoordEx.Latitude();
+	iLongitude = aCoordEx.Longitude();
+	iAltitude  = aCoordEx.Altitude();
+	iCourse    = aCoordEx.Course();
+	}
+
+TCoordinateEx::TCoordinateEx(const TCoordinate &aCoord) /*:
+		iLatitude(aCoord.Latitude()),
+		iLongitude(aCoord.Longitude()),
+		iAltitude(aCoord.Altitude()),
+		iCourse(KNaN)*/
+	{
+	iLatitude  = aCoord.Latitude();
+	iLongitude = aCoord.Longitude();
+	iAltitude  = aCoord.Altitude();
+	iCourse    = KNaN;
 	}
