@@ -18,6 +18,7 @@
 #include <e32base.h>
 #include <e32std.h>		// For RTimer
 #include "HttpClient.h"
+#include "FileUtils.h"
 
 
 // Constants
@@ -245,7 +246,7 @@ private:
 	RArray<TTile> /*iItemsForLoading*/ iItemsLoadingQueue;
 	CHTTPClient* iHTTPClient;
 	TTileProviderBase* iTileProvider;
-	TFileName iCacheDir;
+	//TFileName iCacheDir;
 	//TBool iIsLoading;
 	enum TProcessingState
 		{
@@ -258,6 +259,7 @@ private:
 	RFs iFs;
 	TTile iLoadingTile;
 	TBool iIsOfflineMode;
+	CFileTreeMapper* iFileMapper;
 	
 	// @return Pointer to CTileBitmapManagerItem object or NULL if not found
 	CTileBitmapManagerItem* Find(const TTile &aTile) const;

@@ -457,6 +457,7 @@ CTileBitmapManager::CTileBitmapManager(MTileBitmapManagerObserver *aObserver,
 
 CTileBitmapManager::~CTileBitmapManager()
 	{
+	delete iFileMapper;
 	delete iImgDecoder;
 	iItemsLoadingQueue.Close();
 	iItems.ResetAndDestroy();
@@ -493,10 +494,10 @@ void CTileBitmapManager::ConstructL(const TDesC &aCacheDir)
 	
 	iItems = RPointerArray<CTileBitmapManagerItem>(iLimit);
 	iItemsLoadingQueue = RArray<TTile>(20); // ToDo: Move 20 to constant
-
-	iCacheDir.Copy(aCacheDir);
 	
 	iImgDecoder = CBufferedImageDecoder::NewL(iFs);
+	
+	iFileMapper = new(ELeave) CFileTreeMapper(aCacheDir);
 	
 	CActiveScheduler::Add(this);
 	}
@@ -805,13 +806,15 @@ void CTileBitmapManager::TileFileName(const TTile &aTile, TFileName &aFileName) 
 	_LIT(KUnderline, "_");
 	_LIT(KMBMExtension, ".mbm");
 	
-	aFileName.Copy(iCacheDir);
-	aFileName.AppendNum(aTile.iZ);
-	aFileName.Append(KUnderline);
-	aFileName.AppendNum(aTile.iX);
-	aFileName.Append(KUnderline);
-	aFileName.AppendNum(aTile.iY);
-	aFileName.Append(KMBMExtension);
+	/*TFileName*/ TBuf<32> originalFileName;
+	originalFileName.AppendNum(aTile.iZ);
+	originalFileName.Append(KUnderline);
+	originalFileName.AppendNum(aTile.iX);
+	originalFileName.Append(KUnderline);
+	originalFileName.AppendNum(aTile.iY);
+	originalFileName.Append(KMBMExtension);
+	
+	iFileMapper->GetFilePath(originalFileName, aFileName);
 	}
 
 

@@ -39,7 +39,7 @@ END //RESOURCE
 
 
 USERINCLUDE	   ..\inc
-USERINCLUDE    ..\help ..\modules\Logger ..\modules\Positioning
+USERINCLUDE    ..\help ..\modules\Logger ..\modules\Positioning ..\modules\FileUtils
 
 SYSTEMINCLUDE	 \epoc32\include
 
@@ -77,3 +77,5 @@ SOURCE Logger.cpp
 
 SOURCEPATH ..\modules\Positioning
 SOURCE Positioning.cpp
+SOURCEPATH ..\modules\FileUtils
+SOURCE FileUtils.cpp
