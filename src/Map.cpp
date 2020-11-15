@@ -497,7 +497,7 @@ void CTileBitmapManager::ConstructL(const TDesC &aCacheDir)
 	
 	iImgDecoder = CBufferedImageDecoder::NewL(iFs);
 	
-	iFileMapper = new(ELeave) CFileTreeMapper(aCacheDir);
+	iFileMapper = CFileTreeMapper::NewL(aCacheDir, 2, 1, ETrue);
 	
 	CActiveScheduler::Add(this);
 	}
@@ -762,6 +762,10 @@ void CTileBitmapManager::SaveBitmapL(const TTile &aTile, /*const*/ CFbsBitmap *a
 	{
 	TFileName tileFileName;
 	TileFileName(aTile, tileFileName);
+
+	// Create subdirs
+	// ToDo: I think it will be better to create all subdirs once when program starts
+	BaflUtils::EnsurePathExistsL(iFs, tileFileName);
 	
 	RFile file;
 	/*if (aRewrite)
