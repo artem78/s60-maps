@@ -29,6 +29,7 @@
 #ifdef _DEBUG
 #include "GitInfo.h"
 #endif
+#include "FileUtils.h"
 
 
 // ============================ MEMBER FUNCTIONS ===============================
@@ -138,6 +139,11 @@ void CS60MapsAppUi::HandleCommandL(TInt aCommand)
 		case EFindMe:
 			{
 			iAppView->SetFollowUser(ETrue);
+			}
+			break;
+		case ETilesCacheStats:
+			{
+			ShowMapCacheStatsDialogL();
 			}
 			break;
 		case EResetTilesCache:
@@ -364,6 +370,79 @@ void CS60MapsAppUi::MrccatoCommand(TRemConCoreApiOperationId aOperationId,
 			break;
 			}
 		}
+	}
+
+void CS60MapsAppUi::ShowMapCacheStatsDialogL()
+	{
+	CS60MapsApplication* app = static_cast<CS60MapsApplication *>(Application());
+	RFs fs = iEikonEnv->FsSession();
+	
+	// Prepare information text
+	RBuf msg;
+	msg.CreateL(2048);
+	msg.CleanupClosePushL();
+	
+	TInt filesTotal = 0, bytesTotal = 0;
+	
+	TFileName baseCacheDir;
+	app->CacheDir(baseCacheDir);
+	
+	CDir* cacheSubDirs = NULL;
+	TInt r = fs.GetDir(baseCacheDir, KEntryAttDir, ESortByName, cacheSubDirs);
+	if (r == KErrNone && cacheSubDirs != NULL)
+		{
+		for (TInt i = 0; i < cacheSubDirs->Count(); i++)
+			{
+			const TEntry &cacheSubDir = (*cacheSubDirs)[i];
+			
+			// Seems that KEntryAttDir doesn`t work
+			if (!cacheSubDir.IsDir())
+				continue;
+			
+			TDirStats dirStats;
+			RBuf subDirFullPath;
+			subDirFullPath.Create(KMaxFileName);
+			subDirFullPath.Copy(baseCacheDir);
+			TParsePtr parser(subDirFullPath);
+			parser.AddDir(cacheSubDir.iName);
+			r = FileUtils::DirectoryStats(fs, parser.FullName(), dirStats);
+			subDirFullPath.Close();
+			if (r != KErrNone)
+				{ // Something went wrong
+				dirStats.iFilesCount = 0;
+				dirStats.iSize = 0;
+				}
+			
+			filesTotal += dirStats.iFilesCount;
+			bytesTotal += dirStats.iSize;
+			
+			TBuf<16> sizeBuff;
+			FileUtils::FileSizeToReadableString(dirStats.iSize, sizeBuff);
+			msg.AppendFormat(_L("%S: %d files, %S\n"), &cacheSubDir.iName, dirStats.iFilesCount, &sizeBuff);
+			}
+		
+		delete cacheSubDirs;
+		}
+	
+	msg.Append(_L("------------\n"));
+	TBuf<16> totalSizeBuff;
+	FileUtils::FileSizeToReadableString(bytesTotal, totalSizeBuff);
+	msg.AppendFormat(_L("Total: %d files, %S"), filesTotal, &totalSizeBuff);
+	
+	
+	
+	// Show information
+	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
+	dlg->PrepareLC(R_MAP_CACHE_STATS_DIALOG);
+	HBufC* title = iEikonEnv->AllocReadResourceLC(R_MAP_CACHE_STATS_DIALOG_TITLE);
+	dlg->QueryHeading()->SetTextL(*title);
+	CleanupStack::PopAndDestroy(title);
+	dlg->SetMessageTextL(msg);
+	//CleanupStack::PopAndDestroy(&msg);
+	dlg->RunLD();
+	
+	CleanupStack::PopAndDestroy(&msg);
+	//CleanupStack::PopAndDestroy(/*3*/2, &msg);
 	}
 
 

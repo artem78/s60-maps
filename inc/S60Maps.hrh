@@ -18,6 +18,7 @@ enum TS60MapsIds
 	EFindMe = 0x6001, // start value must not be 0
 	EHelp,
 	EAbout,
+	ETilesCacheStats,
 	EResetTilesCache
 	};
 

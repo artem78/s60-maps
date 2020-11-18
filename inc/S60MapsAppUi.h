@@ -122,6 +122,8 @@ private:
 	CRemConCoreApiTarget* iCoreTarget;
 	
 	void ClearTilesCache();
+	
+	void ShowMapCacheStatsDialogL();
 	};
 
 #endif // __S60MAPSAPPUI_h__
