@@ -279,23 +279,20 @@ MFileManObserver::TControl CS60MapsAppUi::NotifyFileManOperation()
 
 MFileManObserver::TControl CS60MapsAppUi::NotifyFileManEnded()
 	{
-	_LIT(KMsg, "Done!");
-	CEikonEnv::Static()->AlertWin(KMsg);
-		
 	return EContinue;
 	}
 
 void CS60MapsAppUi::ClearTilesCache()
 	{
-	TFileName path;
-	static_cast<CS60MapsApplication *>(Application())->CacheDir(path);
-	//_LIT(KFileMask, "*.mbm");
-	_LIT(KFileMask, "*.*");
-	path.Append(KFileMask);
+	TFileName cacheDir;
+	static_cast<CS60MapsApplication *>(Application())->CacheDir(cacheDir);
 
 	// ToDo: Show loading/progress bar during operation
-	iFileMan->Delete(path, CFileMan::ERecurse); // ToDo: check error code
+	// ToDo: Do asynchronous
+	iFileMan->RmDir(cacheDir);
 	
+	_LIT(KMsg, "Done!");
+	CEikonEnv::Static()->AlertWin(KMsg);
 	}
 
 void CS60MapsAppUi::OnPositionUpdated()
