@@ -14,7 +14,7 @@
 // Caption string for app.
 #define qtn_caption_string "S60Maps"
 
-#define qtn_find_me "Go to current position"
+#define qtn_find_me "Follow me"
 
 //#define qtn_help "Help"
 
