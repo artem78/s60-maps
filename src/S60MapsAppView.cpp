@@ -301,8 +301,9 @@ TKeyResponse CS60MapsAppView::OfferKeyEventL(const TKeyEvent &aKeyEvent,
 		{
 		switch (aKeyEvent.iScanCode)
 			{
-			case /*EKeyUpArrow*/ EStdKeyUpArrow:
-			case 50: // ToDo: Replace number to constant
+			case EStdKeyUpArrow:
+			case '2':
+			//case EStdKeyNkp2:
 				{
 				SetFollowUser(EFalse);
 				MoveUp();
@@ -310,8 +311,9 @@ TKeyResponse CS60MapsAppView::OfferKeyEventL(const TKeyEvent &aKeyEvent,
 				//break;
 				}
 				
-			case /*EKeyDownArrow*/ EStdKeyDownArrow:
-			case 56: // ToDo: Replace number to constant
+			case EStdKeyDownArrow:
+			case '8':
+			//case EStdKeyNkp8:
 				{
 				SetFollowUser(EFalse);
 				MoveDown();
@@ -319,8 +321,9 @@ TKeyResponse CS60MapsAppView::OfferKeyEventL(const TKeyEvent &aKeyEvent,
 				//break;
 				}
 				
-			case /*EKeyLeftArrow*/ EStdKeyLeftArrow:
-			case 52: // ToDo: Replace number to constant
+			case EStdKeyLeftArrow:
+			case '4':
+			//case EStdKeyNkp4:
 				{
 				SetFollowUser(EFalse);
 				MoveLeft();
@@ -328,8 +331,9 @@ TKeyResponse CS60MapsAppView::OfferKeyEventL(const TKeyEvent &aKeyEvent,
 				//break;
 				}
 				
-			case /*EKeyRightArrow*/ EStdKeyRightArrow:
-			case 54: // ToDo: Replace number to constant
+			case EStdKeyRightArrow:
+			case '6':
+			//case EStdKeyNkp6:
 				{
 				SetFollowUser(EFalse);
 				MoveRight();
@@ -337,14 +341,16 @@ TKeyResponse CS60MapsAppView::OfferKeyEventL(const TKeyEvent &aKeyEvent,
 				//break;
 				}
 				
-			case 51: // ToDo: Replace number to constant
+			case '3':
+			//case EStdKeyNkp3:
 				{
 				ZoomIn();
 				return EKeyWasConsumed;
 				//break;
 				}
 				
-			case 49: // ToDo: Replace number to constant
+			case '1':
+			//case EStdKeyNkp1:
 				{
 				ZoomOut();
 				return EKeyWasConsumed;
