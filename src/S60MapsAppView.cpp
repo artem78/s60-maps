@@ -15,9 +15,6 @@
 #include <aknappui.h> 
 
 // Constants
-const TZoom KMinZoomLevel = /*0*/ 1;
-const TZoom KMaxZoomLevel = 19;	// Note: 19 for default osm layer.
-								// Other layers often have max 18 level.
 const TInt KMovementRepeaterInterval = 200000;
 
 // ============================ MEMBER FUNCTIONS ===============================
@@ -28,9 +25,11 @@ const TInt KMovementRepeaterInterval = 200000;
 // -----------------------------------------------------------------------------
 //
 CS60MapsAppView* CS60MapsAppView::NewL(const TRect& aRect,
-		const TCoordinate &aInitialPosition, TZoom aInitialZoom)
+		const TCoordinate &aInitialPosition, TZoom aInitialZoom,
+		TZoom aMinZoom, TZoom aMaxZoom)
 	{
-	CS60MapsAppView* self = CS60MapsAppView::NewLC(aRect, aInitialPosition, aInitialZoom);
+	CS60MapsAppView* self = CS60MapsAppView::NewLC(aRect, aInitialPosition, aInitialZoom,
+			aMinZoom, aMaxZoom);
 	CleanupStack::Pop(self);
 	return self;
 	}
@@ -41,11 +40,12 @@ CS60MapsAppView* CS60MapsAppView::NewL(const TRect& aRect,
 // -----------------------------------------------------------------------------
 //
 CS60MapsAppView* CS60MapsAppView::NewLC(const TRect& aRect,
-		const TCoordinate &aInitialPosition, TZoom aInitialZoom)
+		const TCoordinate &aInitialPosition, TZoom aInitialZoom,
+		TZoom aMinZoom, TZoom aMaxZoom)
 	{
 	CS60MapsAppView* self = new (ELeave) CS60MapsAppView(aInitialZoom);
 	CleanupStack::PushL(self);
-	self->ConstructL(aRect, aInitialPosition);
+	self->ConstructL(aRect, aInitialPosition, aMinZoom, aMaxZoom);
 	return self;
 	}
 
@@ -54,8 +54,11 @@ CS60MapsAppView* CS60MapsAppView::NewLC(const TRect& aRect,
 // Symbian 2nd phase constructor can leave.
 // -----------------------------------------------------------------------------
 //
-void CS60MapsAppView::ConstructL(const TRect& aRect, const TCoordinate &aInitialPosition)
+void CS60MapsAppView::ConstructL(const TRect& aRect, const TCoordinate &aInitialPosition,
+		TZoom aMinZoom, TZoom aMaxZoom)
 	{
+	SetZoomBounds(aMinZoom, aMaxZoom);
+	
 	// Create layers
 	iLayers[0] = CTiledMapLayer::NewL(this); 
 #if DISPLAY_TILE_BORDER_AND_XYZ
@@ -420,10 +423,22 @@ void CS60MapsAppView::Move(TReal64 aLat, TReal64 aLon, TZoom aZoom)
 	Move(coord, aZoom);
 	}
 
+void CS60MapsAppView::SetZoomBounds(TZoom aMinZoom, TZoom aMaxZoom)
+	{
+	// Checks
+	if (aMinZoom <= aMaxZoom)
+		{
+		iMinZoom = Max(aMinZoom, KMinZoomLevel);
+		iMaxZoom = Min(aMaxZoom, KMaxZoomLevel);
+		}
+	
+	// ToDo: Return error when checks failed
+	}
+
 void CS60MapsAppView::SetZoom(TZoom aZoom)
 	{
 	// ToDo: Return error code KErrArgument or panic if zoom out of bounds
-	if (aZoom >= KMinZoomLevel and aZoom <= KMaxZoomLevel)
+	if (aZoom >= iMinZoom and aZoom <= iMaxZoom)
 		{
 		if (iZoom != aZoom)
 			{

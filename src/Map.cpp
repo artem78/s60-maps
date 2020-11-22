@@ -104,6 +104,7 @@ void CTiledMapLayer::ConstructL()
 	iTileProvider = new (ELeave) TOsmStandardTileProvider;
 	TBuf<32> tileProviderID;
 	iTileProvider->ID(tileProviderID);
+	iMapView->SetZoomBounds(iTileProvider->MinZoomLevel(), iTileProvider->MaxZoomLevel());
 	
 	TFileName cacheDir;
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
@@ -873,6 +874,17 @@ void CTileBitmapManagerItem::CreateBitmapIfNotExistL()
 	User::LeaveIfError(iBitmap->Create(size, mode));
 	}
 
+// TTileProviderBase
+
+TZoom TTileProviderBase::MinZoomLevel()
+	{
+	return TZoom(0);
+	}
+
+TZoom TTileProviderBase::MaxZoomLevel()
+	{
+	return TZoom(18);
+	}
 
 // OsmStandardTileProvider
 
@@ -894,6 +906,11 @@ void TOsmStandardTileProvider::TileUrl(TDes8 &aUrl, const TTile &aTile)
 	TChar chr('a');
 	chr += Math::Random() % 3; // a-c
 	aUrl.Format(KUrlFmt, (TUint) chr, (TUint) aTile.iZ, aTile.iX, aTile.iY);
+	}
+
+TZoom TOsmStandardTileProvider::MaxZoomLevel()
+	{
+	return TZoom(19);
 	}
 
 

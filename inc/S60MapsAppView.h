@@ -22,6 +22,10 @@
 // Constants
 const TUint KMapDefaultMoveStep = 20; // In pixels
 
+// Hard restrictions for MapView zoom level
+const TZoom KMinZoomLevel = /*0*/ 1;
+const TZoom KMaxZoomLevel = 19;
+
 // CLASS DECLARATION
 class CS60MapsAppView : public CCoeControl
 	{
@@ -46,7 +50,8 @@ public:
 	 * @return a pointer to the created instance of CS60MapsAppView.
 	 */
 	static CS60MapsAppView* NewL(const TRect& aRect,
-			const TCoordinate &aInitialPosition, TZoom aInitialZoom);
+			const TCoordinate &aInitialPosition, TZoom aInitialZoom,
+			TZoom aMinZoom = KMinZoomLevel, TZoom aMaxZoom = KMaxZoomLevel);
 
 	/**
 	 * NewLC.
@@ -57,7 +62,8 @@ public:
 	 * @return A pointer to the created instance of CS60MapsAppView.
 	 */
 	static CS60MapsAppView* NewLC(const TRect& aRect,
-			const TCoordinate &aInitialPosition, TZoom aInitialZoom);
+			const TCoordinate &aInitialPosition, TZoom aInitialZoom,
+			TZoom aMinZoom = KMinZoomLevel, TZoom aMaxZoom = KMaxZoomLevel);
 
 	/**
 	 * ~CS60MapsAppView
@@ -106,7 +112,8 @@ private:
 	 * CS60MapsAppView object.
 	 * @param aRect The rectangle this view will be drawn to.
 	 */
-	void ConstructL(const TRect& aRect, const TCoordinate &aInitialPosition);
+	void ConstructL(const TRect& aRect, const TCoordinate &aInitialPosition,
+			TZoom aMinZoom, TZoom aMaxZoom);
 
 	/**
 	 * CS60MapsAppView.
@@ -121,6 +128,8 @@ private:
 							 // Note: Do not directly change this value! Use Move() instead.
 	TZoom iZoom; // Zoom level from KMinZoomLevel to KMaxZoomLevel
 				 // Note: Do not directly change this value! Use SetZoom() instead.
+	TZoom iMinZoom; // Minimum zoom level
+	TZoom iMaxZoom; // Maximum zoom level
 	TCoordinate iCenterPosition; // Similar to iTopLeftPosition, but used for
 				// more accurate moving to position when zoom changed
 				// ToDo: Any ideas how to make it without additional property? 
@@ -158,6 +167,7 @@ public:
 	static TInt MovementRepeaterCallback(TAny* aObject);
 	void ExecuteMovement();
 
+	void SetZoomBounds(TZoom aMinZoom, TZoom aMaxZoom);
 private:
 	void SetZoom(TZoom aZoom);
 public:

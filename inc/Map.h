@@ -336,6 +336,9 @@ public:
 	// Note: prefer not to use HTTPS protocol because unfortunately 
 	// at the present time SSL works not on all Symbian based phones
 	virtual void TileUrl(TDes8 &aUrl, const TTile &aTile) = 0;
+	
+	virtual TZoom MinZoomLevel(); // Default is 0
+	virtual TZoom MaxZoomLevel(); // Default is 18
 	};
 
 class TOsmStandardTileProvider : public TTileProviderBase
@@ -344,6 +347,7 @@ public:
 	virtual void ID(TDes &aDes);
 	virtual void Title(TDes &aDes);
 	virtual void TileUrl(TDes8 &aUrl, const TTile &aTile);
+	virtual TZoom MaxZoomLevel();
 	};
 
 
