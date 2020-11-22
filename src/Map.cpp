@@ -726,7 +726,7 @@ void CTileBitmapManager::OnHTTPError(TInt aError,
 	iState = /*TProcessingState::*/EIdle;
 	
 	
-	if (aError == -3) // ToDo: "magic" number - find constant for it
+	if (aError == KErrCancel)
 		{
 		// If access point not provoded switch to offline mode
 		

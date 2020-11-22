@@ -129,7 +129,7 @@ void CS60MapsAppUi::HandleCommandL(TInt aCommand)
 			dlg->SetMessageTextL(*msg);
 			CleanupStack::PopAndDestroy(); //msg
 			TInt res = dlg->RunLD();
-			if (res == 3005 /*Yes*/) // ToDo: Replace by constant name
+			if (res == EAknSoftkeyYes)
 				{
 				SaveL();
 				Exit();
@@ -157,7 +157,7 @@ void CS60MapsAppUi::HandleCommandL(TInt aCommand)
 			dlg->SetMessageTextL(*msg);
 			CleanupStack::PopAndDestroy(); //msg
 			TInt res = dlg->RunLD();
-			if (res == 3005 /*Yes*/) // ToDo: Replace by constant name
+			if (res == EAknSoftkeyYes)
 				{
 				ClearTilesCache();
 				}
