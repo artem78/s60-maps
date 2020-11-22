@@ -29,6 +29,9 @@ Must be signed or installed on unlocked phone.
 ## Task list
 - [ ] Add support for other map layers/services (like OSM bicycle, OSM humanitarian, OpenTopoMap, etc...) and add ability to define custom providing tile\`s URLs
 - [ ] Update old cached tiles
+- [ ] Display landmarks
+- [ ] Search (using [Nominatim](https://nominatim.openstreetmap.org/))
+- [ ] Show satellites info (amount, signal strength, etc...)
 
 ## Testing
 Tested on:
