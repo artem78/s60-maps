@@ -24,6 +24,7 @@
 
 #define qtn_loc_resource_file_1 "\\resource\\apps\\S60Maps_0xED689B88"
 
+#define qtn_tile_providers_title "Maps"
 #define qtn_service_title "Service"
 #define qtn_tiles_cache_stats "Map cache statistics"
 #define qtn_reset_tiles_cache "Clear map cache"

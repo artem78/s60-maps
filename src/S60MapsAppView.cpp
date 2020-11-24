@@ -26,10 +26,11 @@ const TInt KMovementRepeaterInterval = 200000;
 //
 CS60MapsAppView* CS60MapsAppView::NewL(const TRect& aRect,
 		const TCoordinate &aInitialPosition, TZoom aInitialZoom,
-		TZoom aMinZoom, TZoom aMaxZoom)
+		//TZoom aMinZoom, TZoom aMaxZoom,
+		TTileProviderBase* aTileProvider)
 	{
 	CS60MapsAppView* self = CS60MapsAppView::NewLC(aRect, aInitialPosition, aInitialZoom,
-			aMinZoom, aMaxZoom);
+			/*aMinZoom, aMaxZoom,*/ aTileProvider);
 	CleanupStack::Pop(self);
 	return self;
 	}
@@ -41,11 +42,12 @@ CS60MapsAppView* CS60MapsAppView::NewL(const TRect& aRect,
 //
 CS60MapsAppView* CS60MapsAppView::NewLC(const TRect& aRect,
 		const TCoordinate &aInitialPosition, TZoom aInitialZoom,
-		TZoom aMinZoom, TZoom aMaxZoom)
+		//TZoom aMinZoom, TZoom aMaxZoom,
+		TTileProviderBase* aTileProvider)
 	{
 	CS60MapsAppView* self = new (ELeave) CS60MapsAppView(aInitialZoom);
 	CleanupStack::PushL(self);
-	self->ConstructL(aRect, aInitialPosition, aMinZoom, aMaxZoom);
+	self->ConstructL(aRect, aInitialPosition, /*aMinZoom, aMaxZoom,*/ aTileProvider);
 	return self;
 	}
 
@@ -55,12 +57,15 @@ CS60MapsAppView* CS60MapsAppView::NewLC(const TRect& aRect,
 // -----------------------------------------------------------------------------
 //
 void CS60MapsAppView::ConstructL(const TRect& aRect, const TCoordinate &aInitialPosition,
-		TZoom aMinZoom, TZoom aMaxZoom)
+		//TZoom aMinZoom, TZoom aMaxZoom,
+		TTileProviderBase* aTileProvider)
 	{
-	SetZoomBounds(aMinZoom, aMaxZoom);
+	//SetZoomBounds(aMinZoom, aMaxZoom);
+	//SetZoomBounds(aTileProvider->MinZoomLevel(), aTileProvider->MaxZoomLevel());
+//	SetTileProviderL(aTileProvider);
 	
 	// Create layers
-	iLayers[0] = CTiledMapLayer::NewL(this); 
+	iLayers[0] = CTiledMapLayer::NewL(this, aTileProvider); 
 #if DISPLAY_TILE_BORDER_AND_XYZ
 	iLayers[1] = new (ELeave) CTileBorderAndXYZLayer(this);
 	iLayers[2] = new (ELeave) CUserPositionLayer(this);
@@ -69,6 +74,8 @@ void CS60MapsAppView::ConstructL(const TRect& aRect, const TCoordinate &aInitial
 	iLayers[1] = new (ELeave) CUserPositionLayer(this);
 	iLayers[2] = new (ELeave) CMapLayerDebugInfo(this);
 #endif
+	
+	SetTileProviderL(aTileProvider);
 
 	// Periodic timer for repeating the movement at holding (touch interface)
 	iMovementRepeater = CPeriodic::NewL(0); // neutral priority
@@ -654,6 +661,12 @@ void CS60MapsAppView::ExecuteMovement()
 		case EMoveNone:
 			break;
 		}
+	}
+
+void CS60MapsAppView::SetTileProviderL(TTileProviderBase* aTileProvider)
+	{
+	static_cast<CTiledMapLayer*>(iLayers[0 /*tiled map*/])->SetTileProviderL(aTileProvider);
+	SetZoomBounds(aTileProvider->MinZoomLevel(), aTileProvider->MaxZoomLevel());
 	}
 
 // End of File

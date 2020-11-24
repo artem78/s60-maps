@@ -45,6 +45,15 @@ void CS60MapsAppUi::ConstructL()
 	// Initialise app UI with standard value.
 	BaseConstructL(CAknAppUi::EAknEnableSkin);
 	
+	// Set available tiles providers
+	iAvailableTileProviders[0] = new (ELeave) TOsmStandardTileProvider;
+	iAvailableTileProviders[1] = new (ELeave) TOsmCyclesTileProvider;
+	iAvailableTileProviders[2] = new (ELeave) TOsmTransportTileProvider;
+	iAvailableTileProviders[3] = new (ELeave) TOsmHumanitarianTileProvider;
+	iAvailableTileProviders[4] = new (ELeave) TOpenTopoMapTileProvider;
+	iActiveTileProvider = iAvailableTileProviders[0]; // Use first
+	
+	
 	iFileMan = CFileMan::NewL(CCoeEnv::Static()->FsSession(), this);
 
 	// Set initial map position
@@ -52,7 +61,7 @@ void CS60MapsAppUi::ConstructL()
 	TZoom zoom = 2;	
 	
 	// Create view object
-	iAppView = CS60MapsAppView::NewL(ClientRect(), position, zoom);
+	iAppView = CS60MapsAppView::NewL(ClientRect(), position, zoom, iActiveTileProvider);
 	AddToStackL(iAppView);
 	
 	// Position requestor
@@ -106,6 +115,9 @@ CS60MapsAppUi::~CS60MapsAppUi()
 		}
 	
 	delete iFileMan;
+	
+	//delete iAvailableTileProviders;
+	iAvailableTileProviders.DeleteAll();
 	}
 
 // -----------------------------------------------------------------------------
@@ -141,6 +153,17 @@ void CS60MapsAppUi::HandleCommandL(TInt aCommand)
 			iAppView->SetFollowUser(ETrue);
 			}
 			break;
+		case ESetOsmStandardTileProvider:
+		case ESetOsmCyclesTileProvider:
+		case ESetOsmHumanitarianTileProvider:
+		case ESetOsmTransportTileProvider:
+		case ESetOpenTopoMapTileProvider:
+			{
+			TInt idx = aCommand - ESetTileProviderBase;
+			iActiveTileProvider = iAvailableTileProviders[idx];
+			static_cast<CS60MapsAppView*>(iAppView)->SetTileProviderL(iActiveTileProvider);
+			}
+			break;		
 		case ETilesCacheStats:
 			{
 			ShowMapCacheStatsDialogL();
@@ -236,6 +259,37 @@ CArrayFix<TCoeHelpContext>* CS60MapsAppUi::HelpContextL() const
 #else
 	return NULL;
 #endif
+	}
+
+void CS60MapsAppUi::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
+	{
+	if (aMenuID == R_SUBMENU_TILE_PROVIDERS)
+		{
+		// Fill list of available tiles services in menu
+		
+		for (TInt idx = 0; idx < iAvailableTileProviders.Count(); idx++)
+			{
+			TInt commandId = ESetTileProviderBase + idx;
+			TBuf<64> menuItemText;
+			iAvailableTileProviders[idx]->Title(menuItemText);
+			
+			CEikMenuPaneItem::SData menuItem;
+			menuItem.iCommandId = commandId;
+			menuItem.iCascadeId = 0;
+			//menuItem.iFlags = ???
+			menuItem.iText.Copy(menuItemText);
+			//menuItem.iExtraText = ???
+			aMenuPane->AddMenuItemL(menuItem);
+			aMenuPane->SetItemButtonState(commandId,
+					/*commandId == selectedTileProviderCommId*/
+					iAvailableTileProviders[idx] == iActiveTileProvider?
+							EEikMenuItemSymbolOn : EEikMenuItemSymbolIndeterminate);				
+			}
+		}
+	/*else
+		{
+		AppUi()->DynInitMenuPaneL(aMenuID, aMenuPane);
+		}*/
 	}
 
 TStreamId CS60MapsAppUi::StoreL(CStreamStore& aStore) const

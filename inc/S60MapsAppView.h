@@ -51,7 +51,8 @@ public:
 	 */
 	static CS60MapsAppView* NewL(const TRect& aRect,
 			const TCoordinate &aInitialPosition, TZoom aInitialZoom,
-			TZoom aMinZoom = KMinZoomLevel, TZoom aMaxZoom = KMaxZoomLevel);
+			//TZoom aMinZoom = KMinZoomLevel, TZoom aMaxZoom = KMaxZoomLevel
+			TTileProviderBase* aTileProvider);
 
 	/**
 	 * NewLC.
@@ -63,7 +64,8 @@ public:
 	 */
 	static CS60MapsAppView* NewLC(const TRect& aRect,
 			const TCoordinate &aInitialPosition, TZoom aInitialZoom,
-			TZoom aMinZoom = KMinZoomLevel, TZoom aMaxZoom = KMaxZoomLevel);
+			//TZoom aMinZoom = KMinZoomLevel, TZoom aMaxZoom = KMaxZoomLevel,
+			TTileProviderBase* aTileProvider);
 
 	/**
 	 * ~CS60MapsAppView
@@ -113,7 +115,8 @@ private:
 	 * @param aRect The rectangle this view will be drawn to.
 	 */
 	void ConstructL(const TRect& aRect, const TCoordinate &aInitialPosition,
-			TZoom aMinZoom, TZoom aMaxZoom);
+			/*TZoom aMinZoom, TZoom aMaxZoom,*/
+			TTileProviderBase* aTileProvider);
 
 	/**
 	 * CS60MapsAppView.
@@ -199,6 +202,7 @@ public:
 	void ShowUserPosition();
 	void HideUserPosition();
 	void SetFollowUser(TBool anEnabled = ETrue);
+	void SetTileProviderL(TTileProviderBase* aTileProvider);
 
 	};
 	

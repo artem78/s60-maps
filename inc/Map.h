@@ -103,12 +103,12 @@ class CTiledMapLayer : public CMapLayerBase, public MTileBitmapManagerObserver
 // Base methods
 public:
 	~CTiledMapLayer();
-	static CTiledMapLayer* NewL(CS60MapsAppView* aMapView);
-	static CTiledMapLayer* NewLC(CS60MapsAppView* aMapView);
+	static CTiledMapLayer* NewL(CS60MapsAppView* aMapView, TTileProviderBase* aTileProvider);
+	static CTiledMapLayer* NewLC(CS60MapsAppView* aMapView, TTileProviderBase* aTileProvider);
 
 private:
 	CTiledMapLayer(CS60MapsAppView* aMapView);
-	void ConstructL();
+	void ConstructL(TTileProviderBase* aTileProvider);
 	
 // From CMapLayerBase
 public:
@@ -125,6 +125,8 @@ private:
 	void VisibleTiles(RArray<TTile> &aTiles); // Return list of visible tiles
 	void DrawTile(CWindowGc &aGc, const TTile &aTile, const CFbsBitmap *aBitmap);
 	
+public:
+	void SetTileProviderL(TTileProviderBase* aTileProvider);
 	};
 
 
@@ -341,7 +343,53 @@ public:
 	virtual TZoom MaxZoomLevel(); // Default is 18
 	};
 
+// https://www.openstreetmap.org/
 class TOsmStandardTileProvider : public TTileProviderBase
+	{
+public:
+	virtual void ID(TDes &aDes);
+	virtual void Title(TDes &aDes);
+	virtual void TileUrl(TDes8 &aUrl, const TTile &aTile);
+	virtual TZoom MaxZoomLevel();
+	};
+
+// https://wiki.openstreetmap.org/wiki/OpenCycleMap
+// https://www.thunderforest.com/maps/opencyclemap/
+class TOsmCyclesTileProvider : public TTileProviderBase
+	{
+public:
+	virtual void ID(TDes &aDes);
+	virtual void Title(TDes &aDes);
+	virtual void TileUrl(TDes8 &aUrl, const TTile &aTile);
+	virtual TZoom MaxZoomLevel();
+	};
+
+// https://wiki.openstreetmap.org/wiki/Transport_Map
+// https://www.thunderforest.com/maps/transport/
+class TOsmTransportTileProvider : public TTileProviderBase
+	{
+public:
+	virtual void ID(TDes &aDes);
+	virtual void Title(TDes &aDes);
+	virtual void TileUrl(TDes8 &aUrl, const TTile &aTile);
+	virtual TZoom MaxZoomLevel();
+	};
+
+// https://wiki.openstreetmap.org/wiki/Humanitarian_map_style
+// https://www.openstreetmap.org/?layers=H
+class TOsmHumanitarianTileProvider : public TTileProviderBase
+	{
+public:
+	virtual void ID(TDes &aDes);
+	virtual void Title(TDes &aDes);
+	virtual void TileUrl(TDes8 &aUrl, const TTile &aTile);
+	virtual TZoom MaxZoomLevel();
+	};
+
+// https://wiki.openstreetmap.org/wiki/OpenTopoMap
+// https://opentopomap.org/
+// FixMe: Doesn`t work without SSL 
+class TOpenTopoMapTileProvider : public TTileProviderBase
 	{
 public:
 	virtual void ID(TDes &aDes);

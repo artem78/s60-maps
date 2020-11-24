@@ -20,6 +20,7 @@
 #include <remconcoreapitarget.h>
 #include <remconinterfaceselector.h>
 
+#include <Map.h> // For tile providers
 
 // FORWARD DECLARATIONS
 class CS60MapsAppView;
@@ -78,6 +79,8 @@ private:
 	 *  size is changed.
 	 */
 	CArrayFix<TCoeHelpContext>* HelpContextL() const;
+	
+	void DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane);
 
 private:
 	// Data
@@ -120,6 +123,10 @@ private:
 	
 	CRemConInterfaceSelector* iInterfaceSelector;
 	CRemConCoreApiTarget* iCoreTarget;
+	
+	TFixedArray<TTileProviderBase*, 5> iAvailableTileProviders;
+	//TBuf<64> iTileProviderId
+	TTileProviderBase* iActiveTileProvider;
 	
 	void ClearTilesCache();
 	
