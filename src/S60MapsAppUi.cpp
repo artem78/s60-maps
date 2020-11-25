@@ -314,11 +314,38 @@ void CS60MapsAppUi::RestoreL(const CStreamStore& aStore,
 void CS60MapsAppUi::ExternalizeL(RWriteStream& aStream) const
 	{
 	aStream << *iAppView;
+	
+	TBuf<64> tileProviderId;
+	iActiveTileProvider->ID(tileProviderId);
+	aStream << tileProviderId;
 	}
 
 void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 	{
 	aStream >> *iAppView;
+	
+	// ToDo: Add compatibility with old config file (without id)
+	TBuf<64> tileProviderId;
+	aStream >> tileProviderId;
+	TBool isFound = EFalse;
+	for (TInt idx = 0; idx < iAvailableTileProviders.Count(); idx++)
+		{
+		TBuf<64> tileProviderId2;
+		iAvailableTileProviders[idx]->ID(tileProviderId2);
+		if (tileProviderId == tileProviderId2)
+			{
+			iActiveTileProvider = iAvailableTileProviders[idx];
+			iAppView->SetTileProviderL(iAvailableTileProviders[idx]);
+			isFound = ETrue;
+			break;
+			}
+		}
+	
+	if (!isFound)
+		{ // Set default
+		iActiveTileProvider = iAvailableTileProviders[0];
+		iAppView->SetTileProviderL(iAvailableTileProviders[0]);
+		}
 	}
 
 MFileManObserver::TControl CS60MapsAppUi::NotifyFileManStarted()
