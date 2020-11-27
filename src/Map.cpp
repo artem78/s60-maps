@@ -84,14 +84,14 @@ CTiledMapLayer::~CTiledMapLayer()
 	delete iTileProvider;
 	}
 
-CTiledMapLayer* CTiledMapLayer::NewL(CS60MapsAppView* aMapView, TTileProviderBase* aTileProvider)
+CTiledMapLayer* CTiledMapLayer::NewL(CS60MapsAppView* aMapView, TTileProvider* aTileProvider)
 	{
 	CTiledMapLayer* self = CTiledMapLayer::NewLC(aMapView, aTileProvider);
 	CleanupStack::Pop(); // self;
 	return self;
 	}
 
-CTiledMapLayer* CTiledMapLayer::NewLC(CS60MapsAppView* aMapView, TTileProviderBase* aTileProvider)
+CTiledMapLayer* CTiledMapLayer::NewLC(CS60MapsAppView* aMapView, TTileProvider* aTileProvider)
 	{
 	CTiledMapLayer* self = new (ELeave) CTiledMapLayer(aMapView);
 	CleanupStack::PushL(self);
@@ -99,7 +99,7 @@ CTiledMapLayer* CTiledMapLayer::NewLC(CS60MapsAppView* aMapView, TTileProviderBa
 	return self;
 	}
 
-void CTiledMapLayer::ConstructL(TTileProviderBase* aTileProvider)
+void CTiledMapLayer::ConstructL(TTileProvider* aTileProvider)
 	{
 	////////////////
 	//iTileProvider = new (ELeave) TOsmStandardTileProvider;
@@ -211,19 +211,17 @@ void CTiledMapLayer::OnTileLoaded(const TTile &/*aTile*/, const CFbsBitmap */*aB
 	iMapView->DrawNow();
 	}
 
-void CTiledMapLayer::SetTileProviderL(TTileProviderBase* aTileProvider)
+void CTiledMapLayer::SetTileProviderL(TTileProvider* aTileProvider)
 	{
 	iTileProvider = aTileProvider;
 	
-	TBuf<32> tileProviderID;
-	iTileProvider->ID(tileProviderID);
 	//iMapView->SetZoomBounds(iTileProvider->MinZoomLevel(), iTileProvider->MaxZoomLevel());
 	
 	TFileName cacheDir;
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
 	CS60MapsApplication* app = static_cast<CS60MapsApplication*>(appUi->Application());
 	app->CacheDir(cacheDir);
-	cacheDir.Append(tileProviderID);
+	cacheDir.Append(iTileProvider->iId);
 	cacheDir.Append(KPathDelimiter);
 	
 	RFs fs = iMapView->ControlEnv()->FsSession();
@@ -479,7 +477,7 @@ void CTileBorderAndXYZLayer::DrawTile(CWindowGc &aGc, const TTile &aTile)
 // CTileBitmapManager
 
 CTileBitmapManager::CTileBitmapManager(MTileBitmapManagerObserver *aObserver,
-		RFs aFs, TTileProviderBase* aTileProvider, TInt aLimit) :
+		RFs aFs, TTileProvider* aTileProvider, TInt aLimit) :
 		CActive(EPriorityStandard),
 		iObserver(aObserver),
 		iLimit(aLimit),
@@ -501,7 +499,7 @@ CTileBitmapManager::~CTileBitmapManager()
 	}
 
 CTileBitmapManager* CTileBitmapManager::NewLC(MTileBitmapManagerObserver *aObserver,
-		RFs aFs, TTileProviderBase* aTileProvider, const TDesC &aCacheDir, TInt aLimit)
+		RFs aFs, TTileProvider* aTileProvider, const TDesC &aCacheDir, TInt aLimit)
 	{
 	CTileBitmapManager* self = new (ELeave) CTileBitmapManager(aObserver, aFs, aTileProvider, aLimit);
 	CleanupStack::PushL(self);
@@ -510,7 +508,7 @@ CTileBitmapManager* CTileBitmapManager::NewLC(MTileBitmapManagerObserver *aObser
 	}
 
 CTileBitmapManager* CTileBitmapManager::NewL(MTileBitmapManagerObserver *aObserver,
-		RFs aFs, TTileProviderBase* aTileProvider, const TDesC &aCacheDir, TInt aLimit)
+		RFs aFs, TTileProvider* aTileProvider, const TDesC &aCacheDir, TInt aLimit)
 	{
 	CTileBitmapManager* self = CTileBitmapManager::NewLC(aObserver, aFs, aTileProvider, aCacheDir, aLimit);
 	CleanupStack::Pop(); // self;
@@ -908,153 +906,25 @@ void CTileBitmapManagerItem::CreateBitmapIfNotExistL()
 	User::LeaveIfError(iBitmap->Create(size, mode));
 	}
 
-// TTileProviderBase
+// TTileProvider
 
-TZoom TTileProviderBase::MinZoomLevel()
+TTileProvider::TTileProvider(const TDesC& anId, const TDesC& aTitle,
+		const TDesC8& anUrlTemplate, TZoom aMinZoom, TZoom aMaxZoom)
 	{
-	return TZoom(0);
+	iId.Copy(anId);
+	iTitle.Copy(aTitle);
+	iTileUrlTemplate.Copy(anUrlTemplate);
+	iMinZoomLevel = aMinZoom;
+	iMaxZoomLevel = aMaxZoom;
 	}
 
-TZoom TTileProviderBase::MaxZoomLevel()
+void TTileProvider::TileUrl(TDes8 &aUrl, const TTile &aTile)
 	{
-	return TZoom(18);
-	}
-
-// OsmStandardTileProvider
-
-void TOsmStandardTileProvider::ID(TDes &aDes)
-	{
-	_LIT(KProviderID, "osm");
-	aDes.Copy(KProviderID);
-	}
-
-void TOsmStandardTileProvider::Title(TDes &aDes)
-	{
-	_LIT(KProviderTitle, "OpenStreetMap");
-	aDes.Copy(KProviderTitle);
-	}
-
-void TOsmStandardTileProvider::TileUrl(TDes8 &aUrl, const TTile &aTile)
-	{
-	_LIT8(KUrlFmt, "http://%c.tile.openstreetmap.org/%u/%u/%u.png");
 	TChar chr('a');
 	chr += Math::Random() % 3; // a-c
-	aUrl.Format(KUrlFmt, (TUint) chr, (TUint) aTile.iZ, aTile.iX, aTile.iY);
+	aUrl.Format(iTileUrlTemplate, (TUint) chr, (TUint) aTile.iZ, aTile.iX, aTile.iY);
 	}
 
-TZoom TOsmStandardTileProvider::MaxZoomLevel()
-	{
-	return TZoom(19);
-	}
-
-// TOsmCyclesTileProvider
-
-void TOsmCyclesTileProvider::ID(TDes &aDes)
-	{
-	_LIT(KProviderID, "osm-cycles");
-	aDes.Copy(KProviderID);
-	}
-
-void TOsmCyclesTileProvider::Title(TDes &aDes)
-	{
-	_LIT(KProviderTitle, "OpenCycleMap");
-	aDes.Copy(KProviderTitle);
-	}
-
-void TOsmCyclesTileProvider::TileUrl(TDes8 &aUrl, const TTile &aTile)
-	{
-	_LIT8(KUrlFmt, "http://%c.tile.thunderforest.com/cycle/%u/%u/%u.png");
-	TChar chr('a');
-	chr += Math::Random() % 3; // a-c
-	aUrl.Format(KUrlFmt, (TUint) chr, (TUint) aTile.iZ, aTile.iX, aTile.iY);
-	}
-
-TZoom TOsmCyclesTileProvider::MaxZoomLevel()
-	{
-	return TZoom(22);
-	}
-
-
-// TOsmTransportTileProvider
-
-void TOsmTransportTileProvider::ID(TDes &aDes)
-	{
-	_LIT(KProviderID, "osm-transport");
-	aDes.Copy(KProviderID);
-	}
-
-void TOsmTransportTileProvider::Title(TDes &aDes)
-	{
-	_LIT(KProviderTitle, "Transport Map");
-	aDes.Copy(KProviderTitle);
-	}
-
-void TOsmTransportTileProvider::TileUrl(TDes8 &aUrl, const TTile &aTile)
-	{
-	_LIT8(KUrlFmt, "http://%c.tile.thunderforest.com/transport/%u/%u/%u.png");
-	TChar chr('a');
-	chr += Math::Random() % 3; // a-c
-	aUrl.Format(KUrlFmt, (TUint) chr, (TUint) aTile.iZ, aTile.iX, aTile.iY);
-	}
-
-TZoom TOsmTransportTileProvider::MaxZoomLevel()
-	{
-	return TZoom(22);
-	}
-
-// TOsmHumanitarianTileProvider
-
-void TOsmHumanitarianTileProvider::ID(TDes &aDes)
-	{
-	_LIT(KProviderID, "osm-humanitarian");
-	aDes.Copy(KProviderID);
-	}
-
-void TOsmHumanitarianTileProvider::Title(TDes &aDes)
-	{
-	_LIT(KProviderTitle, "Humanitarian");
-	aDes.Copy(KProviderTitle);
-	}
-
-void TOsmHumanitarianTileProvider::TileUrl(TDes8 &aUrl, const TTile &aTile)
-	{
-	_LIT8(KUrlFmt, "http://tile-%c.openstreetmap.fr/hot/%u/%u/%u.png");
-	TChar chr('a');
-	chr += Math::Random() % 3; // a-c
-	aUrl.Format(KUrlFmt, (TUint) chr, (TUint) aTile.iZ, aTile.iX, aTile.iY);
-	}
-
-TZoom TOsmHumanitarianTileProvider::MaxZoomLevel()
-	{
-	return TZoom(20);
-	}
-
-// TOpenTopoMapTileProvider
-
-void TOpenTopoMapTileProvider::ID(TDes &aDes)
-	{
-	_LIT(KProviderID, "opentopomap");
-	aDes.Copy(KProviderID);
-	}
-
-void TOpenTopoMapTileProvider::Title(TDes &aDes)
-	{
-	_LIT(KProviderTitle, "OpenTopoMap");
-	aDes.Copy(KProviderTitle);
-	}
-
-void TOpenTopoMapTileProvider::TileUrl(TDes8 &aUrl, const TTile &aTile)
-	{
-	_LIT8(KUrlFmt, "http://%c.tile.opentopomap.org/%u/%u/%u.png");
-	TChar chr('a');
-	chr += Math::Random() % 3; // a-c
-	aUrl.Format(KUrlFmt, (TUint) chr, (TUint) aTile.iZ, aTile.iX, aTile.iY);
-	}
-
-TZoom TOpenTopoMapTileProvider::MaxZoomLevel()
-	{
-	return TZoom(17);
-	}
 
 
 // TCoordinateEx

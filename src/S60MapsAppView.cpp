@@ -27,7 +27,7 @@ const TInt KMovementRepeaterInterval = 200000;
 CS60MapsAppView* CS60MapsAppView::NewL(const TRect& aRect,
 		const TCoordinate &aInitialPosition, TZoom aInitialZoom,
 		//TZoom aMinZoom, TZoom aMaxZoom,
-		TTileProviderBase* aTileProvider)
+		TTileProvider* aTileProvider)
 	{
 	CS60MapsAppView* self = CS60MapsAppView::NewLC(aRect, aInitialPosition, aInitialZoom,
 			/*aMinZoom, aMaxZoom,*/ aTileProvider);
@@ -43,7 +43,7 @@ CS60MapsAppView* CS60MapsAppView::NewL(const TRect& aRect,
 CS60MapsAppView* CS60MapsAppView::NewLC(const TRect& aRect,
 		const TCoordinate &aInitialPosition, TZoom aInitialZoom,
 		//TZoom aMinZoom, TZoom aMaxZoom,
-		TTileProviderBase* aTileProvider)
+		TTileProvider* aTileProvider)
 	{
 	CS60MapsAppView* self = new (ELeave) CS60MapsAppView(aInitialZoom);
 	CleanupStack::PushL(self);
@@ -58,7 +58,7 @@ CS60MapsAppView* CS60MapsAppView::NewLC(const TRect& aRect,
 //
 void CS60MapsAppView::ConstructL(const TRect& aRect, const TCoordinate &aInitialPosition,
 		//TZoom aMinZoom, TZoom aMaxZoom,
-		TTileProviderBase* aTileProvider)
+		TTileProvider* aTileProvider)
 	{
 	//SetZoomBounds(aMinZoom, aMaxZoom);
 	//SetZoomBounds(aTileProvider->MinZoomLevel(), aTileProvider->MaxZoomLevel());
@@ -663,10 +663,10 @@ void CS60MapsAppView::ExecuteMovement()
 		}
 	}
 
-void CS60MapsAppView::SetTileProviderL(TTileProviderBase* aTileProvider)
+void CS60MapsAppView::SetTileProviderL(TTileProvider* aTileProvider)
 	{
 	static_cast<CTiledMapLayer*>(iLayers[0 /*tiled map*/])->SetTileProviderL(aTileProvider);
-	SetZoomBounds(aTileProvider->MinZoomLevel(), aTileProvider->MaxZoomLevel());
+	SetZoomBounds(aTileProvider->iMinZoomLevel, aTileProvider->iMaxZoomLevel);
 	}
 
 // End of File

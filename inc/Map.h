@@ -88,7 +88,7 @@ public:
 
 class CTileBitmapManager;
 //class MTileBitmapManagerObserver;
-class TTileProviderBase;
+class TTileProvider;
 
 class MTileBitmapManagerObserver
 	{
@@ -103,12 +103,12 @@ class CTiledMapLayer : public CMapLayerBase, public MTileBitmapManagerObserver
 // Base methods
 public:
 	~CTiledMapLayer();
-	static CTiledMapLayer* NewL(CS60MapsAppView* aMapView, TTileProviderBase* aTileProvider);
-	static CTiledMapLayer* NewLC(CS60MapsAppView* aMapView, TTileProviderBase* aTileProvider);
+	static CTiledMapLayer* NewL(CS60MapsAppView* aMapView, TTileProvider* aTileProvider);
+	static CTiledMapLayer* NewLC(CS60MapsAppView* aMapView, TTileProvider* aTileProvider);
 
 private:
 	CTiledMapLayer(CS60MapsAppView* aMapView);
-	void ConstructL(TTileProviderBase* aTileProvider);
+	void ConstructL(TTileProvider* aTileProvider);
 	
 // From CMapLayerBase
 public:
@@ -121,12 +121,12 @@ public:
 // Custom properties and methods
 private:
 	CTileBitmapManager *iBitmapMgr;
-	TTileProviderBase *iTileProvider;
+	TTileProvider *iTileProvider;
 	void VisibleTiles(RArray<TTile> &aTiles); // Return list of visible tiles
 	void DrawTile(CWindowGc &aGc, const TTile &aTile, const CFbsBitmap *aBitmap);
 	
 public:
-	void SetTileProviderL(TTileProviderBase* aTileProvider);
+	void SetTileProviderL(TTileProvider* aTileProvider);
 	};
 
 
@@ -204,7 +204,7 @@ private:
 //	void OnTileLoaded(const TTile &aTile, const CFbsBitmap *aBitmap);
 //	};
 
-class TTileProviderBase;
+class TTileProvider;
 
 class CTileBitmapManagerItem;
 
@@ -216,13 +216,13 @@ class CTileBitmapManager : public CActive, public MHTTPClientObserver
 public:
 	~CTileBitmapManager();
 	static CTileBitmapManager* NewL(MTileBitmapManagerObserver *aObserver,
-			RFs aFs, TTileProviderBase* aTileProvider, const TDesC &aCacheDir, TInt aLimit = 50);
+			RFs aFs, TTileProvider* aTileProvider, const TDesC &aCacheDir, TInt aLimit = 50);
 	static CTileBitmapManager* NewLC(MTileBitmapManagerObserver *aObserver,
-			RFs aFs, TTileProviderBase* aTileProvider, const TDesC &aCacheDir, TInt aLimit = 50);
+			RFs aFs, TTileProvider* aTileProvider, const TDesC &aCacheDir, TInt aLimit = 50);
 
 private:
 	CTileBitmapManager(MTileBitmapManagerObserver *aObserver, RFs aFs,
-			TTileProviderBase* aTileProvider, TInt aLimit);
+			TTileProvider* aTileProvider, TInt aLimit);
 	void ConstructL(const TDesC &aCacheDir);
 	
 // From CActive
@@ -247,7 +247,7 @@ private:
 	
 	RArray<TTile> /*iItemsForLoading*/ iItemsLoadingQueue;
 	CHTTPClient* iHTTPClient;
-	TTileProviderBase* iTileProvider;
+	TTileProvider* iTileProvider;
 	//TFileName iCacheDir;
 	//TBool iIsLoading;
 	enum TProcessingState
@@ -320,84 +320,36 @@ public:
 	};
 
 
-class TTileProviderBase
+typedef TBuf<32> TTileProviderId;
+typedef TBuf<32> TTileProviderTitle;
+typedef TBuf8<512> TTileProviderUrl;
+
+class TTileProvider
 	{
-/*private:
-	TileProviderBase() {};
-	~TileProviderBase() {};*/
-	
 public:
+	TTileProvider(const TDesC& anId, const TDesC& aTitle, const TDesC8& anUrlTemplate,
+			TZoom aMinZoom, TZoom aMaxZoom);
+
 	// Short string identifier of tile provider. Used in cache subdir name.
-	// Must be unique. 
-	virtual /*static*/ void ID/*Name*/(TDes &aDes) = 0;
+	// Must be unique and do not contains any special symbols (allowed: a-Z, 0-9, - and _). 
+	TTileProviderId iId;
 	
 	// Readable name of tile provider. Will be display in settings.
-	virtual /*static*/ void Title(TDes &aDes) = 0;
+	TTileProviderTitle iTitle;
 	
-	// Create and return URL for specified tile
+	// Tile URL template with placeholders
 	// Note: prefer not to use HTTPS protocol because unfortunately 
 	// at the present time SSL works not on all Symbian based phones
-	virtual void TileUrl(TDes8 &aUrl, const TTile &aTile) = 0;
+	TTileProviderUrl iTileUrlTemplate;
 	
-	virtual TZoom MinZoomLevel(); // Default is 0
-	virtual TZoom MaxZoomLevel(); // Default is 18
+	// Minimum and maximum zoom level
+	TZoom iMinZoomLevel; // /*Default is 0*/
+	TZoom iMaxZoomLevel; // /*Default is 18*/
+	
+	// Return url of given tile
+	void TileUrl(TDes8 &aUrl, const TTile &aTile);
 	};
-
-// https://www.openstreetmap.org/
-class TOsmStandardTileProvider : public TTileProviderBase
-	{
-public:
-	virtual void ID(TDes &aDes);
-	virtual void Title(TDes &aDes);
-	virtual void TileUrl(TDes8 &aUrl, const TTile &aTile);
-	virtual TZoom MaxZoomLevel();
-	};
-
-// https://wiki.openstreetmap.org/wiki/OpenCycleMap
-// https://www.thunderforest.com/maps/opencyclemap/
-class TOsmCyclesTileProvider : public TTileProviderBase
-	{
-public:
-	virtual void ID(TDes &aDes);
-	virtual void Title(TDes &aDes);
-	virtual void TileUrl(TDes8 &aUrl, const TTile &aTile);
-	virtual TZoom MaxZoomLevel();
-	};
-
-// https://wiki.openstreetmap.org/wiki/Transport_Map
-// https://www.thunderforest.com/maps/transport/
-class TOsmTransportTileProvider : public TTileProviderBase
-	{
-public:
-	virtual void ID(TDes &aDes);
-	virtual void Title(TDes &aDes);
-	virtual void TileUrl(TDes8 &aUrl, const TTile &aTile);
-	virtual TZoom MaxZoomLevel();
-	};
-
-// https://wiki.openstreetmap.org/wiki/Humanitarian_map_style
-// https://www.openstreetmap.org/?layers=H
-class TOsmHumanitarianTileProvider : public TTileProviderBase
-	{
-public:
-	virtual void ID(TDes &aDes);
-	virtual void Title(TDes &aDes);
-	virtual void TileUrl(TDes8 &aUrl, const TTile &aTile);
-	virtual TZoom MaxZoomLevel();
-	};
-
-// https://wiki.openstreetmap.org/wiki/OpenTopoMap
-// https://opentopomap.org/
-// FixMe: Doesn`t work without SSL 
-class TOpenTopoMapTileProvider : public TTileProviderBase
-	{
-public:
-	virtual void ID(TDes &aDes);
-	virtual void Title(TDes &aDes);
-	virtual void TileUrl(TDes8 &aUrl, const TTile &aTile);
-	virtual TZoom MaxZoomLevel();
-	};
-
+	
 
 class TCoordinateEx : public TCoordinate
 	{

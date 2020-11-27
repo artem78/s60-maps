@@ -45,12 +45,48 @@ void CS60MapsAppUi::ConstructL()
 	// Initialise app UI with standard value.
 	BaseConstructL(CAknAppUi::EAknEnableSkin);
 	
-	// Set available tiles providers
-	iAvailableTileProviders[0] = new (ELeave) TOsmStandardTileProvider;
-	iAvailableTileProviders[1] = new (ELeave) TOsmCyclesTileProvider;
-	iAvailableTileProviders[2] = new (ELeave) TOsmTransportTileProvider;
-	iAvailableTileProviders[3] = new (ELeave) TOsmHumanitarianTileProvider;
-	iAvailableTileProviders[4] = new (ELeave) TOpenTopoMapTileProvider;
+	// Set several predefined available tiles providers
+
+	// OpenStreetMap standard tile layer
+	// https://www.openstreetmap.org/
+	iAvailableTileProviders[0] = new (ELeave) TTileProvider(
+			_L("osm"), _L("OpenStreetMap"),
+			_L8("http://%c.tile.openstreetmap.org/%u/%u/%u.png"),
+			0, 19);
+	
+	// OpenCycleMap
+	// https://wiki.openstreetmap.org/wiki/OpenCycleMap
+	// https://www.thunderforest.com/maps/opencyclemap/
+	iAvailableTileProviders[1] = new (ELeave) TTileProvider(
+			_L("osm-cycles"), _L("OpenCycleMap"),
+			_L8("http://%c.tile.thunderforest.com/cycle/%u/%u/%u.png"),
+			0, 22);
+	
+	// Transport Map
+	// https://wiki.openstreetmap.org/wiki/Transport_Map
+	// https://www.thunderforest.com/maps/transport/
+	iAvailableTileProviders[2] = new (ELeave) TTileProvider(
+			_L("osm-transport"), _L("Transport Map"),
+			_L8("http://%c.tile.thunderforest.com/transport/%u/%u/%u.png"),
+			0, 22);
+	
+	// Humanitarian Map
+	// https://wiki.openstreetmap.org/wiki/Humanitarian_map_style
+	// https://www.openstreetmap.org/?layers=H
+	iAvailableTileProviders[3] = new (ELeave) TTileProvider(
+			_L("osm-humanitarian"), _L("Humanitarian"),
+			_L8("http://tile-%c.openstreetmap.fr/hot/%u/%u/%u.png"),
+			0, 20);
+	
+	// OpenTopoMap
+	// https://wiki.openstreetmap.org/wiki/OpenTopoMap
+	// https://opentopomap.org/
+	// FixMe: Doesn`t work without SSL 
+	iAvailableTileProviders[4] = new (ELeave) TTileProvider(
+			_L("opentopomap"), _L("OpenTopoMap"),
+			_L8("http://%c.tile.opentopomap.org/%u/%u/%u.png"),
+			0, 17);
+	
 	iActiveTileProvider = iAvailableTileProviders[0]; // Use first
 	
 	
@@ -270,14 +306,12 @@ void CS60MapsAppUi::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
 		for (TInt idx = 0; idx < iAvailableTileProviders.Count(); idx++)
 			{
 			TInt commandId = ESetTileProviderBase + idx;
-			TBuf<64> menuItemText;
-			iAvailableTileProviders[idx]->Title(menuItemText);
 			
 			CEikMenuPaneItem::SData menuItem;
 			menuItem.iCommandId = commandId;
 			menuItem.iCascadeId = 0;
 			//menuItem.iFlags = ???
-			menuItem.iText.Copy(menuItemText);
+			menuItem.iText.Copy(iAvailableTileProviders[idx]->iTitle);
 			//menuItem.iExtraText = ???
 			aMenuPane->AddMenuItemL(menuItem);
 			aMenuPane->SetItemButtonState(commandId,
@@ -315,9 +349,7 @@ void CS60MapsAppUi::ExternalizeL(RWriteStream& aStream) const
 	{
 	aStream << *iAppView;
 	
-	TBuf<64> tileProviderId;
-	iActiveTileProvider->ID(tileProviderId);
-	aStream << tileProviderId;
+	aStream << iActiveTileProvider->iId;
 	}
 
 void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
@@ -325,14 +357,12 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 	aStream >> *iAppView;
 	
 	// ToDo: Add compatibility with old config file (without id)
-	TBuf<64> tileProviderId;
+	TTileProviderId tileProviderId;
 	aStream >> tileProviderId;
 	TBool isFound = EFalse;
 	for (TInt idx = 0; idx < iAvailableTileProviders.Count(); idx++)
 		{
-		TBuf<64> tileProviderId2;
-		iAvailableTileProviders[idx]->ID(tileProviderId2);
-		if (tileProviderId == tileProviderId2)
+		if (tileProviderId == iAvailableTileProviders[idx]->iId)
 			{
 			iActiveTileProvider = iAvailableTileProviders[idx];
 			iAppView->SetTileProviderL(iAvailableTileProviders[idx]);

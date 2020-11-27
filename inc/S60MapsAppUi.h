@@ -124,9 +124,9 @@ private:
 	CRemConInterfaceSelector* iInterfaceSelector;
 	CRemConCoreApiTarget* iCoreTarget;
 	
-	TFixedArray<TTileProviderBase*, 5> iAvailableTileProviders;
+	TFixedArray<TTileProvider*, 5> iAvailableTileProviders;
 	//TBuf<64> iTileProviderId
-	TTileProviderBase* iActiveTileProvider;
+	TTileProvider* iActiveTileProvider;
 	
 	void ClearTilesCache();
 	
