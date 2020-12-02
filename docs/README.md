@@ -21,6 +21,10 @@ to move up/down/left/right
 * Swipe left/right to zoom out/in
 * Swipe up/down to show/hide softkeys (Options | Exit)
 
+## More screenshots
+
+![Menu](images/menu.png) ![About dialog](images/about.png) ![Application launch icon](images/launch_icon.png)
+
 ## Download
 Download and install `sis` or `sisx` package from [release page](../../../releases/latest/).
 
