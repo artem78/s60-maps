@@ -7,6 +7,7 @@ Simple map for Symbian phones. Supports s60v3 and s60v5.
 ## Features
 * Show map from default [OpenStreetMap](https://www.openstreetmap.org/) layer
 * Retrieve phone location using internal GPS
+* **Offline mode** - all downloaded tiles save in cache on disk and you can view them later without network connection needed
 
 ## Controls
 
