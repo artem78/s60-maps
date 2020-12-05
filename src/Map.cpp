@@ -231,8 +231,14 @@ void CTiledMapLayer::SetTileProviderL(TTileProvider* aTileProvider)
 	if (r != KErrAlreadyExists)
 		User::LeaveIfError(r);
 	
-	delete iBitmapMgr; // Delete old bitmap manager and replace with new one
-	iBitmapMgr = CTileBitmapManager::NewL(this, fs, iTileProvider, cacheDir);
+	if (iBitmapMgr == NULL)
+		// Create bitmap manager if not exist yet
+		iBitmapMgr = CTileBitmapManager::NewL(this, fs, iTileProvider, cacheDir);
+	else
+		// Set new tile provider and cache dir for bitmap manager
+		iBitmapMgr->ChangeTileProvider(iTileProvider, cacheDir);
+	
+	//iMapView->DrawNow();
 	}
 
 
@@ -854,6 +860,15 @@ void CTileBitmapManager::TileFileName(const TTile &aTile, TFileName &aFileName) 
 	iFileMapper->GetFilePath(originalFileName, aFileName);
 	}
 
+void CTileBitmapManager::ChangeTileProvider(TTileProvider* aTileProvider,
+		const TDesC &aCacheDir)
+	{
+	Cancel();	
+	iItemsLoadingQueue.Reset(); // Should already be cleared by Cancel() call at previous line
+	iItems.ResetAndDestroy();
+	iTileProvider = aTileProvider;
+	iFileMapper->SetBaseDir(aCacheDir);
+	}
 
 // CTileBitmapManagerItem
 

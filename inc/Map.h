@@ -280,6 +280,7 @@ public:
 	// @return Error codes: KErrNotFound, KErrNotReady or KErrNone
 	TInt GetTileBitmap(const TTile &aTile, CFbsBitmap* &aBitmap);
 	void AddToLoading(const TTile &aTile);
+	void ChangeTileProvider(TTileProvider* aTileProvider, const TDesC &aCacheDir);
 	};
 
 
