@@ -446,6 +446,12 @@ void CS60MapsAppView::SetZoomBounds(TZoom aMinZoom, TZoom aMaxZoom)
 		}
 	
 	// ToDo: Return error when checks failed
+	
+	// Set zoom to maximum/minimum available value if it went out of bounds
+	if (iZoom < iMinZoom)
+		SetZoom(iMinZoom);
+	else if (iZoom > iMaxZoom)
+		SetZoom(iMaxZoom);
 	}
 
 void CS60MapsAppView::SetZoom(TZoom aZoom)
