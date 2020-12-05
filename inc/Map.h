@@ -347,7 +347,12 @@ public:
 	TZoom iMaxZoomLevel; // /*Default is 18*/
 	
 	// Return url of given tile
+	// ToDo: It is a good idea to make tests for this method
 	void TileUrl(TDes8 &aUrl, const TTile &aTile);
+	
+private:
+	TInt ParseRandCharRange(TLex8 &aLex, TChar &aReturnedChar);
+	TInt ParseVariable(TLex8 &aLex, const TTile aTile, /*TInt32*/ TUint32 &aReturnedVal);
 	};
 	
 

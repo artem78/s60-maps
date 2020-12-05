@@ -920,9 +920,152 @@ TTileProvider::TTileProvider(const TDesC& anId, const TDesC& aTitle,
 
 void TTileProvider::TileUrl(TDes8 &aUrl, const TTile &aTile)
 	{
-	TChar chr('a');
-	chr += Math::Random() % 3; // a-c
-	aUrl.Format(iTileUrlTemplate, (TUint) chr, (TUint) aTile.iZ, aTile.iX, aTile.iY);
+	aUrl.Zero();
+	TLex8 lex(iTileUrlTemplate);
+
+	do
+		{
+		/*TInt*/ TUint32 value;
+		TChar randChar;
+		
+		if (ParseVariable(lex, aTile, value) == KErrNone)
+			{
+			// Try to parse variable
+			aUrl.AppendNum(value);
+			}
+		else if (ParseRandCharRange(lex, randChar) == KErrNone)
+			{
+			// Try to parse random char range
+			aUrl.Append(randChar);
+			}
+		else
+			{
+			// Copy char to destination string
+			aUrl.Append(lex.Get());
+			}
+			
+		} while (!lex.Eos());
+	}
+
+TInt TTileProvider::ParseRandCharRange(TLex8 &aLex, TChar &aReturnedChar)
+	{
+	const TChar KStartChar = '{';
+	const TChar KEndChar = '}';
+	
+	TLexMark8 startMark;
+	aLex.Mark(startMark);
+	
+	if (aLex.Eos() || aLex.Peek() != KStartChar)
+		{
+		aLex.UnGetToMark(startMark);
+		return KErrNotFound;
+		}
+	aLex.Inc();
+	
+	// Process start char
+	if (aLex.Eos() || !aLex.Peek().IsAlphaDigit())
+		{
+		aLex.UnGetToMark(startMark);
+		return KErrNotFound;
+		}
+	TChar ch1 = aLex.Get();
+	
+	if (aLex.Eos() || aLex.Peek() != '-')
+		{
+		aLex.UnGetToMark(startMark);
+		return KErrNotFound;
+		}
+	aLex.Inc();
+	
+	// Process end char
+	if (aLex.Eos() || !aLex.Peek().IsAlphaDigit())
+		{
+		aLex.UnGetToMark(startMark);
+		return KErrNotFound;
+		}
+	TChar ch2 = aLex.Get();
+	
+	if (aLex.Eos() || aLex.Peek() != KEndChar)
+		{
+		aLex.UnGetToMark(startMark);
+		return KErrNotFound;
+		}
+	aLex.Inc();
+	
+	// Check that start char is smaller than end char
+	if (!(ch1 < ch2))
+		{
+		aLex.UnGetToMark(startMark);
+		return KErrGeneral;
+		}
+	
+	// Get random char from range
+//	aReturnedChar = ch1 + (Math::Random() % (ch2 - ch1 + 1));
+	aReturnedChar = TUint32(ch1) + (Math::Random() % (TUint32(ch2) - TUint32(ch1) + 1));
+	return KErrNone;
+	}
+
+TInt TTileProvider::ParseVariable(TLex8 &aLex, const TTile aTile, /*TInt32*/ TUint32 &aReturnedVal)
+	{
+	const TChar KStartChar = '{';
+	const TChar KEndChar = '}';
+	const TChar KVariablePrefixChar = '$';
+	
+	TLexMark8 startMark;
+	aLex.Mark(startMark);
+	
+	if (aLex.Eos() || aLex.Peek() != KStartChar)
+		{
+		aLex.UnGetToMark(startMark);
+		return KErrNotFound;
+		}
+	aLex.Inc();
+	
+	if (aLex.Eos() || aLex.Peek() != KVariablePrefixChar)
+		{
+		aLex.UnGetToMark(startMark);
+		return KErrNotFound;
+		}
+	aLex.Inc();
+	
+	if (aLex.Eos())
+		{
+		aLex.UnGetToMark(startMark);
+		return KErrNotFound;
+		}
+	
+	TChar variable = aLex.Get();
+	/*TInt32*/ TUint32 value = KNaN;
+	switch (variable)
+		{
+		case 'x':
+			value = aTile.iX;
+			break;
+			
+		case 'y':
+			value = aTile.iY;
+			break;
+							
+		case 'z':
+			value = aTile.iZ;
+			break;
+			
+		default:
+			aLex.UnGetToMark(startMark);
+			return KErrNotFound;
+			break;
+		}
+	
+	if (aLex.Eos() || aLex.Peek() != KEndChar)
+		{
+		aLex.UnGetToMark(startMark);
+		return KErrNotFound;
+		}
+	aLex.Inc();
+	
+	aReturnedVal = value;
+	
+	return KErrNone;	
 	}
 
 

@@ -51,7 +51,7 @@ void CS60MapsAppUi::ConstructL()
 	// https://www.openstreetmap.org/
 	iAvailableTileProviders[0] = new (ELeave) TTileProvider(
 			_L("osm"), _L("OpenStreetMap"),
-			_L8("http://%c.tile.openstreetmap.org/%u/%u/%u.png"),
+			_L8("http://{a-c}.tile.openstreetmap.org/{$z}/{$x}/{$y}.png"),
 			0, 19);
 	
 	// OpenCycleMap
@@ -59,7 +59,7 @@ void CS60MapsAppUi::ConstructL()
 	// https://www.thunderforest.com/maps/opencyclemap/
 	iAvailableTileProviders[1] = new (ELeave) TTileProvider(
 			_L("osm-cycles"), _L("OpenCycleMap"),
-			_L8("http://%c.tile.thunderforest.com/cycle/%u/%u/%u.png"),
+			_L8("http://{a-c}.tile.thunderforest.com/cycle/{$z}/{$x}/{$y}.png"),
 			0, 22);
 	
 	// Transport Map
@@ -67,7 +67,7 @@ void CS60MapsAppUi::ConstructL()
 	// https://www.thunderforest.com/maps/transport/
 	iAvailableTileProviders[2] = new (ELeave) TTileProvider(
 			_L("osm-transport"), _L("Transport Map"),
-			_L8("http://%c.tile.thunderforest.com/transport/%u/%u/%u.png"),
+			_L8("http://{a-c}.tile.thunderforest.com/transport/{$z}/{$x}/{$y}.png"),
 			0, 22);
 	
 	// Humanitarian Map
@@ -75,7 +75,7 @@ void CS60MapsAppUi::ConstructL()
 	// https://www.openstreetmap.org/?layers=H
 	iAvailableTileProviders[3] = new (ELeave) TTileProvider(
 			_L("osm-humanitarian"), _L("Humanitarian"),
-			_L8("http://tile-%c.openstreetmap.fr/hot/%u/%u/%u.png"),
+			_L8("http://tile-{a-c}.openstreetmap.fr/hot/{$z}/{$x}/{$y}.png"),
 			0, 20);
 	
 	// OpenTopoMap
@@ -84,7 +84,7 @@ void CS60MapsAppUi::ConstructL()
 	// FixMe: Doesn`t work without SSL 
 	iAvailableTileProviders[4] = new (ELeave) TTileProvider(
 			_L("opentopomap"), _L("OpenTopoMap"),
-			_L8("http://%c.tile.opentopomap.org/%u/%u/%u.png"),
+			_L8("http://{a-c}.tile.opentopomap.org/{$z}/{$x}/{$y}.png"),
 			0, 17);
 	
 	iActiveTileProvider = iAvailableTileProviders[0]; // Use first
