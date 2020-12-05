@@ -58,7 +58,7 @@ void CS60MapsAppUi::ConstructL()
 	// https://wiki.openstreetmap.org/wiki/OpenCycleMap
 	// https://www.thunderforest.com/maps/opencyclemap/
 	iAvailableTileProviders[1] = new (ELeave) TTileProvider(
-			_L("osm-cycles"), _L("OpenCycleMap"),
+			_L("opencycle"), _L("OpenCycleMap"),
 			_L8("http://{a-c}.tile.thunderforest.com/cycle/{$z}/{$x}/{$y}.png"),
 			0, 22);
 	
@@ -66,7 +66,7 @@ void CS60MapsAppUi::ConstructL()
 	// https://wiki.openstreetmap.org/wiki/Transport_Map
 	// https://www.thunderforest.com/maps/transport/
 	iAvailableTileProviders[2] = new (ELeave) TTileProvider(
-			_L("osm-transport"), _L("Transport Map"),
+			_L("transport"), _L("Transport Map"),
 			_L8("http://{a-c}.tile.thunderforest.com/transport/{$z}/{$x}/{$y}.png"),
 			0, 22);
 	
@@ -74,7 +74,7 @@ void CS60MapsAppUi::ConstructL()
 	// https://wiki.openstreetmap.org/wiki/Humanitarian_map_style
 	// https://www.openstreetmap.org/?layers=H
 	iAvailableTileProviders[3] = new (ELeave) TTileProvider(
-			_L("osm-humanitarian"), _L("Humanitarian"),
+			_L("humanitarian"), _L("Humanitarian"),
 			_L8("http://tile-{a-c}.openstreetmap.fr/hot/{$z}/{$x}/{$y}.png"),
 			0, 20);
 	
