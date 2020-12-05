@@ -57,18 +57,32 @@ void CS60MapsAppUi::ConstructL()
 	// OpenCycleMap
 	// https://wiki.openstreetmap.org/wiki/OpenCycleMap
 	// https://www.thunderforest.com/maps/opencyclemap/
+	_LIT8(KOpenCycleMapUrl, "http://{a-c}.tile.thunderforest.com/cycle/{$z}/{$x}/{$y}.png?apikey=");
+	RBuf8 openCycleMapUrl;
+	openCycleMapUrl.CreateMaxL(KOpenCycleMapUrl().Length() + KThunderForestApiKey().Length());
+	openCycleMapUrl.CleanupClosePushL();
+	openCycleMapUrl.Copy(KOpenCycleMapUrl);
+	openCycleMapUrl.Append(KThunderForestApiKey);
 	iAvailableTileProviders[1] = new (ELeave) TTileProvider(
 			_L("opencycle"), _L("OpenCycleMap"),
-			_L8("http://{a-c}.tile.thunderforest.com/cycle/{$z}/{$x}/{$y}.png"),
+			openCycleMapUrl,
 			0, 22);
+	CleanupStack::PopAndDestroy(&openCycleMapUrl);
 	
 	// Transport Map
 	// https://wiki.openstreetmap.org/wiki/Transport_Map
 	// https://www.thunderforest.com/maps/transport/
+	_LIT8(KTransportMapUrl, "http://{a-c}.tile.thunderforest.com/transport/{$z}/{$x}/{$y}.png?apikey=");
+	RBuf8 transportMapUrl;
+	transportMapUrl.CreateMaxL(KTransportMapUrl().Length() + KThunderForestApiKey().Length());
+	transportMapUrl.CleanupClosePushL();
+	transportMapUrl.Copy(KTransportMapUrl);
+	transportMapUrl.Append(KThunderForestApiKey);
 	iAvailableTileProviders[2] = new (ELeave) TTileProvider(
 			_L("transport"), _L("Transport Map"),
-			_L8("http://{a-c}.tile.thunderforest.com/transport/{$z}/{$x}/{$y}.png"),
+			transportMapUrl,
 			0, 22);
+	CleanupStack::PopAndDestroy(&transportMapUrl);
 	
 	// Humanitarian Map
 	// https://wiki.openstreetmap.org/wiki/Humanitarian_map_style
