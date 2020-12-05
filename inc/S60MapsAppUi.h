@@ -124,7 +124,11 @@ private:
 	CRemConInterfaceSelector* iInterfaceSelector;
 	CRemConCoreApiTarget* iCoreTarget;
 	
+#ifdef __WINSCW__
+	TFixedArray<TTileProvider*, 6> iAvailableTileProviders;
+#else
 	TFixedArray<TTileProvider*, 5> iAvailableTileProviders;
+#endif
 	//TBuf<64> iTileProviderId
 	TTileProvider* iActiveTileProvider;
 	

@@ -87,6 +87,14 @@ void CS60MapsAppUi::ConstructL()
 			_L8("http://{a-c}.tile.opentopomap.org/{$z}/{$x}/{$y}.png"),
 			0, 17);
 	
+#ifdef __WINSCW__
+	// Just for development and tesitng
+	iAvailableTileProviders[5] = new (ELeave) TTileProvider(
+			_L("test"), _L("Test !!!"),
+			_L8("http://869257868f6ff756911a8e89f59c656a.m.pipedream.net?x={$x}&y={$y}&z={$z}"),
+			0, 19);
+#endif
+	
 	iActiveTileProvider = iAvailableTileProviders[0]; // Use first
 	
 	
@@ -194,6 +202,9 @@ void CS60MapsAppUi::HandleCommandL(TInt aCommand)
 		case ESetOsmHumanitarianTileProvider:
 		case ESetOsmTransportTileProvider:
 		case ESetOpenTopoMapTileProvider:
+#ifdef __WINSCW__
+		case ESetOpenTopoMapTileProvider+1: // Test
+#endif
 			{
 			TInt idx = aCommand - ESetTileProviderBase;
 			iActiveTileProvider = iAvailableTileProviders[idx];
