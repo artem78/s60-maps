@@ -26,6 +26,10 @@ to move up/down/left/right
 
 ![Menu](images/menu.png) ![About dialog](images/about.png) ![Application launch icon](images/launch_icon.png)
 
+### And video
+
+![](images/demo_video.gif)
+
 ## Download
 Download and install `sis` or `sisx` package from [release page](../../../releases/latest/).
 
