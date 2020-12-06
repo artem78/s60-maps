@@ -2,7 +2,7 @@
 
 Simple map for Symbian phones. Supports s60v3 and s60v5.
 
-![](images/moving_animation.gif)
+![About dialog](images/about.png)
 
 ## Features
 * Show map from default [OpenStreetMap](https://www.openstreetmap.org/) layer
@@ -22,13 +22,11 @@ to move up/down/left/right
 * Swipe left/right to zoom out/in
 * Swipe up/down to show/hide softkeys (Options | Exit)
 
-## More screenshots
+## Screenshots & Screencasts
 
-![Menu](images/menu.png) ![About dialog](images/about.png) ![Application launch icon](images/launch_icon.png)
+![Menu](images/menu.png) ![Application launch icon](images/launch_icon.png)
 
-### And video
-
-![](images/demo_video.gif)
+![Moving](images/moving_animation.gif) ![Demo](images/demo_video.gif)
 
 ## Download
 Download and install `sis` or `sisx` package from [release page](../../../releases/latest/).
