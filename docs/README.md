@@ -1,8 +1,7 @@
+![icon](images/qgn_menu_S60Maps.png)
 # S60Maps
 
 Simple map for Symbian phones. Supports s60v3 and s60v5.
-
-![About dialog](images/about.png)
 
 - [Features](#features)
 - [Controls](#controls)
@@ -38,7 +37,7 @@ Simple map for Symbian phones. Supports s60v3 and s60v5.
 
 ## Screenshots
 
-![Menu](images/menu.png) ![Application launch icon](images/launch_icon.png) ![Demo](images/demo_video.gif)
+![Application launch icon](images/launch_icon.png) ![About dialog](images/about.png) ![Menu](images/menu.png) ![Demo](images/demo_video.gif)
 
 ## Supported Devices
 
