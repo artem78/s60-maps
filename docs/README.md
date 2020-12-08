@@ -26,15 +26,15 @@ Simple map for Symbian phones. Supports s60v3 and s60v5.
 
 ### Keys
 
-- Move: `arrows` or `2`, `4`, `6`, `8`
-- Zoom: `1` and `3` or volume keys
+- Move: <kbd>←</kbd>/<kbd>↑</kbd>/<kbd>→</kbd>/<kbd>↓</kbd> or <kbd>2</kbd>/<kbd>4</kbd>/<kbd>6</kbd>/<kbd>8</kbd>
+- Zoom: <kbd>1</kbd> (zoom in) and <kbd>3</kbd> (zoom out) or volume keys
 
 ### Touchscreen
 
 - Touch top/bottom/left/right side of the screen to move up/down/left/right
 - Touch and hold to move continuously
 - Swipe left/right to zoom out/in
-- Swipe up/down to show/hide softkeys (Options | Exit)
+- Swipe up/down to show/hide softkeys (on-screen <kbd>Options</kbd> & <kbd>Exit</kbd>)
 
 ## Screenshots
 
@@ -45,7 +45,7 @@ Simple map for Symbian phones. Supports s60v3 and s60v5.
 - `OK` Nokia N95 8GB
 - `OK` Nokia 5530 XM (thanks to [baranovskiykonstantin](https://github.com/baranovskiykonstantin))
 
-If you can test it works (or not) on other s60-based phones, let me know.
+> **NOTE:** If you can test it works (or not) on other s60-based phones, let me know.
 
 ## DOWNLOAD
 
