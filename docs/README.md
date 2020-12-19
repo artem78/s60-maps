@@ -43,6 +43,7 @@ Simple map for Symbian phones. Supports s60v3 and s60v5.
 
 - `OK` Nokia N95 8GB
 - `OK` Nokia 5530 XM (thanks to [baranovskiykonstantin](https://github.com/baranovskiykonstantin))
+- `FAILED` [EKA2L1](https://github.com/EKA2L1/EKA2L1) emulator ([more info](https://github.com/EKA2L1/EKA2L1/issues/231))
 
 > **NOTE:** If you can test it works (or not) on other s60-based phones, let me know.
 
