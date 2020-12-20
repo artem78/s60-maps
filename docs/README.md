@@ -9,8 +9,8 @@ Simple map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wi
   - [Touchscreen](#touchscreen)
 - [Screenshots](#screenshots)
 - [Supported Devices](#supported-devices)
-- [DOWNLOAD](#download)
-- [ROADMAP](#roadmap)
+- [Download](#download)
+- [Roadmap](#roadmap)
 - [LICENSE](#license)
 
 ----
@@ -25,15 +25,16 @@ Simple map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wi
 
 ### Keys
 
-- Move: <kbd>←</kbd>/<kbd>↑</kbd>/<kbd>→</kbd>/<kbd>↓</kbd> or <kbd>2</kbd>/<kbd>4</kbd>/<kbd>6</kbd>/<kbd>8</kbd>
-- Zoom: <kbd>1</kbd> (zoom in) and <kbd>3</kbd> (zoom out) or volume keys
+- Move: <kbd>←</kbd>/<kbd>↑</kbd>/<kbd>→</kbd>/<kbd>↓</kbd> (or <kbd>2</kbd>/<kbd>4</kbd>/<kbd>6</kbd>/<kbd>8</kbd>)
+- Zoom in: <kbd>▲</kbd> volume key (or <kbd>1</kbd>)
+- Zoom out: <kbd>▼</kbd> volume key (or <kbd>3</kbd>)
 
 ### Touchscreen
 
-- Touch top/bottom/left/right side of the screen to move up/down/left/right
-- Touch and hold to move continuously
-- Swipe left/right to zoom out/in
-- Swipe up/down to show/hide softkeys (on-screen <kbd>Options</kbd> & <kbd>Exit</kbd>)
+- Touch *top* / *bottom* / *left* / *right side of the screen* — to move *up* / *down* / *left* / *right*
+- Touch *and hold* — to move continuously
+- Swipe *left* / *right* — to *zoom out* / *zoom in*
+- Swipe *up* / *down* — to *show* / *hide softkeys* (on-screen <kbd>Options</kbd> & <kbd>Exit</kbd>)
 
 ## Screenshots
 
@@ -49,13 +50,15 @@ Simple map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wi
 
 > **NOTE:** If you can test it works (or not) on other Series S60 devices or emulators, let me know.
 
-## DOWNLOAD
+## Download
 
-Download and install `sis` or `sisx` package from [release page](../../../releases/latest/).
+- Download and install `*.sis` or `*.sisx` (*unsigned!*) package from [release page](../../../releases/latest/).
+- If your smartphone is locked (by default):
+  - Sign package with developer certificate ([details](https://digipassion.com/signing-sissisx-files-for-symbian-s60/));
+  - Install already signed package on your smartphone.
+- If your smartphone is unlocked ('rooted') you may install provided unsigned package directly.
 
-Must be signed or installed on unlocked phone.
-
-## ROADMAP
+## Roadmap
 
 - [ ] Add support for other map layers and WMS services (like OSM bicycle, OSM humanitarian, OpenTopoMap, etc...) and add ability to define custom providing tile\`s URLs
 - [ ] Update old cached tiles
