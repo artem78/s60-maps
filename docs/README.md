@@ -1,8 +1,8 @@
 ![icon](images/qgn_menu_S60Maps.png)
 # S60Maps
 
-Simple map for Symbian phones. Supports s60v3 and s60v5.
-
+Simple map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wiki/Symbian#Version_comparison) smartphones powered by [*Series S60 3rd/5th Edition*](https://en.wikipedia.org/wiki/S60_%28software_platform%29#Versions_and_supported_devices).
+  
 - [Features](#features)
 - [Controls](#controls)
   - [Keys](#keys)
@@ -41,13 +41,13 @@ Simple map for Symbian phones. Supports s60v3 and s60v5.
 
 ## Supported Devices
 
-Symbian S60 3rd and 5th.
+- Smarthones:
+  - `OK` [Nokia N95 8GB](https://en.wikipedia.org/wiki/Nokia_N95#Variations)
+  - `OK` [Nokia 5530 XM](https://en.wikipedia.org/wiki/Nokia_5530_XpressMusic) (thanks to [baranovskiykonstantin](https://github.com/baranovskiykonstantin))
+- Emulators:
+  - `FAILED` [EKA2L1](https://github.com/EKA2L1/EKA2L1) (here is [issue thread](https://github.com/EKA2L1/EKA2L1/issues/231))
 
-- `OK` Nokia N95 8GB
-- `OK` Nokia 5530 XM (thanks to [baranovskiykonstantin](https://github.com/baranovskiykonstantin))
-- `FAILED` [EKA2L1](https://github.com/EKA2L1/EKA2L1) emulator ([more info](https://github.com/EKA2L1/EKA2L1/issues/231))
-
-> **NOTE:** If you can test it works (or not) on other s60-based phones, let me know.
+> **NOTE:** If you can test it works (or not) on other Series S60 devices or emulators, let me know.
 
 ## DOWNLOAD
 
