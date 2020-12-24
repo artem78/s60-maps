@@ -81,7 +81,6 @@ CTiledMapLayer::CTiledMapLayer(CS60MapsAppView* aMapView) :
 CTiledMapLayer::~CTiledMapLayer()
 	{
 	delete iBitmapMgr;
-	delete iTileProvider;
 	}
 
 CTiledMapLayer* CTiledMapLayer::NewL(CS60MapsAppView* aMapView, TTileProvider* aTileProvider)
