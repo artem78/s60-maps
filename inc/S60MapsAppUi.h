@@ -20,7 +20,7 @@
 #include <remconcoreapitarget.h>
 #include <remconinterfaceselector.h>
 
-#include <Map.h> // For tile providers
+#include "Map.h" // For tile providers
 #include "Settings.h"
 
 // FORWARD DECLARATIONS
