@@ -211,7 +211,7 @@ void CS60MapsAppUi::HandleCommandL(TInt aCommand)
 		case ESetOsmCyclesTileProvider:
 		case ESetOsmHumanitarianTileProvider:
 		case ESetOsmTransportTileProvider:
-		case ESetOpenTopoMapTileProvider:
+		//case ESetOpenTopoMapTileProvider:
 			{
 			TInt idx = aCommand - ESetTileProviderBase;
 			iActiveTileProvider = iAvailableTileProviders[idx];
