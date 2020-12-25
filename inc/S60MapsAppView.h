@@ -72,9 +72,7 @@ public:
 	 * Virtual Destructor.
 	 */
 	virtual ~CS60MapsAppView();
-	
-	void ExternalizeL(RWriteStream &aStream) const;
-	void InternalizeL(RReadStream &aStream); 
+
 
 public:
 	// Functions from base classes

@@ -21,6 +21,7 @@
 #include <remconinterfaceselector.h>
 
 #include <Map.h> // For tile providers
+#include "Settings.h"
 
 // FORWARD DECLARATIONS
 class CS60MapsAppView;
@@ -118,6 +119,7 @@ public:
 	
 	// Custom properties and methods
 private:
+	CSettings* iSettings;
 	CFileMan* iFileMan;
 	CPositionRequestor* iPosRequestor;
 	

@@ -120,25 +120,6 @@ CS60MapsAppView::~CS60MapsAppView()
 	iMovementRepeater = NULL;
 	}
 
-void CS60MapsAppView::ExternalizeL(RWriteStream &aStream) const
-	{
-	TCoordinate pos = GetCenterCoordinate();
-	aStream << pos.Latitude();
-	aStream << pos.Longitude();
-	aStream << TCardinality(GetZoom());
-	}
-
-void CS60MapsAppView::InternalizeL(RReadStream &aStream)
-	{
-	TReal64 lat, lon;
-	TCardinality zoom;
-	aStream >> lat;
-	aStream >> lon;
-	aStream >> zoom;
-	
-	Move(lat, lon, (TInt) zoom);
-	}
-
 // -----------------------------------------------------------------------------
 // CS60MapsAppView::Draw()
 // Draws the display.

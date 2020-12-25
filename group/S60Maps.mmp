@@ -79,3 +79,5 @@ SOURCEPATH ..\modules\Positioning
 SOURCE Positioning.cpp
 SOURCEPATH ..\modules\FileUtils
 SOURCE FileUtils.cpp
+SOURCEPATH ..\src
+SOURCE Settings.cpp

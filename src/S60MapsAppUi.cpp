@@ -45,6 +45,8 @@ void CS60MapsAppUi::ConstructL()
 	// Initialise app UI with standard value.
 	BaseConstructL(CAknAppUi::EAknEnableSkin);
 	
+	iSettings = new (ELeave) CSettings();
+	
 	// Set several predefined available tiles providers
 
 	// OpenStreetMap standard tile layer
@@ -107,8 +109,8 @@ void CS60MapsAppUi::ConstructL()
 	iFileMan = CFileMan::NewL(CCoeEnv::Static()->FsSession(), this);
 
 	// Set initial map position
-	TCoordinate position = TCoordinate(47.100, 5.361); // Center of Europe
-	TZoom zoom = 2;	
+	TCoordinate position = TCoordinate(iSettings->GetLat(), iSettings->GetLon());
+	TZoom zoom = iSettings->GetZoom();	
 	
 	// Create view object
 	iAppView = CS60MapsAppView::NewL(ClientRect(), position, zoom, iActiveTileProvider);
@@ -168,6 +170,8 @@ CS60MapsAppUi::~CS60MapsAppUi()
 	
 	//delete iAvailableTileProviders;
 	iAvailableTileProviders.DeleteAll();
+	
+	delete iSettings;
 	}
 
 // -----------------------------------------------------------------------------
@@ -361,18 +365,23 @@ void CS60MapsAppUi::RestoreL(const CStreamStore& aStore,
 
 void CS60MapsAppUi::ExternalizeL(RWriteStream& aStream) const
 	{
-	aStream << *iAppView;
+	// Update settings
+	TCoordinate coord = iAppView->GetCenterCoordinate();
+	iSettings->SetLat(coord.Latitude());
+	iSettings->SetLon(coord.Longitude());
+	iSettings->SetZoom(iAppView->GetZoom());
+	iSettings->SetTileProviderId(iActiveTileProvider->iId);	
 	
-	aStream << iActiveTileProvider->iId;
+	// And save
+	aStream << *iSettings;
 	}
 
 void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 	{
-	aStream >> *iAppView;
+	TRAP_IGNORE(aStream >> *iSettings);
+	iAppView->Move(iSettings->GetLat(), iSettings->GetLon(), iSettings->GetZoom());
 	
-	// ToDo: Add compatibility with old config file (without id)
-	TTileProviderId tileProviderId;
-	aStream >> tileProviderId;
+	TTileProviderId tileProviderId(iSettings->GetTileProviderId());
 	TBool isFound = EFalse;
 	for (TInt idx = 0; idx < iAvailableTileProviders.Count(); idx++)
 		{
