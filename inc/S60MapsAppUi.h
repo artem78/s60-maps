@@ -132,7 +132,15 @@ private:
 	
 	void ClearTilesCache();
 	
-	void ShowMapCacheStatsDialogL();
+	// Command handlers
+	void HandleExitL();
+	void HandleFindMeL();
+	void HandleTileProviderChangeL(TInt aTileProviderIdx);
+	void HandleTilesCacheStatsL();
+	void HandleTilesCacheResetL();
+	void HandleHelpL();
+	void HandleAboutL();
+	
 	};
 
 #endif // __S60MAPSAPPUI_h__

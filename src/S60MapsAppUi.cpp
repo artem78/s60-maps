@@ -185,98 +185,39 @@ void CS60MapsAppUi::HandleCommandL(TInt aCommand)
 		{
 		case EEikCmdExit:
 		case EAknSoftkeyExit:
-			{
-			CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
-			dlg->PrepareLC(R_CONFIRM_EXIT_QUERY_DIALOG);
-			HBufC* title = iEikonEnv->AllocReadResourceLC(R_CONFIRM_EXIT_DIALOG_TITLE);
-			dlg->QueryHeading()->SetTextL(*title);
-			CleanupStack::PopAndDestroy(); //title
-			HBufC* msg = iEikonEnv->AllocReadResourceLC(R_CONFIRM_EXIT_DIALOG_TEXT);
-			dlg->SetMessageTextL(*msg);
-			CleanupStack::PopAndDestroy(); //msg
-			TInt res = dlg->RunLD();
-			if (res == EAknSoftkeyYes)
-				{
-				SaveL();
-				Exit();
-				}
-			}
+			HandleExitL();
 			break;
+			
 		case EFindMe:
-			{
-			iAppView->SetFollowUser(ETrue);
-			}
+			HandleFindMeL();
 			break;
+			
 		case ESetOsmStandardTileProvider:
 		case ESetOsmCyclesTileProvider:
 		case ESetOsmHumanitarianTileProvider:
 		case ESetOsmTransportTileProvider:
 		//case ESetOpenTopoMapTileProvider:
-			{
-			TInt idx = aCommand - ESetTileProviderBase;
-			iActiveTileProvider = iAvailableTileProviders[idx];
-			static_cast<CS60MapsAppView*>(iAppView)->SetTileProviderL(iActiveTileProvider);
-			}
-			break;		
+			HandleTileProviderChangeL(aCommand - ESetTileProviderBase);
+			break;	
+			
 		case ETilesCacheStats:
-			{
-			ShowMapCacheStatsDialogL();
-			}
+			HandleTilesCacheStatsL();
 			break;
+			
 		case EResetTilesCache:
-			{
-			CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
-			dlg->PrepareLC(R_CONFIRM_RESET_TILES_CACHE_DIALOG);
-			HBufC* title = iEikonEnv->AllocReadResourceLC(R_CONFIRM_RESET_TILES_CACHE_DIALOG_TITLE);
-			dlg->QueryHeading()->SetTextL(*title);
-			CleanupStack::PopAndDestroy(); //title
-			HBufC* msg = iEikonEnv->AllocReadResourceLC(R_CONFIRM_RESET_TILES_CACHE_DIALOG_TEXT);
-			dlg->SetMessageTextL(*msg);
-			CleanupStack::PopAndDestroy(); //msg
-			TInt res = dlg->RunLD();
-			if (res == EAknSoftkeyYes)
-				{
-				ClearTilesCache();
-				}
-			}
+			HandleTilesCacheResetL();
 			break;
+			
 		case EHelp:
-			{
-
-			CArrayFix<TCoeHelpContext>* buf = CCoeAppUi::AppHelpContextL();
-			HlpLauncher::LaunchHelpApplicationL(iEikonEnv->WsSession(), buf);
-			}
+			HandleHelpL();
 			break;
+			
 		case EAbout:
-			{
-
-			CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
-			dlg->PrepareLC(R_ABOUT_QUERY_DIALOG);
-			HBufC* title = iEikonEnv->AllocReadResourceLC(R_ABOUT_DIALOG_TITLE);
-			dlg->QueryHeading()->SetTextL(*title);
-			CleanupStack::PopAndDestroy(); //title
-#ifdef _DEBUG
-			HBufC* msg = iEikonEnv->AllocReadResourceLC(R_ABOUT_DIALOG_TEXT);
-			HBufC* gitMsg = iEikonEnv->AllocReadResourceLC(R_ABOUT_DIALOG_GIT_TEXT);
-			RBuf buff;
-			buff.CreateL(msg->Length() + gitMsg->Length() + 100);
-			buff.CleanupClosePushL();
-			buff.Zero();
-			buff.Append(*msg);
-			buff.AppendFormat(*gitMsg, &KGITBranch, &KGITCommit);
-			dlg->SetMessageTextL(buff);
-			CleanupStack::PopAndDestroy(3, msg);
-			dlg->RunLD();
-#else
-			HBufC* msg = iEikonEnv->AllocReadResourceLC(R_ABOUT_DIALOG_TEXT);
-			dlg->SetMessageTextL(*msg);
-			CleanupStack::PopAndDestroy(); //msg
-			dlg->RunLD();
-#endif
-			}
+			HandleAboutL();
 			break;
+			
 		default:
-			Panic( ES60MapsUi);
+			Panic(ES60MapsUi);
 			break;
 		}
 	}
@@ -503,7 +444,36 @@ void CS60MapsAppUi::MrccatoCommand(TRemConCoreApiOperationId aOperationId,
 		}
 	}
 
-void CS60MapsAppUi::ShowMapCacheStatsDialogL()
+void CS60MapsAppUi::HandleExitL()
+	{
+	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
+	dlg->PrepareLC(R_CONFIRM_EXIT_QUERY_DIALOG);
+	HBufC* title = iEikonEnv->AllocReadResourceLC(R_CONFIRM_EXIT_DIALOG_TITLE);
+	dlg->QueryHeading()->SetTextL(*title);
+	CleanupStack::PopAndDestroy(); //title
+	HBufC* msg = iEikonEnv->AllocReadResourceLC(R_CONFIRM_EXIT_DIALOG_TEXT);
+	dlg->SetMessageTextL(*msg);
+	CleanupStack::PopAndDestroy(); //msg
+	TInt res = dlg->RunLD();
+	if (res == EAknSoftkeyYes)
+		{
+		SaveL();
+		Exit();
+		}
+	}
+
+void CS60MapsAppUi::HandleFindMeL()
+	{
+	iAppView->SetFollowUser(ETrue);
+	}
+
+void CS60MapsAppUi::HandleTileProviderChangeL(TInt aTileProviderIdx)
+	{
+	iActiveTileProvider = iAvailableTileProviders[aTileProviderIdx];
+	static_cast<CS60MapsAppView*>(iAppView)->SetTileProviderL(iActiveTileProvider);
+	}
+
+void CS60MapsAppUi::HandleTilesCacheStatsL()
 	{
 	CS60MapsApplication* app = static_cast<CS60MapsApplication *>(Application());
 	RFs fs = iEikonEnv->FsSession();
@@ -574,6 +544,56 @@ void CS60MapsAppUi::ShowMapCacheStatsDialogL()
 	
 	CleanupStack::PopAndDestroy(&msg);
 	//CleanupStack::PopAndDestroy(/*3*/2, &msg);
+	}
+
+void CS60MapsAppUi::HandleTilesCacheResetL()
+	{
+	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
+	dlg->PrepareLC(R_CONFIRM_RESET_TILES_CACHE_DIALOG);
+	HBufC* title = iEikonEnv->AllocReadResourceLC(R_CONFIRM_RESET_TILES_CACHE_DIALOG_TITLE);
+	dlg->QueryHeading()->SetTextL(*title);
+	CleanupStack::PopAndDestroy(); //title
+	HBufC* msg = iEikonEnv->AllocReadResourceLC(R_CONFIRM_RESET_TILES_CACHE_DIALOG_TEXT);
+	dlg->SetMessageTextL(*msg);
+	CleanupStack::PopAndDestroy(); //msg
+	TInt res = dlg->RunLD();
+	if (res == EAknSoftkeyYes)
+		{
+		ClearTilesCache();
+		}
+	}
+
+void CS60MapsAppUi::HandleHelpL()
+	{
+	CArrayFix<TCoeHelpContext>* buf = CCoeAppUi::AppHelpContextL();
+	HlpLauncher::LaunchHelpApplicationL(iEikonEnv->WsSession(), buf);
+	}
+
+void CS60MapsAppUi::HandleAboutL()
+	{
+	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
+	dlg->PrepareLC(R_ABOUT_QUERY_DIALOG);
+	HBufC* title = iEikonEnv->AllocReadResourceLC(R_ABOUT_DIALOG_TITLE);
+	dlg->QueryHeading()->SetTextL(*title);
+	CleanupStack::PopAndDestroy(); //title
+#ifdef _DEBUG
+	HBufC* msg = iEikonEnv->AllocReadResourceLC(R_ABOUT_DIALOG_TEXT);
+	HBufC* gitMsg = iEikonEnv->AllocReadResourceLC(R_ABOUT_DIALOG_GIT_TEXT);
+	RBuf buff;
+	buff.CreateL(msg->Length() + gitMsg->Length() + 100);
+	buff.CleanupClosePushL();
+	buff.Zero();
+	buff.Append(*msg);
+	buff.AppendFormat(*gitMsg, &KGITBranch, &KGITCommit);
+	dlg->SetMessageTextL(buff);
+	CleanupStack::PopAndDestroy(3, msg);
+	dlg->RunLD();
+#else
+	HBufC* msg = iEikonEnv->AllocReadResourceLC(R_ABOUT_DIALOG_TEXT);
+	dlg->SetMessageTextL(*msg);
+	CleanupStack::PopAndDestroy(); //msg
+	dlg->RunLD();
+#endif
 	}
 
 
