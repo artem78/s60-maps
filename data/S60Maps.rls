@@ -41,6 +41,6 @@
 
 #define qtn_confirm_exit_dialog_title "Confirm exit"
 
-#define qtn_confirm_exit_dialog_text "Are you sure you want to exit?"
+#define qtn_confirm_exit_dialog_text "Are you sure to exit?"
 
 // End of File
