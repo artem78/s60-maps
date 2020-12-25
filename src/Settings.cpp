@@ -14,9 +14,9 @@
 // Constants
 
 // Center of Europe
-const TReal64 KDefaultLat = 47.100;
-const TReal64 KDefaultLon = 5.361;
-const TZoom KDefaultZoom = 2;
+const TReal64 KDefaultLat = 50.0;
+const TReal64 KDefaultLon = 9.0;
+const TZoom KDefaultZoom = 3;
 _LIT(KDefaultTileProviderId, "osm");
 
 
