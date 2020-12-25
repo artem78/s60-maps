@@ -126,7 +126,7 @@ private:
 	CRemConInterfaceSelector* iInterfaceSelector;
 	CRemConCoreApiTarget* iCoreTarget;
 	
-	TFixedArray<TTileProvider*, 5> iAvailableTileProviders;
+	TFixedArray<TTileProvider*, /*5*/ 4> iAvailableTileProviders;
 	//TBuf<64> iTileProviderId
 	TTileProvider* iActiveTileProvider;
 	
