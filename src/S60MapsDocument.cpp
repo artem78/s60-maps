@@ -59,6 +59,7 @@ void CS60MapsDocument::ConstructL()
 	BaflUtils::EnsurePathExistsL(CEikonEnv::Static()->FsSession(), pathParser.DriveAndPath());
 	iLogFile.Replace(CEikonEnv::Static()->FsSession(), logFilePath, EFileWrite);
 	iLogger = CLogger::NewL(iLogFile, CLogger::ELevelAll, CLogger::EUtf8);
+	LoggerStatic::SetLogger(iLogger);
 	LOG(_L8("Log started"));
 #endif
 	}
