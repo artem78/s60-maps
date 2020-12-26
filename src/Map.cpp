@@ -17,6 +17,7 @@
 #include "S60MapsAppUi.h"
 #include "S60MapsApplication.h"
 #include <bautils.h>
+#include "Defs.h"
 
 CMapLayerBase::CMapLayerBase(/*const*/ CS60MapsAppView* aMapView) :
 		iMapView(aMapView)
@@ -528,7 +529,13 @@ void CTileBitmapManager::ConstructL(const TDesC &aCacheDir)
 	User::After(10 * KSecond);
 #endif
 	iHTTPClient = CHTTPClient::NewL(this);
-	iHTTPClient->SetUserAgentL(_L8("S60Maps")); // ToDo: Move to constant
+	
+	TBuf8<32> userAgent;
+	userAgent.Copy(_L8("S60Maps")); // ToDo: Move to constant
+	userAgent.Append(' ');
+	userAgent.Append('v');
+	userAgent.Append(KProgramVersion.Name());
+	iHTTPClient->SetUserAgentL(userAgent); 
 	
 	iItems = RPointerArray<CTileBitmapManagerItem>(iLimit);
 	iItemsLoadingQueue = RArray<TTile>(20); // ToDo: Move 20 to constant
