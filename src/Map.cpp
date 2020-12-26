@@ -652,6 +652,7 @@ void CTileBitmapManager::StartDownloadTileL(const TTile &aTile)
 
 void CTileBitmapManager::DoCancel()
 	{
+	DEBUG(_L("Cancel"));
 	iImgDecoder->Cancel();
 	}
 
@@ -882,6 +883,8 @@ void CTileBitmapManager::ChangeTileProvider(TTileProvider* aTileProvider,
 	if (iTileProvider->iId == aTileProvider->iId)
 		return; // Nothing changed
 
+	INFO(_L("Changing of tile provider from %S to %S"), &iTileProvider->iTitle, &aTileProvider->iTitle);
+	
 	Cancel();	
 	iItemsLoadingQueue.Reset(); // Should already be cleared by Cancel() call at previous line
 	iItems.ResetAndDestroy();
