@@ -535,6 +535,11 @@ void CTileBitmapManager::ConstructL(const TDesC &aCacheDir)
 	userAgent.Append(' ');
 	userAgent.Append('v');
 	userAgent.Append(KProgramVersion.Name());
+#ifdef _DEBUG
+	_LIT8(KDebugStr, "DEV");
+	userAgent.Append(' ');
+	userAgent.Append(KDebugStr);
+#endif
 	iHTTPClient->SetUserAgentL(userAgent); 
 	
 	iItems = RPointerArray<CTileBitmapManagerItem>(iLimit);
