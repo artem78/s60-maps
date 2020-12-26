@@ -640,10 +640,14 @@ void CTileBitmapManager::StartDownloadTileL(const TTile &aTile)
 	iState = /*TProcessingState::*/EDownloading;
 	iLoadingTile = aTile;
 	
-	TBuf8<100> tileUrl;
+	RBuf8 tileUrl;
+	const TInt KReserveLength = 30; // For variables substitution
+	tileUrl.CreateL(iTileProvider->iTileUrlTemplate.Length() + KReserveLength);
+	tileUrl.CleanupClosePushL();
 	iTileProvider->TileUrl(tileUrl, aTile);
 	iHTTPClient->GetL(tileUrl);
 	LOG(_L8("Started download tile %S from url %S"), &aTile.AsDes8(), &tileUrl);
+	CleanupStack::PopAndDestroy(&tileUrl);
 	}
 
 void CTileBitmapManager::DoCancel()
