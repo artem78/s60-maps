@@ -878,6 +878,10 @@ void CTileBitmapManager::TileFileName(const TTile &aTile, TFileName &aFileName) 
 void CTileBitmapManager::ChangeTileProvider(TTileProvider* aTileProvider,
 		const TDesC &aCacheDir)
 	{
+	// FixMe: On the program startup this method may be called twice with same tile provider 
+	if (iTileProvider->iId == aTileProvider->iId)
+		return; // Nothing changed
+
 	Cancel();	
 	iItemsLoadingQueue.Reset(); // Should already be cleared by Cancel() call at previous line
 	iItems.ResetAndDestroy();
