@@ -577,9 +577,10 @@ void CS60MapsAppUi::HandleAboutL()
 	dlg->QueryHeading()->SetTextL(*title);
 	CleanupStack::PopAndDestroy(); //title
 	
-	CDesCArrayFlat* strings = new (ELeave) CDesC16ArrayFlat(2);
+	CDesCArrayFlat* strings = new (ELeave) CDesC16ArrayFlat(3);
 	CleanupStack::PushL(strings);
 	
+	strings->AppendL(KProgramVersion.Name());
 	strings->AppendL(KGITBranch);
 	strings->AppendL(KGITCommit);
 	

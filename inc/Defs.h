@@ -3,6 +3,9 @@
 #ifndef DEFS_H_
 #define DEFS_H_
 
+// Main definitions
+const TVersion KProgramVersion(1, 0, 0);
+
 // Types
 typedef /*TUInt8*/ TInt TZoom;
 const TReal KNaN = 0.0 / 0.0;
