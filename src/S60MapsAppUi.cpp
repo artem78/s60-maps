@@ -576,24 +576,18 @@ void CS60MapsAppUi::HandleAboutL()
 	HBufC* title = iEikonEnv->AllocReadResourceLC(R_ABOUT_DIALOG_TITLE);
 	dlg->QueryHeading()->SetTextL(*title);
 	CleanupStack::PopAndDestroy(); //title
-#ifdef _DEBUG
-	HBufC* msg = iEikonEnv->AllocReadResourceLC(R_ABOUT_DIALOG_TEXT);
-	HBufC* gitMsg = iEikonEnv->AllocReadResourceLC(R_ABOUT_DIALOG_GIT_TEXT);
-	RBuf buff;
-	buff.CreateL(msg->Length() + gitMsg->Length() + 100);
-	buff.CleanupClosePushL();
-	buff.Zero();
-	buff.Append(*msg);
-	buff.AppendFormat(*gitMsg, &KGITBranch, &KGITCommit);
-	dlg->SetMessageTextL(buff);
-	CleanupStack::PopAndDestroy(3, msg);
-	dlg->RunLD();
-#else
-	HBufC* msg = iEikonEnv->AllocReadResourceLC(R_ABOUT_DIALOG_TEXT);
+	
+	CDesCArrayFlat* strings = new (ELeave) CDesC16ArrayFlat(2);
+	CleanupStack::PushL(strings);
+	
+	strings->AppendL(KGITBranch);
+	strings->AppendL(KGITCommit);
+	
+	HBufC* msg = StringLoader::LoadLC(R_ABOUT_DIALOG_TEXT, *strings, iEikonEnv);
+	
 	dlg->SetMessageTextL(*msg);
-	CleanupStack::PopAndDestroy(); //msg
+	CleanupStack::PopAndDestroy(2, strings);
 	dlg->RunLD();
-#endif
 	}
 
 
