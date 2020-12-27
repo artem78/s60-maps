@@ -1,3 +1,7 @@
+[submodule "modules/FileUtils"]
+	path = modules/FileUtils
+	url = git@github.com:artem78/s60-file-utils.git
+
 [submodule "modules/Logger"]
 	path = modules/Logger
 	url = git@github.com:artem78/s60-logger.git
