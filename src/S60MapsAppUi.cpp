@@ -116,8 +116,13 @@ void CS60MapsAppUi::ConstructL()
 	
 	// Position requestor
 	_LIT(KPosRequestorName, "S60 Maps"); // ToDo: Move to global const
-	iPosRequestor = CPositionRequestor::NewL(this, KPosRequestorName);
-	iPosRequestor->Start(); // Must be started after view created
+	TRAPD(err, iPosRequestor = CPositionRequestor::NewL(this, KPosRequestorName));
+	if (err == KErrNone)
+		iPosRequestor->Start(); // Must be started after view created
+	else
+		{
+		ERROR(_L("Failed to create position requestor (error: %d), continue without GPS"), err);
+		}
 	
 	// Media keys catching
 	iInterfaceSelector = CRemConInterfaceSelector::NewL();
@@ -370,6 +375,8 @@ void CS60MapsAppUi::ClearTilesCache()
 
 void CS60MapsAppUi::OnPositionUpdated()
 	{
+	__ASSERT_DEBUG(iPosRequestor != NULL, Panic(ES60MapsPosRequestorIsNull));
+	
 	const TPositionInfo* posInfo = iPosRequestor->LastKnownPositionInfo();
 	TPosition pos;
 	posInfo->GetPosition(pos);
