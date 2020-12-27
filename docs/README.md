@@ -21,8 +21,8 @@ All data stored in directory `E:\Data\S60Maps\`. In particular, map cache locate
 
 ## Features
 
-- Show map from default [OpenStreetMap](https://www.openstreetmap.org/) layer
-- Retrieve phone location using internal GPS
+- Show different map layers: [OpenStreetMap Standard](https://www.openstreetmap.org/), [OpenCycleMap](https://wiki.openstreetmap.org/wiki/OpenCycleMap), [Transport Map](https://wiki.openstreetmap.org/wiki/Transport_Map) and [Humanitarian Map](https://wiki.openstreetmap.org/wiki/Humanitarian_map_style)
+- Retrieve and show phone location using internal GPS
 - **Offline mode** - all downloaded tiles save in cache on disk and you can view them later without network connection needed
 
 ## Controls
@@ -42,7 +42,7 @@ All data stored in directory `E:\Data\S60Maps\`. In particular, map cache locate
 
 ## Screenshots
 
-![Application launch icon](images/launch_icon.png) ![About dialog](images/about.png) ![Menu](images/menu.png) ![Demo](images/demo_video.gif)
+![Application launch icon](images/launch_icon.png) ![About dialog](images/about.png) ![Menu](images/menu.png) ![Demo](images/demo_video.gif) ![Different map layers](images/layers.gif)
 
 ## Supported Devices
 
@@ -66,7 +66,8 @@ All data stored in directory `E:\Data\S60Maps\`. In particular, map cache locate
 
 ## Roadmap
 
-- [ ] Add support for other map layers and WMS services (like OSM bicycle, OSM humanitarian, OpenTopoMap, etc...) and add ability to define custom providing tile\`s URLs
+- [x] Add support for other map layers and WMS services (like OSM bicycle, OSM humanitarian, OpenTopoMap, etc...) 
+- [ ] Add ability to define custom map layers providing tile\`s URLs
 - [ ] Update old cached tiles
 - [ ] Display landmarks
 - [ ] Search (using [Nominatim](https://nominatim.openstreetmap.org/))
