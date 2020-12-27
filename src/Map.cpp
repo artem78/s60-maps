@@ -29,7 +29,8 @@ CMapLayerBase::CMapLayerBase(/*const*/ CS60MapsAppView* aMapView) :
 // CMapLayerDebugInfo
 
 CMapLayerDebugInfo::CMapLayerDebugInfo(/*const*/ CS60MapsAppView* aMapView) :
-	CMapLayerBase(aMapView)
+	CMapLayerBase(aMapView),
+	iRedrawingsCount(0)
 	{
 	/*CWindowGc& gc = iMapView->SystemGc();
 	gc.UseFont(CEikonEnv::Static()->AnnotationFont());*/
@@ -44,6 +45,7 @@ CMapLayerDebugInfo::CMapLayerDebugInfo(/*const*/ CS60MapsAppView* aMapView) :
 void CMapLayerDebugInfo::Draw(CWindowGc &aGc)
 	{
 	DrawPos(aGc);
+	DrawRedrawingsCount(aGc);
 	};
 
 void CMapLayerDebugInfo::DrawPos(CWindowGc &aGc)
@@ -66,6 +68,26 @@ void CMapLayerDebugInfo::DrawPos(CWindowGc &aGc)
 	aGc.DrawText(buff, area, baselineOffset);
 	aGc.DiscardFont();
 	CEikonEnv::Static()->ScreenDevice()->ReleaseFont(font);
+	}
+
+void CMapLayerDebugInfo::DrawRedrawingsCount(CWindowGc &aGc)
+	{
+	iRedrawingsCount++;
+	
+	TBuf<32> buff;
+	_LIT(KFmt, "Redrawings: %d");
+	buff.Format(KFmt, iRedrawingsCount);
+	
+	aGc.Reset();
+	aGc.SetPenColor(KRgbDarkBlue);
+	
+	const CFont* font = CEikonEnv::Static()->AnnotationFont();
+	aGc.UseFont(font);
+	TRect area = iMapView->Rect();
+	area.Shrink(4, 4);
+	TInt baselineOffset = font->AscentInPixels();
+	aGc.DrawText(buff, area, baselineOffset, CGraphicsContext::ERight);
+	aGc.DiscardFont();
 	}
 
 

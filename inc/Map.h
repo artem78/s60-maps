@@ -86,7 +86,10 @@ public:
 	void Draw(CWindowGc &aGc);
 	
 private:
+	TInt iRedrawingsCount;
+	
 	void DrawPos(CWindowGc &aGc);
+	void DrawRedrawingsCount(CWindowGc &aGc);
 	};
 
 class CTileBitmapManager;
