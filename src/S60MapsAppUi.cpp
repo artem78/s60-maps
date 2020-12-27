@@ -26,9 +26,7 @@
 #include "S60MapsAppUi.h"
 #include "S60MapsAppView.h"
 #include "Defs.h"
-#ifdef _DEBUG
 #include "GitInfo.h"
-#endif
 #include "FileUtils.h"
 
 
