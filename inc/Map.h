@@ -84,6 +84,9 @@ public:
 	CMapLayerDebugInfo(/*const*/ CS60MapsAppView* aMapView);
 	//~CMapLayerDebugInfo();
 	void Draw(CWindowGc &aGc);
+	
+private:
+	void DrawPos(CWindowGc &aGc);
 	};
 
 class CTileBitmapManager;

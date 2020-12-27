@@ -43,6 +43,11 @@ CMapLayerDebugInfo::CMapLayerDebugInfo(/*const*/ CS60MapsAppView* aMapView) :
 
 void CMapLayerDebugInfo::Draw(CWindowGc &aGc)
 	{
+	DrawPos(aGc);
+	};
+
+void CMapLayerDebugInfo::DrawPos(CWindowGc &aGc)
+	{
 	TBuf<100> buff;
 	TCoordinate center = iMapView->GetCenterCoordinate();
 	_LIT(KInfoText, "pos: %f %f   zoom: %d");
@@ -61,7 +66,7 @@ void CMapLayerDebugInfo::Draw(CWindowGc &aGc)
 	aGc.DrawText(buff, area, baselineOffset);
 	aGc.DiscardFont();
 	CEikonEnv::Static()->ScreenDevice()->ReleaseFont(font);
-	};
+	}
 
 
 // MTileBitmapManagerObserver
