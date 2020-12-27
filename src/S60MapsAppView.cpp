@@ -15,9 +15,6 @@
 #include <aknappui.h> 
 
 // Constants
-const TZoom KMinZoomLevel = /*0*/ 1;
-const TZoom KMaxZoomLevel = 19;	// Note: 19 for default osm layer.
-								// Other layers often have max 18 level.
 const TInt KMovementRepeaterInterval = 200000;
 
 // ============================ MEMBER FUNCTIONS ===============================
@@ -28,9 +25,12 @@ const TInt KMovementRepeaterInterval = 200000;
 // -----------------------------------------------------------------------------
 //
 CS60MapsAppView* CS60MapsAppView::NewL(const TRect& aRect,
-		const TCoordinate &aInitialPosition, TZoom aInitialZoom)
+		const TCoordinate &aInitialPosition, TZoom aInitialZoom,
+		//TZoom aMinZoom, TZoom aMaxZoom,
+		TTileProvider* aTileProvider)
 	{
-	CS60MapsAppView* self = CS60MapsAppView::NewLC(aRect, aInitialPosition, aInitialZoom);
+	CS60MapsAppView* self = CS60MapsAppView::NewLC(aRect, aInitialPosition, aInitialZoom,
+			/*aMinZoom, aMaxZoom,*/ aTileProvider);
 	CleanupStack::Pop(self);
 	return self;
 	}
@@ -41,11 +41,13 @@ CS60MapsAppView* CS60MapsAppView::NewL(const TRect& aRect,
 // -----------------------------------------------------------------------------
 //
 CS60MapsAppView* CS60MapsAppView::NewLC(const TRect& aRect,
-		const TCoordinate &aInitialPosition, TZoom aInitialZoom)
+		const TCoordinate &aInitialPosition, TZoom aInitialZoom,
+		//TZoom aMinZoom, TZoom aMaxZoom,
+		TTileProvider* aTileProvider)
 	{
 	CS60MapsAppView* self = new (ELeave) CS60MapsAppView(aInitialZoom);
 	CleanupStack::PushL(self);
-	self->ConstructL(aRect, aInitialPosition);
+	self->ConstructL(aRect, aInitialPosition, /*aMinZoom, aMaxZoom,*/ aTileProvider);
 	return self;
 	}
 
@@ -54,10 +56,16 @@ CS60MapsAppView* CS60MapsAppView::NewLC(const TRect& aRect,
 // Symbian 2nd phase constructor can leave.
 // -----------------------------------------------------------------------------
 //
-void CS60MapsAppView::ConstructL(const TRect& aRect, const TCoordinate &aInitialPosition)
+void CS60MapsAppView::ConstructL(const TRect& aRect, const TCoordinate &aInitialPosition,
+		//TZoom aMinZoom, TZoom aMaxZoom,
+		TTileProvider* aTileProvider)
 	{
+	//SetZoomBounds(aMinZoom, aMaxZoom);
+	//SetZoomBounds(aTileProvider->MinZoomLevel(), aTileProvider->MaxZoomLevel());
+//	SetTileProviderL(aTileProvider);
+	
 	// Create layers
-	iLayers[0] = CTiledMapLayer::NewL(this); 
+	iLayers[0] = CTiledMapLayer::NewL(this, aTileProvider); 
 #if DISPLAY_TILE_BORDER_AND_XYZ
 	iLayers[1] = new (ELeave) CTileBorderAndXYZLayer(this);
 	iLayers[2] = new (ELeave) CUserPositionLayer(this);
@@ -66,6 +74,8 @@ void CS60MapsAppView::ConstructL(const TRect& aRect, const TCoordinate &aInitial
 	iLayers[1] = new (ELeave) CUserPositionLayer(this);
 	iLayers[2] = new (ELeave) CMapLayerDebugInfo(this);
 #endif
+	
+	SetTileProviderL(aTileProvider);
 
 	// Periodic timer for repeating the movement at holding (touch interface)
 	iMovementRepeater = CPeriodic::NewL(0); // neutral priority
@@ -108,25 +118,6 @@ CS60MapsAppView::~CS60MapsAppView()
 	iMovementRepeater->Cancel();
 	delete iMovementRepeater;
 	iMovementRepeater = NULL;
-	}
-
-void CS60MapsAppView::ExternalizeL(RWriteStream &aStream) const
-	{
-	TCoordinate pos = GetCenterCoordinate();
-	aStream << pos.Latitude();
-	aStream << pos.Longitude();
-	aStream << TCardinality(GetZoom());
-	}
-
-void CS60MapsAppView::InternalizeL(RReadStream &aStream)
-	{
-	TReal64 lat, lon;
-	TCardinality zoom;
-	aStream >> lat;
-	aStream >> lon;
-	aStream >> zoom;
-	
-	Move(lat, lon, (TInt) zoom);
 	}
 
 // -----------------------------------------------------------------------------
@@ -298,8 +289,9 @@ TKeyResponse CS60MapsAppView::OfferKeyEventL(const TKeyEvent &aKeyEvent,
 		{
 		switch (aKeyEvent.iScanCode)
 			{
-			case /*EKeyUpArrow*/ EStdKeyUpArrow:
-			case 50: // ToDo: Replace number to constant
+			case EStdKeyUpArrow:
+			case '2':
+			//case EStdKeyNkp2:
 				{
 				SetFollowUser(EFalse);
 				MoveUp();
@@ -307,8 +299,9 @@ TKeyResponse CS60MapsAppView::OfferKeyEventL(const TKeyEvent &aKeyEvent,
 				//break;
 				}
 				
-			case /*EKeyDownArrow*/ EStdKeyDownArrow:
-			case 56: // ToDo: Replace number to constant
+			case EStdKeyDownArrow:
+			case '8':
+			//case EStdKeyNkp8:
 				{
 				SetFollowUser(EFalse);
 				MoveDown();
@@ -316,8 +309,9 @@ TKeyResponse CS60MapsAppView::OfferKeyEventL(const TKeyEvent &aKeyEvent,
 				//break;
 				}
 				
-			case /*EKeyLeftArrow*/ EStdKeyLeftArrow:
-			case 52: // ToDo: Replace number to constant
+			case EStdKeyLeftArrow:
+			case '4':
+			//case EStdKeyNkp4:
 				{
 				SetFollowUser(EFalse);
 				MoveLeft();
@@ -325,8 +319,9 @@ TKeyResponse CS60MapsAppView::OfferKeyEventL(const TKeyEvent &aKeyEvent,
 				//break;
 				}
 				
-			case /*EKeyRightArrow*/ EStdKeyRightArrow:
-			case 54: // ToDo: Replace number to constant
+			case EStdKeyRightArrow:
+			case '6':
+			//case EStdKeyNkp6:
 				{
 				SetFollowUser(EFalse);
 				MoveRight();
@@ -334,14 +329,16 @@ TKeyResponse CS60MapsAppView::OfferKeyEventL(const TKeyEvent &aKeyEvent,
 				//break;
 				}
 				
-			case 51: // ToDo: Replace number to constant
+			case '3':
+			//case EStdKeyNkp3:
 				{
 				ZoomIn();
 				return EKeyWasConsumed;
 				//break;
 				}
 				
-			case 49: // ToDo: Replace number to constant
+			case '1':
+			//case EStdKeyNkp1:
 				{
 				ZoomOut();
 				return EKeyWasConsumed;
@@ -420,10 +417,28 @@ void CS60MapsAppView::Move(TReal64 aLat, TReal64 aLon, TZoom aZoom)
 	Move(coord, aZoom);
 	}
 
+void CS60MapsAppView::SetZoomBounds(TZoom aMinZoom, TZoom aMaxZoom)
+	{
+	// Checks
+	if (aMinZoom <= aMaxZoom)
+		{
+		iMinZoom = Max(aMinZoom, KMinZoomLevel);
+		iMaxZoom = Min(aMaxZoom, KMaxZoomLevel);
+		}
+	
+	// ToDo: Return error when checks failed
+	
+	// Set zoom to maximum/minimum available value if it went out of bounds
+	if (iZoom < iMinZoom)
+		SetZoom(iMinZoom);
+	else if (iZoom > iMaxZoom)
+		SetZoom(iMaxZoom);
+	}
+
 void CS60MapsAppView::SetZoom(TZoom aZoom)
 	{
 	// ToDo: Return error code KErrArgument or panic if zoom out of bounds
-	if (aZoom >= KMinZoomLevel and aZoom <= KMaxZoomLevel)
+	if (aZoom >= iMinZoom and aZoom <= iMaxZoom)
 		{
 		if (iZoom != aZoom)
 			{
@@ -633,6 +648,12 @@ void CS60MapsAppView::ExecuteMovement()
 		case EMoveNone:
 			break;
 		}
+	}
+
+void CS60MapsAppView::SetTileProviderL(TTileProvider* aTileProvider)
+	{
+	static_cast<CTiledMapLayer*>(iLayers[0 /*tiled map*/])->SetTileProviderL(aTileProvider);
+	SetZoomBounds(aTileProvider->iMinZoomLevel, aTileProvider->iMaxZoomLevel);
 	}
 
 // End of File

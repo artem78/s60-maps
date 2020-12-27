@@ -52,7 +52,7 @@ LIBRARY		   commonengine.lib
 LIBRARY		   efsrv.lib 
 LIBRARY		   estor.lib
 LIBRARY        aknnotify.lib
-LIBRARY        hlplch.lib lbs.lib gdi.lib imageconversion.lib fbscli.lib bitgdi.lib http.lib bafl.lib inetprotutil.lib remconcoreapi.lib remconinterfacebase.lib ws32.lib charconv.lib hash.lib
+LIBRARY        hlplch.lib lbs.lib gdi.lib imageconversion.lib fbscli.lib bitgdi.lib http.lib bafl.lib inetprotutil.lib remconcoreapi.lib remconinterfacebase.lib ws32.lib charconv.lib hash.lib eikcoctl.lib
  
 
 LANG SC
@@ -79,3 +79,5 @@ SOURCEPATH ..\modules\Positioning
 SOURCE Positioning.cpp
 SOURCEPATH ..\modules\FileUtils
 SOURCE FileUtils.cpp
+SOURCEPATH ..\src
+SOURCE Settings.cpp

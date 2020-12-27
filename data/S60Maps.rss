@@ -96,6 +96,12 @@ RESOURCE MENU_PANE r_menu
 		MENU_ITEM
 				{
 				//command = ...;
+				txt = qtn_tile_providers_title;
+				cascade = r_submenu_tile_providers;
+				},
+		MENU_ITEM
+				{
+				//command = ...;
 				txt = qtn_service_title;
 				cascade = r_submenu_service;
 				},
@@ -110,6 +116,12 @@ RESOURCE MENU_PANE r_menu
 				txt = qtn_exit;
 				}
 		};
+	}
+
+RESOURCE MENU_PANE r_submenu_tile_providers
+	{
+	items =
+		{}; // Will be filled at runtime
 	}
 
 RESOURCE MENU_PANE r_submenu_service

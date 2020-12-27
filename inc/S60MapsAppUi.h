@@ -20,6 +20,8 @@
 #include <remconcoreapitarget.h>
 #include <remconinterfaceselector.h>
 
+#include "Map.h" // For tile providers
+#include "Settings.h"
 
 // FORWARD DECLARATIONS
 class CS60MapsAppView;
@@ -78,6 +80,8 @@ private:
 	 *  size is changed.
 	 */
 	CArrayFix<TCoeHelpContext>* HelpContextL() const;
+	
+	void DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane);
 
 private:
 	// Data
@@ -115,15 +119,28 @@ public:
 	
 	// Custom properties and methods
 private:
+	CSettings* iSettings;
 	CFileMan* iFileMan;
 	CPositionRequestor* iPosRequestor;
 	
 	CRemConInterfaceSelector* iInterfaceSelector;
 	CRemConCoreApiTarget* iCoreTarget;
 	
+	TFixedArray<TTileProvider*, /*5*/ 4> iAvailableTileProviders;
+	//TBuf<64> iTileProviderId
+	TTileProvider* iActiveTileProvider;
+	
 	void ClearTilesCache();
 	
-	void ShowMapCacheStatsDialogL();
+	// Command handlers
+	void HandleExitL();
+	void HandleFindMeL();
+	void HandleTileProviderChangeL(TInt aTileProviderIdx);
+	void HandleTilesCacheStatsL();
+	void HandleTilesCacheResetL();
+	void HandleHelpL();
+	void HandleAboutL();
+	
 	};
 
 #endif // __S60MAPSAPPUI_h__

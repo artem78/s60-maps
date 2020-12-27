@@ -17,6 +17,7 @@
 #include "S60MapsAppUi.h"
 #include "S60MapsApplication.h"
 #include <bautils.h>
+#include "Defs.h"
 
 CMapLayerBase::CMapLayerBase(/*const*/ CS60MapsAppView* aMapView) :
 		iMapView(aMapView)
@@ -81,45 +82,54 @@ CTiledMapLayer::CTiledMapLayer(CS60MapsAppView* aMapView) :
 CTiledMapLayer::~CTiledMapLayer()
 	{
 	delete iBitmapMgr;
-	delete iTileProvider;
 	}
 
-CTiledMapLayer* CTiledMapLayer::NewL(CS60MapsAppView* aMapView)
+CTiledMapLayer* CTiledMapLayer::NewL(CS60MapsAppView* aMapView, TTileProvider* aTileProvider)
 	{
-	CTiledMapLayer* self = CTiledMapLayer::NewLC(aMapView);
+	CTiledMapLayer* self = CTiledMapLayer::NewLC(aMapView, aTileProvider);
 	CleanupStack::Pop(); // self;
 	return self;
 	}
 
-CTiledMapLayer* CTiledMapLayer::NewLC(CS60MapsAppView* aMapView)
+CTiledMapLayer* CTiledMapLayer::NewLC(CS60MapsAppView* aMapView, TTileProvider* aTileProvider)
 	{
 	CTiledMapLayer* self = new (ELeave) CTiledMapLayer(aMapView);
 	CleanupStack::PushL(self);
-	self->ConstructL();
+	self->ConstructL(aTileProvider);
 	return self;
 	}
 
-void CTiledMapLayer::ConstructL()
+void CTiledMapLayer::ConstructL(TTileProvider* aTileProvider)
 	{
-	iTileProvider = new (ELeave) TOsmStandardTileProvider;
-	TBuf<32> tileProviderID;
-	iTileProvider->ID(tileProviderID);
+	////////////////
+	//iTileProvider = new (ELeave) TOsmStandardTileProvider;
+	//iTileProvider = new (ELeave) TOsmCyclesTileProvider;
+	//iTileProvider = new (ELeave) TOsmTransportTileProvider;
+	//iTileProvider = new (ELeave) TOsmHumanitarianTileProvider;
+	//iTileProvider = new (ELeave) TOpenTopoMapTileProvider;
+	////////////////////
+//	TBuf<32> tileProviderID;
+//	iTileProvider->ID(tileProviderID);
+//	iMapView->SetZoomBounds(iTileProvider->MinZoomLevel(), iTileProvider->MaxZoomLevel());
 	
-	TFileName cacheDir;
-	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
-	CS60MapsApplication* app = static_cast<CS60MapsApplication*>(appUi->Application());
-	app->CacheDir(cacheDir);
-	cacheDir.Append(tileProviderID);
-	cacheDir.Append(KPathDelimiter);
+//	TFileName cacheDir;
+//	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
+//	CS60MapsApplication* app = static_cast<CS60MapsApplication*>(appUi->Application());
+//	app->CacheDir(cacheDir);
+//	cacheDir.Append(tileProviderID);
+//	cacheDir.Append(KPathDelimiter);
+//	
+//	RFs fs = iMapView->ControlEnv()->FsSession();
+//	
+//	// Create cache dir (if not exists)
+//	TInt r = fs.MkDirAll(cacheDir);
+//	if (r != KErrAlreadyExists)
+//		User::LeaveIfError(r);
 	
-	RFs fs = iMapView->ControlEnv()->FsSession();
+	SetTileProviderL(aTileProvider);
 	
-	// Create cache dir (if not exists)
-	TInt r = fs.MkDirAll(cacheDir);
-	if (r != KErrAlreadyExists)
-		User::LeaveIfError(r);
-	
-	iBitmapMgr = CTileBitmapManager::NewL(this, fs, iTileProvider, cacheDir);
+	//RFs fs = iMapView->ControlEnv()->FsSession();
+	//iBitmapMgr = CTileBitmapManager::NewL(this, fs, iTileProvider, cacheDir);
 	}
 
 void CTiledMapLayer::Draw(CWindowGc &aGc)
@@ -201,6 +211,35 @@ void CTiledMapLayer::OnTileLoaded(const TTile &/*aTile*/, const CFbsBitmap */*aB
 	iMapView->DrawNow();
 	}
 
+void CTiledMapLayer::SetTileProviderL(TTileProvider* aTileProvider)
+	{
+	iTileProvider = aTileProvider;
+	
+	//iMapView->SetZoomBounds(iTileProvider->MinZoomLevel(), iTileProvider->MaxZoomLevel());
+	
+	TFileName cacheDir;
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
+	CS60MapsApplication* app = static_cast<CS60MapsApplication*>(appUi->Application());
+	app->CacheDir(cacheDir);
+	cacheDir.Append(iTileProvider->iId);
+	cacheDir.Append(KPathDelimiter);
+	
+	RFs fs = iMapView->ControlEnv()->FsSession();
+	
+	// Create cache dir (if not exists)
+	TInt r = fs.MkDirAll(cacheDir);
+	if (r != KErrAlreadyExists)
+		User::LeaveIfError(r);
+	
+	if (iBitmapMgr == NULL)
+		// Create bitmap manager if not exist yet
+		iBitmapMgr = CTileBitmapManager::NewL(this, fs, iTileProvider, cacheDir);
+	else
+		// Set new tile provider and cache dir for bitmap manager
+		iBitmapMgr->ChangeTileProvider(iTileProvider, cacheDir);
+	
+	//iMapView->DrawNow();
+	}
 
 
 // CUserPositionLayer
@@ -444,7 +483,7 @@ void CTileBorderAndXYZLayer::DrawTile(CWindowGc &aGc, const TTile &aTile)
 // CTileBitmapManager
 
 CTileBitmapManager::CTileBitmapManager(MTileBitmapManagerObserver *aObserver,
-		RFs aFs, TTileProviderBase* aTileProvider, TInt aLimit) :
+		RFs aFs, TTileProvider* aTileProvider, TInt aLimit) :
 		CActive(EPriorityStandard),
 		iObserver(aObserver),
 		iLimit(aLimit),
@@ -466,7 +505,7 @@ CTileBitmapManager::~CTileBitmapManager()
 	}
 
 CTileBitmapManager* CTileBitmapManager::NewLC(MTileBitmapManagerObserver *aObserver,
-		RFs aFs, TTileProviderBase* aTileProvider, const TDesC &aCacheDir, TInt aLimit)
+		RFs aFs, TTileProvider* aTileProvider, const TDesC &aCacheDir, TInt aLimit)
 	{
 	CTileBitmapManager* self = new (ELeave) CTileBitmapManager(aObserver, aFs, aTileProvider, aLimit);
 	CleanupStack::PushL(self);
@@ -475,7 +514,7 @@ CTileBitmapManager* CTileBitmapManager::NewLC(MTileBitmapManagerObserver *aObser
 	}
 
 CTileBitmapManager* CTileBitmapManager::NewL(MTileBitmapManagerObserver *aObserver,
-		RFs aFs, TTileProviderBase* aTileProvider, const TDesC &aCacheDir, TInt aLimit)
+		RFs aFs, TTileProvider* aTileProvider, const TDesC &aCacheDir, TInt aLimit)
 	{
 	CTileBitmapManager* self = CTileBitmapManager::NewLC(aObserver, aFs, aTileProvider, aCacheDir, aLimit);
 	CleanupStack::Pop(); // self;
@@ -490,7 +529,18 @@ void CTileBitmapManager::ConstructL(const TDesC &aCacheDir)
 	User::After(10 * KSecond);
 #endif
 	iHTTPClient = CHTTPClient::NewL(this);
-	iHTTPClient->SetUserAgentL(_L8("S60Maps")); // ToDo: Move to constant
+	
+	TBuf8<32> userAgent;
+	userAgent.Copy(_L8("S60Maps")); // ToDo: Move to constant
+	userAgent.Append(' ');
+	userAgent.Append('v');
+	userAgent.Append(KProgramVersion.Name());
+#ifdef _DEBUG
+	_LIT8(KDebugStr, "DEV");
+	userAgent.Append(' ');
+	userAgent.Append(KDebugStr);
+#endif
+	iHTTPClient->SetUserAgentL(userAgent); 
 	
 	iItems = RPointerArray<CTileBitmapManagerItem>(iLimit);
 	iItemsLoadingQueue = RArray<TTile>(20); // ToDo: Move 20 to constant
@@ -590,14 +640,19 @@ void CTileBitmapManager::StartDownloadTileL(const TTile &aTile)
 	iState = /*TProcessingState::*/EDownloading;
 	iLoadingTile = aTile;
 	
-	TBuf8<100> tileUrl;
+	RBuf8 tileUrl;
+	const TInt KReserveLength = 30; // For variables substitution
+	tileUrl.CreateL(iTileProvider->iTileUrlTemplate.Length() + KReserveLength);
+	tileUrl.CleanupClosePushL();
 	iTileProvider->TileUrl(tileUrl, aTile);
 	iHTTPClient->GetL(tileUrl);
 	LOG(_L8("Started download tile %S from url %S"), &aTile.AsDes8(), &tileUrl);
+	CleanupStack::PopAndDestroy(&tileUrl);
 	}
 
 void CTileBitmapManager::DoCancel()
 	{
+	DEBUG(_L("Cancel"));
 	iImgDecoder->Cancel();
 	}
 
@@ -725,7 +780,7 @@ void CTileBitmapManager::OnHTTPError(TInt aError,
 	iState = /*TProcessingState::*/EIdle;
 	
 	
-	if (aError == -3) // ToDo: "magic" number - find constant for it
+	if (aError == KErrCancel)
 		{
 		// If access point not provoded switch to offline mode
 		
@@ -821,6 +876,21 @@ void CTileBitmapManager::TileFileName(const TTile &aTile, TFileName &aFileName) 
 	iFileMapper->GetFilePath(originalFileName, aFileName);
 	}
 
+void CTileBitmapManager::ChangeTileProvider(TTileProvider* aTileProvider,
+		const TDesC &aCacheDir)
+	{
+	// FixMe: On the program startup this method may be called twice with same tile provider 
+	if (iTileProvider->iId == aTileProvider->iId)
+		return; // Nothing changed
+
+	INFO(_L("Changing of tile provider from %S to %S"), &iTileProvider->iTitle, &aTileProvider->iTitle);
+	
+	Cancel();	
+	iItemsLoadingQueue.Reset(); // Should already be cleared by Cancel() call at previous line
+	iItems.ResetAndDestroy();
+	iTileProvider = aTileProvider;
+	iFileMapper->SetBaseDir(aCacheDir);
+	}
 
 // CTileBitmapManagerItem
 
@@ -873,28 +943,168 @@ void CTileBitmapManagerItem::CreateBitmapIfNotExistL()
 	User::LeaveIfError(iBitmap->Create(size, mode));
 	}
 
+// TTileProvider
 
-// OsmStandardTileProvider
-
-void TOsmStandardTileProvider::ID(TDes &aDes)
+TTileProvider::TTileProvider(const TDesC& anId, const TDesC& aTitle,
+		const TDesC8& anUrlTemplate, TZoom aMinZoom, TZoom aMaxZoom)
 	{
-	_LIT(KProviderID, "osm");
-	aDes.Copy(KProviderID);
+	iId.Copy(anId);
+	iTitle.Copy(aTitle);
+	iTileUrlTemplate.Copy(anUrlTemplate);
+	iMinZoomLevel = aMinZoom;
+	iMaxZoomLevel = aMaxZoom;
 	}
 
-void TOsmStandardTileProvider::Title(TDes &aDes)
+void TTileProvider::TileUrl(TDes8 &aUrl, const TTile &aTile)
 	{
-	_LIT(KProviderTitle, "OpenStreetMap");
-	aDes.Copy(KProviderTitle);
+	aUrl.Zero();
+	TLex8 lex(iTileUrlTemplate);
+
+	do
+		{
+		/*TInt*/ TUint32 value;
+		TChar randChar;
+		
+		if (ParseVariable(lex, aTile, value) == KErrNone)
+			{
+			// Try to parse variable
+			aUrl.AppendNum(value);
+			}
+		else if (ParseRandCharRange(lex, randChar) == KErrNone)
+			{
+			// Try to parse random char range
+			aUrl.Append(randChar);
+			}
+		else
+			{
+			// Copy char to destination string
+			aUrl.Append(lex.Get());
+			}
+			
+		} while (!lex.Eos());
 	}
 
-void TOsmStandardTileProvider::TileUrl(TDes8 &aUrl, const TTile &aTile)
+TInt TTileProvider::ParseRandCharRange(TLex8 &aLex, TChar &aReturnedChar)
 	{
-	_LIT8(KUrlFmt, "http://%c.tile.openstreetmap.org/%u/%u/%u.png");
-	TChar chr('a');
-	chr += Math::Random() % 3; // a-c
-	aUrl.Format(KUrlFmt, (TUint) chr, (TUint) aTile.iZ, aTile.iX, aTile.iY);
+	const TChar KStartChar = '{';
+	const TChar KEndChar = '}';
+	
+	TLexMark8 startMark;
+	aLex.Mark(startMark);
+	
+	if (aLex.Eos() || aLex.Peek() != KStartChar)
+		{
+		aLex.UnGetToMark(startMark);
+		return KErrNotFound;
+		}
+	aLex.Inc();
+	
+	// Process start char
+	if (aLex.Eos() || !aLex.Peek().IsAlphaDigit())
+		{
+		aLex.UnGetToMark(startMark);
+		return KErrNotFound;
+		}
+	TChar ch1 = aLex.Get();
+	
+	if (aLex.Eos() || aLex.Peek() != '-')
+		{
+		aLex.UnGetToMark(startMark);
+		return KErrNotFound;
+		}
+	aLex.Inc();
+	
+	// Process end char
+	if (aLex.Eos() || !aLex.Peek().IsAlphaDigit())
+		{
+		aLex.UnGetToMark(startMark);
+		return KErrNotFound;
+		}
+	TChar ch2 = aLex.Get();
+	
+	if (aLex.Eos() || aLex.Peek() != KEndChar)
+		{
+		aLex.UnGetToMark(startMark);
+		return KErrNotFound;
+		}
+	aLex.Inc();
+	
+	// Check that start char is smaller than end char
+	if (!(ch1 < ch2))
+		{
+		aLex.UnGetToMark(startMark);
+		return KErrGeneral;
+		}
+	
+	// Get random char from range
+//	aReturnedChar = ch1 + (Math::Random() % (ch2 - ch1 + 1));
+	aReturnedChar = TUint32(ch1) + (Math::Random() % (TUint32(ch2) - TUint32(ch1) + 1));
+	return KErrNone;
 	}
+
+TInt TTileProvider::ParseVariable(TLex8 &aLex, const TTile aTile, /*TInt32*/ TUint32 &aReturnedVal)
+	{
+	const TChar KStartChar = '{';
+	const TChar KEndChar = '}';
+	const TChar KVariablePrefixChar = '$';
+	
+	TLexMark8 startMark;
+	aLex.Mark(startMark);
+	
+	if (aLex.Eos() || aLex.Peek() != KStartChar)
+		{
+		aLex.UnGetToMark(startMark);
+		return KErrNotFound;
+		}
+	aLex.Inc();
+	
+	if (aLex.Eos() || aLex.Peek() != KVariablePrefixChar)
+		{
+		aLex.UnGetToMark(startMark);
+		return KErrNotFound;
+		}
+	aLex.Inc();
+	
+	if (aLex.Eos())
+		{
+		aLex.UnGetToMark(startMark);
+		return KErrNotFound;
+		}
+	
+	TChar variable = aLex.Get();
+	/*TInt32*/ TUint32 value = KNaN;
+	switch (variable)
+		{
+		case 'x':
+			value = aTile.iX;
+			break;
+			
+		case 'y':
+			value = aTile.iY;
+			break;
+							
+		case 'z':
+			value = aTile.iZ;
+			break;
+			
+		default:
+			aLex.UnGetToMark(startMark);
+			return KErrNotFound;
+			break;
+		}
+	
+	if (aLex.Eos() || aLex.Peek() != KEndChar)
+		{
+		aLex.UnGetToMark(startMark);
+		return KErrNotFound;
+		}
+	aLex.Inc();
+	
+	aReturnedVal = value;
+	
+	return KErrNone;	
+	}
+
 
 
 // TCoordinateEx

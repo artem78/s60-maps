@@ -26,9 +26,7 @@
 #include "S60MapsAppUi.h"
 #include "S60MapsAppView.h"
 #include "Defs.h"
-#ifdef _DEBUG
 #include "GitInfo.h"
-#endif
 #include "FileUtils.h"
 
 
@@ -45,14 +43,75 @@ void CS60MapsAppUi::ConstructL()
 	// Initialise app UI with standard value.
 	BaseConstructL(CAknAppUi::EAknEnableSkin);
 	
+	iSettings = new (ELeave) CSettings();
+	
+	// Set several predefined available tiles providers
+
+	// OpenStreetMap standard tile layer
+	// https://www.openstreetmap.org/
+	iAvailableTileProviders[0] = new (ELeave) TTileProvider(
+			_L("osm"), _L("OpenStreetMap"),
+			_L8("http://{a-c}.tile.openstreetmap.org/{$z}/{$x}/{$y}.png"),
+			0, 19);
+	
+	// OpenCycleMap
+	// https://wiki.openstreetmap.org/wiki/OpenCycleMap
+	// https://www.thunderforest.com/maps/opencyclemap/
+	_LIT8(KOpenCycleMapUrl, "http://{a-c}.tile.thunderforest.com/cycle/{$z}/{$x}/{$y}.png?apikey=");
+	RBuf8 openCycleMapUrl;
+	openCycleMapUrl.CreateMaxL(KOpenCycleMapUrl().Length() + KThunderForestApiKey().Length());
+	openCycleMapUrl.CleanupClosePushL();
+	openCycleMapUrl.Copy(KOpenCycleMapUrl);
+	openCycleMapUrl.Append(KThunderForestApiKey);
+	iAvailableTileProviders[1] = new (ELeave) TTileProvider(
+			_L("opencycle"), _L("OpenCycleMap"),
+			openCycleMapUrl,
+			0, 22);
+	CleanupStack::PopAndDestroy(&openCycleMapUrl);
+	
+	// Transport Map
+	// https://wiki.openstreetmap.org/wiki/Transport_Map
+	// https://www.thunderforest.com/maps/transport/
+	_LIT8(KTransportMapUrl, "http://{a-c}.tile.thunderforest.com/transport/{$z}/{$x}/{$y}.png?apikey=");
+	RBuf8 transportMapUrl;
+	transportMapUrl.CreateMaxL(KTransportMapUrl().Length() + KThunderForestApiKey().Length());
+	transportMapUrl.CleanupClosePushL();
+	transportMapUrl.Copy(KTransportMapUrl);
+	transportMapUrl.Append(KThunderForestApiKey);
+	iAvailableTileProviders[2] = new (ELeave) TTileProvider(
+			_L("transport"), _L("Transport Map"),
+			transportMapUrl,
+			0, 22);
+	CleanupStack::PopAndDestroy(&transportMapUrl);
+	
+	// Humanitarian Map
+	// https://wiki.openstreetmap.org/wiki/Humanitarian_map_style
+	// https://www.openstreetmap.org/?layers=H
+	iAvailableTileProviders[3] = new (ELeave) TTileProvider(
+			_L("humanitarian"), _L("Humanitarian"),
+			_L8("http://tile-{a-c}.openstreetmap.fr/hot/{$z}/{$x}/{$y}.png"),
+			0, 20);
+	
+	/*// OpenTopoMap
+	// https://wiki.openstreetmap.org/wiki/OpenTopoMap
+	// https://opentopomap.org/
+	// FixMe: Doesn`t work without SSL 
+	iAvailableTileProviders[4] = new (ELeave) TTileProvider(
+			_L("opentopomap"), _L("OpenTopoMap"),
+			_L8("http://{a-c}.tile.opentopomap.org/{$z}/{$x}/{$y}.png"),
+			0, 17);*/
+	
+	iActiveTileProvider = iAvailableTileProviders[0]; // Use first
+	
+	
 	iFileMan = CFileMan::NewL(CCoeEnv::Static()->FsSession(), this);
 
 	// Set initial map position
-	TCoordinate position = TCoordinate(47.100, 5.361); // Center of Europe
-	TZoom zoom = 2;	
+	TCoordinate position = TCoordinate(iSettings->GetLat(), iSettings->GetLon());
+	TZoom zoom = iSettings->GetZoom();	
 	
 	// Create view object
-	iAppView = CS60MapsAppView::NewL(ClientRect(), position, zoom);
+	iAppView = CS60MapsAppView::NewL(ClientRect(), position, zoom, iActiveTileProvider);
 	AddToStackL(iAppView);
 	
 	// Position requestor
@@ -106,6 +165,11 @@ CS60MapsAppUi::~CS60MapsAppUi()
 		}
 	
 	delete iFileMan;
+	
+	//delete iAvailableTileProviders;
+	iAvailableTileProviders.DeleteAll();
+	
+	delete iSettings;
 	}
 
 // -----------------------------------------------------------------------------
@@ -119,87 +183,39 @@ void CS60MapsAppUi::HandleCommandL(TInt aCommand)
 		{
 		case EEikCmdExit:
 		case EAknSoftkeyExit:
-			{
-			CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
-			dlg->PrepareLC(R_CONFIRM_EXIT_QUERY_DIALOG);
-			HBufC* title = iEikonEnv->AllocReadResourceLC(R_CONFIRM_EXIT_DIALOG_TITLE);
-			dlg->QueryHeading()->SetTextL(*title);
-			CleanupStack::PopAndDestroy(); //title
-			HBufC* msg = iEikonEnv->AllocReadResourceLC(R_CONFIRM_EXIT_DIALOG_TEXT);
-			dlg->SetMessageTextL(*msg);
-			CleanupStack::PopAndDestroy(); //msg
-			TInt res = dlg->RunLD();
-			if (res == 3005 /*Yes*/) // ToDo: Replace by constant name
-				{
-				SaveL();
-				Exit();
-				}
-			}
+			HandleExitL();
 			break;
+			
 		case EFindMe:
-			{
-			iAppView->SetFollowUser(ETrue);
-			}
+			HandleFindMeL();
 			break;
+			
+		case ESetOsmStandardTileProvider:
+		case ESetOsmCyclesTileProvider:
+		case ESetOsmHumanitarianTileProvider:
+		case ESetOsmTransportTileProvider:
+		//case ESetOpenTopoMapTileProvider:
+			HandleTileProviderChangeL(aCommand - ESetTileProviderBase);
+			break;	
+			
 		case ETilesCacheStats:
-			{
-			ShowMapCacheStatsDialogL();
-			}
+			HandleTilesCacheStatsL();
 			break;
+			
 		case EResetTilesCache:
-			{
-			CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
-			dlg->PrepareLC(R_CONFIRM_RESET_TILES_CACHE_DIALOG);
-			HBufC* title = iEikonEnv->AllocReadResourceLC(R_CONFIRM_RESET_TILES_CACHE_DIALOG_TITLE);
-			dlg->QueryHeading()->SetTextL(*title);
-			CleanupStack::PopAndDestroy(); //title
-			HBufC* msg = iEikonEnv->AllocReadResourceLC(R_CONFIRM_RESET_TILES_CACHE_DIALOG_TEXT);
-			dlg->SetMessageTextL(*msg);
-			CleanupStack::PopAndDestroy(); //msg
-			TInt res = dlg->RunLD();
-			if (res == 3005 /*Yes*/) // ToDo: Replace by constant name
-				{
-				ClearTilesCache();
-				}
-			}
+			HandleTilesCacheResetL();
 			break;
+			
 		case EHelp:
-			{
-
-			CArrayFix<TCoeHelpContext>* buf = CCoeAppUi::AppHelpContextL();
-			HlpLauncher::LaunchHelpApplicationL(iEikonEnv->WsSession(), buf);
-			}
+			HandleHelpL();
 			break;
+			
 		case EAbout:
-			{
-
-			CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
-			dlg->PrepareLC(R_ABOUT_QUERY_DIALOG);
-			HBufC* title = iEikonEnv->AllocReadResourceLC(R_ABOUT_DIALOG_TITLE);
-			dlg->QueryHeading()->SetTextL(*title);
-			CleanupStack::PopAndDestroy(); //title
-#ifdef _DEBUG
-			HBufC* msg = iEikonEnv->AllocReadResourceLC(R_ABOUT_DIALOG_TEXT);
-			HBufC* gitMsg = iEikonEnv->AllocReadResourceLC(R_ABOUT_DIALOG_GIT_TEXT);
-			RBuf buff;
-			buff.CreateL(msg->Length() + gitMsg->Length() + 100);
-			buff.CleanupClosePushL();
-			buff.Zero();
-			buff.Append(*msg);
-			buff.AppendFormat(*gitMsg, &KGITBranch, &KGITCommit);
-			dlg->SetMessageTextL(buff);
-			CleanupStack::PopAndDestroy(3, msg);
-			dlg->RunLD();
-#else
-			HBufC* msg = iEikonEnv->AllocReadResourceLC(R_ABOUT_DIALOG_TEXT);
-			dlg->SetMessageTextL(*msg);
-			CleanupStack::PopAndDestroy(); //msg
-			dlg->RunLD();
-#endif
-			}
+			HandleAboutL();
 			break;
+			
 		default:
-			Panic( ES60MapsUi);
+			Panic(ES60MapsUi);
 			break;
 		}
 	}
@@ -238,6 +254,35 @@ CArrayFix<TCoeHelpContext>* CS60MapsAppUi::HelpContextL() const
 #endif
 	}
 
+void CS60MapsAppUi::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
+	{
+	if (aMenuID == R_SUBMENU_TILE_PROVIDERS)
+		{
+		// Fill list of available tiles services in menu
+		
+		for (TInt idx = 0; idx < iAvailableTileProviders.Count(); idx++)
+			{
+			TInt commandId = ESetTileProviderBase + idx;
+			
+			CEikMenuPaneItem::SData menuItem;
+			menuItem.iCommandId = commandId;
+			menuItem.iCascadeId = 0;
+			//menuItem.iFlags = ???
+			menuItem.iText.Copy(iAvailableTileProviders[idx]->iTitle);
+			//menuItem.iExtraText = ???
+			aMenuPane->AddMenuItemL(menuItem);
+			aMenuPane->SetItemButtonState(commandId,
+					/*commandId == selectedTileProviderCommId*/
+					iAvailableTileProviders[idx] == iActiveTileProvider?
+							EEikMenuItemSymbolOn : EEikMenuItemSymbolIndeterminate);				
+			}
+		}
+	/*else
+		{
+		AppUi()->DynInitMenuPaneL(aMenuID, aMenuPane);
+		}*/
+	}
+
 TStreamId CS60MapsAppUi::StoreL(CStreamStore& aStore) const
 	{
 	RStoreWriteStream stream;
@@ -259,12 +304,40 @@ void CS60MapsAppUi::RestoreL(const CStreamStore& aStore,
 
 void CS60MapsAppUi::ExternalizeL(RWriteStream& aStream) const
 	{
-	aStream << *iAppView;
+	// Update settings
+	TCoordinate coord = iAppView->GetCenterCoordinate();
+	iSettings->SetLat(coord.Latitude());
+	iSettings->SetLon(coord.Longitude());
+	iSettings->SetZoom(iAppView->GetZoom());
+	iSettings->SetTileProviderId(iActiveTileProvider->iId);	
+	
+	// And save
+	aStream << *iSettings;
 	}
 
 void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 	{
-	aStream >> *iAppView;
+	TRAP_IGNORE(aStream >> *iSettings);
+	iAppView->Move(iSettings->GetLat(), iSettings->GetLon(), iSettings->GetZoom());
+	
+	TTileProviderId tileProviderId(iSettings->GetTileProviderId());
+	TBool isFound = EFalse;
+	for (TInt idx = 0; idx < iAvailableTileProviders.Count(); idx++)
+		{
+		if (tileProviderId == iAvailableTileProviders[idx]->iId)
+			{
+			iActiveTileProvider = iAvailableTileProviders[idx];
+			iAppView->SetTileProviderL(iAvailableTileProviders[idx]);
+			isFound = ETrue;
+			break;
+			}
+		}
+	
+	if (!isFound)
+		{ // Set default
+		iActiveTileProvider = iAvailableTileProviders[0];
+		iAppView->SetTileProviderL(iAvailableTileProviders[0]);
+		}
 	}
 
 MFileManObserver::TControl CS60MapsAppUi::NotifyFileManStarted()
@@ -369,7 +442,36 @@ void CS60MapsAppUi::MrccatoCommand(TRemConCoreApiOperationId aOperationId,
 		}
 	}
 
-void CS60MapsAppUi::ShowMapCacheStatsDialogL()
+void CS60MapsAppUi::HandleExitL()
+	{
+	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
+	dlg->PrepareLC(R_CONFIRM_EXIT_QUERY_DIALOG);
+	HBufC* title = iEikonEnv->AllocReadResourceLC(R_CONFIRM_EXIT_DIALOG_TITLE);
+	dlg->QueryHeading()->SetTextL(*title);
+	CleanupStack::PopAndDestroy(); //title
+	HBufC* msg = iEikonEnv->AllocReadResourceLC(R_CONFIRM_EXIT_DIALOG_TEXT);
+	dlg->SetMessageTextL(*msg);
+	CleanupStack::PopAndDestroy(); //msg
+	TInt res = dlg->RunLD();
+	if (res == EAknSoftkeyYes)
+		{
+		SaveL();
+		Exit();
+		}
+	}
+
+void CS60MapsAppUi::HandleFindMeL()
+	{
+	iAppView->SetFollowUser(ETrue);
+	}
+
+void CS60MapsAppUi::HandleTileProviderChangeL(TInt aTileProviderIdx)
+	{
+	iActiveTileProvider = iAvailableTileProviders[aTileProviderIdx];
+	static_cast<CS60MapsAppView*>(iAppView)->SetTileProviderL(iActiveTileProvider);
+	}
+
+void CS60MapsAppUi::HandleTilesCacheStatsL()
 	{
 	CS60MapsApplication* app = static_cast<CS60MapsApplication *>(Application());
 	RFs fs = iEikonEnv->FsSession();
@@ -440,6 +542,51 @@ void CS60MapsAppUi::ShowMapCacheStatsDialogL()
 	
 	CleanupStack::PopAndDestroy(&msg);
 	//CleanupStack::PopAndDestroy(/*3*/2, &msg);
+	}
+
+void CS60MapsAppUi::HandleTilesCacheResetL()
+	{
+	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
+	dlg->PrepareLC(R_CONFIRM_RESET_TILES_CACHE_DIALOG);
+	HBufC* title = iEikonEnv->AllocReadResourceLC(R_CONFIRM_RESET_TILES_CACHE_DIALOG_TITLE);
+	dlg->QueryHeading()->SetTextL(*title);
+	CleanupStack::PopAndDestroy(); //title
+	HBufC* msg = iEikonEnv->AllocReadResourceLC(R_CONFIRM_RESET_TILES_CACHE_DIALOG_TEXT);
+	dlg->SetMessageTextL(*msg);
+	CleanupStack::PopAndDestroy(); //msg
+	TInt res = dlg->RunLD();
+	if (res == EAknSoftkeyYes)
+		{
+		ClearTilesCache();
+		}
+	}
+
+void CS60MapsAppUi::HandleHelpL()
+	{
+	CArrayFix<TCoeHelpContext>* buf = CCoeAppUi::AppHelpContextL();
+	HlpLauncher::LaunchHelpApplicationL(iEikonEnv->WsSession(), buf);
+	}
+
+void CS60MapsAppUi::HandleAboutL()
+	{
+	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
+	dlg->PrepareLC(R_ABOUT_QUERY_DIALOG);
+	HBufC* title = iEikonEnv->AllocReadResourceLC(R_ABOUT_DIALOG_TITLE);
+	dlg->QueryHeading()->SetTextL(*title);
+	CleanupStack::PopAndDestroy(); //title
+	
+	CDesCArrayFlat* strings = new (ELeave) CDesC16ArrayFlat(3);
+	CleanupStack::PushL(strings);
+	
+	strings->AppendL(KProgramVersion.Name());
+	strings->AppendL(KGITBranch);
+	strings->AppendL(KGITCommit);
+	
+	HBufC* msg = StringLoader::LoadLC(R_ABOUT_DIALOG_TEXT, *strings, iEikonEnv);
+	
+	dlg->SetMessageTextL(*msg);
+	CleanupStack::PopAndDestroy(2, strings);
+	dlg->RunLD();
 	}
 
 
