@@ -180,6 +180,9 @@ void CTiledMapLayer::Draw(CWindowGc &aGc)
 			case KErrNotFound:
 				{
 				iBitmapMgr->AddToLoading(tiles[idx]);
+				TInt err = iBitmapMgr->GetTileBitmap(tiles[idx], bitmap);
+				if (KErrNone == err)
+					DrawTile(aGc, tiles[idx], bitmap);
 				break;
 				}
 				
