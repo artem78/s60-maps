@@ -25,6 +25,7 @@ CMapLayerBase::CMapLayerBase(/*const*/ CS60MapsAppView* aMapView) :
 	}
 
 
+#ifdef DEBUG_SHOW_ADDITIONAL_INFO
 
 // CMapLayerDebugInfo
 
@@ -32,52 +33,42 @@ CMapLayerDebugInfo::CMapLayerDebugInfo(/*const*/ CS60MapsAppView* aMapView) :
 	CMapLayerBase(aMapView),
 	iRedrawingsCount(0)
 	{
-	/*CWindowGc& gc = iMapView->SystemGc();
-	gc.UseFont(CEikonEnv::Static()->AnnotationFont());*/
 	}
-
-/*CMapLayerDebugInfo::~CMapLayerDebugInfo()
-	{
-	CWindowGc& gc = iMapView->SystemGc();
-	gc.DiscardFont();
-	}*/
 
 void CMapLayerDebugInfo::Draw(CWindowGc &aGc)
 	{
-	DrawPos(aGc);
-	DrawRedrawingsCount(aGc);
+	TRAP_IGNORE(DrawInfoL(aGc));
 	};
 
-void CMapLayerDebugInfo::DrawPos(CWindowGc &aGc)
+void CMapLayerDebugInfo::DrawInfoL(CWindowGc &aGc)
 	{
-	TBuf<100> buff;
-	TCoordinate center = iMapView->GetCenterCoordinate();
-	_LIT(KInfoText, "pos: %f %f   zoom: %d");
-	buff.Format(KInfoText, center.Latitude(), center.Longitude(), (TInt) iMapView->GetZoom());
+	_LIT(KRedrawingsText, "Redrawings: %d");
+	_LIT(KLatText, "Lat: %f");
+	_LIT(KLonText, "Lon: %f");
+	_LIT(KZoomText, "Zoom: %d");
 	
-	_LIT(KFontName, "Series 60 Sans");
-	TFontSpec fontSpec(KFontName, 100);
-	CFont* font;
-	TInt res = CEikonEnv::Static()->ScreenDevice()->GetNearestFontInTwips(font, fontSpec);
-	if (res)
-		return;
-	aGc.UseFont(font);
-	TRect area = iMapView->Rect();
-	area.Shrink(4, 4);
-	TInt baselineOffset = area.Height() - font->AscentInPixels();
-	aGc.DrawText(buff, area, baselineOffset);
-	aGc.DiscardFont();
-	CEikonEnv::Static()->ScreenDevice()->ReleaseFont(font);
-	}
-
-void CMapLayerDebugInfo::DrawRedrawingsCount(CWindowGc &aGc)
-	{
 	iRedrawingsCount++;
+	TCoordinate center = iMapView->GetCenterCoordinate();
+	
+	// Prepare strings
+	/*TBuf<100> buff;
+		_LIT(KFmt, "Redrawings: %d\rLat: %f\rLon: %f\rZoom: %d");
+		buff.Format(KFmt, iRedrawingsCount, center.Latitude(), center.Longitude(), (TInt) iMapView->GetZoom());*/
+	
+	CDesCArrayFlat* strings = new (ELeave) CDesCArrayFlat(4);
+	CleanupStack::PushL(strings);
 	
 	TBuf<32> buff;
-	_LIT(KFmt, "Redrawings: %d");
-	buff.Format(KFmt, iRedrawingsCount);
+	buff.Format(KRedrawingsText, iRedrawingsCount);
+	strings->AppendL(buff);
+	buff.Format(KLatText, center.Latitude());
+	strings->AppendL(buff);
+	buff.Format(KLonText, center.Longitude());
+	strings->AppendL(buff);
+	buff.Format(KZoomText, (TInt) iMapView->GetZoom());
+	strings->AppendL(buff);
 	
+	// Draw
 	aGc.Reset();
 	aGc.SetPenColor(KRgbDarkBlue);
 	
@@ -85,10 +76,18 @@ void CMapLayerDebugInfo::DrawRedrawingsCount(CWindowGc &aGc)
 	aGc.UseFont(font);
 	TRect area = iMapView->Rect();
 	area.Shrink(4, 4);
-	TInt baselineOffset = font->AscentInPixels();
-	aGc.DrawText(buff, area, baselineOffset, CGraphicsContext::ERight);
+	TInt baselineOffset = 0;
+	for (TInt i = 0; i < strings->Count(); i++)
+		{
+		baselineOffset += font->AscentInPixels() + 5;
+		aGc.DrawText((*strings)[i], area, baselineOffset, CGraphicsContext::ERight);
+		}
 	aGc.DiscardFont();
+	
+	CleanupStack::PopAndDestroy(strings);
 	}
+
+#endif
 
 
 // MTileBitmapManagerObserver

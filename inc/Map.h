@@ -77,20 +77,20 @@ public:
 //	void OnImageReaded();
 //	};
 
-// Debug layer with zoom, lat and lon info
+#ifdef DEBUG_SHOW_ADDITIONAL_INFO
+// Debug layer with additional info
 class CMapLayerDebugInfo : public CMapLayerBase
 	{
 public:
 	CMapLayerDebugInfo(/*const*/ CS60MapsAppView* aMapView);
-	//~CMapLayerDebugInfo();
 	void Draw(CWindowGc &aGc);
 	
 private:
 	TInt iRedrawingsCount;
 	
-	void DrawPos(CWindowGc &aGc);
-	void DrawRedrawingsCount(CWindowGc &aGc);
+	void DrawInfoL(CWindowGc &aGc);
 	};
+#endif
 
 class CTileBitmapManager;
 //class MTileBitmapManagerObserver;

@@ -6,6 +6,11 @@
 // Main definitions
 const TVersion KProgramVersion(1, 1, 0);
 
+// Debugging
+#ifdef _DEBUG
+#define DEBUG_SHOW_ADDITIONAL_INFO
+#endif
+
 // Types
 typedef /*TUInt8*/ TInt TZoom;
 const TReal KNaN = 0.0 / 0.0;

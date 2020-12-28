@@ -71,7 +71,9 @@ void CS60MapsAppView::ConstructL(const TRect& aRect, const TCoordinate &aInitial
 	iLayers[i++] = new (ELeave) CTileBorderAndXYZLayer(this);
 #endif
 	iLayers[i++] = new (ELeave) CUserPositionLayer(this);
+#ifdef DEBUG_SHOW_ADDITIONAL_INFO
 	iLayers[i++] = new (ELeave) CMapLayerDebugInfo(this);
+#endif
 	
 	SetTileProviderL(aTileProvider);
 
