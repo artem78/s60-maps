@@ -134,7 +134,7 @@ private:
 	TCoordinate iCenterPosition; // Similar to iTopLeftPosition, but used for
 				// more accurate moving to position when zoom changed
 				// ToDo: Any ideas how to make it without additional property? 
-#if DISPLAY_TILE_BORDER_AND_XYZ
+#ifdef DEBUG_SHOW_TILE_BORDER_AND_XYZ
 	TFixedArray<CMapLayerBase*, 4> iLayers;
 #else
 	TFixedArray<CMapLayerBase*, 3> iLayers;

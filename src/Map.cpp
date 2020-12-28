@@ -445,7 +445,7 @@ void MImageReaderObserver::OnImageReadingFailed(TInt /*aErr*/)
 	}
 
 
-#if DISPLAY_TILE_BORDER_AND_XYZ
+#ifdef DEBUG_SHOW_TILE_BORDER_AND_XYZ
 
 // CTileBorderAndNumbersLayer
 

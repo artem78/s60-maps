@@ -177,7 +177,7 @@ private:
 	CImageDecoder* iDecoder;
 	};
 
-#if DISPLAY_TILE_BORDER_AND_XYZ
+#ifdef DEBUG_SHOW_TILE_BORDER_AND_XYZ
 // Debug layer for drawing tile`s border and x/y/z values.
 // May be used as stub.
 class CTileBorderAndXYZLayer : public CMapLayerBase
