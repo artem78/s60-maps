@@ -877,7 +877,7 @@ void CTileBitmapManager::LoadBitmapL(const TTile &aTile, CFbsBitmap *aBitmap)
 	CleanupClosePushL(file);
 	User::LeaveIfError(aBitmap->Load(file));	
 	CleanupStack::PopAndDestroy(&file);
-	LOG(_L8("Bitmap for %S sucessfully loaded from file \"%S\""), &aTile.AsDes8(), &tileFileName);
+	LOG(_L("Bitmap for %S sucessfully loaded from file \"%S\""), &aTile.AsDes(), &tileFileName);
 	}
 
 TBool CTileBitmapManager::IsTileFileExists(const TTile &aTile) /*const*/
