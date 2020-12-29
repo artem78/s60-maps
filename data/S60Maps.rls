@@ -33,7 +33,7 @@
 
 #define qtn_about_dialog_title "About"
 
-#define qtn_about_dialog_text "S60Maps Version %0U\nBuild: " __DATE__ " " __TIME__ "\nGit: %1U %2U\nAuthor: artem78 (megabyte1024@ya.ru)\nWeb: https://github.com/artem78/s60-maps\nThanks to: baranovskiykonstantin, Symbian9"
+#define qtn_about_dialog_text "S60Maps Version %S\nBuild: " __DATE__ " " __TIME__ "\nGit: %S %S\nAuthor: artem78 (megabyte1024@ya.ru)\nWeb: https://github.com/artem78/s60-maps\nThanks to: baranovskiykonstantin, Symbian9"
 
 #define qtn_confirm_exit_dialog_title "Confirm exit"
 

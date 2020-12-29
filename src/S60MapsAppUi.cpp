@@ -590,17 +590,13 @@ void CS60MapsAppUi::HandleAboutL()
 	dlg->QueryHeading()->SetTextL(*title);
 	CleanupStack::PopAndDestroy(); //title
 	
-	CDesCArrayFlat* strings = new (ELeave) CDesC16ArrayFlat(3);
-	CleanupStack::PushL(strings);
-	
-	strings->AppendL(KProgramVersion.Name());
-	strings->AppendL(KGITBranch);
-	strings->AppendL(KGITCommit);
-	
-	HBufC* msg = StringLoader::LoadLC(R_ABOUT_DIALOG_TEXT, *strings, iEikonEnv);
-	
-	dlg->SetMessageTextL(*msg);
-	CleanupStack::PopAndDestroy(2, strings);
+	RBuf msg;
+	msg.CreateL(512);
+	msg.CleanupClosePushL();
+	iEikonEnv->Format256(msg, R_ABOUT_DIALOG_TEXT, &KProgramVersion.Name(),
+			&KGITBranch, &KGITCommit);
+	dlg->SetMessageTextL(msg);
+	CleanupStack::PopAndDestroy(&msg);
 	dlg->RunLD();
 	}
 
