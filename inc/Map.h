@@ -146,6 +146,7 @@ public:
 	
 // Own methods
 private:
+	void DrawAccuracyCircle(CWindowGc &aGc, const TPoint &aScreenPos, TSize aSize);
 	void DrawDirectionMarkL(CWindowGc &aGc, const TPoint &aScreenPos, TReal aRotation);
 	void DrawRoundMark(CWindowGc &aGc, const TPoint &aScreenPos);
 	};
@@ -367,6 +368,8 @@ class TCoordinateEx : public TCoordinate
 	{
 protected:
 	TReal32 iCourse;
+	TReal32 iHorAccuracy;
+	
 public:
 	TCoordinateEx();
 	TCoordinateEx(const TCoordinateEx &aCoordEx);
@@ -376,6 +379,12 @@ public:
 		{ return iCourse; };
 	inline void SetCourse(TReal32 aCourse)
 		{ iCourse = aCourse; };
+
+	inline TReal32 HorAccuracy() const
+		{ return iHorAccuracy; }
+	inline void SetHorAccuracy(TReal32 aHorAccuracy)
+		{ iHorAccuracy = aHorAccuracy; }
+	
 	//operator TCoordinate() const;
 	};
 

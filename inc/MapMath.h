@@ -29,6 +29,8 @@ public:
 			TReal32 &aHorizontalDistance, TReal32 &aVerticalDistance);
 	static void PixelsToDegrees(const TReal64 &aLatitude, TZoom aZoom, TUint aPixels /*= 1*/,
 			/*TReal32*/ TReal64 &aHorizontalAngle, /*TReal32*/ TReal64 &aVerticalAngle);
+	static void MetersToPixels(const TReal64 &aLatitude, TZoom aZoom, TReal32 aDistance,
+			/*TUint*/ TInt &aHorizontalPixels, /*TUint*/ TInt &aVerticalPixels);
 	static TTile GeoCoordsToTile(const TCoordinate &aCoord, TZoom aZoom);
 	static TTileReal GeoCoordsToTileReal(const TCoordinate &aCoord, TZoom aZoom);
 	static TCoordinate TileToGeoCoords(const TTileReal &aTile, TZoom aZoom);

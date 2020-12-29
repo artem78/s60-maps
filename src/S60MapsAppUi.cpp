@@ -391,6 +391,7 @@ void CS60MapsAppUi::OnPositionUpdated()
 		
 		coord.SetCourse(course.Heading());
 		}
+	coord.SetHorAccuracy(pos.HorizontalAccuracy());
 	iAppView->SetUserPosition(coord);
 	}
 

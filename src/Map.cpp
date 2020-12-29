@@ -287,6 +287,17 @@ void CUserPositionLayer::Draw(CWindowGc &aGc)
 		{
 		TPoint screenPoint = iMapView->GeoCoordsToScreenCoords(pos);
 		
+		if (!Math::IsNaN(pos.HorAccuracy()) && pos.HorAccuracy() > 0)
+			{
+			// Draw accuracy circle
+			TSize circleSize;
+			MapMath::MetersToPixels(pos.Latitude(), iMapView->GetZoom(), pos.HorAccuracy(),
+					circleSize.iWidth, circleSize.iHeight);
+			circleSize.iHeight = circleSize.iWidth; // Real height may a little differ
+						// due to projection limitations, but I ignore this
+			DrawAccuracyCircle(aGc, screenPoint, circleSize);
+			}
+		
 		// ToDo: Do not draw direction mark when speed is too low (about < 3 kph)
 		if (!Math::IsNaN(pos.Course()))
 			{ // Draw direction mark
@@ -298,6 +309,27 @@ void CUserPositionLayer::Draw(CWindowGc &aGc)
 			DrawRoundMark(aGc, screenPoint);
 			}
 		}
+	}
+
+void CUserPositionLayer::DrawAccuracyCircle(CWindowGc &aGc, const TPoint &aScreenPos, TSize aSize)
+	{
+	const TInt KAlpha = 0x50;
+	TRgb fillColor   = 0xAD8B58;
+	TRgb strokeColor = 0x4F3612;
+	fillColor.SetAlpha(KAlpha);
+	strokeColor.SetAlpha(KAlpha);
+	
+	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
+	aGc.SetBrushColor(fillColor);
+	aGc.SetPenStyle(CGraphicsContext::ESolidPen);
+	aGc.SetPenColor(strokeColor);
+	aGc.SetPenSize(TSize(1, 1));
+
+	TRect rect(TSize(0, 0));
+	rect.Move(aScreenPos);
+	//rect.Grow(aSize);
+	rect.Grow(aSize.iWidth / 2, aSize.iHeight / 2);
+	aGc.DrawEllipse(rect);
 	}
 
 void CUserPositionLayer::DrawDirectionMarkL(CWindowGc &aGc, const TPoint &aScreenPos, TReal aRotation)
@@ -1148,6 +1180,7 @@ TCoordinateEx::TCoordinateEx() /*:
 	iLongitude = KNaN;
 	iAltitude  = KNaN;
 	iCourse    = KNaN;
+	iHorAccuracy = KNaN;
 	}
 
 TCoordinateEx::TCoordinateEx(const TCoordinateEx &aCoordEx) /*:
@@ -1160,6 +1193,7 @@ TCoordinateEx::TCoordinateEx(const TCoordinateEx &aCoordEx) /*:
 	iLongitude = aCoordEx.Longitude();
 	iAltitude  = aCoordEx.Altitude();
 	iCourse    = aCoordEx.Course();
+	iHorAccuracy = aCoordEx.HorAccuracy();
 	}
 
 TCoordinateEx::TCoordinateEx(const TCoordinate &aCoord) /*:
@@ -1172,4 +1206,5 @@ TCoordinateEx::TCoordinateEx(const TCoordinate &aCoord) /*:
 	iLongitude = aCoord.Longitude();
 	iAltitude  = aCoord.Altitude();
 	iCourse    = KNaN;
+	iHorAccuracy = KNaN;
 	}
