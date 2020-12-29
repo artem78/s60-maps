@@ -17,6 +17,7 @@ NAME S60M	// 4 letter ID
 #include <appinfo.rh>
 #include "S60Maps.hrh"
 #include "S60Maps.rls"
+#include "S60Maps.loc"
 
 //  RESOURCE DEFINITIONS
 // -----------------------------------------------------------------------------
