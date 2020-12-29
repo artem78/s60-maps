@@ -584,6 +584,10 @@ void CS60MapsAppUi::HandleHelpL()
 
 void CS60MapsAppUi::HandleAboutL()
 	{
+	_LIT(KAuthor,	"artem78 (megabyte1024@ya.ru)");
+	_LIT(KWebSite,	"https://github.com/artem78/s60-maps");
+	_LIT(KThanksTo,	"baranovskiykonstantin, Symbian9");
+	
 	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
 	dlg->PrepareLC(R_ABOUT_QUERY_DIALOG);
 	HBufC* title = iEikonEnv->AllocReadResourceLC(R_ABOUT_DIALOG_TITLE);
@@ -593,8 +597,8 @@ void CS60MapsAppUi::HandleAboutL()
 	RBuf msg;
 	msg.CreateL(512);
 	msg.CleanupClosePushL();
-	iEikonEnv->Format256(msg, R_ABOUT_DIALOG_TEXT, &KProgramVersion.Name(),
-			&KGITBranch, &KGITCommit);
+	iEikonEnv->Format128/*256*/(msg, R_ABOUT_DIALOG_TEXT, &KProgramVersion.Name(),
+			&KGITBranch, &KGITCommit, &KAuthor, &KWebSite, &KThanksTo);
 	dlg->SetMessageTextL(msg);
 	CleanupStack::PopAndDestroy(&msg);
 	dlg->RunLD();
