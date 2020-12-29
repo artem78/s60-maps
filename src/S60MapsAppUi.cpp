@@ -369,8 +369,10 @@ void CS60MapsAppUi::ClearTilesCache()
 	// ToDo: Do asynchronous
 	iFileMan->RmDir(cacheDir);
 	
-	_LIT(KMsg, "Done!");
-	CEikonEnv::Static()->AlertWin(KMsg);
+	// iEikonEnv->InfoWinL(R_DONE);
+	HBufC* msg = iEikonEnv->AllocReadResourceL(R_DONE);
+	iEikonEnv->AlertWin(*msg);
+	delete msg;
 	}
 
 void CS60MapsAppUi::OnPositionUpdated()
@@ -525,7 +527,10 @@ void CS60MapsAppUi::HandleTilesCacheStatsL()
 			
 			TBuf<16> sizeBuff;
 			FileUtils::FileSizeToReadableString(dirStats.iSize, sizeBuff);
-			msg.AppendFormat(_L("%S: %d files, %S\n"), &cacheSubDir.iName, dirStats.iFilesCount, &sizeBuff);
+			
+			TBuf<64> buf;
+			iEikonEnv->Format128(buf, R_STATS_LINE, &cacheSubDir.iName, dirStats.iFilesCount, &sizeBuff);
+			msg.Append(buf);
 			}
 		
 		delete cacheSubDirs;
@@ -534,7 +539,9 @@ void CS60MapsAppUi::HandleTilesCacheStatsL()
 	msg.Append(_L("------------\n"));
 	TBuf<16> totalSizeBuff;
 	FileUtils::FileSizeToReadableString(bytesTotal, totalSizeBuff);
-	msg.AppendFormat(_L("Total: %d files, %S"), filesTotal, &totalSizeBuff);
+	TBuf<64> buf;
+	iEikonEnv->Format128(buf, R_STATS_TOTAL, filesTotal, &totalSizeBuff);
+	msg.Append(buf);
 	
 	
 	

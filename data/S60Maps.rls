@@ -39,4 +39,8 @@
 
 #define qtn_confirm_exit_dialog_text "Are you sure to exit?"
 
+#define qtn_done "Done!"
+#define qtn_stats_line "%S: %d files, %S\n"
+#define qtn_stats_total "Total: %d files, %S"
+
 // End of File
