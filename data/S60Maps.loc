@@ -5,6 +5,10 @@
 #include "S60Maps.l01"
 #endif
 
+#ifdef LANGUAGE_16
+#include "S60Maps.l16"
+#endif
+
 #ifdef LANGUAGE_57
 #include "S60Maps.l57"
 #endif
