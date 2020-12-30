@@ -530,8 +530,18 @@ void CS60MapsAppUi::HandleTilesCacheStatsL()
 			TBuf<16> sizeBuff;
 			FileUtils::FileSizeToReadableString(dirStats.iSize, sizeBuff);
 			
+			TPtrC itemName(cacheSubDir.iName);
+			for (TInt providerIdx = 0; providerIdx < iAvailableTileProviders.Count(); providerIdx++)
+				{
+				if (iAvailableTileProviders[providerIdx]->iId == cacheSubDir.iName)
+					{
+					itemName.Set(iAvailableTileProviders[providerIdx]->iTitle);
+					break;
+					}
+				}
+			
 			TBuf<64> buf;
-			iEikonEnv->Format128(buf, R_STATS_LINE, &cacheSubDir.iName, dirStats.iFilesCount, &sizeBuff);
+			iEikonEnv->Format128(buf, R_STATS_LINE, &itemName, dirStats.iFilesCount, &sizeBuff);
 			msg.Append(buf);
 			}
 		
