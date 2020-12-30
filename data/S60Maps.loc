@@ -1,3 +1,7 @@
 #ifdef LANGUAGE_01
 #include "S60Maps.l01"
 #endif
+
+#ifdef LANGUAGE_57
+#include "S60Maps.l57"
+#endif
