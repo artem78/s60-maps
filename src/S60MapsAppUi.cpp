@@ -211,9 +211,11 @@ void CS60MapsAppUi::HandleCommandL(TInt aCommand)
 			HandleTilesCacheResetL();
 			break;
 			
+#ifdef _HELP_AVAILABLE_
 		case EHelp:
 			HandleHelpL();
 			break;
+#endif
 			
 		case EAbout:
 			HandleAboutL();
@@ -576,11 +578,13 @@ void CS60MapsAppUi::HandleTilesCacheResetL()
 		}
 	}
 
+#ifdef _HELP_AVAILABLE_
 void CS60MapsAppUi::HandleHelpL()
 	{
 	CArrayFix<TCoeHelpContext>* buf = CCoeAppUi::AppHelpContextL();
 	HlpLauncher::LaunchHelpApplicationL(iEikonEnv->WsSession(), buf);
 	}
+#endif
 
 void CS60MapsAppUi::HandleAboutL()
 	{

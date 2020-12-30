@@ -7,7 +7,7 @@
 ============================================================================
 */
 
-MACRO _HELP_AVAILABLE_
+//MACRO _HELP_AVAILABLE_
 
 // Uncomment for debugging:
 // MACRO DEBUG_SHOW_TILE_BORDER_AND_XYZ
