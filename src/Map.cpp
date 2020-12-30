@@ -72,6 +72,7 @@ void CMapLayerDebugInfo::DrawInfoL(CWindowGc &aGc)
 	aGc.Reset();
 	aGc.SetPenColor(KRgbDarkBlue);
 	
+	// FixMe: Fails with Panic KERN-EXEC 3 when program are going to exit
 	const CFont* font = CEikonEnv::Static()->AnnotationFont();
 	aGc.UseFont(font);
 	TRect area = iMapView->Rect();
