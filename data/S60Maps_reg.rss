@@ -8,7 +8,7 @@
 */
 
 #include "S60Maps.hrh"
-#include "S60Maps.rls"
+//#include "S60Maps.rls"
 #include <appinfo.rh>
 #include <S60Maps_0xED689B88.rsg>
 
@@ -18,7 +18,7 @@ UID3 _UID3
 RESOURCE APP_REGISTRATION_INFO
 	{
 	app_file="S60Maps_0xED689B88";
-	localisable_resource_file =  qtn_loc_resource_file_1;
+	localisable_resource_file = "\\resource\\apps\\S60Maps_0xED689B88";
 	localisable_resource_id = R_LOCALISABLE_APP_INFO;
 
 	embeddability=KAppNotEmbeddable;

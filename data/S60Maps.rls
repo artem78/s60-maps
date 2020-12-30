@@ -9,12 +9,14 @@
 ============================================================================
 */
 
+// ToDo: Can we delete this file?
+
 //  LOCALISATION STRINGS
 
-#define qtn_loc_resource_file_1 "\\resource\\apps\\S60Maps_0xED689B88"
+//#define qtn_loc_resource_file_1 "\\resource\\apps\\S60Maps_0xED689B88"
 
 // Caption string for app.
-#define qtn_caption_string "S60Maps"
+//#define qtn_caption_string "S60Maps"
 
 
 // End of File
