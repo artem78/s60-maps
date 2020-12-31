@@ -16,7 +16,8 @@ enum TS60MapsPanics
 	ES60MapsUi = 1,
 	ES60MapsTileBitmapManagerItemNotFoundPanic = 100,
 	ES60MapsTileBitmapIsNullPanic,
-	ES60MapsNoRequiredHeaderInResponse
+	ES60MapsNoRequiredHeaderInResponse,
+	ES60MapsPosRequestorIsNull
 	};
 
 inline void Panic(TS60MapsPanics aReason)

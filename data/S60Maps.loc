@@ -1,0 +1,14 @@
+#define qtn_caption_string "S60Maps"
+#define qtn_loc_resource_file_1 "\\resource\\apps\\S60Maps_0xED689B88"
+
+#ifdef LANGUAGE_01
+#include "S60Maps.l01"
+#endif
+
+#ifdef LANGUAGE_16
+#include "S60Maps.l16"
+#endif
+
+#ifdef LANGUAGE_57
+#include "S60Maps.l57"
+#endif

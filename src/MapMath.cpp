@@ -9,10 +9,13 @@
 
 #include "MapMath.h"
 #include <e32math.h>
+#include "Map.h"
 
 
 // Constants
-const TReal KEquatorLength = 40075016.686; // Equatorial circumference of the Earth in meters
+const TReal KEarthRadiusMinor = 6356752.3142; // According to WGS 84, in meters
+const TReal KEarthRadiusMajor = 6378137.0;    // According to WGS 84, in meters
+const TReal KEquatorLength = 2 * KPi * KEarthRadiusMajor; // Equatorial circumference of the Earth in meters
 
 
 void MapMath::PixelsToMeters(const TReal64 &aLatitude, TZoom aZoom, TUint aPixels,
@@ -25,8 +28,9 @@ void MapMath::PixelsToMeters(const TReal64 &aLatitude, TZoom aZoom, TUint aPixel
 	//TInt p = 2 ** (aZoom + 8);
 	TReal p;
 	Math::Pow(p, 2, aZoom + 8);
-	aHorizontalDistance =	aPixels * KEquatorLength / p;	
-	aVerticalDistance =		aPixels * KEquatorLength * c / p;
+	aHorizontalDistance = aPixels * KEquatorLength * c / p;
+	aVerticalDistance = (Abs(KMinLatitudeMapBound) + Abs(KMinLatitudeMapBound)) /*~170deg*/
+			* KDegToRad * KEarthRadiusMinor / p * aPixels; 
 	}
 
 void MapMath::PixelsToDegrees(const TReal64 &aLatitude, TZoom aZoom, TUint aPixels,
@@ -37,6 +41,23 @@ void MapMath::PixelsToDegrees(const TReal64 &aLatitude, TZoom aZoom, TUint aPixe
 	PixelsToMeters(aLatitude, aZoom, aPixels, horizontalDistance, verticalDistance);
 	aHorizontalAngle =	horizontalDistance / (KEquatorLength / 360.0);
 	aVerticalAngle =	verticalDistance   / (KEquatorLength / 360.0);
+	}
+
+void MapMath::MetersToPixels(const TReal64 &aLatitude, TZoom aZoom, TReal32 aDistance,
+		/*TUint*/ TInt &aHorizontalPixels, /*TUint*/ TInt &aVerticalPixels)
+	{
+	TReal c;
+	Math::Cos(c, aLatitude * KDegToRad);
+	TReal p;
+	Math::Pow(p, 2, aZoom + 8);
+	TReal horPixels, vertPixels;
+	horPixels  = aDistance * p / (KEquatorLength * c);
+	vertPixels = aDistance / ((Abs(KMinLatitudeMapBound) + Abs(KMinLatitudeMapBound)) /*~170deg*/
+			* KDegToRad * KEarthRadiusMinor / p);
+	Math::Round(horPixels, horPixels, 0);
+	Math::Round(vertPixels, vertPixels, 0);
+	aHorizontalPixels = (TInt) horPixels;
+	aVerticalPixels = (TInt) vertPixels;
 	}
 
 TTile MapMath::GeoCoordsToTile(const TCoordinate &aCoord, TZoom aZoom)

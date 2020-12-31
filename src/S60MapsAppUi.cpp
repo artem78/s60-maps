@@ -116,8 +116,13 @@ void CS60MapsAppUi::ConstructL()
 	
 	// Position requestor
 	_LIT(KPosRequestorName, "S60 Maps"); // ToDo: Move to global const
-	iPosRequestor = CPositionRequestor::NewL(this, KPosRequestorName);
-	iPosRequestor->Start(); // Must be started after view created
+	TRAPD(err, iPosRequestor = CPositionRequestor::NewL(this, KPosRequestorName));
+	if (err == KErrNone)
+		iPosRequestor->Start(); // Must be started after view created
+	else
+		{
+		ERROR(_L("Failed to create position requestor (error: %d), continue without GPS"), err);
+		}
 	
 	// Media keys catching
 	iInterfaceSelector = CRemConInterfaceSelector::NewL();
@@ -206,9 +211,11 @@ void CS60MapsAppUi::HandleCommandL(TInt aCommand)
 			HandleTilesCacheResetL();
 			break;
 			
+#ifdef _HELP_AVAILABLE_
 		case EHelp:
 			HandleHelpL();
 			break;
+#endif
 			
 		case EAbout:
 			HandleAboutL();
@@ -364,12 +371,16 @@ void CS60MapsAppUi::ClearTilesCache()
 	// ToDo: Do asynchronous
 	iFileMan->RmDir(cacheDir);
 	
-	_LIT(KMsg, "Done!");
-	CEikonEnv::Static()->AlertWin(KMsg);
+	// iEikonEnv->InfoWinL(R_DONE);
+	HBufC* msg = iEikonEnv->AllocReadResourceL(R_DONE);
+	iEikonEnv->AlertWin(*msg);
+	delete msg;
 	}
 
 void CS60MapsAppUi::OnPositionUpdated()
 	{
+	__ASSERT_DEBUG(iPosRequestor != NULL, Panic(ES60MapsPosRequestorIsNull));
+	
 	const TPositionInfo* posInfo = iPosRequestor->LastKnownPositionInfo();
 	TPosition pos;
 	posInfo->GetPosition(pos);
@@ -384,6 +395,7 @@ void CS60MapsAppUi::OnPositionUpdated()
 		
 		coord.SetCourse(course.Heading());
 		}
+	coord.SetHorAccuracy(pos.HorizontalAccuracy());
 	iAppView->SetUserPosition(coord);
 	}
 
@@ -517,7 +529,20 @@ void CS60MapsAppUi::HandleTilesCacheStatsL()
 			
 			TBuf<16> sizeBuff;
 			FileUtils::FileSizeToReadableString(dirStats.iSize, sizeBuff);
-			msg.AppendFormat(_L("%S: %d files, %S\n"), &cacheSubDir.iName, dirStats.iFilesCount, &sizeBuff);
+			
+			TPtrC itemName(cacheSubDir.iName);
+			for (TInt providerIdx = 0; providerIdx < iAvailableTileProviders.Count(); providerIdx++)
+				{
+				if (iAvailableTileProviders[providerIdx]->iId == cacheSubDir.iName)
+					{
+					itemName.Set(iAvailableTileProviders[providerIdx]->iTitle);
+					break;
+					}
+				}
+			
+			TBuf<64> buf;
+			iEikonEnv->Format128(buf, R_STATS_LINE, &itemName, dirStats.iFilesCount, &sizeBuff);
+			msg.Append(buf);
 			}
 		
 		delete cacheSubDirs;
@@ -526,7 +551,9 @@ void CS60MapsAppUi::HandleTilesCacheStatsL()
 	msg.Append(_L("------------\n"));
 	TBuf<16> totalSizeBuff;
 	FileUtils::FileSizeToReadableString(bytesTotal, totalSizeBuff);
-	msg.AppendFormat(_L("Total: %d files, %S"), filesTotal, &totalSizeBuff);
+	TBuf<64> buf;
+	iEikonEnv->Format128(buf, R_STATS_TOTAL, filesTotal, &totalSizeBuff);
+	msg.Append(buf);
 	
 	
 	
@@ -561,31 +588,33 @@ void CS60MapsAppUi::HandleTilesCacheResetL()
 		}
 	}
 
+#ifdef _HELP_AVAILABLE_
 void CS60MapsAppUi::HandleHelpL()
 	{
 	CArrayFix<TCoeHelpContext>* buf = CCoeAppUi::AppHelpContextL();
 	HlpLauncher::LaunchHelpApplicationL(iEikonEnv->WsSession(), buf);
 	}
+#endif
 
 void CS60MapsAppUi::HandleAboutL()
 	{
+	_LIT(KAuthor,	"artem78 (megabyte1024@ya.ru)");
+	_LIT(KWebSite,	"https://github.com/artem78/s60-maps");
+	_LIT(KThanksTo,	"baranovskiykonstantin, Symbian9");
+	
 	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
 	dlg->PrepareLC(R_ABOUT_QUERY_DIALOG);
 	HBufC* title = iEikonEnv->AllocReadResourceLC(R_ABOUT_DIALOG_TITLE);
 	dlg->QueryHeading()->SetTextL(*title);
 	CleanupStack::PopAndDestroy(); //title
 	
-	CDesCArrayFlat* strings = new (ELeave) CDesC16ArrayFlat(3);
-	CleanupStack::PushL(strings);
-	
-	strings->AppendL(KProgramVersion.Name());
-	strings->AppendL(KGITBranch);
-	strings->AppendL(KGITCommit);
-	
-	HBufC* msg = StringLoader::LoadLC(R_ABOUT_DIALOG_TEXT, *strings, iEikonEnv);
-	
-	dlg->SetMessageTextL(*msg);
-	CleanupStack::PopAndDestroy(2, strings);
+	RBuf msg;
+	msg.CreateL(512);
+	msg.CleanupClosePushL();
+	iEikonEnv->Format128/*256*/(msg, R_ABOUT_DIALOG_TEXT, &KProgramVersion.Name(),
+			&KGITBranch, &KGITCommit, &KAuthor, &KWebSite, &KThanksTo);
+	dlg->SetMessageTextL(msg);
+	CleanupStack::PopAndDestroy(&msg);
 	dlg->RunLD();
 	}
 

@@ -138,7 +138,9 @@ private:
 	void HandleTileProviderChangeL(TInt aTileProviderIdx);
 	void HandleTilesCacheStatsL();
 	void HandleTilesCacheResetL();
+#ifdef _HELP_AVAILABLE_
 	void HandleHelpL();
+#endif
 	void HandleAboutL();
 	
 	};

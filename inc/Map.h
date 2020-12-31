@@ -77,14 +77,20 @@ public:
 //	void OnImageReaded();
 //	};
 
-// Debug layer with zoom, lat and lon info
+#ifdef DEBUG_SHOW_ADDITIONAL_INFO
+// Debug layer with additional info
 class CMapLayerDebugInfo : public CMapLayerBase
 	{
 public:
 	CMapLayerDebugInfo(/*const*/ CS60MapsAppView* aMapView);
-	//~CMapLayerDebugInfo();
 	void Draw(CWindowGc &aGc);
+	
+private:
+	TInt iRedrawingsCount;
+	
+	void DrawInfoL(CWindowGc &aGc);
 	};
+#endif
 
 class CTileBitmapManager;
 //class MTileBitmapManagerObserver;
@@ -140,6 +146,7 @@ public:
 	
 // Own methods
 private:
+	void DrawAccuracyCircle(CWindowGc &aGc, const TPoint &aScreenPos, TSize aSize);
 	void DrawDirectionMarkL(CWindowGc &aGc, const TPoint &aScreenPos, TReal aRotation);
 	void DrawRoundMark(CWindowGc &aGc, const TPoint &aScreenPos);
 	};
@@ -171,7 +178,7 @@ private:
 	CImageDecoder* iDecoder;
 	};
 
-#if DISPLAY_TILE_BORDER_AND_XYZ
+#ifdef DEBUG_SHOW_TILE_BORDER_AND_XYZ
 // Debug layer for drawing tile`s border and x/y/z values.
 // May be used as stub.
 class CTileBorderAndXYZLayer : public CMapLayerBase
@@ -361,6 +368,8 @@ class TCoordinateEx : public TCoordinate
 	{
 protected:
 	TReal32 iCourse;
+	TReal32 iHorAccuracy;
+	
 public:
 	TCoordinateEx();
 	TCoordinateEx(const TCoordinateEx &aCoordEx);
@@ -370,6 +379,12 @@ public:
 		{ return iCourse; };
 	inline void SetCourse(TReal32 aCourse)
 		{ iCourse = aCourse; };
+
+	inline TReal32 HorAccuracy() const
+		{ return iHorAccuracy; }
+	inline void SetHorAccuracy(TReal32 aHorAccuracy)
+		{ iHorAccuracy = aHorAccuracy; }
+	
 	//operator TCoordinate() const;
 	};
 

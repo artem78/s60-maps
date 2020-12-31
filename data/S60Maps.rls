@@ -9,34 +9,14 @@
 ============================================================================
 */
 
+// ToDo: Can we delete this file?
+
 //  LOCALISATION STRINGS
 
+//#define qtn_loc_resource_file_1 "\\resource\\apps\\S60Maps_0xED689B88"
+
 // Caption string for app.
-#define qtn_caption_string "S60Maps"
+//#define qtn_caption_string "S60Maps"
 
-#define qtn_find_me "Follow me"
-
-//#define qtn_help "Help"
-
-#define qtn_about "About"
-
-#define qtn_exit "Exit"
-
-#define qtn_loc_resource_file_1 "\\resource\\apps\\S60Maps_0xED689B88"
-
-#define qtn_tile_providers_title "Maps"
-#define qtn_service_title "Service"
-#define qtn_tiles_cache_stats "Map cache statistics"
-#define qtn_reset_tiles_cache "Clear map cache"
-#define qtn_confirm_reset_tiles_cache_dialog_title "Confirm clear cache"
-#define qtn_confirm_reset_tiles_cache_dialog_text "This action will delete all of your maps cache. Are you sure?"
-
-#define qtn_about_dialog_title "About"
-
-#define qtn_about_dialog_text "S60Maps Version %0U\nBuild: " __DATE__ " " __TIME__ "\nGit: %1U %2U\nAuthor: artem78 (megabyte1024@ya.ru)\nWeb: https://github.com/artem78/s60-maps\nThanks to: baranovskiykonstantin, Symbian9"
-
-#define qtn_confirm_exit_dialog_title "Confirm exit"
-
-#define qtn_confirm_exit_dialog_text "Are you sure to exit?"
 
 // End of File

@@ -25,43 +25,70 @@ CMapLayerBase::CMapLayerBase(/*const*/ CS60MapsAppView* aMapView) :
 	}
 
 
+#ifdef DEBUG_SHOW_ADDITIONAL_INFO
 
 // CMapLayerDebugInfo
 
 CMapLayerDebugInfo::CMapLayerDebugInfo(/*const*/ CS60MapsAppView* aMapView) :
-	CMapLayerBase(aMapView)
+	CMapLayerBase(aMapView),
+	iRedrawingsCount(0)
 	{
-	/*CWindowGc& gc = iMapView->SystemGc();
-	gc.UseFont(CEikonEnv::Static()->AnnotationFont());*/
 	}
-
-/*CMapLayerDebugInfo::~CMapLayerDebugInfo()
-	{
-	CWindowGc& gc = iMapView->SystemGc();
-	gc.DiscardFont();
-	}*/
 
 void CMapLayerDebugInfo::Draw(CWindowGc &aGc)
 	{
-	TBuf<100> buff;
-	TCoordinate center = iMapView->GetCenterCoordinate();
-	_LIT(KInfoText, "pos: %f %f   zoom: %d");
-	buff.Format(KInfoText, center.Latitude(), center.Longitude(), (TInt) iMapView->GetZoom());
+	TRAP_IGNORE(DrawInfoL(aGc));
+	};
+
+void CMapLayerDebugInfo::DrawInfoL(CWindowGc &aGc)
+	{
+	_LIT(KRedrawingsText, "Redrawings: %d");
+	_LIT(KLatText, "Lat: %f");
+	_LIT(KLonText, "Lon: %f");
+	_LIT(KZoomText, "Zoom: %d");
 	
-	_LIT(KFontName, "Series 60 Sans");
-	TFontSpec fontSpec(KFontName, 100);
-	CFont* font;
-	TInt res = CEikonEnv::Static()->ScreenDevice()->GetNearestFontInTwips(font, fontSpec);
-	if (res)
-		return;
+	iRedrawingsCount++;
+	TCoordinate center = iMapView->GetCenterCoordinate();
+	
+	// Prepare strings
+	/*TBuf<100> buff;
+		_LIT(KFmt, "Redrawings: %d\rLat: %f\rLon: %f\rZoom: %d");
+		buff.Format(KFmt, iRedrawingsCount, center.Latitude(), center.Longitude(), (TInt) iMapView->GetZoom());*/
+	
+	CDesCArrayFlat* strings = new (ELeave) CDesCArrayFlat(4);
+	CleanupStack::PushL(strings);
+	
+	TBuf<32> buff;
+	buff.Format(KRedrawingsText, iRedrawingsCount);
+	strings->AppendL(buff);
+	buff.Format(KLatText, center.Latitude());
+	strings->AppendL(buff);
+	buff.Format(KLonText, center.Longitude());
+	strings->AppendL(buff);
+	buff.Format(KZoomText, (TInt) iMapView->GetZoom());
+	strings->AppendL(buff);
+	
+	// Draw
+	aGc.Reset();
+	aGc.SetPenColor(KRgbDarkBlue);
+	
+	// FixMe: Fails with Panic KERN-EXEC 3 when program are going to exit
+	const CFont* font = CEikonEnv::Static()->AnnotationFont();
 	aGc.UseFont(font);
 	TRect area = iMapView->Rect();
 	area.Shrink(4, 4);
-	TInt baselineOffset = area.Height() - font->AscentInPixels();
-	aGc.DrawText(buff, area, baselineOffset);
+	TInt baselineOffset = 0;
+	for (TInt i = 0; i < strings->Count(); i++)
+		{
+		baselineOffset += font->AscentInPixels() + 5;
+		aGc.DrawText((*strings)[i], area, baselineOffset, CGraphicsContext::ERight);
+		}
 	aGc.DiscardFont();
-	CEikonEnv::Static()->ScreenDevice()->ReleaseFont(font);
-	};
+	
+	CleanupStack::PopAndDestroy(strings);
+	}
+
+#endif
 
 
 // MTileBitmapManagerObserver
@@ -153,6 +180,9 @@ void CTiledMapLayer::Draw(CWindowGc &aGc)
 			case KErrNotFound:
 				{
 				iBitmapMgr->AddToLoading(tiles[idx]);
+				TInt err = iBitmapMgr->GetTileBitmap(tiles[idx], bitmap);
+				if (KErrNone == err)
+					DrawTile(aGc, tiles[idx], bitmap);
 				break;
 				}
 				
@@ -258,6 +288,17 @@ void CUserPositionLayer::Draw(CWindowGc &aGc)
 		{
 		TPoint screenPoint = iMapView->GeoCoordsToScreenCoords(pos);
 		
+		if (!Math::IsNaN(pos.HorAccuracy()) && pos.HorAccuracy() > 0)
+			{
+			// Draw accuracy circle
+			TSize circleSize;
+			MapMath::MetersToPixels(pos.Latitude(), iMapView->GetZoom(), pos.HorAccuracy(),
+					circleSize.iWidth, circleSize.iHeight);
+			circleSize.iHeight = circleSize.iWidth; // Real height may a little differ
+						// due to projection limitations, but I ignore this
+			DrawAccuracyCircle(aGc, screenPoint, circleSize);
+			}
+		
 		// ToDo: Do not draw direction mark when speed is too low (about < 3 kph)
 		if (!Math::IsNaN(pos.Course()))
 			{ // Draw direction mark
@@ -269,6 +310,27 @@ void CUserPositionLayer::Draw(CWindowGc &aGc)
 			DrawRoundMark(aGc, screenPoint);
 			}
 		}
+	}
+
+void CUserPositionLayer::DrawAccuracyCircle(CWindowGc &aGc, const TPoint &aScreenPos, TSize aSize)
+	{
+	const TInt KAlpha = 0x50;
+	TRgb fillColor   = 0xAD8B58;
+	TRgb strokeColor = 0x4F3612;
+	fillColor.SetAlpha(KAlpha);
+	strokeColor.SetAlpha(KAlpha);
+	
+	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
+	aGc.SetBrushColor(fillColor);
+	aGc.SetPenStyle(CGraphicsContext::ESolidPen);
+	aGc.SetPenColor(strokeColor);
+	aGc.SetPenSize(TSize(1, 1));
+
+	TRect rect(TSize(0, 0));
+	rect.Move(aScreenPos);
+	//rect.Grow(aSize);
+	rect.Grow(aSize.iWidth / 2, aSize.iHeight / 2);
+	aGc.DrawEllipse(rect);
 	}
 
 void CUserPositionLayer::DrawDirectionMarkL(CWindowGc &aGc, const TPoint &aScreenPos, TReal aRotation)
@@ -415,7 +477,7 @@ void MImageReaderObserver::OnImageReadingFailed(TInt /*aErr*/)
 	}
 
 
-#if DISPLAY_TILE_BORDER_AND_XYZ
+#ifdef DEBUG_SHOW_TILE_BORDER_AND_XYZ
 
 // CTileBorderAndNumbersLayer
 
@@ -850,7 +912,7 @@ void CTileBitmapManager::LoadBitmapL(const TTile &aTile, CFbsBitmap *aBitmap)
 	CleanupClosePushL(file);
 	User::LeaveIfError(aBitmap->Load(file));	
 	CleanupStack::PopAndDestroy(&file);
-	LOG(_L8("Bitmap for %S sucessfully loaded from file \"%S\""), &aTile.AsDes8(), &tileFileName);
+	LOG(_L("Bitmap for %S sucessfully loaded from file \"%S\""), &aTile.AsDes(), &tileFileName);
 	}
 
 TBool CTileBitmapManager::IsTileFileExists(const TTile &aTile) /*const*/
@@ -1119,6 +1181,7 @@ TCoordinateEx::TCoordinateEx() /*:
 	iLongitude = KNaN;
 	iAltitude  = KNaN;
 	iCourse    = KNaN;
+	iHorAccuracy = KNaN;
 	}
 
 TCoordinateEx::TCoordinateEx(const TCoordinateEx &aCoordEx) /*:
@@ -1131,6 +1194,7 @@ TCoordinateEx::TCoordinateEx(const TCoordinateEx &aCoordEx) /*:
 	iLongitude = aCoordEx.Longitude();
 	iAltitude  = aCoordEx.Altitude();
 	iCourse    = aCoordEx.Course();
+	iHorAccuracy = aCoordEx.HorAccuracy();
 	}
 
 TCoordinateEx::TCoordinateEx(const TCoordinate &aCoord) /*:
@@ -1143,4 +1207,5 @@ TCoordinateEx::TCoordinateEx(const TCoordinate &aCoord) /*:
 	iLongitude = aCoord.Longitude();
 	iAltitude  = aCoord.Altitude();
 	iCourse    = KNaN;
+	iHorAccuracy = KNaN;
 	}
