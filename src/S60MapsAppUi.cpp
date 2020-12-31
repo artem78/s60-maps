@@ -600,7 +600,7 @@ void CS60MapsAppUi::HandleAboutL()
 	{
 	_LIT(KAuthor,	"artem78 (megabyte1024@ya.ru)");
 	_LIT(KWebSite,	"https://github.com/artem78/s60-maps");
-	_LIT(KThanksTo,	"baranovskiykonstantin, Symbian9");
+	_LIT(KThanksTo,	"baranovskiykonstantin, Symbian9, Men770");
 	
 	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
 	dlg->PrepareLC(R_ABOUT_QUERY_DIALOG);
