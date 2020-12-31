@@ -30,8 +30,6 @@ const TReal64 KMaxLongitudeMapBound = 180;
 
 // Forward declaration
 class CS60MapsAppView;
-//class MImageReaderObserver;
-class CImageReader;
 
 
 // Classes
@@ -45,37 +43,6 @@ public:
 	virtual void Draw(CWindowGc &aGc) = 0;
 	};
 
-// Observer class for image reader
-class MImageReaderObserver
-	{
-public:
-	virtual void OnImageReaded() = 0;
-	virtual void OnImageReadingFailed(TInt aErr);
-	};
-
-// Stub layer (just for testing, currently not nedeed more)
-//class CMapLayerStub : public CMapLayerBase, public MImageReaderObserver
-//	{
-//private:
-//	TFixedArray<TCoordinate, 6> iCoords;
-//	RFs iFs;
-//	CFbsBitmap* iBackgroundBitmap;
-//	CImageReader* iImgReader;
-//	
-//	CMapLayerStub(/*const*/ CS60MapsAppView* aMapView, RFs &aFs);
-//	void ConstructL();
-//	
-//	void DrawMap(CWindowGc &aGc);
-//	void DrawMarks(CWindowGc &aGc);
-//	void LoadBackgroundImageL();
-//public:
-//	~CMapLayerStub();
-//	static CMapLayerStub* NewL(/*const*/ CS60MapsAppView* aMapView, RFs &aFs);
-//	static CMapLayerStub* NewLC(/*const*/ CS60MapsAppView* aMapView, RFs &aFs);
-//	
-//	void Draw(CWindowGc &aGc);
-//	void OnImageReaded();
-//	};
 
 #ifdef DEBUG_SHOW_ADDITIONAL_INFO
 // Debug layer with additional info
@@ -152,32 +119,6 @@ private:
 	};
 
 
-// Class for asynchronous image reading from file
-class CImageReader : public CActive
-	{
-public:
-	~CImageReader();
-	static CImageReader* NewL(MImageReaderObserver* aObserver, CFbsBitmap* aBitmap,
-			const TDesC &aFilePath, RFs &aFs);
-	static CImageReader* NewLC(MImageReaderObserver* aObserver, CFbsBitmap* aBitmap,
-			const TDesC &aFilePath, RFs &aFs);
-
-	void StartRead();
-
-private:
-	CImageReader(MImageReaderObserver* aObserver, CFbsBitmap* aBitmap);
-	void ConstructL(const TDesC &aFilePath, RFs &aFs);
-
-	void RunL();
-	void DoCancel();
-	//TInt RunError(TInt aError);
-
-	MImageReaderObserver* iObserver;
-	CFbsBitmap* iBitmap;
-	//HBufC* iFilePath;
-	CImageDecoder* iDecoder;
-	};
-
 #ifdef DEBUG_SHOW_TILE_BORDER_AND_XYZ
 // Debug layer for drawing tile`s border and x/y/z values.
 // May be used as stub.
@@ -196,20 +137,6 @@ private:
 	};
 #endif
 
-//// Observer class for image reader
-//class MImageReaderObserver
-//	{
-//public:
-//	virtual void OnImageReaded() = 0;
-//	virtual void OnImageReadingFailed(TInt aErr);
-//	};
-
-
-//class MTileBitmapManagerObserver
-//	{
-//public:
-//	void OnTileLoaded(const TTile &aTile, const CFbsBitmap *aBitmap);
-//	};
 
 class TTileProvider;
 

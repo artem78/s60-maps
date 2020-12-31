@@ -128,35 +128,7 @@ CTiledMapLayer* CTiledMapLayer::NewLC(CS60MapsAppView* aMapView, TTileProvider* 
 
 void CTiledMapLayer::ConstructL(TTileProvider* aTileProvider)
 	{
-	////////////////
-	//iTileProvider = new (ELeave) TOsmStandardTileProvider;
-	//iTileProvider = new (ELeave) TOsmCyclesTileProvider;
-	//iTileProvider = new (ELeave) TOsmTransportTileProvider;
-	//iTileProvider = new (ELeave) TOsmHumanitarianTileProvider;
-	//iTileProvider = new (ELeave) TOpenTopoMapTileProvider;
-	////////////////////
-//	TBuf<32> tileProviderID;
-//	iTileProvider->ID(tileProviderID);
-//	iMapView->SetZoomBounds(iTileProvider->MinZoomLevel(), iTileProvider->MaxZoomLevel());
-	
-//	TFileName cacheDir;
-//	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
-//	CS60MapsApplication* app = static_cast<CS60MapsApplication*>(appUi->Application());
-//	app->CacheDir(cacheDir);
-//	cacheDir.Append(tileProviderID);
-//	cacheDir.Append(KPathDelimiter);
-//	
-//	RFs fs = iMapView->ControlEnv()->FsSession();
-//	
-//	// Create cache dir (if not exists)
-//	TInt r = fs.MkDirAll(cacheDir);
-//	if (r != KErrAlreadyExists)
-//		User::LeaveIfError(r);
-	
 	SetTileProviderL(aTileProvider);
-	
-	//RFs fs = iMapView->ControlEnv()->FsSession();
-	//iBitmapMgr = CTileBitmapManager::NewL(this, fs, iTileProvider, cacheDir);
 	}
 
 void CTiledMapLayer::Draw(CWindowGc &aGc)
@@ -398,83 +370,6 @@ void CUserPositionLayer::DrawRoundMark(CWindowGc &aGc, const TPoint &aScreenPos)
 	aGc.DrawEllipse(rect);
 	}
 
-// CImageReader
-
-CImageReader::CImageReader(MImageReaderObserver* aObserver, CFbsBitmap* aBitmap) :
-	CActive(EPriorityStandard),
-	iObserver(aObserver),
-	iBitmap(aBitmap)
-	{
-	}
-
-CImageReader* CImageReader::NewLC(MImageReaderObserver* aObserver,
-		CFbsBitmap* aBitmap, const TDesC &aFilePath, RFs &aFs)
-	{
-	CImageReader* self = new (ELeave) CImageReader(aObserver, aBitmap);
-	CleanupStack::PushL(self);
-	self->ConstructL(aFilePath, aFs);
-	return self;
-	}
-
-CImageReader* CImageReader::NewL(MImageReaderObserver* aObserver,
-		CFbsBitmap* aBitmap, const TDesC &aFilePath, RFs &aFs)
-	{
-	CImageReader* self = CImageReader::NewLC(aObserver, aBitmap, aFilePath, aFs);
-	CleanupStack::Pop();
-	return self;
-	}
-
-void CImageReader::ConstructL(const TDesC &aFilePath, RFs &aFs)
-	{
-	//iFilePath = aFilePath.AllocL();
-	iDecoder = CImageDecoder::FileNewL(aFs, aFilePath);	
-	CActiveScheduler::Add(this);
-	}
-
-CImageReader::~CImageReader()
-	{
-	Cancel();
-	delete iDecoder;
-	}
-
-void CImageReader::DoCancel()
-	{
-	iDecoder->Cancel();
-	}
-
-void CImageReader::StartRead()
-	{
-	Cancel();
-	iDecoder->Convert(&iStatus, *iBitmap, 0);
-	SetActive();
-	}
-
-void CImageReader::RunL()
-	{
-	switch (iStatus.Int())
-		{
-		case KErrNone:
-			iObserver->OnImageReaded();
-			break;
-			
-		default:
-			iObserver->OnImageReadingFailed(iStatus.Int());
-			break;
-		}
-	}
-
-//TInt CImageReader::RunError(TInt aError)
-//	{
-//	return aError;
-//	}
-
-
-// MImageReaderObserver
-
-void MImageReaderObserver::OnImageReadingFailed(TInt /*aErr*/)
-	{
-	// No any action by default
-	}
 
 
 #ifdef DEBUG_SHOW_TILE_BORDER_AND_XYZ
