@@ -109,6 +109,8 @@ CTiledMapLayer::CTiledMapLayer(CS60MapsAppView* aMapView) :
 CTiledMapLayer::~CTiledMapLayer()
 	{
 	delete iBitmapMgr;
+	
+	DEBUG(_L("TiledMapLayer destroyed"));
 	}
 
 CTiledMapLayer* CTiledMapLayer::NewL(CS60MapsAppView* aMapView, TTileProvider* aTileProvider)
@@ -129,6 +131,8 @@ CTiledMapLayer* CTiledMapLayer::NewLC(CS60MapsAppView* aMapView, TTileProvider* 
 void CTiledMapLayer::ConstructL(TTileProvider* aTileProvider)
 	{
 	SetTileProviderL(aTileProvider);
+	
+	DEBUG(_L("TiledMapLayer created"));
 	}
 
 void CTiledMapLayer::Draw(CWindowGc &aGc)
@@ -459,6 +463,8 @@ CTileBitmapManager::~CTileBitmapManager()
 	iItems.ResetAndDestroy();
 	iItems.Close();
 	delete iHTTPClient;
+	
+	DEBUG(_L("TileBitmapManager destroyed"));
 	}
 
 CTileBitmapManager* CTileBitmapManager::NewLC(MTileBitmapManagerObserver *aObserver,
@@ -507,6 +513,8 @@ void CTileBitmapManager::ConstructL(const TDesC &aCacheDir)
 	iFileMapper = CFileTreeMapper::NewL(aCacheDir, 2, 1, ETrue);
 	
 	CActiveScheduler::Add(this);
+	
+	DEBUG(_L("TileBitmapManager created"));
 	}
 
 TInt CTileBitmapManager::GetTileBitmap(const TTile &aTile, CFbsBitmap* &aBitmap)

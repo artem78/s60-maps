@@ -13,6 +13,7 @@
 #include <e32math.h>
 #include "Defs.h"
 #include <aknappui.h> 
+#include "Logger.h"
 
 // Constants
 const TInt KMovementRepeaterInterval = 200000;
@@ -74,6 +75,7 @@ void CS60MapsAppView::ConstructL(const TRect& aRect, const TCoordinate &aInitial
 #ifdef DEBUG_SHOW_ADDITIONAL_INFO
 	iLayers[i++] = new (ELeave) CMapLayerDebugInfo(this);
 #endif
+	DEBUG(_L("Map layers created"));
 	
 	SetTileProviderL(aTileProvider);
 
@@ -91,6 +93,8 @@ void CS60MapsAppView::ConstructL(const TRect& aRect, const TCoordinate &aInitial
 	
 	// Activate the window, which makes it ready to be drawn
 	ActivateL();
+	
+	DEBUG(_L("AppView initialization finished"));
 	}
 
 // -----------------------------------------------------------------------------
@@ -118,6 +122,8 @@ CS60MapsAppView::~CS60MapsAppView()
 	iMovementRepeater->Cancel();
 	delete iMovementRepeater;
 	iMovementRepeater = NULL;
+	
+	DEBUG(_L("AppView destroyed"));
 	}
 
 // -----------------------------------------------------------------------------

@@ -65,6 +65,8 @@ void CS60MapsDocument::ConstructL()
 	LoggerStatic::SetLogger(iLogger);
 	LOG(_L8("Log started"));
 #endif
+	
+	DEBUG(_L("Document created"));
 	}
 
 // -----------------------------------------------------------------------------
@@ -90,6 +92,8 @@ CS60MapsDocument::~CS60MapsDocument()
 	delete iLogger;
 	iLogFile.Close();
 #endif
+	
+	DEBUG(_L("Document destroyed"));
 	}
 
 // ---------------------------------------------------------------------------
