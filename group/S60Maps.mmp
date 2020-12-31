@@ -26,16 +26,18 @@ SOURCE			S60MapsDocument.cpp
 
 SOURCEPATH		..\data
 
-START RESOURCE	S60Maps.rss
-HEADER
-TARGET S60Maps_0xED689B88
-TARGETPATH resource\apps
-END //RESOURCE
+START RESOURCE S60Maps.rss
+	HEADER
+	TARGET S60Maps_0xED689B88
+	TARGETPATH resource\apps
+	LANG 01 16 57
+END
 
-START RESOURCE	S60Maps_reg.rss
-TARGET S60Maps_0xED689B88_reg
-TARGETPATH 	  \private\10003a3f\apps
-END //RESOURCE
+START RESOURCE S60Maps_reg.rss
+	TARGET S60Maps_0xED689B88_reg
+	TARGETPATH \private\10003a3f\apps
+	LANG SC
+END
 
 
 
@@ -56,7 +58,6 @@ LIBRARY        aknnotify.lib
 LIBRARY        hlplch.lib lbs.lib gdi.lib imageconversion.lib fbscli.lib bitgdi.lib http.lib bafl.lib inetprotutil.lib remconcoreapi.lib remconinterfacebase.lib ws32.lib charconv.lib hash.lib eikcoctl.lib
  
 
-LANG SC
 
 VENDORID	  	  0
 SECUREID		  0xED689B88
@@ -82,3 +83,5 @@ SOURCEPATH ..\modules\FileUtils
 SOURCE FileUtils.cpp
 SOURCEPATH ..\src
 SOURCE Settings.cpp
+
+LANG 01 16 57

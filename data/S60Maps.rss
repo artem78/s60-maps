@@ -16,7 +16,8 @@ NAME S60M	// 4 letter ID
 #include <avkon.rh>
 #include <appinfo.rh>
 #include "S60Maps.hrh"
-#include "S60Maps.rls"
+//#include "S60Maps.rls"
+#include "S60Maps.loc"
 
 //  RESOURCE DEFINITIONS
 // -----------------------------------------------------------------------------
@@ -268,9 +269,7 @@ RESOURCE TBUF32 r_confirm_reset_tiles_cache_dialog_title { buf=qtn_confirm_reset
 RESOURCE TBUF r_confirm_reset_tiles_cache_dialog_text { buf=qtn_confirm_reset_tiles_cache_dialog_text; }
 RESOURCE TBUF32 r_about_dialog_title { buf=qtn_about_dialog_title; }
 RESOURCE TBUF r_about_dialog_text { buf=qtn_about_dialog_text; }
-//#ifdef _DEBUG
 RESOURCE TBUF r_about_dialog_git_text { buf=qtn_about_dialog_git_text; }
-//#endif
 RESOURCE TBUF32 r_confirm_exit_dialog_title { buf=qtn_confirm_exit_dialog_title; }
 RESOURCE TBUF r_confirm_exit_dialog_text { buf=qtn_confirm_exit_dialog_text; }
 RESOURCE TBUF r_command1_text { buf=qtn_command1_text; }

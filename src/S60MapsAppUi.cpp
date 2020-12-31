@@ -598,23 +598,23 @@ void CS60MapsAppUi::HandleHelpL()
 
 void CS60MapsAppUi::HandleAboutL()
 	{
+	_LIT(KAuthor,	"artem78 (megabyte1024@ya.ru)");
+	_LIT(KWebSite,	"https://github.com/artem78/s60-maps");
+	_LIT(KThanksTo,	"baranovskiykonstantin, Symbian9");
+	
 	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
 	dlg->PrepareLC(R_ABOUT_QUERY_DIALOG);
 	HBufC* title = iEikonEnv->AllocReadResourceLC(R_ABOUT_DIALOG_TITLE);
 	dlg->QueryHeading()->SetTextL(*title);
 	CleanupStack::PopAndDestroy(); //title
 	
-	CDesCArrayFlat* strings = new (ELeave) CDesC16ArrayFlat(3);
-	CleanupStack::PushL(strings);
-	
-	strings->AppendL(KProgramVersion.Name());
-	strings->AppendL(KGITBranch);
-	strings->AppendL(KGITCommit);
-	
-	HBufC* msg = StringLoader::LoadLC(R_ABOUT_DIALOG_TEXT, *strings, iEikonEnv);
-	
-	dlg->SetMessageTextL(*msg);
-	CleanupStack::PopAndDestroy(2, strings);
+	RBuf msg;
+	msg.CreateL(512);
+	msg.CleanupClosePushL();
+	iEikonEnv->Format128/*256*/(msg, R_ABOUT_DIALOG_TEXT, &KProgramVersion.Name(),
+			&KGITBranch, &KGITCommit, &KAuthor, &KWebSite, &KThanksTo);
+	dlg->SetMessageTextL(msg);
+	CleanupStack::PopAndDestroy(&msg);
 	dlg->RunLD();
 	}
 

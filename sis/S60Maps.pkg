@@ -28,7 +28,10 @@
 ;You should change the source paths to match that of your environment
 ;<source> <destination>
 "$(EPOCROOT)Epoc32\release\$(PLATFORM)\$(TARGET)\S60Maps_0xED689B88.exe"		-"!:\sys\bin\S60Maps_0xED689B88.exe"
-"$(EPOCROOT)Epoc32\data\z\resource\apps\S60Maps_0xED689B88.rsc"		-"!:\resource\apps\S60Maps_0xED689B88.rsc"
+"$(EPOCROOT)Epoc32\data\z\resource\apps\S60Maps_0xED689B88.r01"		-"!:\resource\apps\S60Maps_0xED689B88.r01"
+"$(EPOCROOT)Epoc32\data\z\resource\apps\S60Maps_0xED689B88.r16"		-"!:\resource\apps\S60Maps_0xED689B88.r16"
+"$(EPOCROOT)Epoc32\data\z\resource\apps\S60Maps_0xED689B88.r57"		-"!:\resource\apps\S60Maps_0xED689B88.r57"
+;"$(EPOCROOT)Epoc32\data\z\resource\apps\S60Maps_0xED689B88.rsc"		-"!:\resource\apps\S60Maps_0xED689B88.rsc"
 "$(EPOCROOT)Epoc32\data\z\private\10003a3f\apps\S60Maps_0xED689B88_reg.rsc"	-"!:\private\10003a3f\import\apps\S60Maps_0xED689B88_reg.rsc"
 "$(EPOCROOT)Epoc32\data\z\resource\apps\S60Maps_0xED689B88.mif" -"!:\resource\apps\S60Maps_0xED689B88.mif"
 ;"..\help\S60Maps_0xED689B88.hlp"							 -"!:\resource\help\S60Maps_0xED689B88.hlp"
