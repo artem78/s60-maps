@@ -13,7 +13,6 @@
 // INCLUDES
 #include <aknappui.h>
 #include <f32file.h>
-#include "Positioning.h"
 
 // For media keys handling
 #include <remconcoreapitargetobserver.h>
@@ -33,7 +32,7 @@ class CS60MapsAppView;
  * from the handler class
  */
 class CS60MapsAppUi : public CAknAppUi, public MFileManObserver,
-		public MPositionListener, public MRemConCoreApiTargetObserver
+		public MRemConCoreApiTargetObserver
 	{
 public:
 	// Constructors and destructor
@@ -104,14 +103,6 @@ public:
 	MFileManObserver::TControl NotifyFileManOperation();
 	MFileManObserver::TControl NotifyFileManEnded();
 	
-	// MPositionListener
-public:
-	void OnPositionUpdated();
-	void OnPositionPartialUpdated();
-	void OnPositionRestored();
-	void OnPositionLost();
-	void OnPositionError(TInt aErrCode);
-	
 	// MRemConCoreApiTargetObserver
 public:
 	void MrccatoCommand(TRemConCoreApiOperationId aOperationId,
@@ -121,7 +112,6 @@ public:
 private:
 	CSettings* iSettings;
 	CFileMan* iFileMan;
-	CPositionRequestor* iPosRequestor;
 	
 	CRemConInterfaceSelector* iInterfaceSelector;
 	CRemConCoreApiTarget* iCoreTarget;

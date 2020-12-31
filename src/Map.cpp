@@ -489,7 +489,7 @@ void CTileBitmapManager::ConstructL(const TDesC &aCacheDir)
 #ifdef __WINSCW__
 	// Add some delay for network services have been started on the emulator,
 	// otherwise CEcmtServer: 3 panic will be raised.
-	User::After(10 * KSecond);
+	User::After(10000000);
 #endif
 	iHTTPClient = CHTTPClient::NewL(this);
 	

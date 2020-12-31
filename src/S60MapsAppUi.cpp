@@ -114,16 +114,6 @@ void CS60MapsAppUi::ConstructL()
 	iAppView = CS60MapsAppView::NewL(ClientRect(), position, zoom, iActiveTileProvider);
 	AddToStackL(iAppView);
 	
-	// Position requestor
-	_LIT(KPosRequestorName, "S60 Maps"); // ToDo: Move to global const
-	TRAPD(err, iPosRequestor = CPositionRequestor::NewL(this, KPosRequestorName));
-	if (err == KErrNone)
-		iPosRequestor->Start(); // Must be started after view created
-	else
-		{
-		ERROR(_L("Failed to create position requestor (error: %d), continue without GPS"), err);
-		}
-	
 	// Media keys catching
 	iInterfaceSelector = CRemConInterfaceSelector::NewL();
 	iCoreTarget = CRemConCoreApiTarget::NewL(*iInterfaceSelector, *this);
@@ -158,8 +148,6 @@ CS60MapsAppUi::~CS60MapsAppUi()
 	 because interface selector brings ownership and will delete target by itself. */
 	
 	delete iInterfaceSelector;
-	
-	delete iPosRequestor;
 	
 	if (iAppView)
 		{
@@ -375,48 +363,6 @@ void CS60MapsAppUi::ClearTilesCache()
 	HBufC* msg = iEikonEnv->AllocReadResourceL(R_DONE);
 	iEikonEnv->AlertWin(*msg);
 	delete msg;
-	}
-
-void CS60MapsAppUi::OnPositionUpdated()
-	{
-	__ASSERT_DEBUG(iPosRequestor != NULL, Panic(ES60MapsPosRequestorIsNull));
-	
-	const TPositionInfo* posInfo = iPosRequestor->LastKnownPositionInfo();
-	TPosition pos;
-	posInfo->GetPosition(pos);
-	TCoordinateEx coord = pos;
-	coord.SetCourse(KNaN);
-	if (posInfo->PositionClassType() & EPositionCourseInfoClass)
-		{
-		const TPositionCourseInfo* courseInfo =
-				static_cast<const TPositionCourseInfo*>(posInfo);
-		TCourse course;
-		courseInfo->GetCourse(course);
-		
-		coord.SetCourse(course.Heading());
-		}
-	coord.SetHorAccuracy(pos.HorizontalAccuracy());
-	iAppView->SetUserPosition(coord);
-	}
-
-void CS60MapsAppUi::OnPositionPartialUpdated()
-	{
-	
-	}
-
-void CS60MapsAppUi::OnPositionRestored()
-	{
-	iAppView->ShowUserPosition();
-	}
-
-void CS60MapsAppUi::OnPositionLost()
-	{
-	iAppView->HideUserPosition();
-	}
-
-void CS60MapsAppUi::OnPositionError(TInt /*aErrCode*/)
-	{
-	
 	}
 
 void CS60MapsAppUi::MrccatoCommand(TRemConCoreApiOperationId aOperationId,

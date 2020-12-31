@@ -42,7 +42,7 @@ END
 
 
 USERINCLUDE	   ..\inc
-USERINCLUDE    ..\help ..\modules\Logger ..\modules\Positioning ..\modules\FileUtils
+USERINCLUDE    ..\help ..\modules\Logger ..\modules\FileUtils
 
 SYSTEMINCLUDE	 \epoc32\include
 
@@ -55,7 +55,7 @@ LIBRARY		   commonengine.lib
 LIBRARY		   efsrv.lib 
 LIBRARY		   estor.lib
 LIBRARY        aknnotify.lib
-LIBRARY        hlplch.lib lbs.lib gdi.lib imageconversion.lib fbscli.lib bitgdi.lib http.lib bafl.lib inetprotutil.lib remconcoreapi.lib remconinterfacebase.lib ws32.lib charconv.lib hash.lib eikcoctl.lib
+LIBRARY        hlplch.lib gdi.lib imageconversion.lib fbscli.lib bitgdi.lib http.lib bafl.lib inetprotutil.lib remconcoreapi.lib remconinterfacebase.lib ws32.lib charconv.lib hash.lib eikcoctl.lib lbs.lib
  
 
 
@@ -77,8 +77,6 @@ SOURCE MapMath.cpp Map.cpp HTTPClient.cpp
 SOURCEPATH ..\modules\Logger
 SOURCE Logger.cpp
 
-SOURCEPATH ..\modules\Positioning
-SOURCE Positioning.cpp
 SOURCEPATH ..\modules\FileUtils
 SOURCE FileUtils.cpp
 SOURCEPATH ..\src
