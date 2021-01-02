@@ -4,6 +4,7 @@ sis/*.sisx
 sis/**/*.sis
 sis/**/*.sisx
 *.bak
+Thumbs.db
 
 # Autocreated:
 inc/GitInfo.h
