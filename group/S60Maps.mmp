@@ -42,7 +42,7 @@ END
 
 
 USERINCLUDE	   ..\inc
-USERINCLUDE    ..\help ..\modules\Logger ..\modules\Positioning ..\modules\FileUtils
+USERINCLUDE    ..\help ..\modules\Logger ..\modules\Positioning ..\modules\FileUtils ..\modules\HTTPClient
 
 SYSTEMINCLUDE	 \epoc32\include
 
@@ -69,7 +69,7 @@ DEBUGGABLE_UDEBONLY
 // End of File
 
 SOURCEPATH ..\src
-SOURCE MapMath.cpp Map.cpp HTTPClient.cpp
+SOURCE MapMath.cpp Map.cpp
 
 // ToDo: Need to be increased in the future
 //EPOCHEAPSIZE 0x1000 0x1000000
@@ -85,3 +85,6 @@ SOURCEPATH ..\src
 SOURCE Settings.cpp
 
 LANG 01 16 57
+
+SOURCEPATH ..\modules\HTTPClient
+SOURCE HTTPClient.cpp
