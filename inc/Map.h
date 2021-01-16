@@ -19,6 +19,7 @@
 #include <e32std.h>		// For RTimer
 #include "HttpClient.h"
 #include "FileUtils.h"
+#include <e32msgqueue.h>
 
 
 // Constants
@@ -138,6 +139,46 @@ private:
 #endif
 
 
+class TSaverQueryItem
+	{
+public:
+	TTile iTile;
+	CFbsBitmap *iBitmap;
+	
+	TBool iShouldStop; // If true, thread processing will be stopped on this item
+	};
+
+
+// Class for save tile bitmaps in separate thread
+// for improve bad performance on some phones
+
+class CTileBitmapSaver: public CBase
+	{
+	// Constructors/destructors
+public:
+	~CTileBitmapSaver();
+	static CTileBitmapSaver* NewL(CTileBitmapManager* aMgr);
+	static CTileBitmapSaver* NewLC(CTileBitmapManager* aMgr);
+
+private:
+	CTileBitmapSaver(CTileBitmapManager* aMgr);
+	void ConstructL();
+	
+	// Custom
+public:
+	void AppendL(const TTile &aTile, CFbsBitmap *aBitmap);
+	
+private:
+	CTileBitmapManager* iMgr;
+	RMsgQueue<TSaverQueryItem> iQueue;
+	TThreadId iThreadId;
+	
+	static TInt ThreadFunction(TAny* anArg);
+	void SaveL(const TSaverQueryItem &anItem, RFs &aFs);
+	};
+
+
+
 class TTileProvider;
 
 class CTileBitmapManagerItem;
@@ -196,13 +237,14 @@ private:
 	TTile iLoadingTile;
 	TBool iIsOfflineMode;
 	CFileTreeMapper* iFileMapper;
+	CTileBitmapSaver* iSaver;
 	
 	// @return Pointer to CTileBitmapManagerItem object or NULL if not found
 	CTileBitmapManagerItem* Find(const TTile &aTile) const;
 	void StartDownloadTileL(const TTile &aTile);
 	
 	// Save tile bitmap to file
-	void SaveBitmapL(const TTile &aTile, /*const*/ CFbsBitmap *aBitmap/*, TBool aRewrite = EFalse*/) /*const*/;
+	void SaveBitmapInBackgroundL(const TTile &aTile, /*const*/ CFbsBitmap *aBitmap);
 	
 	// Restore tile bitmap from file
 	void LoadBitmapL(const TTile &aTile, CFbsBitmap *aBitmap) /*const*/;
@@ -215,6 +257,9 @@ public:
 	TInt GetTileBitmap(const TTile &aTile, CFbsBitmap* &aBitmap);
 	void AddToLoading(const TTile &aTile);
 	void ChangeTileProvider(TTileProvider* aTileProvider, const TDesC &aCacheDir);
+	
+// Friends
+	friend class CTileBitmapSaver;
 	};
 
 

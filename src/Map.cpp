@@ -437,6 +437,165 @@ void CTileBorderAndXYZLayer::DrawTile(CWindowGc &aGc, const TTile &aTile)
 	}
 #endif
 
+// CTileBitmapSaver
+
+_LIT(KSaverThreadName, "TileSaverThread");
+
+CTileBitmapSaver::CTileBitmapSaver(CTileBitmapManager* aMgr) :
+		iMgr(aMgr),
+		iThreadId(0)
+	{
+	}
+
+CTileBitmapSaver::~CTileBitmapSaver()
+	{
+	// Stop and destroy running thread
+	RThread thr;
+	if (thr.Open(iThreadId) == KErrNone)
+		{
+		// Clear queue
+		TSaverQueryItem item;
+		while (iQueue.Receive(item) != KErrUnderflow)
+			{};
+			
+		// Add stop-item to queue
+		TSaverQueryItem stopItem;
+		stopItem.iShouldStop = ETrue;
+		iQueue.Send(stopItem);
+		
+		// Wait until thread will be closed
+		TRequestStatus status;
+		thr.Logon(status);
+		User::WaitForRequest(status);
+		DEBUG(_L("Saver thread stopped"));
+		thr.Close();
+		}
+	else
+		{
+		ERROR(_L("Saver thread is not running!"));
+		}	
+	
+	
+	// Free other resources
+	iQueue.Close();
+	}
+
+CTileBitmapSaver* CTileBitmapSaver::NewLC(CTileBitmapManager* aMgr)
+	{
+	CTileBitmapSaver* self = new (ELeave) CTileBitmapSaver(aMgr);
+	CleanupStack::PushL(self);
+	self->ConstructL();
+	return self;
+	}
+
+CTileBitmapSaver* CTileBitmapSaver::NewL(CTileBitmapManager* aMgr)
+	{
+	CTileBitmapSaver* self = CTileBitmapSaver::NewLC(aMgr);
+	CleanupStack::Pop(); // self;
+	return self;
+	}
+
+void CTileBitmapSaver::ConstructL()
+	{
+	// Some initializations
+	User::LeaveIfError(iQueue.CreateLocal(20)); // ToDo: Move number to constant
+	
+	// Prepare and start new thread	
+	RThread thr;
+	User::LeaveIfError(thr.Create(
+			KSaverThreadName,
+			ThreadFunction,
+			8 * KKilo, // Default stack size 8kb
+			NULL,
+			this
+			));
+	thr.SetPriority(/*EPriorityMuchLess*/ EPriorityLess);
+	thr.Resume();
+	DEBUG(_L("Saver thread started"));
+	iThreadId = thr.Id(); // Remember thread ID for future use
+	thr.Close();
+	}
+
+void CTileBitmapSaver::AppendL(const TTile &aTile, CFbsBitmap *aBitmap)
+	{
+	TSaverQueryItem item;
+	item.iBitmap = aBitmap;
+	item.iTile = aTile;
+	item.iShouldStop = EFalse;
+	
+	iQueue.Send(item); // ToDo: Check overflow
+	}
+
+TInt CTileBitmapSaver::ThreadFunction(TAny* anArg)
+	{	
+	// Initializations for new thread
+	CTrapCleanup* cleanup = CTrapCleanup::New();
+	RFs fs;
+	TInt res = fs.Connect();
+	if (res == KErrNone)
+		{
+		RFbsSession fbsSess;
+		res = fbsSess.Connect(fs);
+		if (res == KErrNone)
+			{
+			CTileBitmapSaver* saver = static_cast<CTileBitmapSaver*>(anArg);
+			
+			while (ETrue)
+				{
+				TSaverQueryItem item;
+				saver->iQueue.ReceiveBlocking(item);
+				
+				if (item.iShouldStop)
+					{
+					res = KErrNone;
+					DEBUG(_L("Stop signal recieved. Going to exit."))
+					break; // Going to exit
+					}
+				
+				TRAPD(r, saver->SaveL(item, fs));
+				if (r != KErrNone)
+					{
+					ERROR(_L("Saving of %S failed with code %d"),
+							&item.iTile.AsDes(), r);
+					}
+				}
+			
+			fbsSess.Disconnect();
+			//fbsSess.Close();
+			}
+		
+		fs.Close();
+		}
+	
+	DEBUG(_L("Thread finished"));
+	
+	delete cleanup;
+	
+	return /*KErrNone*/ res;
+	}
+
+void CTileBitmapSaver::SaveL(const TSaverQueryItem &anItem, RFs &aFs)
+	{
+	TFileName tileFileName;
+	iMgr->TileFileName(anItem.iTile, tileFileName);
+	BaflUtils::EnsurePathExistsL(aFs, tileFileName);
+	
+	RFile file;
+	User::LeaveIfError(file.Replace(aFs, tileFileName, EFileWrite));
+	CleanupClosePushL(file);
+
+	CFbsBitmap* bitmap = new (ELeave) CFbsBitmap;
+	CleanupStack::PushL(bitmap);
+	User::LeaveIfError(bitmap->Duplicate(anItem.iBitmap->Handle())); // Can`t use bitmap from another thread directly,
+																	 // therefore duplicate it
+	User::LeaveIfError(bitmap->Save(file));
+	
+	DEBUG(_L("Bitmap for %S sucessfully saved to file \"%S\""),
+					&anItem.iTile.AsDes(), &tileFileName);
+	
+	CleanupStack::PopAndDestroy(2, &file);
+	}
+
 // CTileBitmapManager
 
 CTileBitmapManager::CTileBitmapManager(MTileBitmapManagerObserver *aObserver,
@@ -453,6 +612,7 @@ CTileBitmapManager::CTileBitmapManager(MTileBitmapManagerObserver *aObserver,
 
 CTileBitmapManager::~CTileBitmapManager()
 	{
+	delete iSaver;
 	delete iFileMapper;
 	delete iImgDecoder;
 	iItemsLoadingQueue.Close();
@@ -505,6 +665,7 @@ void CTileBitmapManager::ConstructL(const TDesC &aCacheDir)
 	iImgDecoder = CBufferedImageDecoder::NewL(iFs);
 	
 	iFileMapper = CFileTreeMapper::NewL(aCacheDir, 2, 1, ETrue);
+	iSaver = CTileBitmapSaver::NewL(this);
 	
 	CActiveScheduler::Add(this);
 	}
@@ -632,7 +793,7 @@ void CTileBitmapManager::RunL()
 		LOG(_L8("Tile %S downloaded and decoded"), &iLoadingTile.AsDes8());
 		iObserver->OnTileLoaded(iLoadingTile, item->Bitmap());
 		
-		SaveBitmapL(iLoadingTile, item->Bitmap());
+		SaveBitmapInBackgroundL(iLoadingTile, item->Bitmap());
 		}
 	else
 		{
@@ -770,31 +931,9 @@ void CTileBitmapManager::OnHTTPHeadersRecieved(
 	iImgDecoder->OpenL(KNullDesC8, KPNGMimeType);
 	}
 
-void CTileBitmapManager::SaveBitmapL(const TTile &aTile, /*const*/ CFbsBitmap *aBitmap/*, TBool aRewrite*/)
+void CTileBitmapManager::SaveBitmapInBackgroundL(const TTile &aTile, /*const*/ CFbsBitmap *aBitmap)
 	{
-	TFileName tileFileName;
-	TileFileName(aTile, tileFileName);
-
-	// Create subdirs
-	// ToDo: I think it will be better to create all subdirs once when program starts
-	BaflUtils::EnsurePathExistsL(iFs, tileFileName);
-	
-	RFile file;
-	/*if (aRewrite)
-		{*/
-		User::LeaveIfError(file.Replace(iFs, tileFileName, EFileWrite));
-		CleanupClosePushL(file);
-	/*	}
-	else
-		{
-		TInt r = file.Create(iFs, tileFileName, EFileWrite);
-		CleanupClosePushL(file);
-		if (r != KErrAlreadyExists)
-			User::LeaveIfError(r);
-		}*/
-	User::LeaveIfError(aBitmap->Save(file));	
-	CleanupStack::PopAndDestroy(&file);
-	LOG(_L8("Bitmap for %S sucessfully saved to file \"%S\""), &aTile.AsDes8(), &tileFileName);
+	iSaver->AppendL(aTile, aBitmap);
 	}
 
 void CTileBitmapManager::LoadBitmapL(const TTile &aTile, CFbsBitmap *aBitmap)
