@@ -5,7 +5,7 @@ Simple map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wi
 
 ## Technical info
 
-All data stored in directory `E:\Data\S60Maps\`. In particular, map cache located in `E:\Data\S60Maps\cache\_PAlbTN\<map service>\`.
+All data stored in directory `E:\Data\S60Maps\` (**note:** E drive used regardles of on which drive program installed). Map cache located in `E:\Data\S60Maps\cache\_PAlbTN\<map service>\` directory.
   
 - [Features](#features)
 - [Controls](#controls)
