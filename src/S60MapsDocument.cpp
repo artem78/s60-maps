@@ -14,6 +14,7 @@
 #include "S60MapsApplication.h"
 #include <eikenv.h>
 #include <bautils.h>
+#include "GitInfo.h"
 
 // ============================ MEMBER FUNCTIONS ===============================
 
@@ -51,7 +52,7 @@ CS60MapsDocument* CS60MapsDocument::NewLC(CEikApplication& aApp)
 void CS60MapsDocument::ConstructL()
 	{
 #if LOGGING_ENABLED
-	_LIT(KLogFileName, "log.txt");
+	_LIT(KLogFileName, "s60maps_log.txt");
 	TFileName logFilePath;
 	static_cast<CS60MapsApplication *>(Application())->RelPathToAbsFromDataDir(KLogFileName, logFilePath);
 	TParse pathParser;
@@ -65,6 +66,24 @@ void CS60MapsDocument::ConstructL()
 #endif
 	iLogger = CLogger::NewL(iLogFile, CLogger::ELevelAll, CLogger::EUtf8, autoFlush);
 	LoggerStatic::SetLogger(iLogger);
+	
+	// Write some info to log
+	TBuf8<32> dateTimeBuff8;
+	dateTimeBuff8.Append(_L8(__DATE__));
+	dateTimeBuff8.Append(' ');
+	dateTimeBuff8.Append(_L8(__TIME__));
+	TBuf<32> dateTimeBuff;
+	dateTimeBuff.Copy(dateTimeBuff8);
+	INFO(_L("Program info: S60Maps v%S (%S %S, build: %S)"), &KProgramVersion.Name(),
+			&KGITBranch, &KGITCommit, &dateTimeBuff);
+	
+	_LIT(KDateFmt, "%F%Y-%M-%D %H:%T:%S");
+	TTime now;
+	now.HomeTime();
+	TBuf<32> nowBuf;
+	now.FormatL(nowBuf, KDateFmt);
+	INFO(_L("Current date: %S"), &nowBuf);
+	
 	LOG(_L8("Log started"));
 #endif
 	}

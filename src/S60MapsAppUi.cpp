@@ -121,7 +121,7 @@ void CS60MapsAppUi::ConstructL()
 		iPosRequestor->Start(); // Must be started after view created
 	else
 		{
-		ERROR(_L("Failed to create position requestor (error: %d), continue without GPS"), err);
+		WARNING(_L("Failed to create position requestor (error: %d), continue without GPS"), err);
 		}
 	
 	// Media keys catching
