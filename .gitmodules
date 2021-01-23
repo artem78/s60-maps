@@ -9,3 +9,6 @@
 [submodule "modules/Positioning"]
 	path = modules/Positioning
 	url = git@github.com:artem78/s60-positioning.git
+[submodule "modules/HTTPClient"]
+	path = modules/HTTPClient
+	url = git@github.com:artem78/s60-http-client.git
