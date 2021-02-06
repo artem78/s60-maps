@@ -51,13 +51,13 @@ void CS60MapsAppUi::ConstructL()
 	// https://www.openstreetmap.org/
 	iAvailableTileProviders[0] = new (ELeave) TTileProvider(
 			_L("osm"), _L("OpenStreetMap"),
-			_L8("http://{a-c}.tile.openstreetmap.org/{$z}/{$x}/{$y}.png"),
+			_L8("http://tile.openstreetmap.org/{$z}/{$x}/{$y}.png"),
 			0, 19);
 	
 	// OpenCycleMap
 	// https://wiki.openstreetmap.org/wiki/OpenCycleMap
 	// https://www.thunderforest.com/maps/opencyclemap/
-	_LIT8(KOpenCycleMapUrl, "http://{a-c}.tile.thunderforest.com/cycle/{$z}/{$x}/{$y}.png?apikey=");
+	_LIT8(KOpenCycleMapUrl, "http://tile.thunderforest.com/cycle/{$z}/{$x}/{$y}.png?apikey=");
 	RBuf8 openCycleMapUrl;
 	openCycleMapUrl.CreateMaxL(KOpenCycleMapUrl().Length() + KThunderForestApiKey().Length());
 	openCycleMapUrl.CleanupClosePushL();
@@ -72,7 +72,7 @@ void CS60MapsAppUi::ConstructL()
 	// Transport Map
 	// https://wiki.openstreetmap.org/wiki/Transport_Map
 	// https://www.thunderforest.com/maps/transport/
-	_LIT8(KTransportMapUrl, "http://{a-c}.tile.thunderforest.com/transport/{$z}/{$x}/{$y}.png?apikey=");
+	_LIT8(KTransportMapUrl, "http://tile.thunderforest.com/transport/{$z}/{$x}/{$y}.png?apikey=");
 	RBuf8 transportMapUrl;
 	transportMapUrl.CreateMaxL(KTransportMapUrl().Length() + KThunderForestApiKey().Length());
 	transportMapUrl.CleanupClosePushL();
@@ -89,7 +89,7 @@ void CS60MapsAppUi::ConstructL()
 	// https://www.openstreetmap.org/?layers=H
 	iAvailableTileProviders[3] = new (ELeave) TTileProvider(
 			_L("humanitarian"), _L("Humanitarian"),
-			_L8("http://tile-{a-c}.openstreetmap.fr/hot/{$z}/{$x}/{$y}.png"),
+			_L8("http://tile.openstreetmap.fr/hot/{$z}/{$x}/{$y}.png"),
 			0, 20);
 	
 	/*// OpenTopoMap
@@ -98,7 +98,7 @@ void CS60MapsAppUi::ConstructL()
 	// FixMe: Doesn`t work without SSL 
 	iAvailableTileProviders[4] = new (ELeave) TTileProvider(
 			_L("opentopomap"), _L("OpenTopoMap"),
-			_L8("http://{a-c}.tile.opentopomap.org/{$z}/{$x}/{$y}.png"),
+			_L8("http://tile.opentopomap.org/{$z}/{$x}/{$y}.png"),
 			0, 17);*/
 	
 	iActiveTileProvider = iAvailableTileProviders[0]; // Use first
