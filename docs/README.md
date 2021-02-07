@@ -8,7 +8,7 @@ Simple map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wi
   - [Keys](#keys)
   - [Touchscreen](#touchscreen)
 - [Screenshots](#screenshots)
-- [Supported Devices](#supported-devices)
+- [Supported devices](#supported-devices)
 - [Download](#download)
 - [Technical details](#technical-details)
 - [Roadmap](#roadmap)
@@ -41,7 +41,7 @@ Simple map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wi
 
 ![Application launch icon](images/launch_icon.png) ![About dialog](images/about.png) ![Menu](images/menu.png) ![Demo](images/demo_video.gif) ![Different map layers](images/layers.gif)
 
-## Supported Devices
+## Supported devices
 
 This software was tested on:
 
