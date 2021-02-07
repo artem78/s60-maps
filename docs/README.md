@@ -2,10 +2,6 @@
 # S60Maps
 
 Simple map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wiki/Symbian#Version_comparison) smartphones powered by [*Series S60 3rd/5th Edition*](https://en.wikipedia.org/wiki/S60_%28software_platform%29#Versions_and_supported_devices).
-
-## Technical info
-
-All data stored in directory `E:\Data\S60Maps\` (**note:** E drive used regardles of on which drive program installed). Map cache located in `E:\Data\S60Maps\cache\_PAlbTN\<map service>\` directory.
   
 - [Features](#features)
 - [Controls](#controls)
@@ -14,6 +10,7 @@ All data stored in directory `E:\Data\S60Maps\` (**note:** E drive used regardle
 - [Screenshots](#screenshots)
 - [Supported Devices](#supported-devices)
 - [Download](#download)
+- [Technical details](#technical-details)
 - [Roadmap](#roadmap)
 - [LICENSE](#license)
 
@@ -67,6 +64,10 @@ This software was tested on:
   - Sign package with developer certificate ([details](https://digipassion.com/signing-sissisx-files-for-symbian-s60/));
   - Install already signed package on your smartphone.
 - If your smartphone is unlocked ('rooted') you may install provided unsigned package directly.
+
+## Technical details
+
+All data stored in directory `E:\Data\S60Maps\` (**note:** E drive used regardles of on which drive program installed). Map cache located in `E:\Data\S60Maps\cache\_PAlbTN\<map service>\` directory.
 
 ## Roadmap
 
