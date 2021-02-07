@@ -611,7 +611,14 @@ void CS60MapsAppUi::HandleAboutL()
 	RBuf msg;
 	msg.CreateL(512);
 	msg.CleanupClosePushL();
-	iEikonEnv->Format128/*256*/(msg, R_ABOUT_DIALOG_TEXT, &KProgramVersion.Name(),
+	TBuf<32> version;
+	version.Copy(KProgramVersion.Name());
+#ifdef _DEBUG
+	_LIT(KDebug, "DEBUG");
+	version.Append(' ');
+	version.Append(KDebug);
+#endif
+	iEikonEnv->Format128/*256*/(msg, R_ABOUT_DIALOG_TEXT, &version,
 			&KGITBranch, &KGITCommit, &KAuthor, &KWebSite, &KThanksTo);
 	dlg->SetMessageTextL(msg);
 	CleanupStack::PopAndDestroy(&msg);
