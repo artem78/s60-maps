@@ -523,7 +523,10 @@ void CTileBitmapSaver::AppendL(const TTile &aTile, CFbsBitmap *aBitmap)
 	item.iTile = aTile;
 	item.iShouldStop = EFalse;
 	
-	iQueue.Send(item); // ToDo: Check overflow
+	if (iQueue.Send(item) == KErrOverflow)
+		{
+		ERROR(_L("Saving queue is full!"));
+		}
 	}
 
 TInt CTileBitmapSaver::ThreadFunction(TAny* anArg)
