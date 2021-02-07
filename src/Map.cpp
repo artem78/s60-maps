@@ -660,7 +660,11 @@ void CTileBitmapManager::ConstructL(const TDesC &aCacheDir)
 	userAgent.Append(' ');
 	userAgent.Append(KDebugStr);
 #endif
-	iHTTPClient->SetUserAgentL(userAgent); 
+	iHTTPClient->SetUserAgentL(userAgent);
+	_LIT8(KAllowedTypes, "image/png"); // At the moment only PNG supported
+	iHTTPClient->SetHeaderL(HTTP::EAccept, KAllowedTypes);
+	_LIT8(KKeepAlive, "Keep-Alive");
+	iHTTPClient->SetHeaderL(HTTP::EConnection, KKeepAlive); // Not mandatory for HTTP 1.1
 	
 	iItems = RPointerArray<CTileBitmapManagerItem>(iLimit);
 	iItemsLoadingQueue = RArray<TTile>(20); // ToDo: Move 20 to constant
