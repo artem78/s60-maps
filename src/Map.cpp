@@ -505,7 +505,7 @@ void CTileBitmapSaver::ConstructL()
 	User::LeaveIfError(thr.Create(
 			KSaverThreadName,
 			ThreadFunction,
-			8 * KKilo, // Default stack size 8kb
+			KDefaultStackSize,
 			NULL,
 			this
 			));
