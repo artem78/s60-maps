@@ -669,6 +669,7 @@ void CTileBitmapManager::ConstructL(const TDesC &aCacheDir)
 	
 	iFileMapper = CFileTreeMapper::NewL(aCacheDir, 2, 1, ETrue);
 	iSaver = CTileBitmapSaver::NewL(this);
+	// ToDo: Start saver thread only when needed (at first downloaded tile)
 	
 	CActiveScheduler::Add(this);
 	}
