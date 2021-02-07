@@ -46,11 +46,15 @@ All data stored in directory `E:\Data\S60Maps\` (**note:** E drive used regardle
 
 ## Supported Devices
 
+This software was tested on:
+
 - Smarthones:
   - `OK` [Nokia N95 8GB](https://en.wikipedia.org/wiki/Nokia_N95#Variations)
   - `OK` [Nokia 5530 XM](https://en.wikipedia.org/wiki/Nokia_5530_XpressMusic) (thanks to [baranovskiykonstantin](https://github.com/baranovskiykonstantin))
   - `OK` [Nokia E71](https://en.wikipedia.org/wiki/Nokia_E71) (thanks to [misheu12](https://github.com/misheu12))
   - `OK` [Nokia C5-00 5MP](https://en.wikipedia.org/wiki/Nokia_C5-00) (thanks to [Men770](https://github.com/Men770))
+  - `OK` [Nokia E63](https://en.wikipedia.org/wiki/Nokia_E63) (thanks to Fizolas)
+  - `OK` [Nokia E72](https://en.wikipedia.org/wiki/Nokia_E72) (thanks to Fizolas)
 - Emulators:
   - `FAILED` [EKA2L1](https://github.com/EKA2L1/EKA2L1) (here is [issue thread](https://github.com/EKA2L1/EKA2L1/issues/231))
 
