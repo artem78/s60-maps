@@ -133,7 +133,7 @@ void CTiledMapLayer::ConstructL(TTileProvider* aTileProvider)
 
 void CTiledMapLayer::Draw(CWindowGc &aGc)
 	{
-	LOG(_L8("Begin layer drawing"));
+	DEBUG(_L8("Begin layer drawing"));
 	
 	RArray<TTile> tiles(10);
 	VisibleTiles(tiles);
@@ -165,7 +165,7 @@ void CTiledMapLayer::Draw(CWindowGc &aGc)
 		}
 	
 	tiles.Close();
-	LOG(_L8("End layer drawing"));
+	DEBUG(_L8("End layer drawing"));
 	}
 
 void CTiledMapLayer::VisibleTiles(RArray<TTile> &aTiles)
@@ -681,11 +681,11 @@ void CTileBitmapManager::ConstructL(const TDesC &aCacheDir)
 TInt CTileBitmapManager::GetTileBitmap(const TTile &aTile, CFbsBitmap* &aBitmap)
 	{
 	CTileBitmapManagerItem* item = Find(aTile);
-	LOG(_L8("tile=%S, item=%x"), &aTile.AsDes8(), item);
+	DEBUG(_L8("tile=%S, item=%x"), &aTile.AsDes8(), item);
 	
 	if (item == NULL)
 		return KErrNotFound;
-	LOG(_L8("tile=%S, isready=%d, bitmap=%x"), &aTile.AsDes8(), item->IsReady(), item->Bitmap());
+	DEBUG(_L8("tile=%S, isready=%d, bitmap=%x"), &aTile.AsDes8(), item->IsReady(), item->Bitmap());
 	
 	if (!item->IsReady())
 		return KErrNotReady;
@@ -707,7 +707,7 @@ void CTileBitmapManager::AddToLoading(const TTile &aTile)
 	if (iItems.Count() >= iLimit)
 		{
 		// Delete oldest item
-		LOG(_L8("Delete old bitmap of %S from cache"), &iItems[0]->Tile().AsDes8());
+		DEBUG(_L8("Delete old bitmap of %S from cache"), &iItems[0]->Tile().AsDes8());
 		delete iItems[0];
 		iItems.Remove(0);
 		}
@@ -734,10 +734,10 @@ void CTileBitmapManager::AddToLoading(const TTile &aTile)
 		// Add to loading queue
 		// ToDo: Check array is not full
 		iItemsLoadingQueue.Append(aTile);
-		LOG(_L8("Tile %S appended to download queue"), &aTile.AsDes8());
-		LOG(_L8("Total %d tiles in download queue"), iItemsLoadingQueue.Count());
+		DEBUG(_L8("Tile %S appended to download queue"), &aTile.AsDes8());
+		DEBUG(_L8("Total %d tiles in download queue"), iItemsLoadingQueue.Count());
 		}
-	LOG(_L8("Now %d items in bitmap cache"), iItems.Count());
+	DEBUG(_L8("Now %d items in bitmap cache"), iItems.Count());
 	}
 
 CTileBitmapManagerItem* CTileBitmapManager::Find(const TTile &aTile) const
@@ -772,7 +772,7 @@ void CTileBitmapManager::StartDownloadTileL(const TTile &aTile)
 	tileUrl.CleanupClosePushL();
 	iTileProvider->TileUrl(tileUrl, aTile);
 	iHTTPClient->GetL(tileUrl);
-	LOG(_L8("Started download tile %S from url %S"), &aTile.AsDes8(), &tileUrl);
+	DEBUG(_L8("Started download tile %S from url %S"), &aTile.AsDes8(), &tileUrl);
 	CleanupStack::PopAndDestroy(&tileUrl);
 	}
 
@@ -784,7 +784,7 @@ void CTileBitmapManager::DoCancel()
 
 void CTileBitmapManager::RunL()
 	{
-	LOG(_L8("CTileBitmapManager::RunL"));
+	DEBUG(_L8("CTileBitmapManager::RunL"));
 	if (iStatus.Int() == KErrNone)
 		{
 		/*CFbsBitmap* bitmap;
@@ -798,14 +798,14 @@ void CTileBitmapManager::RunL()
 		
 		item->SetReady();
 		
-		LOG(_L8("Tile %S downloaded and decoded"), &iLoadingTile.AsDes8());
+		INFO(_L8("Tile %S downloaded and decoded"), &iLoadingTile.AsDes8());
 		iObserver->OnTileLoaded(iLoadingTile, item->Bitmap());
 		
 		SaveBitmapInBackgroundL(iLoadingTile, item->Bitmap());
 		}
 	else
 		{
-		LOG(_L8("Image decoding error: %d"), iStatus.Int());
+		ERROR(_L8("Image decoding error: %d"), iStatus.Int());
 		iObserver->OnTileLoadingFailed(iLoadingTile, iStatus.Int());
 		}
 	
@@ -832,7 +832,7 @@ void CTileBitmapManager::OnHTTPResponseDataChunkRecieved(
 		const RHTTPTransaction aTransaction, const TDesC8 &aDataChunk,
 		TInt anOverallDataSize, TBool anIsLastChunk)
 	{
-	LOG(_L8("HTTP chunk recieved"));
+	DEBUG(_L8("HTTP chunk recieved"));
 	
 	// Checking that mime-type is PNG
 	// (If any error (for example: 404 Not Found) chunk may contains
@@ -875,7 +875,7 @@ void CTileBitmapManager::OnHTTPResponseDataChunkRecieved(
 
 void CTileBitmapManager::OnHTTPResponse(const RHTTPTransaction aTransaction)
 	{
-	LOG(_L8("HTTP response success"));
+	DEBUG(_L8("HTTP response success"));
 	
 	iState = /*TProcessingState::*/EDecoding;
 	
@@ -889,7 +889,7 @@ void CTileBitmapManager::OnHTTPResponse(const RHTTPTransaction aTransaction)
 	__ASSERT_DEBUG(item->Bitmap() != NULL, Panic(ES60MapsTileBitmapIsNullPanic));
 	
 	//iImgDecoder->ContinueOpenL();
-	LOG(_L8("Tile %S succesfully downloaded, starting decode"), &iLoadingTile.AsDes8());
+	DEBUG(_L8("Tile %S succesfully downloaded, starting decode"), &iLoadingTile.AsDes8());
 	iImgDecoder->Convert(&this->iStatus, /**bitmap*/ *item->Bitmap(), 0);
 	//iImgDecoder->ContinueConvert(&this->iStatus);
 	SetActive();
@@ -898,8 +898,8 @@ void CTileBitmapManager::OnHTTPResponse(const RHTTPTransaction aTransaction)
 void CTileBitmapManager::OnHTTPError(TInt aError,
 		const RHTTPTransaction aTransaction)
 	{
-	//LOG(_L8("HTTP error: %d"), aError);
-	LOG(_L8("Failed to download tile %S, error: %d"), &iLoadingTile.AsDes8(), aError);
+	//ERROR(_L8("HTTP error: %d"), aError);
+	ERROR(_L8("Failed to download tile %S, error: %d"), &iLoadingTile.AsDes8(), aError);
 	iObserver->OnTileLoadingFailed(iLoadingTile, aError);
 	
 	iImgDecoder->Reset();
@@ -914,7 +914,7 @@ void CTileBitmapManager::OnHTTPError(TInt aError,
 		// (in my case: 2 in emulator, 5-6 on the phone) and only after that
 		// we can catch cancel in this callback
 		iIsOfflineMode = ETrue;
-		LOG(_L8("Switched to Offline Mode"));
+		INFO(_L8("Switched to Offline Mode"));
 		iItemsLoadingQueue.Reset(); // Clear queue of loading tiles
 		}
 	else
@@ -932,7 +932,7 @@ void CTileBitmapManager::OnHTTPError(TInt aError,
 void CTileBitmapManager::OnHTTPHeadersRecieved(
 		const RHTTPTransaction aTransaction)
 	{
-	LOG(_L8("HTTP headers recieved"));
+	DEBUG(_L8("HTTP headers recieved"));
 	
 	iImgDecoder->Reset();
 	_LIT8(KPNGMimeType, "image/png");
@@ -954,7 +954,7 @@ void CTileBitmapManager::LoadBitmapL(const TTile &aTile, CFbsBitmap *aBitmap)
 	CleanupClosePushL(file);
 	User::LeaveIfError(aBitmap->Load(file));	
 	CleanupStack::PopAndDestroy(&file);
-	LOG(_L("Bitmap for %S sucessfully loaded from file \"%S\""), &aTile.AsDes(), &tileFileName);
+	INFO(_L("Bitmap for %S sucessfully loaded from file \"%S\""), &aTile.AsDes(), &tileFileName);
 	}
 
 TBool CTileBitmapManager::IsTileFileExists(const TTile &aTile) /*const*/
@@ -1004,9 +1004,9 @@ CTileBitmapManagerItem::~CTileBitmapManagerItem()
 	delete iBitmap; // iBitmap already may be NULL
 	
 	if (iBitmap != NULL)
-		LOG(_L8("Bitmap of %S destroyed"), &iTile.AsDes8());
+		DEBUG(_L8("Bitmap of %S destroyed"), &iTile.AsDes8());
 	
-	LOG(_L8("Bitmap manager item of %S destroyed"), &iTile.AsDes8());
+	DEBUG(_L8("Bitmap manager item of %S destroyed"), &iTile.AsDes8());
 	}
 
 CTileBitmapManagerItem* CTileBitmapManagerItem::NewL(const TTile &aTile)
@@ -1021,7 +1021,7 @@ CTileBitmapManagerItem* CTileBitmapManagerItem::NewLC(const TTile &aTile)
 	CTileBitmapManagerItem* self = new (ELeave) CTileBitmapManagerItem(aTile);
 	CleanupStack::PushL(self);
 	self->ConstructL();
-	LOG(_L8("Bitmap manager item of %S created"), &self->iTile.AsDes8());
+	DEBUG(_L8("Bitmap manager item of %S created"), &self->iTile.AsDes8());
 	return self;
 	}
 

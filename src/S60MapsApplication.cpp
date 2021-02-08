@@ -68,7 +68,7 @@ void CS60MapsApplication::RelPathToAbsFromDataDir(const TDesC &aRelPath, TFileNa
 	DataDir(anAbsPath);
 	anAbsPath.Append(aRelPath);
 	
-	//LOG(_L8("%S --> %S"), &aRelPath, &anAbsPath);
+	//DEBUG(_L8("%S --> %S"), &aRelPath, &anAbsPath);
 	}
 
 void CS60MapsApplication::CacheDir(TFileName &aCacheDir) const
