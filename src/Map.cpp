@@ -723,8 +723,16 @@ void CTileBitmapManager::AddToLoading(const TTile &aTile)
 		if (IsTileFileExists(aTile))
 			{
 			item->CreateBitmapIfNotExistL();
-			LoadBitmapL(aTile, item->Bitmap());
-			item->SetReady();
+			TRAPD(r, LoadBitmapL(aTile, item->Bitmap()));
+			if (r == KErrNone)
+				item->SetReady();
+			else // If read error, try to download
+				{
+				ERROR(_L("Error while reading %S from file (code: %d)"),
+						&aTile.AsDes(), r);
+				
+				StartDownloadTileL(aTile);
+				}
 			}
 		else
 			// Start download now
@@ -1051,13 +1059,15 @@ void CTileBitmapManagerItem::ConstructL()
 
 void CTileBitmapManagerItem::CreateBitmapIfNotExistL()
 	{
-	if (iBitmap != NULL)
-		return;
+	if (iBitmap == NULL)
+		iBitmap = new (ELeave) CFbsBitmap();
 	
-	iBitmap = new (ELeave) CFbsBitmap();
-	TSize size(KTileSize, KTileSize);
-	TDisplayMode mode = EColor16M;
-	User::LeaveIfError(iBitmap->Create(size, mode));
+	if (iBitmap->Handle() == 0)
+		{
+		TSize size(KTileSize, KTileSize);
+		TDisplayMode mode = EColor16M;
+		User::LeaveIfError(iBitmap->Create(size, mode));
+		}
 	}
 
 // TTileProvider
