@@ -911,14 +911,23 @@ void CTileBitmapManager::OnHTTPError(TInt aError,
 	
 	if (aError == KErrCancel)
 		{
-		// If access point not provoded switch to offline mode
+		// If access point not provided switch to offline mode
+		
+		// ToDo: This code may be thrown in other cases. Try to find better way
+		// to determine if IAP have been choosed or not.
 		
 		// FixMe: Access point choosing dialog appears several times in a row
 		// (in my case: 2 in emulator, 5-6 on the phone) and only after that
 		// we can catch cancel in this callback
+		// https://github.com/artem78/s60-maps/issues/4
 		iIsOfflineMode = ETrue;
 		INFO(_L8("Switched to Offline Mode"));
 		iItemsLoadingQueue.Reset(); // Clear queue of loading tiles
+		}
+	else if (aError == KErrAbort) // Request aborted
+		{
+		INFO(_L("HTTP request cancelled"));
+		// No any further action
 		}
 	else
 		{	
