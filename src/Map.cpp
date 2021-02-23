@@ -616,6 +616,7 @@ CTileBitmapManager::CTileBitmapManager(MTileBitmapManagerObserver *aObserver,
 CTileBitmapManager::~CTileBitmapManager()
 	{
 	delete iSaver;
+	// cancel()
 	delete iFileMapper;
 	delete iImgDecoder;
 	iItemsLoadingQueue.Close();
@@ -772,6 +773,7 @@ void CTileBitmapManager::StartDownloadTileL(const TTile &aTile)
 	tileUrl.CleanupClosePushL();
 	iTileProvider->TileUrl(tileUrl, aTile);
 	iHTTPClient->GetL(tileUrl);
+	// SetActive()
 	DEBUG(_L8("Started download tile %S from url %S"), &aTile.AsDes8(), &tileUrl);
 	CleanupStack::PopAndDestroy(&tileUrl);
 	}
@@ -779,6 +781,7 @@ void CTileBitmapManager::StartDownloadTileL(const TTile &aTile)
 void CTileBitmapManager::DoCancel()
 	{
 	DEBUG(_L("Cancel"));
+//	iHTTPClient->CancelRequest();
 	iImgDecoder->Cancel();
 	}
 
@@ -990,6 +993,7 @@ void CTileBitmapManager::ChangeTileProvider(TTileProvider* aTileProvider,
 	INFO(_L("Changing of tile provider from %S to %S"), &iTileProvider->iTitle, &aTileProvider->iTitle);
 	
 	Cancel();	
+	iHTTPClient->CancelRequest();
 	iItemsLoadingQueue.Reset(); // Should already be cleared by Cancel() call at previous line
 	iItems.ResetAndDestroy();
 	iTileProvider = aTileProvider;
