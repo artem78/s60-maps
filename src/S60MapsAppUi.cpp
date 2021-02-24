@@ -430,7 +430,7 @@ void CS60MapsAppUi::MrccatoCommand(TRemConCoreApiOperationId aOperationId,
 			{
 			case ERemConCoreApiVolumeUp:
 				{
-				//DEBUG(_L8("VolumeUp pressed\n"));
+				//DEBUG(_L("VolumeUp pressed\n"));
 				iAppView->ZoomIn();
 				
 				/*iCoreTarget->VolumeUpResponse(status, KErrNone);
@@ -440,7 +440,7 @@ void CS60MapsAppUi::MrccatoCommand(TRemConCoreApiOperationId aOperationId,
 			
 			case ERemConCoreApiVolumeDown:
 				{
-				//DEBUG(_L8("VolumeDown pressed\n"));
+				//DEBUG(_L("VolumeDown pressed\n"));
 				iAppView->ZoomOut();
 				
 				/*iCoreTarget->VolumeDownResponse(status, KErrNone);

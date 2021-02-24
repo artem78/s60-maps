@@ -84,7 +84,7 @@ void CS60MapsDocument::ConstructL()
 	now.FormatL(nowBuf, KDateFmt);
 	INFO(_L("Current date: %S"), &nowBuf);
 	
-	INFO(_L8("Log started"));
+	INFO(_L("Log started"));
 #endif
 	}
 
@@ -107,7 +107,7 @@ CS60MapsDocument::CS60MapsDocument(CEikApplication& aApp) :
 CS60MapsDocument::~CS60MapsDocument()
 	{
 #if LOGGING_ENABLED
-	INFO(_L8("Log ended"));
+	INFO(_L("Log ended"));
 	delete iLogger;
 	iLogFile.Close();
 #endif

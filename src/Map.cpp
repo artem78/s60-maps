@@ -133,7 +133,7 @@ void CTiledMapLayer::ConstructL(TTileProvider* aTileProvider)
 
 void CTiledMapLayer::Draw(CWindowGc &aGc)
 	{
-	DEBUG(_L8("Begin layer drawing"));
+	DEBUG(_L("Begin layer drawing"));
 	
 	RArray<TTile> tiles(10);
 	VisibleTiles(tiles);
@@ -165,7 +165,7 @@ void CTiledMapLayer::Draw(CWindowGc &aGc)
 		}
 	
 	tiles.Close();
-	DEBUG(_L8("End layer drawing"));
+	DEBUG(_L("End layer drawing"));
 	}
 
 void CTiledMapLayer::VisibleTiles(RArray<TTile> &aTiles)
@@ -682,11 +682,11 @@ void CTileBitmapManager::ConstructL(const TDesC &aCacheDir)
 TInt CTileBitmapManager::GetTileBitmap(const TTile &aTile, CFbsBitmap* &aBitmap)
 	{
 	CTileBitmapManagerItem* item = Find(aTile);
-	DEBUG(_L8("tile=%S, item=%x"), &aTile.AsDes8(), item);
+	DEBUG(_L("tile=%S, item=%x"), &aTile.AsDes(), item);
 	
 	if (item == NULL)
 		return KErrNotFound;
-	DEBUG(_L8("tile=%S, isready=%d, bitmap=%x"), &aTile.AsDes8(), item->IsReady(), item->Bitmap());
+	DEBUG(_L("tile=%S, isready=%d, bitmap=%x"), &aTile.AsDes(), item->IsReady(), item->Bitmap());
 	
 	if (!item->IsReady())
 		return KErrNotReady;
@@ -708,7 +708,7 @@ void CTileBitmapManager::AddToLoading(const TTile &aTile)
 	if (iItems.Count() >= iLimit)
 		{
 		// Delete oldest item
-		DEBUG(_L8("Delete old bitmap of %S from cache"), &iItems[0]->Tile().AsDes8());
+		DEBUG(_L("Delete old bitmap of %S from cache"), &iItems[0]->Tile().AsDes());
 		delete iItems[0];
 		iItems.Remove(0);
 		}
@@ -743,10 +743,10 @@ void CTileBitmapManager::AddToLoading(const TTile &aTile)
 		// Add to loading queue
 		// ToDo: Check array is not full
 		iItemsLoadingQueue.Append(aTile);
-		DEBUG(_L8("Tile %S appended to download queue"), &aTile.AsDes8());
-		DEBUG(_L8("Total %d tiles in download queue"), iItemsLoadingQueue.Count());
+		DEBUG(_L("Tile %S appended to download queue"), &aTile.AsDes());
+		DEBUG(_L("Total %d tiles in download queue"), iItemsLoadingQueue.Count());
 		}
-	DEBUG(_L8("Now %d items in bitmap cache"), iItems.Count());
+	DEBUG(_L("Now %d items in bitmap cache"), iItems.Count());
 	}
 
 CTileBitmapManagerItem* CTileBitmapManager::Find(const TTile &aTile) const
@@ -795,7 +795,7 @@ void CTileBitmapManager::DoCancel()
 
 void CTileBitmapManager::RunL()
 	{
-	DEBUG(_L8("CTileBitmapManager::RunL"));
+	DEBUG(_L("CTileBitmapManager::RunL"));
 	if (iStatus.Int() == KErrNone)
 		{
 		/*CFbsBitmap* bitmap;
@@ -809,14 +809,14 @@ void CTileBitmapManager::RunL()
 		
 		item->SetReady();
 		
-		INFO(_L8("Tile %S downloaded and decoded"), &iLoadingTile.AsDes8());
+		INFO(_L("Tile %S downloaded and decoded"), &iLoadingTile.AsDes());
 		iObserver->OnTileLoaded(iLoadingTile, item->Bitmap());
 		
 		SaveBitmapInBackgroundL(iLoadingTile, item->Bitmap());
 		}
 	else
 		{
-		ERROR(_L8("Image decoding error: %d"), iStatus.Int());
+		ERROR(_L("Image decoding error: %d"), iStatus.Int());
 		iObserver->OnTileLoadingFailed(iLoadingTile, iStatus.Int());
 		}
 	
@@ -843,7 +843,7 @@ void CTileBitmapManager::OnHTTPResponseDataChunkRecieved(
 		const RHTTPTransaction aTransaction, const TDesC8 &aDataChunk,
 		TInt anOverallDataSize, TBool anIsLastChunk)
 	{
-	DEBUG(_L8("HTTP chunk recieved"));
+	DEBUG(_L("HTTP chunk recieved"));
 	
 	// Checking that mime-type is PNG
 	// (If any error (for example: 404 Not Found) chunk may contains
@@ -886,7 +886,7 @@ void CTileBitmapManager::OnHTTPResponseDataChunkRecieved(
 
 void CTileBitmapManager::OnHTTPResponse(const RHTTPTransaction aTransaction)
 	{
-	DEBUG(_L8("HTTP response success"));
+	DEBUG(_L("HTTP response success"));
 	
 	iState = /*TProcessingState::*/EDecoding;
 	
@@ -900,7 +900,7 @@ void CTileBitmapManager::OnHTTPResponse(const RHTTPTransaction aTransaction)
 	__ASSERT_DEBUG(item->Bitmap() != NULL, Panic(ES60MapsTileBitmapIsNullPanic));
 	
 	//iImgDecoder->ContinueOpenL();
-	DEBUG(_L8("Tile %S succesfully downloaded, starting decode"), &iLoadingTile.AsDes8());
+	DEBUG(_L("Tile %S succesfully downloaded, starting decode"), &iLoadingTile.AsDes());
 	iImgDecoder->Convert(&this->iStatus, /**bitmap*/ *item->Bitmap(), 0);
 	//iImgDecoder->ContinueConvert(&this->iStatus);
 	SetActive();
@@ -909,8 +909,8 @@ void CTileBitmapManager::OnHTTPResponse(const RHTTPTransaction aTransaction)
 void CTileBitmapManager::OnHTTPError(TInt aError,
 		const RHTTPTransaction aTransaction)
 	{
-	//ERROR(_L8("HTTP error: %d"), aError);
-	ERROR(_L8("Failed to download tile %S, error: %d"), &iLoadingTile.AsDes8(), aError);
+	//ERROR(_L("HTTP error: %d"), aError);
+	ERROR(_L("Failed to download tile %S, error: %d"), &iLoadingTile.AsDes(), aError);
 	iObserver->OnTileLoadingFailed(iLoadingTile, aError);
 	
 	iImgDecoder->Reset();
@@ -929,7 +929,7 @@ void CTileBitmapManager::OnHTTPError(TInt aError,
 		// we can catch cancel in this callback
 		// https://github.com/artem78/s60-maps/issues/4
 		iIsOfflineMode = ETrue;
-		INFO(_L8("Switched to Offline Mode"));
+		INFO(_L("Switched to Offline Mode"));
 		iItemsLoadingQueue.Reset(); // Clear queue of loading tiles
 		}
 	else if (aError == KErrAbort) // Request aborted
@@ -952,7 +952,7 @@ void CTileBitmapManager::OnHTTPError(TInt aError,
 void CTileBitmapManager::OnHTTPHeadersRecieved(
 		const RHTTPTransaction aTransaction)
 	{
-	DEBUG(_L8("HTTP headers recieved"));
+	DEBUG(_L("HTTP headers recieved"));
 	
 	iImgDecoder->Reset();
 	_LIT8(KPNGMimeType, "image/png");
@@ -1025,9 +1025,9 @@ CTileBitmapManagerItem::~CTileBitmapManagerItem()
 	delete iBitmap; // iBitmap already may be NULL
 	
 	if (iBitmap != NULL)
-		DEBUG(_L8("Bitmap of %S destroyed"), &iTile.AsDes8());
+		DEBUG(_L("Bitmap of %S destroyed"), &iTile.AsDes());
 	
-	DEBUG(_L8("Bitmap manager item of %S destroyed"), &iTile.AsDes8());
+	DEBUG(_L("Bitmap manager item of %S destroyed"), &iTile.AsDes());
 	}
 
 CTileBitmapManagerItem* CTileBitmapManagerItem::NewL(const TTile &aTile)
@@ -1042,7 +1042,7 @@ CTileBitmapManagerItem* CTileBitmapManagerItem::NewLC(const TTile &aTile)
 	CTileBitmapManagerItem* self = new (ELeave) CTileBitmapManagerItem(aTile);
 	CleanupStack::PushL(self);
 	self->ConstructL();
-	DEBUG(_L8("Bitmap manager item of %S created"), &self->iTile.AsDes8());
+	DEBUG(_L("Bitmap manager item of %S created"), &self->iTile.AsDes());
 	return self;
 	}
 
