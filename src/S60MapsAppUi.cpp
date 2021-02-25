@@ -14,6 +14,7 @@
 #include <stringloader.h>
 #include <s32file.h>
 #include <hlplch.h>
+#include <apgwgnam.h>
 
 #include <S60Maps_0xED689B88.rsg>
 
@@ -456,20 +457,30 @@ void CS60MapsAppUi::MrccatoCommand(TRemConCoreApiOperationId aOperationId,
 
 void CS60MapsAppUi::HandleExitL()
 	{
-	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
-	dlg->PrepareLC(R_CONFIRM_EXIT_QUERY_DIALOG);
-	HBufC* title = iEikonEnv->AllocReadResourceLC(R_CONFIRM_EXIT_DIALOG_TITLE);
-	dlg->QueryHeading()->SetTextL(*title);
-	CleanupStack::PopAndDestroy(); //title
-	HBufC* msg = iEikonEnv->AllocReadResourceLC(R_CONFIRM_EXIT_DIALOG_TEXT);
-	dlg->SetMessageTextL(*msg);
-	CleanupStack::PopAndDestroy(); //msg
-	TInt res = dlg->RunLD();
-	if (res == EAknSoftkeyYes)
+	RWsSession& session = CEikonEnv::Static()->WsSession();
+	TInt WgId = session.GetFocusWindowGroup();
+	CApaWindowGroupName* Wgn = CApaWindowGroupName::NewL(session, WgId);
+	TUid forgroundApp = Wgn->AppUid();
+	const TUid KAppUid = {_UID3};
+	//If application is in background Symbian OS will show its own quit confirmation.
+	if(forgroundApp == KAppUid)
 		{
-		SaveL();
-		Exit();
+		CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
+		dlg->PrepareLC(R_CONFIRM_EXIT_QUERY_DIALOG);
+		HBufC* title = iEikonEnv->AllocReadResourceLC(R_CONFIRM_EXIT_DIALOG_TITLE);
+		dlg->QueryHeading()->SetTextL(*title);
+		CleanupStack::PopAndDestroy(); //title
+		HBufC* msg = iEikonEnv->AllocReadResourceLC(R_CONFIRM_EXIT_DIALOG_TEXT);
+		dlg->SetMessageTextL(*msg);
+		CleanupStack::PopAndDestroy(); //msg
+		TInt res = dlg->RunLD();
+		if (res != EAknSoftkeyYes)
+			{
+			return;
+			}
 		}
+	SaveL();
+	Exit();
 	}
 
 void CS60MapsAppUi::HandleFindMeL()
