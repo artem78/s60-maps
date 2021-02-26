@@ -461,6 +461,7 @@ void CS60MapsAppUi::HandleExitL()
 	TInt WgId = session.GetFocusWindowGroup();
 	CApaWindowGroupName* Wgn = CApaWindowGroupName::NewL(session, WgId);
 	TUid forgroundApp = Wgn->AppUid();
+	delete Wgn;
 	const TUid KAppUid = {_UID3};
 	//If application is in background Symbian OS will show its own quit confirmation.
 	if(forgroundApp == KAppUid)
