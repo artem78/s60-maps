@@ -2,7 +2,7 @@
  * MapMath.cpp
  *
  *  Created on: 12.08.2019
- *      Author: user
+ *      Author: artem78
  */
 
 // Formulas source: https://wiki.openstreetmap.org/wiki/Zoom_levels

@@ -2,7 +2,7 @@
  * Map.h
  *
  *  Created on: 14.08.2019
- *      Author: user
+ *      Author: artem78
  */
 
 #ifndef MAP_H_

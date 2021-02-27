@@ -2,7 +2,7 @@
  * LoggingDefs.h
  *
  *  Created on: 28.02.2020
- *      Author: user
+ *      Author: artem78
  */
 
 #ifndef LOGGINGDEFS_H_

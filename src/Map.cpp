@@ -2,7 +2,7 @@
  * Map.cpp
  *
  *  Created on: 14.08.2019
- *      Author: user
+ *      Author: artem78
  */
 
 #include "Map.h"

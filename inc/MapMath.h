@@ -2,7 +2,7 @@
  * MapMath.h
  *
  *  Created on: 12.08.2019
- *      Author: user
+ *      Author: artem78
  */
 
 // ToDo: Separate type for lat, lon?
