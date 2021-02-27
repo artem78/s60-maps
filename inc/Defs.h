@@ -7,9 +7,9 @@
 const TVersion KProgramVersion(1, 2, 0);
 
 // Debugging
-#ifdef _DEBUG
+/*#ifdef _DEBUG
 #define DEBUG_SHOW_ADDITIONAL_INFO
-#endif
+#endif*/
 
 // Types
 typedef /*TUInt8*/ TInt TZoom;
