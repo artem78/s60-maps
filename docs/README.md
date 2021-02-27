@@ -2,18 +2,15 @@
 # S60Maps
 
 Simple map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wiki/Symbian#Version_comparison) smartphones powered by [*Series S60 3rd/5th Edition*](https://en.wikipedia.org/wiki/S60_%28software_platform%29#Versions_and_supported_devices).
-
-## Technical info
-
-All data stored in directory `E:\Data\S60Maps\`. In particular, map cache located in `E:\Data\S60Maps\cache\_PAlbTN\<map service>\`.
   
 - [Features](#features)
 - [Controls](#controls)
   - [Keys](#keys)
   - [Touchscreen](#touchscreen)
 - [Screenshots](#screenshots)
-- [Supported Devices](#supported-devices)
+- [Supported devices](#supported-devices)
 - [Download](#download)
+- [Technical details](#technical-details)
 - [Roadmap](#roadmap)
 - [LICENSE](#license)
 
@@ -23,6 +20,7 @@ All data stored in directory `E:\Data\S60Maps\`. In particular, map cache locate
 
 - Show different map layers: [OpenStreetMap Standard](https://www.openstreetmap.org/), [OpenCycleMap](https://wiki.openstreetmap.org/wiki/OpenCycleMap), [Transport Map](https://wiki.openstreetmap.org/wiki/Transport_Map) and [Humanitarian Map](https://wiki.openstreetmap.org/wiki/Humanitarian_map_style)
 - Retrieve and show phone location using internal GPS
+- Can work without GPS
 - **Offline mode** - all downloaded tiles save in cache on disk and you can view them later without network connection needed
 
 ## Controls
@@ -44,13 +42,17 @@ All data stored in directory `E:\Data\S60Maps\`. In particular, map cache locate
 
 ![Application launch icon](images/launch_icon.png) ![About dialog](images/about.png) ![Menu](images/menu.png) ![Demo](images/demo_video.gif) ![Different map layers](images/layers.gif)
 
-## Supported Devices
+## Supported devices
+
+This software was tested on:
 
 - Smarthones:
   - `OK` [Nokia N95 8GB](https://en.wikipedia.org/wiki/Nokia_N95#Variations)
   - `OK` [Nokia 5530 XM](https://en.wikipedia.org/wiki/Nokia_5530_XpressMusic) (thanks to [baranovskiykonstantin](https://github.com/baranovskiykonstantin))
   - `OK` [Nokia E71](https://en.wikipedia.org/wiki/Nokia_E71) (thanks to [misheu12](https://github.com/misheu12))
   - `OK` [Nokia C5-00 5MP](https://en.wikipedia.org/wiki/Nokia_C5-00) (thanks to [Men770](https://github.com/Men770))
+  - `OK` [Nokia E63](https://en.wikipedia.org/wiki/Nokia_E63) (thanks to [Fizolas](https://github.com/fizolas))
+  - `OK` [Nokia E72](https://en.wikipedia.org/wiki/Nokia_E72) (thanks to [Fizolas](https://github.com/fizolas))
 - Emulators:
   - `FAILED` [EKA2L1](https://github.com/EKA2L1/EKA2L1) (here is [issue thread](https://github.com/EKA2L1/EKA2L1/issues/231))
 
@@ -63,6 +65,12 @@ All data stored in directory `E:\Data\S60Maps\`. In particular, map cache locate
   - Sign package with developer certificate ([details](https://digipassion.com/signing-sissisx-files-for-symbian-s60/));
   - Install already signed package on your smartphone.
 - If your smartphone is unlocked ('rooted') you may install provided unsigned package directly.
+
+## Technical details
+
+All data stored in directory `E:\Data\S60Maps\` (**note:** E drive used regardles of on which drive program installed). Map cache located in `E:\Data\S60Maps\cache\_PAlbTN\<map service>\` directory.
+
+Settings store in `store.dat` file. If you have problems with application to run, try to delete this file and run again.
 
 ## Roadmap
 
