@@ -523,9 +523,21 @@ void CTileBitmapSaver::AppendL(const TTile &aTile, CFbsBitmap *aBitmap)
 	item.iTile = aTile;
 	item.iShouldStop = EFalse;
 	
-	if (iQueue.Send(item) == KErrOverflow)
+	TInt r = iQueue.Send(item);
+	if (r == KErrNone) // No errors
 		{
-		ERROR(_L("Saving queue is full!"));
+		DEBUG(_L("%S appended to saving queue"), &aTile.AsDes());
+		}
+	else // Any error
+		{
+		if (r == KErrOverflow)
+			{
+			ERROR(_L("Saving queue is full!"));
+			}
+		
+		ERROR(_L("Error appending %S to saving queue (code: %d)"),
+						&aTile.AsDes(), r);
+		//User::Leave(r);
 		}
 	}
 
@@ -555,6 +567,7 @@ TInt CTileBitmapSaver::ThreadFunction(TAny* anArg)
 					break; // Going to exit
 					}
 				
+				DEBUG(_L("Start saving %S"), &item.iTile.AsDes());
 				TRAPD(r, saver->SaveL(item, fs));
 				if (r != KErrNone)
 					{
@@ -725,7 +738,9 @@ void CTileBitmapManager::AddToLoading(const TTile &aTile)
 			item->CreateBitmapIfNotExistL();
 			TRAPD(r, LoadBitmapL(aTile, item->Bitmap()));
 			if (r == KErrNone)
+				{
 				item->SetReady();
+				}
 			else // If read error, try to download
 				{
 				ERROR(_L("Error while reading %S from file (code: %d)"),
@@ -735,8 +750,11 @@ void CTileBitmapManager::AddToLoading(const TTile &aTile)
 				}
 			}
 		else
+			{
+			DEBUG(_L("Tile %S not found in cache dir"), &aTile.AsDes());
 			// Start download now
 			StartDownloadTileL(aTile);
+			}
 		}
 	else
 		{
