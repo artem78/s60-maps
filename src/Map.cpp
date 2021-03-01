@@ -498,7 +498,7 @@ CTileBitmapSaver* CTileBitmapSaver::NewL(CTileBitmapManager* aMgr)
 void CTileBitmapSaver::ConstructL()
 	{
 	// Some initializations
-	User::LeaveIfError(iQueue.CreateLocal(20)); // ToDo: Move number to constant
+	User::LeaveIfError(iQueue.CreateLocal(50)); // ToDo: Move number to constant
 	
 	// Prepare and start new thread	
 	RThread thr;
