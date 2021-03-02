@@ -466,13 +466,13 @@ void CS60MapsAppUi::HandleExitL()
 	//If application is in background Symbian OS will show its own quit confirmation.
 	if(forgroundApp == KAppUid)
 		{
-		CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
+		CAknQueryDialog* dlg = CAknQueryDialog::NewL();
 		dlg->PrepareLC(R_CONFIRM_EXIT_QUERY_DIALOG);
-		HBufC* title = iEikonEnv->AllocReadResourceLC(R_CONFIRM_EXIT_DIALOG_TITLE);
-		dlg->QueryHeading()->SetTextL(*title);
-		CleanupStack::PopAndDestroy(); //title
+		/*HBufC* title = iEikonEnv->AllocReadResourceLC(R_CONFIRM_EXIT_DIALOG_TITLE);
+		dlg->SetHeaderTextL(*title);
+		CleanupStack::PopAndDestroy(); //title*/
 		HBufC* msg = iEikonEnv->AllocReadResourceLC(R_CONFIRM_EXIT_DIALOG_TEXT);
-		dlg->SetMessageTextL(*msg);
+		dlg->SetPromptL(*msg);
 		CleanupStack::PopAndDestroy(); //msg
 		TInt res = dlg->RunLD();
 		if (res != EAknSoftkeyYes)
@@ -585,13 +585,13 @@ void CS60MapsAppUi::HandleTilesCacheStatsL()
 
 void CS60MapsAppUi::HandleTilesCacheResetL()
 	{
-	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
+	CAknQueryDialog* dlg = CAknQueryDialog::NewL();
 	dlg->PrepareLC(R_CONFIRM_RESET_TILES_CACHE_DIALOG);
-	HBufC* title = iEikonEnv->AllocReadResourceLC(R_CONFIRM_RESET_TILES_CACHE_DIALOG_TITLE);
-	dlg->QueryHeading()->SetTextL(*title);
-	CleanupStack::PopAndDestroy(); //title
+	/*HBufC* title = iEikonEnv->AllocReadResourceLC(R_CONFIRM_RESET_TILES_CACHE_DIALOG_TITLE);
+	dlg->SetHeaderTextL(*title);
+	CleanupStack::PopAndDestroy(); //title*/
 	HBufC* msg = iEikonEnv->AllocReadResourceLC(R_CONFIRM_RESET_TILES_CACHE_DIALOG_TEXT);
-	dlg->SetMessageTextL(*msg);
+	dlg->SetPromptL(*msg);
 	CleanupStack::PopAndDestroy(); //msg
 	TInt res = dlg->RunLD();
 	if (res == EAknSoftkeyYes)

@@ -151,11 +151,11 @@ RESOURCE MENU_PANE r_submenu_service
 
 RESOURCE DIALOG r_confirm_reset_tiles_cache_dialog
 	{
-	flags = EGeneralQueryFlags | EEikDialogFlagNoBorder | EEikDialogFlagNoShadow;
+	flags = EGeneralQueryFlags;
 	buttons = R_AVKON_SOFTKEYS_YES_NO;
 	items = 
 		{
-		DLG_LINE 
+		/*DLG_LINE 
 			{
 			type = EAknCtPopupHeadingPane;
 			id = EAknMessageQueryHeaderId;
@@ -163,13 +163,14 @@ RESOURCE DIALOG r_confirm_reset_tiles_cache_dialog
 			control = AVKON_HEADING
 				{
 				};
-			},
+			},*/
 		DLG_LINE
 			{
-			type = EAknCtMessageQuery;
-			id = EAknMessageQueryContentId;
-			control = AVKON_MESSAGE_QUERY
+			type = EAknCtQuery;
+			id = EGeneralQuery;
+			control = AVKON_CONFIRMATION_QUERY
 				{
+				layout = EConfirmationQueryLayout;
 				};
 			}
 		};
@@ -205,11 +206,11 @@ RESOURCE DIALOG r_about_query_dialog
 // Exit confirm dialog
 RESOURCE DIALOG r_confirm_exit_query_dialog
 	{
-	flags = EGeneralQueryFlags | EEikDialogFlagNoBorder | EEikDialogFlagNoShadow;
+	flags = EGeneralQueryFlags;
 	buttons = R_AVKON_SOFTKEYS_YES_NO;
-	items = 
+	items =
 		{
-		DLG_LINE 
+		/*DLG_LINE 
 			{
 			type = EAknCtPopupHeadingPane;
 			id = EAknMessageQueryHeaderId;
@@ -217,14 +218,15 @@ RESOURCE DIALOG r_confirm_exit_query_dialog
 			control = AVKON_HEADING
 				{
 				};
-			},
+			},*/
 		DLG_LINE
 			{
-			type = EAknCtMessageQuery;
-			id = EAknMessageQueryContentId;
-			control = AVKON_MESSAGE_QUERY
+			type = EAknCtQuery;
+			id = EGeneralQuery;
+			control = AVKON_CONFIRMATION_QUERY
 				{
-				};
+				layout = EConfirmationQueryLayout;
+		        };
 			}
 		};
 	}
@@ -265,12 +267,12 @@ RESOURCE DIALOG r_map_cache_stats_dialog
 RESOURCE TBUF32 r_caption_string { buf=qtn_caption_string; }
 
 RESOURCE TBUF32 r_map_cache_stats_dialog_title { buf=qtn_tiles_cache_stats; }
-RESOURCE TBUF32 r_confirm_reset_tiles_cache_dialog_title { buf=qtn_confirm_reset_tiles_cache_dialog_title; }
+//RESOURCE TBUF32 r_confirm_reset_tiles_cache_dialog_title { buf=qtn_confirm_reset_tiles_cache_dialog_title; }
 RESOURCE TBUF r_confirm_reset_tiles_cache_dialog_text { buf=qtn_confirm_reset_tiles_cache_dialog_text; }
 RESOURCE TBUF32 r_about_dialog_title { buf=qtn_about_dialog_title; }
 RESOURCE TBUF r_about_dialog_text { buf=qtn_about_dialog_text; }
 RESOURCE TBUF r_about_dialog_git_text { buf=qtn_about_dialog_git_text; }
-RESOURCE TBUF32 r_confirm_exit_dialog_title { buf=qtn_confirm_exit_dialog_title; }
+//RESOURCE TBUF32 r_confirm_exit_dialog_title { buf=qtn_confirm_exit_dialog_title; }
 RESOURCE TBUF r_confirm_exit_dialog_text { buf=qtn_confirm_exit_dialog_text; }
 RESOURCE TBUF r_command1_text { buf=qtn_command1_text; }
 RESOURCE TBUF r_done { buf=qtn_done; }
