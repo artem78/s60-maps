@@ -130,7 +130,7 @@ private:
 	//TBuf<64> iTileProviderId
 	TTileProvider* iActiveTileProvider;
 	
-	void ClearTilesCache();
+	void ClearTilesCacheL();
 	
 	// Command handlers
 	void HandleExitL();

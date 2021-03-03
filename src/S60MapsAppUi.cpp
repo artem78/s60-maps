@@ -363,7 +363,7 @@ MFileManObserver::TControl CS60MapsAppUi::NotifyFileManEnded()
 	return EContinue;
 	}
 
-void CS60MapsAppUi::ClearTilesCache()
+void CS60MapsAppUi::ClearTilesCacheL()
 	{
 	TFileName cacheDir;
 	static_cast<CS60MapsApplication *>(Application())->CacheDir(cacheDir);
@@ -596,7 +596,7 @@ void CS60MapsAppUi::HandleTilesCacheResetL()
 	TInt res = dlg->RunLD();
 	if (res == EAknSoftkeyYes)
 		{
-		ClearTilesCache();
+		ClearTilesCacheL();
 		}
 	}
 
