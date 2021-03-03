@@ -2,9 +2,9 @@
  ============================================================================
  Name		: Settings.h
  Author	  : artem78
- Version	 : 1.0
+ Version	 :
  Copyright   : 
- Description : CSettings declaration
+ Description : Settings store class
  ============================================================================
  */
 
@@ -59,6 +59,8 @@ private:
 	
 	
 private:
+	// Parameters
+	
 	TReal64 iLat;
 	TReal64 iLon;
 	TZoom iZoom;
@@ -69,6 +71,9 @@ public:
 	
 	void ExternalizeL(RWriteStream& aStream) const;
 	void InternalizeL(RReadStream& aStream);
+	
+	
+	// Getters and setters for access to stored parameters
 	
 	inline TReal64 GetLat() const
 		{ return iLat; }

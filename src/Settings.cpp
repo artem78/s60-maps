@@ -2,7 +2,7 @@
  ============================================================================
  Name		: Settings.cpp
  Author	  : artem78
- Version	 : 1.0
+ Version	 :
  Copyright   : 
  Description : CSettings implementation
  ============================================================================
