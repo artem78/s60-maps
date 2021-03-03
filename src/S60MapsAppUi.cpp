@@ -372,10 +372,11 @@ void CS60MapsAppUi::ClearTilesCacheL()
 	// ToDo: Do asynchronous
 	iFileMan->RmDir(cacheDir);
 	
-	// iEikonEnv->InfoWinL(R_DONE);
-	HBufC* msg = iEikonEnv->AllocReadResourceL(R_DONE);
-	iEikonEnv->AlertWin(*msg);
-	delete msg;
+	// Show "Done" message
+	HBufC* msg = iEikonEnv->AllocReadResourceLC(R_DONE);
+	CAknInformationNote* note = new (ELeave) CAknInformationNote;
+	note->ExecuteLD(*msg);
+	CleanupStack::PopAndDestroy(msg);
 	}
 
 void CS60MapsAppUi::OnPositionUpdated()
