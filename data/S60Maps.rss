@@ -221,7 +221,6 @@ RESOURCE TBUF r_about_dialog_text { buf=qtn_about_dialog_text; }
 RESOURCE TBUF r_about_dialog_git_text { buf=qtn_about_dialog_git_text; }
 //RESOURCE TBUF32 r_confirm_exit_dialog_title { buf=qtn_confirm_exit_dialog_title; }
 RESOURCE TBUF r_confirm_exit_dialog_text { buf=qtn_confirm_exit_dialog_text; }
-RESOURCE TBUF r_command1_text { buf=qtn_command1_text; }
 RESOURCE TBUF r_done { buf=qtn_done; }
 RESOURCE TBUF r_stats_line { buf=qtn_stats_line; }
 RESOURCE TBUF r_stats_total { buf=qtn_stats_total; }
