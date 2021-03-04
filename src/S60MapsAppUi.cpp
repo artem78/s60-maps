@@ -468,7 +468,7 @@ void CS60MapsAppUi::HandleExitL()
 	if(forgroundApp == KAppUid)
 		{
 		CAknQueryDialog* dlg = CAknQueryDialog::NewL();
-		dlg->PrepareLC(R_CONFIRM_EXIT_QUERY_DIALOG);
+		dlg->PrepareLC(R_CONFIRM_DIALOG);
 		/*HBufC* title = iEikonEnv->AllocReadResourceLC(R_CONFIRM_EXIT_DIALOG_TITLE);
 		dlg->SetHeaderTextL(*title);
 		CleanupStack::PopAndDestroy(); //title*/
@@ -572,7 +572,7 @@ void CS60MapsAppUi::HandleTilesCacheStatsL()
 	
 	// Show information
 	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
-	dlg->PrepareLC(R_MAP_CACHE_STATS_DIALOG);
+	dlg->PrepareLC(R_QUERY_DIALOG);
 	HBufC* title = iEikonEnv->AllocReadResourceLC(R_MAP_CACHE_STATS_DIALOG_TITLE);
 	dlg->QueryHeading()->SetTextL(*title);
 	CleanupStack::PopAndDestroy(title);
@@ -587,7 +587,7 @@ void CS60MapsAppUi::HandleTilesCacheStatsL()
 void CS60MapsAppUi::HandleTilesCacheResetL()
 	{
 	CAknQueryDialog* dlg = CAknQueryDialog::NewL();
-	dlg->PrepareLC(R_CONFIRM_RESET_TILES_CACHE_DIALOG);
+	dlg->PrepareLC(R_CONFIRM_DIALOG);
 	/*HBufC* title = iEikonEnv->AllocReadResourceLC(R_CONFIRM_RESET_TILES_CACHE_DIALOG_TITLE);
 	dlg->SetHeaderTextL(*title);
 	CleanupStack::PopAndDestroy(); //title*/
@@ -616,7 +616,7 @@ void CS60MapsAppUi::HandleAboutL()
 	_LIT(KThanksTo,	"baranovskiykonstantin, Symbian9, Men770, fizolas");
 	
 	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
-	dlg->PrepareLC(R_ABOUT_QUERY_DIALOG);
+	dlg->PrepareLC(R_QUERY_DIALOG);
 	HBufC* title = iEikonEnv->AllocReadResourceLC(R_ABOUT_DIALOG_TITLE);
 	dlg->QueryHeading()->SetTextL(*title);
 	CleanupStack::PopAndDestroy(); //title

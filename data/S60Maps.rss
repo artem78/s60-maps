@@ -144,39 +144,13 @@ RESOURCE MENU_PANE r_submenu_service
 
 // -----------------------------------------------------------------------------
 //
-// About dialog resource.
+// Dialog resources.
 //
 // -----------------------------------------------------------------------------
 //
 
-RESOURCE DIALOG r_confirm_reset_tiles_cache_dialog
-	{
-	flags = EGeneralQueryFlags;
-	buttons = R_AVKON_SOFTKEYS_YES_NO;
-	items = 
-		{
-		/*DLG_LINE 
-			{
-			type = EAknCtPopupHeadingPane;
-			id = EAknMessageQueryHeaderId;
-			itemflags = EEikDlgItemNonFocusing;
-			control = AVKON_HEADING
-				{
-				};
-			},*/
-		DLG_LINE
-			{
-			type = EAknCtQuery;
-			id = EGeneralQuery;
-			control = AVKON_CONFIRMATION_QUERY
-				{
-				layout = EConfirmationQueryLayout;
-				};
-			}
-		};
-	}
-
-RESOURCE DIALOG r_about_query_dialog
+// General query dialog
+RESOURCE DIALOG r_query_dialog
 	{
 	flags = EGeneralQueryFlags | EEikDialogFlagNoBorder | EEikDialogFlagNoShadow;
 	buttons = R_AVKON_SOFTKEYS_OK_EMPTY;
@@ -203,8 +177,8 @@ RESOURCE DIALOG r_about_query_dialog
 	}
 
 
-// Exit confirm dialog
-RESOURCE DIALOG r_confirm_exit_query_dialog
+// General confirmation dialog
+RESOURCE DIALOG r_confirm_dialog
 	{
 	flags = EGeneralQueryFlags;
 	buttons = R_AVKON_SOFTKEYS_YES_NO;
@@ -227,33 +201,6 @@ RESOURCE DIALOG r_confirm_exit_query_dialog
 				{
 				layout = EConfirmationQueryLayout;
 		        };
-			}
-		};
-	}
-
-// Map cache statistics dialog
-RESOURCE DIALOG r_map_cache_stats_dialog
-	{
-	flags = EGeneralQueryFlags | EEikDialogFlagNoBorder | EEikDialogFlagNoShadow;
-	buttons = R_AVKON_SOFTKEYS_OK_EMPTY;
-	items=
-		{
-		DLG_LINE 
-			{
-			type = EAknCtPopupHeadingPane;
-			id = EAknMessageQueryHeaderId;
-			itemflags = EEikDlgItemNonFocusing;
-			control = AVKON_HEADING
-				{
-				};
-			},
-		DLG_LINE
-			{
-			type = EAknCtMessageQuery;
-			id = EAknMessageQueryContentId;
-			control = AVKON_MESSAGE_QUERY
-				{
-				};
 			}
 		};
 	}
