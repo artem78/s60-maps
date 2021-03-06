@@ -88,7 +88,7 @@ RESOURCE MENU_PANE r_menu
 				command = EFindMe;
 				txt = qtn_find_me;
 				},
-		// Maybe I will add help in the future
+		// Probably I will add help in the future
 		/*MENU_ITEM
 				{
 				command = EHelp;
@@ -119,12 +119,14 @@ RESOURCE MENU_PANE r_menu
 		};
 	}
 
+// Tile providers submenu
 RESOURCE MENU_PANE r_submenu_tile_providers
 	{
 	items =
 		{}; // Will be filled at runtime
 	}
 
+// Service submenu
 RESOURCE MENU_PANE r_submenu_service
 	{
 	items =
