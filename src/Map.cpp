@@ -443,7 +443,8 @@ _LIT(KSaverThreadName, "TileSaverThread");
 
 CTileBitmapSaver::CTileBitmapSaver(CTileBitmapManager* aMgr) :
 		iMgr(aMgr),
-		iThreadId(0)
+		iThreadId(0),
+		iItemsInQueue(0)
 	{
 	}
 
@@ -526,7 +527,9 @@ void CTileBitmapSaver::AppendL(const TTile &aTile, CFbsBitmap *aBitmap)
 	TInt r = iQueue.Send(item);
 	if (r == KErrNone) // No errors
 		{
+		iItemsInQueue++;
 		DEBUG(_L("%S appended to saving queue"), &aTile.AsDes());
+		DEBUG(_L("Now %d items in saving queue"), iItemsInQueue);
 		}
 	else // Any error
 		{
@@ -559,6 +562,7 @@ TInt CTileBitmapSaver::ThreadFunction(TAny* anArg)
 				{
 				TSaverQueryItem item;
 				saver->iQueue.ReceiveBlocking(item);
+				//iItemsInQueue--;
 				
 				if (item.iShouldStop)
 					{
@@ -568,6 +572,8 @@ TInt CTileBitmapSaver::ThreadFunction(TAny* anArg)
 					}
 				
 				DEBUG(_L("Start saving %S"), &item.iTile.AsDes());
+				saver->iItemsInQueue--;
+				DEBUG(_L("Now %d items in saving queue"), saver->iItemsInQueue);
 				TRAPD(r, saver->SaveL(item, fs));
 				if (r != KErrNone)
 					{

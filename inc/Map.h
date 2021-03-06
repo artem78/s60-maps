@@ -171,6 +171,7 @@ public:
 private:
 	CTileBitmapManager* iMgr;
 	RMsgQueue<TSaverQueryItem> iQueue;
+	TInt iItemsInQueue;
 	TThreadId iThreadId;
 	
 	static TInt ThreadFunction(TAny* anArg);
