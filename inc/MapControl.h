@@ -1,14 +1,14 @@
 /*
  ============================================================================
- Name		: S60MapsAppView.h
+ Name		: MapControl.h
  Author	  : artem78
  Copyright   : 
- Description : Declares view class for application.
+ Description : Declares map control
  ============================================================================
  */
 
-#ifndef __S60MAPSAPPVIEW_h__
-#define __S60MAPSAPPVIEW_h__
+#ifndef __MAPCONTROL_h__
+#define __MAPCONTROL_h__
 
 // INCLUDES
 #include <coecntrl.h>
@@ -27,7 +27,7 @@ const TZoom KMinZoomLevel = /*0*/ 1;
 const TZoom KMaxZoomLevel = 19;
 
 // CLASS DECLARATION
-class CS60MapsAppView : public CCoeControl
+class CMapControl : public CCoeControl
 	{
 public:
 	enum S60MapsMovement
@@ -45,11 +45,11 @@ public:
 	/**
 	 * NewL.
 	 * Two-phased constructor.
-	 * Create a CS60MapsAppView object, which will draw itself to aRect.
+	 * Create a CMapControl object, which will draw itself to aRect.
 	 * @param aRect The rectangle this view will be drawn to.
-	 * @return a pointer to the created instance of CS60MapsAppView.
+	 * @return a pointer to the created instance of CMapControl.
 	 */
-	static CS60MapsAppView* NewL(const TRect& aRect,
+	static CMapControl* NewL(const TRect& aRect,
 			const TCoordinate &aInitialPosition, TZoom aInitialZoom,
 			//TZoom aMinZoom = KMinZoomLevel, TZoom aMaxZoom = KMaxZoomLevel
 			TTileProvider* aTileProvider);
@@ -57,21 +57,21 @@ public:
 	/**
 	 * NewLC.
 	 * Two-phased constructor.
-	 * Create a CS60MapsAppView object, which will draw itself
+	 * Create a CMapControl object, which will draw itself
 	 * to aRect.
 	 * @param aRect Rectangle this view will be drawn to.
-	 * @return A pointer to the created instance of CS60MapsAppView.
+	 * @return A pointer to the created instance of CMapControl.
 	 */
-	static CS60MapsAppView* NewLC(const TRect& aRect,
+	static CMapControl* NewLC(const TRect& aRect,
 			const TCoordinate &aInitialPosition, TZoom aInitialZoom,
 			//TZoom aMinZoom = KMinZoomLevel, TZoom aMaxZoom = KMaxZoomLevel,
 			TTileProvider* aTileProvider);
 
 	/**
-	 * ~CS60MapsAppView
+	 * ~CMapControl
 	 * Virtual Destructor.
 	 */
-	virtual ~CS60MapsAppView();
+	virtual ~CMapControl();
 
 
 public:
@@ -79,7 +79,7 @@ public:
 
 	/**
 	 * From CCoeControl, Draw
-	 * Draw this CS60MapsAppView to the screen.
+	 * Draw this CMapControl to the screen.
 	 * @param aRect the rectangle of this view that needs updating
 	 */
 	void Draw(const TRect& aRect) const;
@@ -109,7 +109,7 @@ private:
 	 * ConstructL
 	 * 2nd phase constructor.
 	 * Perform the second phase construction of a
-	 * CS60MapsAppView object.
+	 * CMapControl object.
 	 * @param aRect The rectangle this view will be drawn to.
 	 */
 	void ConstructL(const TRect& aRect, const TCoordinate &aInitialPosition,
@@ -117,10 +117,10 @@ private:
 			TTileProvider* aTileProvider);
 
 	/**
-	 * CS60MapsAppView.
+	 * CMapControl.
 	 * C++ default constructor.
 	 */
-	CS60MapsAppView(TZoom aInitialZoom);
+	CMapControl(TZoom aInitialZoom);
 
 
 // Custom properties and methods
@@ -212,5 +212,5 @@ public:
 
 	};
 	
-#endif // __S60MAPSAPPVIEW_h__
+#endif // __MAPCONTROL_h__
 // End of File

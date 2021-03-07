@@ -25,7 +25,7 @@
 #include "S60Maps.pan"
 #include "S60MapsApplication.h"
 #include "S60MapsAppUi.h"
-#include "S60MapsAppView.h"
+#include "MapControl.h"
 #include "Defs.h"
 #include "GitInfo.h"
 #include "FileUtils.h"
@@ -112,7 +112,7 @@ void CS60MapsAppUi::ConstructL()
 	TZoom zoom = iSettings->GetZoom();	
 	
 	// Create view object
-	iAppView = CS60MapsAppView::NewL(ClientRect(), position, zoom, iActiveTileProvider);
+	iAppView = CMapControl::NewL(ClientRect(), position, zoom, iActiveTileProvider);
 	AddToStackL(iAppView);
 	
 	// Position requestor
@@ -493,7 +493,7 @@ void CS60MapsAppUi::HandleFindMeL()
 void CS60MapsAppUi::HandleTileProviderChangeL(TInt aTileProviderIdx)
 	{
 	iActiveTileProvider = iAvailableTileProviders[aTileProviderIdx];
-	static_cast<CS60MapsAppView*>(iAppView)->SetTileProviderL(iActiveTileProvider);
+	static_cast<CMapControl*>(iAppView)->SetTileProviderL(iActiveTileProvider);
 	}
 
 void CS60MapsAppUi::HandleTilesCacheStatsL()

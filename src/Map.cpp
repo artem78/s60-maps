@@ -6,7 +6,7 @@
  */
 
 #include "Map.h"
-#include "S60MapsAppView.h"
+#include "MapControl.h"
 #include <eikenv.h>
 #include <gdi.h>
 #include <imageconversion.h>
@@ -19,7 +19,7 @@
 #include <bautils.h>
 #include "Defs.h"
 
-CMapLayerBase::CMapLayerBase(/*const*/ CS60MapsAppView* aMapView) :
+CMapLayerBase::CMapLayerBase(/*const*/ CMapControl* aMapView) :
 		iMapView(aMapView)
 	{
 	}
@@ -29,7 +29,7 @@ CMapLayerBase::CMapLayerBase(/*const*/ CS60MapsAppView* aMapView) :
 
 // CMapLayerDebugInfo
 
-CMapLayerDebugInfo::CMapLayerDebugInfo(/*const*/ CS60MapsAppView* aMapView) :
+CMapLayerDebugInfo::CMapLayerDebugInfo(/*const*/ CMapControl* aMapView) :
 	CMapLayerBase(aMapView),
 	iRedrawingsCount(0)
 	{
@@ -100,7 +100,7 @@ void MTileBitmapManagerObserver::OnTileLoadingFailed(const TTile &/*aTile*/, TIn
 
 // CTiledMapLayer
 
-CTiledMapLayer::CTiledMapLayer(CS60MapsAppView* aMapView) :
+CTiledMapLayer::CTiledMapLayer(CMapControl* aMapView) :
 	CMapLayerBase(aMapView)
 	{
 	// No implementation required
@@ -111,14 +111,14 @@ CTiledMapLayer::~CTiledMapLayer()
 	delete iBitmapMgr;
 	}
 
-CTiledMapLayer* CTiledMapLayer::NewL(CS60MapsAppView* aMapView, TTileProvider* aTileProvider)
+CTiledMapLayer* CTiledMapLayer::NewL(CMapControl* aMapView, TTileProvider* aTileProvider)
 	{
 	CTiledMapLayer* self = CTiledMapLayer::NewLC(aMapView, aTileProvider);
 	CleanupStack::Pop(); // self;
 	return self;
 	}
 
-CTiledMapLayer* CTiledMapLayer::NewLC(CS60MapsAppView* aMapView, TTileProvider* aTileProvider)
+CTiledMapLayer* CTiledMapLayer::NewLC(CMapControl* aMapView, TTileProvider* aTileProvider)
 	{
 	CTiledMapLayer* self = new (ELeave) CTiledMapLayer(aMapView);
 	CleanupStack::PushL(self);
@@ -246,7 +246,7 @@ void CTiledMapLayer::SetTileProviderL(TTileProvider* aTileProvider)
 
 // CUserPositionLayer
 
-CUserPositionLayer::CUserPositionLayer(/*const*/ CS60MapsAppView* aMapView) :
+CUserPositionLayer::CUserPositionLayer(/*const*/ CMapControl* aMapView) :
 		CMapLayerBase(aMapView)
 	{
 	
@@ -376,7 +376,7 @@ void CUserPositionLayer::DrawRoundMark(CWindowGc &aGc, const TPoint &aScreenPos)
 
 // CTileBorderAndNumbersLayer
 
-CTileBorderAndXYZLayer::CTileBorderAndXYZLayer(CS60MapsAppView* aMapView) :
+CTileBorderAndXYZLayer::CTileBorderAndXYZLayer(CMapControl* aMapView) :
 		CMapLayerBase(aMapView)
 	{
 	}
