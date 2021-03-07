@@ -6,7 +6,7 @@
  */
 
 #include "Map.h"
-#include "S60MapsAppView.h"
+#include "MapControl.h"
 #include <eikenv.h>
 #include <gdi.h>
 #include <imageconversion.h>
@@ -24,7 +24,7 @@
 #include "icons.mbg"
 #include "Utils.h"
 
-CMapLayerBase::CMapLayerBase(/*const*/ CS60MapsAppView* aMapView) :
+CMapLayerBase::CMapLayerBase(/*const*/ CMapControl* aMapView) :
 		iMapView(aMapView)
 	{
 	}
@@ -34,13 +34,13 @@ CMapLayerBase::CMapLayerBase(/*const*/ CS60MapsAppView* aMapView) :
 
 // CMapLayerDebugInfo
 
-CMapLayerDebugInfo::CMapLayerDebugInfo(/*const*/ CS60MapsAppView* aMapView) :
+CMapLayerDebugInfo::CMapLayerDebugInfo(/*const*/ CMapControl* aMapView) :
 	CMapLayerBase(aMapView),
 	iRedrawingsCount(0)
 	{
 	}
 
-CMapLayerDebugInfo* CMapLayerDebugInfo::NewLC(CS60MapsAppView* aMapView)
+CMapLayerDebugInfo* CMapLayerDebugInfo::NewLC(CMapControl* aMapView)
 	{
 	CMapLayerDebugInfo* self = new (ELeave) CMapLayerDebugInfo(aMapView);
 	CleanupStack::PushL(self);
@@ -48,7 +48,7 @@ CMapLayerDebugInfo* CMapLayerDebugInfo::NewLC(CS60MapsAppView* aMapView)
 	return self;
 	}
 
-CMapLayerDebugInfo* CMapLayerDebugInfo::NewL(CS60MapsAppView* aMapView)
+CMapLayerDebugInfo* CMapLayerDebugInfo::NewL(CMapControl* aMapView)
 	{
 	CMapLayerDebugInfo* self = CMapLayerDebugInfo::NewLC(aMapView);
 	CleanupStack::Pop(); // self;
@@ -134,7 +134,7 @@ void MTileBitmapManagerObserver::OnTileLoadingFailed(const TTile &/*aTile*/, TIn
 
 // CTiledMapLayer
 
-CTiledMapLayer::CTiledMapLayer(CS60MapsAppView* aMapView) :
+CTiledMapLayer::CTiledMapLayer(CMapControl* aMapView) :
 	CMapLayerBase(aMapView)
 	{
 	// No implementation required
@@ -145,14 +145,14 @@ CTiledMapLayer::~CTiledMapLayer()
 	delete iBitmapMgr;
 	}
 
-CTiledMapLayer* CTiledMapLayer::NewL(CS60MapsAppView* aMapView, TTileProvider* aTileProvider)
+CTiledMapLayer* CTiledMapLayer::NewL(CMapControl* aMapView, TTileProvider* aTileProvider)
 	{
 	CTiledMapLayer* self = CTiledMapLayer::NewLC(aMapView, aTileProvider);
 	CleanupStack::Pop(); // self;
 	return self;
 	}
 
-CTiledMapLayer* CTiledMapLayer::NewLC(CS60MapsAppView* aMapView, TTileProvider* aTileProvider)
+CTiledMapLayer* CTiledMapLayer::NewLC(CMapControl* aMapView, TTileProvider* aTileProvider)
 	{
 	CTiledMapLayer* self = new (ELeave) CTiledMapLayer(aMapView);
 	CleanupStack::PushL(self);
@@ -280,7 +280,7 @@ void CTiledMapLayer::SetTileProviderL(TTileProvider* aTileProvider)
 
 // CUserPositionLayer
 
-CUserPositionLayer::CUserPositionLayer(/*const*/ CS60MapsAppView* aMapView) :
+CUserPositionLayer::CUserPositionLayer(/*const*/ CMapControl* aMapView) :
 		CMapLayerBase(aMapView)
 	{
 	
@@ -410,7 +410,7 @@ void CUserPositionLayer::DrawRoundMark(CWindowGc &aGc, const TPoint &aScreenPos)
 
 // CTileBorderAndNumbersLayer
 
-CTileBorderAndXYZLayer::CTileBorderAndXYZLayer(CS60MapsAppView* aMapView) :
+CTileBorderAndXYZLayer::CTileBorderAndXYZLayer(CMapControl* aMapView) :
 		CMapLayerBase(aMapView)
 	{
 	}
@@ -474,7 +474,7 @@ void CTileBorderAndXYZLayer::DrawTile(CWindowGc &aGc, const TTile &aTile)
 
 // CScaleBarLayer
 
-CScaleBarLayer::CScaleBarLayer(CS60MapsAppView* aMapView):
+CScaleBarLayer::CScaleBarLayer(CMapControl* aMapView):
 		CMapLayerBase(aMapView)
 	{
 	}
@@ -487,7 +487,7 @@ CScaleBarLayer::~CScaleBarLayer()
 	delete iMetersUnit;
 	}
 
-CScaleBarLayer* CScaleBarLayer::NewLC(CS60MapsAppView* aMapView)
+CScaleBarLayer* CScaleBarLayer::NewLC(CMapControl* aMapView)
 	{
 	CScaleBarLayer* self = new (ELeave) CScaleBarLayer(aMapView);
 	CleanupStack::PushL(self);
@@ -495,7 +495,7 @@ CScaleBarLayer* CScaleBarLayer::NewLC(CS60MapsAppView* aMapView)
 	return self;
 	}
 
-CScaleBarLayer* CScaleBarLayer::NewL(CS60MapsAppView* aMapView)
+CScaleBarLayer* CScaleBarLayer::NewL(CMapControl* aMapView)
 	{
 	CScaleBarLayer* self = CScaleBarLayer::NewLC(aMapView);
 	CleanupStack::Pop(); // self;
@@ -638,7 +638,7 @@ TInt CScaleBarLayer::GetOptimalLength(TInt &optimalLength, TReal32 &optimalDista
 
 // CLandmarksLayer
 
-CLandmarksLayer::CLandmarksLayer(CS60MapsAppView* aMapView, CPosLandmarkDatabase* aLmDb):
+CLandmarksLayer::CLandmarksLayer(CMapControl* aMapView, CPosLandmarkDatabase* aLmDb):
 		CMapLayerBase(aMapView),
 		iLandmarksDb(aLmDb)
 	{
@@ -652,7 +652,7 @@ CLandmarksLayer::~CLandmarksLayer()
 	delete iIconBitmap;
 	}
 
-CLandmarksLayer* CLandmarksLayer::NewLC(CS60MapsAppView* aMapView, CPosLandmarkDatabase* aLmDb)
+CLandmarksLayer* CLandmarksLayer::NewLC(CMapControl* aMapView, CPosLandmarkDatabase* aLmDb)
 	{
 	CLandmarksLayer* self = new (ELeave) CLandmarksLayer(aMapView, aLmDb);
 	CleanupStack::PushL(self);
@@ -660,7 +660,7 @@ CLandmarksLayer* CLandmarksLayer::NewLC(CS60MapsAppView* aMapView, CPosLandmarkD
 	return self;
 	}
 
-CLandmarksLayer* CLandmarksLayer::NewL(CS60MapsAppView* aMapView, CPosLandmarkDatabase* aLmDb)
+CLandmarksLayer* CLandmarksLayer::NewL(CMapControl* aMapView, CPosLandmarkDatabase* aLmDb)
 	{
 	CLandmarksLayer* self = CLandmarksLayer::NewLC(aMapView, aLmDb);
 	CleanupStack::Pop(); // self;
@@ -835,7 +835,7 @@ void CLandmarksLayer::DrawLandmark(CWindowGc &aGc,
 
 // CLandmarksLayer
 
-CCrosshairLayer::CCrosshairLayer(CS60MapsAppView* aMapView) :
+CCrosshairLayer::CCrosshairLayer(CMapControl* aMapView) :
 		CMapLayerBase(aMapView)
 	  {	
 	  }

@@ -8,7 +8,7 @@
 #ifndef MAP_H_
 #define MAP_H_
 
-//#include "S60MapsAppView.h"
+//#include "MapControl.h"
 #include <w32std.h>
 #include <lbsposition.h>
 #include <f32file.h>
@@ -31,7 +31,7 @@ const TReal64 KMaxLongitudeMapBound = 180;
 
 
 // Forward declaration
-class CS60MapsAppView;
+class CMapControl;
 
 
 // Classes
@@ -39,9 +39,9 @@ class CS60MapsAppView;
 class CMapLayerBase : public CBase
 	{
 protected:
-	CS60MapsAppView* iMapView;
+	CMapControl* iMapView;
 public:
-	CMapLayerBase(/*const*/ CS60MapsAppView* aMapView);
+	CMapLayerBase(/*const*/ CMapControl* aMapView);
 	virtual void Draw(CWindowGc &aGc) = 0;
 	};
 
@@ -52,12 +52,12 @@ class CMapLayerDebugInfo : public CMapLayerBase
 	{
 	// Constructor/destructor
 private:
-	CMapLayerDebugInfo(/*const*/ CS60MapsAppView* aMapView);
+	CMapLayerDebugInfo(/*const*/ CMapControl* aMapView);
 	void ConstructL();
 	
 public:
-	static CMapLayerDebugInfo* NewL(CS60MapsAppView* aMapView);
-	static CMapLayerDebugInfo* NewLC(CS60MapsAppView* aMapView);
+	static CMapLayerDebugInfo* NewL(CMapControl* aMapView);
+	static CMapLayerDebugInfo* NewLC(CMapControl* aMapView);
 	~CMapLayerDebugInfo();
 	
 	// From CMapLayerBase
@@ -90,11 +90,11 @@ class CTiledMapLayer : public CMapLayerBase, public MTileBitmapManagerObserver
 // Base methods
 public:
 	~CTiledMapLayer();
-	static CTiledMapLayer* NewL(CS60MapsAppView* aMapView, TTileProvider* aTileProvider);
-	static CTiledMapLayer* NewLC(CS60MapsAppView* aMapView, TTileProvider* aTileProvider);
+	static CTiledMapLayer* NewL(CMapControl* aMapView, TTileProvider* aTileProvider);
+	static CTiledMapLayer* NewLC(CMapControl* aMapView, TTileProvider* aTileProvider);
 
 private:
-	CTiledMapLayer(CS60MapsAppView* aMapView);
+	CTiledMapLayer(CMapControl* aMapView);
 	void ConstructL(TTileProvider* aTileProvider);
 	
 // From CMapLayerBase
@@ -122,7 +122,7 @@ class CUserPositionLayer : public CMapLayerBase
 	{
 // From CMapLayerBase
 public:
-	CUserPositionLayer(/*const*/ CS60MapsAppView* aMapView);
+	CUserPositionLayer(/*const*/ CMapControl* aMapView);
 	void Draw(CWindowGc &aGc);
 	
 // Own methods
@@ -140,7 +140,7 @@ class CTileBorderAndXYZLayer : public CMapLayerBase
 	{
 // From CMapLayerBase
 public:
-	CTileBorderAndXYZLayer(CS60MapsAppView* aMapView);
+	CTileBorderAndXYZLayer(CMapControl* aMapView);
 	void Draw(CWindowGc &aGc);
 
 // Custom properties and methods
@@ -157,11 +157,11 @@ class CScaleBarLayer : public CMapLayerBase
 	// Constructor / destructor
 public:
 	~CScaleBarLayer();
-	static CScaleBarLayer* NewL(CS60MapsAppView* aMapView);
-	static CScaleBarLayer* NewLC(CS60MapsAppView* aMapView);
+	static CScaleBarLayer* NewL(CMapControl* aMapView);
+	static CScaleBarLayer* NewLC(CMapControl* aMapView);
 
 private:
-	CScaleBarLayer(CS60MapsAppView* aMapView);
+	CScaleBarLayer(CMapControl* aMapView);
 	void ConstructL();
 	
 	// From CMapLayerBase
@@ -182,11 +182,11 @@ class CLandmarksLayer : public CMapLayerBase
 	// Constructor / destructor
 public:
 	~CLandmarksLayer();
-	static CLandmarksLayer* NewL(CS60MapsAppView* aMapView, CPosLandmarkDatabase* aLmDb);
-	static CLandmarksLayer* NewLC(CS60MapsAppView* aMapView, CPosLandmarkDatabase* aLmDb);
+	static CLandmarksLayer* NewL(CMapControl* aMapView, CPosLandmarkDatabase* aLmDb);
+	static CLandmarksLayer* NewLC(CMapControl* aMapView, CPosLandmarkDatabase* aLmDb);
 
 private:
-	CLandmarksLayer(CS60MapsAppView* aMapView, CPosLandmarkDatabase* aLmDb);
+	CLandmarksLayer(CMapControl* aMapView, CPosLandmarkDatabase* aLmDb);
 	void ConstructL();
 	
 	// From CMapLayerBase
@@ -212,7 +212,7 @@ class CCrosshairLayer : public CMapLayerBase
 	{
 	// Constructor / Destructor
 public:
-	CCrosshairLayer(CS60MapsAppView* aMapView);
+	CCrosshairLayer(CMapControl* aMapView);
 	
 	// From CMapLayerBase
 public:

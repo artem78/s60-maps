@@ -27,7 +27,7 @@
 #include <epos_cposlandmarkdatabase.h> // For CPosLandmarkDatabase
 
 // FORWARD DECLARATIONS
-class CS60MapsAppView;
+class CMapControl;
 
 // CLASS DECLARATION
 /**
@@ -94,7 +94,7 @@ private:
 	 * The application view
 	 * Owned by CS60MapsAppUi
 	 */
-	CS60MapsAppView* iAppView;
+	CMapControl* iAppView;
 
 public:
 	TStreamId StoreL(CStreamStore& aStore) const;
