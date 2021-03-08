@@ -11,7 +11,7 @@
 #define __S60MAPSAPPUI_h__
 
 // INCLUDES
-#include <aknappui.h>
+#include <aknviewappui.h>
 #include <f32file.h>
 #include "Positioning.h"
 
@@ -27,7 +27,7 @@
 #include <epos_cposlandmarkdatabase.h> // For CPosLandmarkDatabase
 
 // FORWARD DECLARATIONS
-class CMapControl;
+class CMapView;
 
 // CLASS DECLARATION
 /**
@@ -35,7 +35,7 @@ class CMapControl;
  * Interacts with the user through the UI and request message processing
  * from the handler class
  */
-class CS60MapsAppUi : public CAknAppUi, public MAsyncFileManObserver,
+class CS60MapsAppUi : public CAknViewAppUi, public MAsyncFileManObserver,
 		public MPositionListener, public MRemConCoreApiTargetObserver,
 		public MProgressDialogCallback
 	{
@@ -64,12 +64,12 @@ public:
 private:
 	// Functions from base classes
 
-	/**
-	 * From CEikAppUi, HandleCommandL.
-	 * Takes care of command handling.
-	 * @param aCommand Command to be handled.
-	 */
-	void HandleCommandL(TInt aCommand);
+//	/**
+//	 * From CEikAppUi, HandleCommandL.
+//	 * Takes care of command handling.
+//	 * @param aCommand Command to be handled.
+//	 */
+//	void HandleCommandL(TInt aCommand);
 
 	/**
 	 *  HandleStatusPaneSizeChange.
@@ -85,7 +85,7 @@ private:
 	 */
 	CArrayFix<TCoeHelpContext>* HelpContextL() const;
 	
-	void DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane);
+	//void PrepareToExit();
 
 private:
 	// Data
@@ -94,7 +94,7 @@ private:
 	 * The application view
 	 * Owned by CS60MapsAppUi
 	 */
-	CMapControl* iAppView;
+	CMapView* iAppView;
 
 public:
 	TStreamId StoreL(CStreamStore& aStore) const;
@@ -127,6 +127,20 @@ public:
 	 void DialogDismissedL(TInt aButtonId);
 	
 	// Custom properties and methods
+public:
+	inline const TFixedArray<TTileProvider*, /*5*/ 4>& AvailableTileProviders()
+			{ return iAvailableTileProviders;  };
+	inline TTileProvider* /*Active*/TileProvider()
+			{ return iActiveTileProvider; };
+	void /*SetActiveTileProvider*/ SetTileProvider(TTileProvider* aTileProvider)
+			{ iActiveTileProvider = aTileProvider; };
+	
+	void ClearTilesCacheL();
+	void SaveAndExitL();
+	void SendAppToBackground(); // Hide application window
+	CPosLandmark* GetNearestLandmarkL(const TCoordinate &aCoord, TBool aPartial = ETrue,
+			TReal32 aMaxDistance = KNaN); // The client takes ownership of the returned landmark object. Returns NULL if nothing found.
+
 private:
 	CSettings* iSettings;
 	CAsyncFileMan* iFileMan;
@@ -145,37 +159,23 @@ private:
 	CPosLandmarkDatabase* iLandmarksDb;
 	CPosLmPartialReadParameters* iLandmarkPartialParameters;
 	
-	void ClearTilesCacheL();
 	//static TInt UpdateTilesClearingProgress(TAny* aSelfPtr);
-	void SendAppToBackground(); // Hide application window
-	CPosLandmark* GetNearestLandmarkL(const TCoordinate &aCoord, TBool aPartial = ETrue,
-			TReal32 aMaxDistance = KNaN); // The client takes ownership of the returned landmark object. Returns NULL if nothing found.
-	CPosLandmark* GetNearestLandmarkAroundTheCenterL(TBool aPartial = ETrue); // The client takes ownership of the returned landmark object. Returns NULL if nothing found.
 	
-	// Command handlers
-	void HandleExitL();
-	void HandleFindMeL();
-	void HandleTileProviderChangeL(TInt aTileProviderIdx);
-	void HandleTilesCacheStatsL();
-	void HandleTilesCacheResetL();
-#ifdef _HELP_AVAILABLE_
-	void HandleHelpL();
-#endif
-	void HandleAboutL();
-	void HandleToggleLandmarksVisibility();
-	void HandleCreateLandmarkL();
-	void HandleRenameLandmarkL();
-	void HandleCreateOrRenameLandmarkL();
-	void HandleDeleteLandmarkL();
-	void HandleGotoLandmarkL();
-	void HandleGotoCoordinateL();
+/*	// Command handlers */
+
 	
 public:
-	inline const CSettings* Settings()
+	inline /*const*/ CSettings* Settings()
 			{ return iSettings; }
 	
 	inline CPosLandmarkDatabase* LandmarkDb()
 			{ return iLandmarksDb; }
+	
+//	inline CPositionRequestor Positionrequestor()
+//			{ return iPosRequestor; }
+	
+	inline TBool IsPositioningAvailable()
+			{ return (TBool) iPosRequestor; }
 	
 	};
 

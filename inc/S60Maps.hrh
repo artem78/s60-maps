@@ -45,4 +45,10 @@ enum TS60MapsControlIds
 	ECacheClearingWaitDialog = 2
 	};
 
+// View IDs
+enum TS60MapsViewUids
+	{
+	EMapViewId = 1 // Main view
+	};
+
 #endif // __S60MAPS_HRH__

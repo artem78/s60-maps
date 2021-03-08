@@ -97,3 +97,5 @@ START BITMAP icons.mbm
 END
 SOURCEPATH ..\src
 SOURCE Utils.cpp
+SOURCEPATH ..\src
+SOURCE MapView.cpp
