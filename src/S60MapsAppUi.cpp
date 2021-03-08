@@ -14,7 +14,6 @@
 #include <stringloader.h>
 #include <s32file.h>
 #include <hlplch.h>
-#include <apgwgnam.h>
 
 #include <S60Maps_0xED689B88.rsg>
 
@@ -25,9 +24,8 @@
 #include "S60Maps.pan"
 #include "S60MapsApplication.h"
 #include "S60MapsAppUi.h"
-#include "MapControl.h"
+#include "MapView.h"
 #include "Defs.h"
-#include "GitInfo.h"
 #include "FileUtils.h"
 
 
@@ -106,14 +104,11 @@ void CS60MapsAppUi::ConstructL()
 	
 	
 	iFileMan = CFileMan::NewL(CCoeEnv::Static()->FsSession(), this);
-
-	// Set initial map position
-	TCoordinate position = TCoordinate(iSettings->GetLat(), iSettings->GetLon());
-	TZoom zoom = iSettings->GetZoom();	
 	
 	// Create view object
-	iAppView = CMapControl::NewL(ClientRect(), position, zoom, iActiveTileProvider);
-	AddToStackL(iAppView);
+	iAppView = CMapView::NewL();
+	AddViewL(iAppView);
+	SetDefaultViewL(*iAppView);
 	
 	// Position requestor
 	_LIT(KPosRequestorName, "S60 Maps"); // ToDo: Move to global const
@@ -130,12 +125,8 @@ void CS60MapsAppUi::ConstructL()
 	iCoreTarget = CRemConCoreApiTarget::NewL(*iInterfaceSelector, *this);
 	iInterfaceSelector->OpenTargetL();
 	
-	// Make fullscreen
-	SetFullScreenApp(ETrue); // Seems no effect
-	StatusPane()->MakeVisible(EFalse); // ToDo: Why if call it before creating
-									   // app view panic KERN-EXEC 3 happens?
-	//Cba()->MakeVisible(EFalse); // Softkeys not work after this
-	iAppView->SetRect(ApplicationRect()); // Need to resize the view to fullscreen
+	/*// Make fullscreen
+	//SetFullScreenApp(ETrue);*/
 	}
 // -----------------------------------------------------------------------------
 // CS60MapsAppUi::CS60MapsAppUi()
@@ -162,14 +153,6 @@ CS60MapsAppUi::~CS60MapsAppUi()
 	
 	delete iPosRequestor;
 	
-	if (iAppView)
-		{
-		//if (IsControlOnStack(iAppView))
-			RemoveFromStack(iAppView);
-		delete iAppView;
-		iAppView = NULL;
-		}
-	
 	delete iFileMan;
 	
 	//delete iAvailableTileProviders;
@@ -179,55 +162,6 @@ CS60MapsAppUi::~CS60MapsAppUi()
 	}
 
 // -----------------------------------------------------------------------------
-// CS60MapsAppUi::HandleCommandL()
-// Takes care of command handling.
-// -----------------------------------------------------------------------------
-//
-void CS60MapsAppUi::HandleCommandL(TInt aCommand)
-	{
-	switch (aCommand)
-		{
-		case EEikCmdExit:
-		case EAknSoftkeyExit:
-			HandleExitL();
-			break;
-			
-		case EFindMe:
-			HandleFindMeL();
-			break;
-			
-		case ESetOsmStandardTileProvider:
-		case ESetOsmCyclesTileProvider:
-		case ESetOsmHumanitarianTileProvider:
-		case ESetOsmTransportTileProvider:
-		//case ESetOpenTopoMapTileProvider:
-			HandleTileProviderChangeL(aCommand - ESetTileProviderBase);
-			break;	
-			
-		case ETilesCacheStats:
-			HandleTilesCacheStatsL();
-			break;
-			
-		case EResetTilesCache:
-			HandleTilesCacheResetL();
-			break;
-			
-#ifdef _HELP_AVAILABLE_
-		case EHelp:
-			HandleHelpL();
-			break;
-#endif
-			
-		case EAbout:
-			HandleAboutL();
-			break;
-			
-		default:
-			Panic(ES60MapsUi);
-			break;
-		}
-	}
-// -----------------------------------------------------------------------------
 //  Called by the framework when the application status pane
 //  size is changed.  Passes the new client rectangle to the
 //  AppView
@@ -236,7 +170,8 @@ void CS60MapsAppUi::HandleCommandL(TInt aCommand)
 void CS60MapsAppUi::HandleStatusPaneSizeChange()
 	{
 	//iAppView->SetRect(ClientRect());
-	iAppView->SetRect(ApplicationRect());
+	if (iAppView && iAppView->MapControl())
+		iAppView->MapControl()->SetRect(/*iAvkonAppUi->*/ApplicationRect());
 	}
 
 CArrayFix<TCoeHelpContext>* CS60MapsAppUi::HelpContextL() const
@@ -262,35 +197,6 @@ CArrayFix<TCoeHelpContext>* CS60MapsAppUi::HelpContextL() const
 #endif
 	}
 
-void CS60MapsAppUi::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
-	{
-	if (aMenuID == R_SUBMENU_TILE_PROVIDERS)
-		{
-		// Fill list of available tiles services in menu
-		
-		for (TInt idx = 0; idx < iAvailableTileProviders.Count(); idx++)
-			{
-			TInt commandId = ESetTileProviderBase + idx;
-			
-			CEikMenuPaneItem::SData menuItem;
-			menuItem.iCommandId = commandId;
-			menuItem.iCascadeId = 0;
-			//menuItem.iFlags = ???
-			menuItem.iText.Copy(iAvailableTileProviders[idx]->iTitle);
-			//menuItem.iExtraText = ???
-			aMenuPane->AddMenuItemL(menuItem);
-			aMenuPane->SetItemButtonState(commandId,
-					/*commandId == selectedTileProviderCommId*/
-					iAvailableTileProviders[idx] == iActiveTileProvider?
-							EEikMenuItemSymbolOn : EEikMenuItemSymbolIndeterminate);				
-			}
-		}
-	/*else
-		{
-		AppUi()->DynInitMenuPaneL(aMenuID, aMenuPane);
-		}*/
-	}
-
 TStreamId CS60MapsAppUi::StoreL(CStreamStore& aStore) const
 	{
 	RStoreWriteStream stream;
@@ -313,10 +219,10 @@ void CS60MapsAppUi::RestoreL(const CStreamStore& aStore,
 void CS60MapsAppUi::ExternalizeL(RWriteStream& aStream) const
 	{
 	// Update settings
-	TCoordinate coord = iAppView->GetCenterCoordinate();
+	TCoordinate coord = iAppView->MapControl()->GetCenterCoordinate();
 	iSettings->SetLat(coord.Latitude());
 	iSettings->SetLon(coord.Longitude());
-	iSettings->SetZoom(iAppView->GetZoom());
+	iSettings->SetZoom(iAppView->MapControl()->GetZoom());
 	iSettings->SetTileProviderId(iActiveTileProvider->iId);	
 	
 	// And save
@@ -326,7 +232,7 @@ void CS60MapsAppUi::ExternalizeL(RWriteStream& aStream) const
 void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 	{
 	TRAP_IGNORE(aStream >> *iSettings);
-	iAppView->Move(iSettings->GetLat(), iSettings->GetLon(), iSettings->GetZoom());
+	iAppView->MapControl()->Move(iSettings->GetLat(), iSettings->GetLon(), iSettings->GetZoom());
 	
 	TTileProviderId tileProviderId(iSettings->GetTileProviderId());
 	TBool isFound = EFalse;
@@ -335,7 +241,7 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 		if (tileProviderId == iAvailableTileProviders[idx]->iId)
 			{
 			iActiveTileProvider = iAvailableTileProviders[idx];
-			iAppView->SetTileProviderL(iAvailableTileProviders[idx]);
+			iAppView->MapControl()->SetTileProviderL(iAvailableTileProviders[idx]);
 			isFound = ETrue;
 			break;
 			}
@@ -344,7 +250,7 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 	if (!isFound)
 		{ // Set default
 		iActiveTileProvider = iAvailableTileProviders[0];
-		iAppView->SetTileProviderL(iAvailableTileProviders[0]);
+		iAppView->MapControl()->SetTileProviderL(iAvailableTileProviders[0]);
 		}
 	}
 
@@ -398,7 +304,7 @@ void CS60MapsAppUi::OnPositionUpdated()
 		coord.SetCourse(course.Heading());
 		}
 	coord.SetHorAccuracy(pos.HorizontalAccuracy());
-	iAppView->SetUserPosition(coord);
+	iAppView->MapControl()->SetUserPosition(coord);
 	}
 
 void CS60MapsAppUi::OnPositionPartialUpdated()
@@ -408,12 +314,12 @@ void CS60MapsAppUi::OnPositionPartialUpdated()
 
 void CS60MapsAppUi::OnPositionRestored()
 	{
-	iAppView->ShowUserPosition();
+	iAppView->MapControl()->ShowUserPosition();
 	}
 
 void CS60MapsAppUi::OnPositionLost()
 	{
-	iAppView->HideUserPosition();
+	iAppView->MapControl()->HideUserPosition();
 	}
 
 void CS60MapsAppUi::OnPositionError(TInt /*aErrCode*/)
@@ -433,7 +339,7 @@ void CS60MapsAppUi::MrccatoCommand(TRemConCoreApiOperationId aOperationId,
 			case ERemConCoreApiVolumeUp:
 				{
 				//DEBUG(_L("VolumeUp pressed\n"));
-				iAppView->ZoomIn();
+				iAppView->MapControl()->ZoomIn();
 				
 				/*iCoreTarget->VolumeUpResponse(status, KErrNone);
 				User::WaitForRequest(status);*/
@@ -443,7 +349,7 @@ void CS60MapsAppUi::MrccatoCommand(TRemConCoreApiOperationId aOperationId,
 			case ERemConCoreApiVolumeDown:
 				{
 				//DEBUG(_L("VolumeDown pressed\n"));
-				iAppView->ZoomOut();
+				iAppView->MapControl()->ZoomOut();
 				
 				/*iCoreTarget->VolumeDownResponse(status, KErrNone);
 				User::WaitForRequest(status);*/
@@ -456,187 +362,18 @@ void CS60MapsAppUi::MrccatoCommand(TRemConCoreApiOperationId aOperationId,
 		}
 	}
 
-void CS60MapsAppUi::HandleExitL()
+/*void CS60MapsAppUi::PrepareToExit()
 	{
-	RWsSession& session = CEikonEnv::Static()->WsSession();
-	TInt WgId = session.GetFocusWindowGroup();
-	CApaWindowGroupName* Wgn = CApaWindowGroupName::NewL(session, WgId);
-	TUid forgroundApp = Wgn->AppUid();
-	delete Wgn;
-	const TUid KAppUid = {_UID3};
-	//If application is in background Symbian OS will show its own quit confirmation.
-	if(forgroundApp == KAppUid)
-		{
-		CAknQueryDialog* dlg = CAknQueryDialog::NewL();
-		dlg->PrepareLC(R_CONFIRM_DIALOG);
-		/*HBufC* title = iEikonEnv->AllocReadResourceLC(R_CONFIRM_EXIT_DIALOG_TITLE);
-		dlg->SetHeaderTextL(*title);
-		CleanupStack::PopAndDestroy(); //title*/
-		HBufC* msg = iEikonEnv->AllocReadResourceLC(R_CONFIRM_EXIT_DIALOG_TEXT);
-		dlg->SetPromptL(*msg);
-		CleanupStack::PopAndDestroy(); //msg
-		TInt res = dlg->RunLD();
-		if (res != EAknSoftkeyYes)
-			{
-			return;
-			}
-		}
+	// Save all changes before exit
+	TRAP_IGNORE(SaveL());
+	
+	CAknAppUi::PrepareToExit();
+	}*/
+
+void CS60MapsAppUi::SaveAndExitL()
+	{
 	SaveL();
 	Exit();
 	}
-
-void CS60MapsAppUi::HandleFindMeL()
-	{
-	iAppView->SetFollowUser(ETrue);
-	}
-
-void CS60MapsAppUi::HandleTileProviderChangeL(TInt aTileProviderIdx)
-	{
-	iActiveTileProvider = iAvailableTileProviders[aTileProviderIdx];
-	static_cast<CMapControl*>(iAppView)->SetTileProviderL(iActiveTileProvider);
-	}
-
-void CS60MapsAppUi::HandleTilesCacheStatsL()
-	{
-	CS60MapsApplication* app = static_cast<CS60MapsApplication *>(Application());
-	RFs fs = iEikonEnv->FsSession();
-	
-	// Prepare information text
-	RBuf msg;
-	msg.CreateL(2048);
-	msg.CleanupClosePushL();
-	
-	TInt filesTotal = 0, bytesTotal = 0;
-	
-	TFileName baseCacheDir;
-	app->CacheDir(baseCacheDir);
-	
-	CDir* cacheSubDirs = NULL;
-	TInt r = fs.GetDir(baseCacheDir, KEntryAttDir, ESortByName, cacheSubDirs);
-	if (r == KErrNone && cacheSubDirs != NULL)
-		{
-		for (TInt i = 0; i < cacheSubDirs->Count(); i++)
-			{
-			const TEntry &cacheSubDir = (*cacheSubDirs)[i];
-			
-			// Seems that KEntryAttDir doesn`t work
-			if (!cacheSubDir.IsDir())
-				continue;
-			
-			TDirStats dirStats;
-			RBuf subDirFullPath;
-			subDirFullPath.Create(KMaxFileName);
-			subDirFullPath.Copy(baseCacheDir);
-			TParsePtr parser(subDirFullPath);
-			parser.AddDir(cacheSubDir.iName);
-			r = FileUtils::DirectoryStats(fs, parser.FullName(), dirStats);
-			subDirFullPath.Close();
-			if (r != KErrNone)
-				{ // Something went wrong
-				dirStats.iFilesCount = 0;
-				dirStats.iSize = 0;
-				}
-			
-			filesTotal += dirStats.iFilesCount;
-			bytesTotal += dirStats.iSize;
-			
-			TBuf<16> sizeBuff;
-			FileUtils::FileSizeToReadableString(dirStats.iSize, sizeBuff);
-			
-			TPtrC itemName(cacheSubDir.iName);
-			for (TInt providerIdx = 0; providerIdx < iAvailableTileProviders.Count(); providerIdx++)
-				{
-				if (iAvailableTileProviders[providerIdx]->iId == cacheSubDir.iName)
-					{
-					itemName.Set(iAvailableTileProviders[providerIdx]->iTitle);
-					break;
-					}
-				}
-			
-			TBuf<64> buf;
-			iEikonEnv->Format128(buf, R_STATS_LINE, &itemName, dirStats.iFilesCount, &sizeBuff);
-			msg.Append(buf);
-			}
-		
-		delete cacheSubDirs;
-		}
-	
-	msg.Append(_L("------------\n"));
-	TBuf<16> totalSizeBuff;
-	FileUtils::FileSizeToReadableString(bytesTotal, totalSizeBuff);
-	TBuf<64> buf;
-	iEikonEnv->Format128(buf, R_STATS_TOTAL, filesTotal, &totalSizeBuff);
-	msg.Append(buf);
-	
-	
-	
-	// Show information
-	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
-	dlg->PrepareLC(R_QUERY_DIALOG);
-	HBufC* title = iEikonEnv->AllocReadResourceLC(R_MAP_CACHE_STATS_DIALOG_TITLE);
-	dlg->QueryHeading()->SetTextL(*title);
-	CleanupStack::PopAndDestroy(title);
-	dlg->SetMessageTextL(msg);
-	//CleanupStack::PopAndDestroy(&msg);
-	dlg->RunLD();
-	
-	CleanupStack::PopAndDestroy(&msg);
-	//CleanupStack::PopAndDestroy(/*3*/2, &msg);
-	}
-
-void CS60MapsAppUi::HandleTilesCacheResetL()
-	{
-	CAknQueryDialog* dlg = CAknQueryDialog::NewL();
-	dlg->PrepareLC(R_CONFIRM_DIALOG);
-	/*HBufC* title = iEikonEnv->AllocReadResourceLC(R_CONFIRM_RESET_TILES_CACHE_DIALOG_TITLE);
-	dlg->SetHeaderTextL(*title);
-	CleanupStack::PopAndDestroy(); //title*/
-	HBufC* msg = iEikonEnv->AllocReadResourceLC(R_CONFIRM_RESET_TILES_CACHE_DIALOG_TEXT);
-	dlg->SetPromptL(*msg);
-	CleanupStack::PopAndDestroy(); //msg
-	TInt res = dlg->RunLD();
-	if (res == EAknSoftkeyYes)
-		{
-		ClearTilesCacheL();
-		}
-	}
-
-#ifdef _HELP_AVAILABLE_
-void CS60MapsAppUi::HandleHelpL()
-	{
-	CArrayFix<TCoeHelpContext>* buf = CCoeAppUi::AppHelpContextL();
-	HlpLauncher::LaunchHelpApplicationL(iEikonEnv->WsSession(), buf);
-	}
-#endif
-
-void CS60MapsAppUi::HandleAboutL()
-	{
-	_LIT(KAuthor,	"artem78 (megabyte1024@ya.ru)");
-	_LIT(KWebSite,	"https://github.com/artem78/s60-maps");
-	_LIT(KThanksTo,	"baranovskiykonstantin, Symbian9, Men770, fizolas");
-	
-	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
-	dlg->PrepareLC(R_QUERY_DIALOG);
-	HBufC* title = iEikonEnv->AllocReadResourceLC(R_ABOUT_DIALOG_TITLE);
-	dlg->QueryHeading()->SetTextL(*title);
-	CleanupStack::PopAndDestroy(); //title
-	
-	RBuf msg;
-	msg.CreateL(512);
-	msg.CleanupClosePushL();
-	TBuf<32> version;
-	version.Copy(KProgramVersion.Name());
-#ifdef _DEBUG
-	_LIT(KDebug, "DEBUG");
-	version.Append(' ');
-	version.Append(KDebug);
-#endif
-	iEikonEnv->Format128/*256*/(msg, R_ABOUT_DIALOG_TEXT, &version,
-			&KGITBranch, &KGITCommit, &KAuthor, &KWebSite, &KThanksTo);
-	dlg->SetMessageTextL(msg);
-	CleanupStack::PopAndDestroy(&msg);
-	dlg->RunLD();
-	}
-
 
 // End of File

@@ -50,9 +50,19 @@ RESOURCE TBUF r_default_document_name
 //
 RESOURCE EIK_APP_INFO
 	{
+	/*menubar = r_menubar;
+	cba = R_AVKON_SOFTKEYS_OPTIONS_EXIT;*/
+
+	// no implementation required
+	}
+
+
+// Map view
+RESOURCE AVKON_VIEW r_map_view
+ {
 	menubar = r_menubar;
 	cba = R_AVKON_SOFTKEYS_OPTIONS_EXIT;
-	}
+ }
 
 
 // -----------------------------------------------------------------------------

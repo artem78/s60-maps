@@ -31,4 +31,10 @@ enum TS60MapsIds
 	//ESetOpenTopoMapTileProvider		= /*ESetTileProviderBase + 4*/ 0x6500 + 4
 	};
 
+// View IDs
+enum TS60MapsViewUids
+	{
+	EMapViewId = 1 // Main view
+	};
+
 #endif // __S60MAPS_HRH__

@@ -11,7 +11,7 @@
 #define __S60MAPSAPPUI_h__
 
 // INCLUDES
-#include <aknappui.h>
+#include <aknviewappui.h>
 #include <f32file.h>
 #include "Positioning.h"
 
@@ -24,7 +24,7 @@
 #include "Settings.h"
 
 // FORWARD DECLARATIONS
-class CMapControl;
+class CMapView;
 
 // CLASS DECLARATION
 /**
@@ -32,7 +32,7 @@ class CMapControl;
  * Interacts with the user through the UI and request message processing
  * from the handler class
  */
-class CS60MapsAppUi : public CAknAppUi, public MFileManObserver,
+class CS60MapsAppUi : public CAknViewAppUi, public MFileManObserver,
 		public MPositionListener, public MRemConCoreApiTargetObserver
 	{
 public:
@@ -61,13 +61,6 @@ private:
 	// Functions from base classes
 
 	/**
-	 * From CEikAppUi, HandleCommandL.
-	 * Takes care of command handling.
-	 * @param aCommand Command to be handled.
-	 */
-	void HandleCommandL(TInt aCommand);
-
-	/**
 	 *  HandleStatusPaneSizeChange.
 	 *  Called by the framework when the application status pane
 	 *  size is changed.
@@ -81,7 +74,7 @@ private:
 	 */
 	CArrayFix<TCoeHelpContext>* HelpContextL() const;
 	
-	void DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane);
+	//void PrepareToExit();
 
 private:
 	// Data
@@ -90,7 +83,7 @@ private:
 	 * The application view
 	 * Owned by CS60MapsAppUi
 	 */
-	CMapControl* iAppView;
+	CMapView* iAppView;
 
 public:
 	TStreamId StoreL(CStreamStore& aStore) const;
@@ -118,6 +111,19 @@ public:
 			TRemConCoreApiButtonAction aButtonAct);
 	
 	// Custom properties and methods
+public:
+	inline const TFixedArray<TTileProvider*, /*5*/ 4>& AvailableTileProviders()
+			{ return iAvailableTileProviders;  };
+	inline TTileProvider* /*Active*/TileProvider()
+			{ return iActiveTileProvider; };
+	void /*SetActiveTileProvider*/ SetTileProvider(TTileProvider* aTileProvider)
+			{ iActiveTileProvider = aTileProvider; }; 
+	inline CSettings* Settings()
+			{ return iSettings; };
+	
+	void ClearTilesCacheL();
+	void SaveAndExitL();
+
 private:
 	CSettings* iSettings;
 	CFileMan* iFileMan;
@@ -129,19 +135,6 @@ private:
 	TFixedArray<TTileProvider*, /*5*/ 4> iAvailableTileProviders;
 	//TBuf<64> iTileProviderId
 	TTileProvider* iActiveTileProvider;
-	
-	void ClearTilesCacheL();
-	
-	// Command handlers
-	void HandleExitL();
-	void HandleFindMeL();
-	void HandleTileProviderChangeL(TInt aTileProviderIdx);
-	void HandleTilesCacheStatsL();
-	void HandleTilesCacheResetL();
-#ifdef _HELP_AVAILABLE_
-	void HandleHelpL();
-#endif
-	void HandleAboutL();
 	
 	};
 

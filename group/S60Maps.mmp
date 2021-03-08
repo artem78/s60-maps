@@ -89,3 +89,5 @@ LANG 01 16 57 93
 
 SOURCEPATH ..\modules\HTTPClient
 SOURCE HTTPClient.cpp
+SOURCEPATH ..\src
+SOURCE MapView.cpp
