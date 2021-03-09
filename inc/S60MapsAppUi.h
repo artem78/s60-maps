@@ -94,7 +94,7 @@ private:
 	 * The application view
 	 * Owned by CS60MapsAppUi
 	 */
-	CMapView* iAppView;
+	CMapView* iMapView;
 
 public:
 	TStreamId StoreL(CStreamStore& aStore) const;
