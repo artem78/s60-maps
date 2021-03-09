@@ -106,9 +106,9 @@ void CS60MapsAppUi::ConstructL()
 	iFileMan = CFileMan::NewL(CCoeEnv::Static()->FsSession(), this);
 	
 	// Create view object
-	iAppView = CMapView::NewL();
-	AddViewL(iAppView);
-	SetDefaultViewL(*iAppView);
+	iMapView = CMapView::NewL();
+	AddViewL(iMapView);
+	SetDefaultViewL(*iMapView);
 	
 	// Position requestor
 	_LIT(KPosRequestorName, "S60 Maps"); // ToDo: Move to global const
@@ -169,9 +169,9 @@ CS60MapsAppUi::~CS60MapsAppUi()
 //
 void CS60MapsAppUi::HandleStatusPaneSizeChange()
 	{
-	//iAppView->SetRect(ClientRect());
-	if (iAppView && iAppView->MapControl())
-		iAppView->MapControl()->SetRect(/*iAvkonAppUi->*/ApplicationRect());
+	//iMapView->SetRect(ClientRect());
+	if (iMapView && iMapView->MapControl())
+		iMapView->MapControl()->SetRect(/*iAvkonAppUi->*/ApplicationRect());
 	}
 
 CArrayFix<TCoeHelpContext>* CS60MapsAppUi::HelpContextL() const
@@ -219,10 +219,10 @@ void CS60MapsAppUi::RestoreL(const CStreamStore& aStore,
 void CS60MapsAppUi::ExternalizeL(RWriteStream& aStream) const
 	{
 	// Update settings
-	TCoordinate coord = iAppView->MapControl()->GetCenterCoordinate();
+	TCoordinate coord = iMapView->MapControl()->GetCenterCoordinate();
 	iSettings->SetLat(coord.Latitude());
 	iSettings->SetLon(coord.Longitude());
-	iSettings->SetZoom(iAppView->MapControl()->GetZoom());
+	iSettings->SetZoom(iMapView->MapControl()->GetZoom());
 	iSettings->SetTileProviderId(iActiveTileProvider->iId);	
 	
 	// And save
@@ -232,7 +232,7 @@ void CS60MapsAppUi::ExternalizeL(RWriteStream& aStream) const
 void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 	{
 	TRAP_IGNORE(aStream >> *iSettings);
-	iAppView->MapControl()->Move(iSettings->GetLat(), iSettings->GetLon(), iSettings->GetZoom());
+	iMapView->MapControl()->Move(iSettings->GetLat(), iSettings->GetLon(), iSettings->GetZoom());
 	
 	TTileProviderId tileProviderId(iSettings->GetTileProviderId());
 	TBool isFound = EFalse;
@@ -241,7 +241,7 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 		if (tileProviderId == iAvailableTileProviders[idx]->iId)
 			{
 			iActiveTileProvider = iAvailableTileProviders[idx];
-			iAppView->MapControl()->SetTileProviderL(iAvailableTileProviders[idx]);
+			iMapView->MapControl()->SetTileProviderL(iAvailableTileProviders[idx]);
 			isFound = ETrue;
 			break;
 			}
@@ -250,7 +250,7 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 	if (!isFound)
 		{ // Set default
 		iActiveTileProvider = iAvailableTileProviders[0];
-		iAppView->MapControl()->SetTileProviderL(iAvailableTileProviders[0]);
+		iMapView->MapControl()->SetTileProviderL(iAvailableTileProviders[0]);
 		}
 	}
 
@@ -304,7 +304,7 @@ void CS60MapsAppUi::OnPositionUpdated()
 		coord.SetCourse(course.Heading());
 		}
 	coord.SetHorAccuracy(pos.HorizontalAccuracy());
-	iAppView->MapControl()->SetUserPosition(coord);
+	iMapView->MapControl()->SetUserPosition(coord);
 	}
 
 void CS60MapsAppUi::OnPositionPartialUpdated()
@@ -314,12 +314,12 @@ void CS60MapsAppUi::OnPositionPartialUpdated()
 
 void CS60MapsAppUi::OnPositionRestored()
 	{
-	iAppView->MapControl()->ShowUserPosition();
+	iMapView->MapControl()->ShowUserPosition();
 	}
 
 void CS60MapsAppUi::OnPositionLost()
 	{
-	iAppView->MapControl()->HideUserPosition();
+	iMapView->MapControl()->HideUserPosition();
 	}
 
 void CS60MapsAppUi::OnPositionError(TInt /*aErrCode*/)
@@ -339,7 +339,7 @@ void CS60MapsAppUi::MrccatoCommand(TRemConCoreApiOperationId aOperationId,
 			case ERemConCoreApiVolumeUp:
 				{
 				//DEBUG(_L("VolumeUp pressed\n"));
-				iAppView->MapControl()->ZoomIn();
+				iMapView->MapControl()->ZoomIn();
 				
 				/*iCoreTarget->VolumeUpResponse(status, KErrNone);
 				User::WaitForRequest(status);*/
@@ -349,7 +349,7 @@ void CS60MapsAppUi::MrccatoCommand(TRemConCoreApiOperationId aOperationId,
 			case ERemConCoreApiVolumeDown:
 				{
 				//DEBUG(_L("VolumeDown pressed\n"));
-				iAppView->MapControl()->ZoomOut();
+				iMapView->MapControl()->ZoomOut();
 				
 				/*iCoreTarget->VolumeDownResponse(status, KErrNone);
 				User::WaitForRequest(status);*/
