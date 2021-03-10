@@ -215,7 +215,7 @@ RESOURCE DIALOG r_confirm_dialog
 //
 RESOURCE TBUF32 r_caption_string { buf=qtn_caption_string; }
 
-RESOURCE TBUF32 r_map_cache_stats_dialog_title { buf=qtn_tiles_cache_stats; }
+RESOURCE /*TBUF32*/ TBUF r_map_cache_stats_dialog_title { buf=qtn_tiles_cache_stats; }
 //RESOURCE TBUF32 r_confirm_reset_tiles_cache_dialog_title { buf=qtn_confirm_reset_tiles_cache_dialog_title; }
 RESOURCE TBUF r_confirm_reset_tiles_cache_dialog_text { buf=qtn_confirm_reset_tiles_cache_dialog_text; }
 RESOURCE TBUF32 r_about_dialog_title { buf=qtn_about_dialog_title; }

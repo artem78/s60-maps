@@ -1,0 +1,28 @@
+/*
+========================================================================
+ Name        : S60Maps.l103
+ Author      : fizolas
+ Copyright   : 
+ Description : 
+========================================================================
+*/
+// localized strings for language: Galician (103)
+CHARACTER_SET UTF8
+
+#define qtn_find_me "Ségueme"
+//#define qtn_help "Axuda"
+#define qtn_about "Sobre"
+#define qtn_exit "Saída"
+#define qtn_tile_providers_title "Mapas"
+#define qtn_service_title "Servizo"
+#define qtn_tiles_cache_stats "Estatísticas do cache de mapas"
+#define qtn_reset_tiles_cache "Limpar o cache de mapas"
+//#define qtn_confirm_reset_tiles_cache_dialog_title "Confirmar limpeza do cache"
+#define qtn_confirm_reset_tiles_cache_dialog_text "Esta acción vai eliminar todos os mapas do cache. Tes certeza?"
+#define qtn_about_dialog_title "Sobre"
+#define qtn_about_dialog_text "S60Maps Versión %S\nCompilación: " __DATE__ " " __TIME__ "\nGit: %S %S\nAutor: %S\nWeb: %S\nGrazas a: %S"
+//#define qtn_confirm_exit_dialog_title "Confirmar saída"
+#define qtn_confirm_exit_dialog_text "Tes certeza que desexas sair?"
+#define qtn_done "Feito!"
+#define qtn_stats_line "%S: %d arquivos, %S\n"
+#define qtn_stats_total "Total: %d arquivos, %S"
