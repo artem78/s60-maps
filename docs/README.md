@@ -57,7 +57,7 @@ This software was tested on:
 - Emulators:
   - `FAILED` [EKA2L1](https://github.com/EKA2L1/EKA2L1) (here is [issue thread](https://github.com/EKA2L1/EKA2L1/issues/231))
 
-> **NOTE:** If you can test it works (or not) on other Series S60 devices or emulators, let me know.
+> **NOTE:** If you can test it works (or not) on other Series S60 devices or emulators, let me know. Also send me some screenshots in order to check a look on different sizes/orientations.
 
 ## Download
 
