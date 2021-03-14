@@ -60,7 +60,7 @@ void CMapView::ConstructL()
 	iMapControl->MakeVisible(EFalse); // Will be shown later after settings will be loaded in CS60MapsAppUi::RestoreL
 	
 	// Make fullscreen
-	StatusPane()->MakeVisible(EFalse);
+	//StatusPane()->MakeVisible(EFalse);
 	//Cba()->MakeVisible(EFalse);
 	iMapControl->SetRect(AppUi()/*iAvkonAppUi*/->ApplicationRect()); // Need to resize the view to fullscreen*/
 	
@@ -77,7 +77,10 @@ void CMapView::DoActivateL(const TVwsViewId& /*aPrevViewId*/,
 			const TDesC8& /*aCustomMessage*/)
 	{
 	//if (iMapControl)
+	//	{
 		AppUi()->AddToStackL(iMapControl);
+		iMapControl->MakeVisible(ETrue);
+	//	}
 	}
 
 void CMapView::DoDeactivate()
@@ -85,7 +88,10 @@ void CMapView::DoDeactivate()
 	/*if (iMapControl)
 		{
 		//if (IsControlOnStack(iMapControl))*/
+		//	{
 			AppUi()->RemoveFromStack(iMapControl);
+			iMapControl->MakeVisible(EFalse);
+		//	}
 		/*delete iMapControl;
 		iMapControl = NULL;
 		}*/
