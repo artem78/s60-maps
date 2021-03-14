@@ -120,11 +120,14 @@ void CS60MapsAppUi::ConstructL()
 	iLandmarksDb->SetPartialReadParametersL(*iLandmarkPartialParameters);
 
 	
-	// Create view object
+	// Create view objects
 	iMapView = CMapView::NewL();
 	//iMapView->MapControl()->MakeVisible(EFalse); // Will be shown later after settings will be loaded in CS60MapsAppUi::RestoreL
 	AddViewL(iMapView);
 	SetDefaultViewL(*iMapView);
+
+	iSettingsView = CSettingsView::NewL();
+	AddViewL(iSettingsView);
 	
 	// Position requestor
 	_LIT(KPosRequestorName, "S60 Maps"); // ToDo: Move to global const

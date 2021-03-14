@@ -22,6 +22,7 @@
 
 #include "Map.h" // For tile providers
 #include "Settings.h"
+#include "SettingsView.h"
 //#include <aknprogressdialog.h> // For CAknProgressDialog
 #include <aknwaitdialog.h> // For CAknWaitDialog 
 #include <epos_cposlandmarkdatabase.h> // For CPosLandmarkDatabase
@@ -88,13 +89,9 @@ private:
 	//void PrepareToExit();
 
 private:
-	// Data
-
-	/**
-	 * The application view
-	 * Owned by CS60MapsAppUi
-	 */
+	// Views
 	CMapView* iMapView;
+	CSettingsView* iSettingsView;
 
 public:
 	TStreamId StoreL(CStreamStore& aStore) const;

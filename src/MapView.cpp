@@ -164,6 +164,10 @@ void CMapView::HandleCommandL(TInt aCommand)
 			HandleGotoCoordinateL();
 			break;
 			
+		case ESettings:
+			HandleSettingsL();
+			break;
+			
 		default:
 			Panic(ES60MapsUi);
 			break;
@@ -619,4 +623,12 @@ CPosLandmark* CMapView::GetNearestLandmarkAroundTheCenterL(TBool aPartial)
 			KMaxDistanceInPixels, maxDistance, unused);
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(AppUi());
 	return appUi->GetNearestLandmarkL(center, aPartial, maxDistance);
+	}
+
+void CMapView::HandleSettingsL()
+	{
+	//TVwsViewId viewId = TVwsViewId(KUidS60MapsApp, TUid::Uid(ESettingsViewId));
+	//AppUi()->ActivateViewL(viewId);
+	//AppUi()->ActivateViewL(iSettingsView->ViewId());
+	AppUi()->ActivateLocalViewL(TUid::Uid(ESettingsViewId));
 	}
