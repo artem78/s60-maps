@@ -65,6 +65,8 @@ private:
 	TReal64 iLon;
 	TZoom iZoom;
 	TTileProviderId iTileProviderId;
+public:
+	TBool iFullScreen;
 	
 public:
 	CSettings();
@@ -94,6 +96,11 @@ public:
 		{ return iTileProviderId; }
 	inline void SetTileProviderId(const TDesC& aTileProviderId)
 		{ iTileProviderId.Copy(aTileProviderId); }
+	
+	/*inline TBool GetFullScreen() const
+		{ return iFullScreen; }
+	inline void SetFullScreen(TBool aFullScreen)
+		{ iFullScreen = aFullScreen; }*/
 	
 	};
 

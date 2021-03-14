@@ -27,3 +27,8 @@
 #define qtn_stats_total "Total: %d files, %S"
 
 #define qtn_settings "Settings"
+//#define qtn_enabled "Enabled"
+//#define qtn_disabled "Disabled"
+#define qtn_on "On"
+#define qtn_off "Off"
+#define qtn_fullscreen "Fullscreen"

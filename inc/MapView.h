@@ -68,6 +68,11 @@ private:
 #endif
 	void HandleAboutL();
 	void HandleSettingsL();
+	
+	// New
+public:
+	void MakeFullScreen(TBool aEnable=ETrue);
+	
 	};
 
 #endif /* __MAPVIEW_H_ */

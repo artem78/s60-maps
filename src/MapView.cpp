@@ -58,9 +58,7 @@ void CMapView::ConstructL()
 	iMapControl = CMapControl::NewL(ClientRect(), position, zoom, appUi->TileProvider());
 	
 	// Make fullscreen
-	//StatusPane()->MakeVisible(EFalse);
-	//Cba()->MakeVisible(EFalse);
-	iMapControl->SetRect(AppUi()/*iAvkonAppUi*/->ApplicationRect()); // Need to resize the view to fullscreen*/
+	MakeFullScreen(settings->iFullScreen);
 	}
 
 TUid CMapView::Id() const
@@ -367,4 +365,18 @@ void CMapView::HandleSettingsL()
 	//AppUi()->ActivateViewL(viewId);
 	//AppUi()->ActivateViewL(iSettingsView->ViewId());
 	AppUi()->ActivateLocalViewL(TUid::Uid(ESettingsViewId));
+	}
+
+void CMapView::MakeFullScreen(TBool aEnable)
+	{
+	if (aEnable)
+		{
+		//StatusPane()->MakeVisible(EFalse);
+		//Cba()->MakeVisible(EFalse);
+		iMapControl->SetRect(AppUi()/*iAvkonAppUi*/->ApplicationRect()); // Need to resize the view to fullscreen*/
+		}
+	else
+		{
+		iMapControl->SetRect(AppUi()->ClientRect());
+		}
 	}

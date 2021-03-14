@@ -255,6 +255,8 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 		iActiveTileProvider = iAvailableTileProviders[0];
 		iMapView->MapControl()->SetTileProviderL(iAvailableTileProviders[0]);
 		}
+	
+	iMapView->MakeFullScreen(iSettings->iFullScreen);
 	}
 
 MFileManObserver::TControl CS60MapsAppUi::NotifyFileManStarted()

@@ -16,6 +16,9 @@ class CSettingsListBox : public CAknSettingItemList
 protected:
 	CAknSettingItem* CreateSettingItemL(TInt aSettingId);
 	
+public:
+	void EditItemL(TInt aIndex, TBool aCalledFromMenu);
+	
 	};
 
 #endif /* __SETTINGSLISTBOX_H_ */
