@@ -132,6 +132,10 @@ void CMapView::HandleCommandL(TInt aCommand)
 			HandleAboutL();
 			break;
 			
+		case ESettings:
+			HandleSettingsL();
+			break;
+			
 		default:
 			Panic(ES60MapsUi);
 			break;
@@ -355,4 +359,12 @@ void CMapView::HandleAboutL()
 	dlg->SetMessageTextL(msg);
 	CleanupStack::PopAndDestroy(&msg);
 	dlg->RunLD();
+	}
+
+void CMapView::HandleSettingsL()
+	{
+	//TVwsViewId viewId = TVwsViewId(KUidS60MapsApp, TUid::Uid(ESettingsViewId));
+	//AppUi()->ActivateViewL(viewId);
+	//AppUi()->ActivateViewL(iSettingsView->ViewId());
+	AppUi()->ActivateLocalViewL(TUid::Uid(ESettingsViewId));
 	}

@@ -25,3 +25,5 @@
 #define qtn_done "Done!"
 #define qtn_stats_line "%S: %d files, %S\n"
 #define qtn_stats_total "Total: %d files, %S"
+
+#define qtn_settings "Settings"

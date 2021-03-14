@@ -105,10 +105,13 @@ void CS60MapsAppUi::ConstructL()
 	
 	iFileMan = CFileMan::NewL(CCoeEnv::Static()->FsSession(), this);
 	
-	// Create view object
+	// Create view objects
 	iMapView = CMapView::NewL();
 	AddViewL(iMapView);
 	SetDefaultViewL(*iMapView);
+
+	iSettingsView = CSettingsView::NewL();
+	AddViewL(iSettingsView);
 	
 	// Position requestor
 	_LIT(KPosRequestorName, "S60 Maps"); // ToDo: Move to global const

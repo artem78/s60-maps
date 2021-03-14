@@ -22,6 +22,7 @@ enum TS60MapsIds
 	EAbout,
 	ETilesCacheStats,
 	EResetTilesCache,
+	ESettings,
 	
 	ESetTileProviderBase = 0x6500, // Start id for tile providers
 	ESetOsmStandardTileProvider		= /*ESetTileProviderBase + 0*/ 0x6500 + 0,
@@ -34,7 +35,8 @@ enum TS60MapsIds
 // View IDs
 enum TS60MapsViewUids
 	{
-	EMapViewId = 1 // Main view
+	EMapViewId = 1, // Main view
+	ESettingsViewId
 	};
 
 #endif // __S60MAPS_HRH__

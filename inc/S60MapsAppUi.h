@@ -22,6 +22,7 @@
 
 #include "Map.h" // For tile providers
 #include "Settings.h"
+#include "SettingsView.h"
 
 // FORWARD DECLARATIONS
 class CMapView;
@@ -77,13 +78,9 @@ private:
 	//void PrepareToExit();
 
 private:
-	// Data
-
-	/**
-	 * The application view
-	 * Owned by CS60MapsAppUi
-	 */
+	// Views
 	CMapView* iMapView;
+	CSettingsView* iSettingsView;
 
 public:
 	TStreamId StoreL(CStreamStore& aStore) const;

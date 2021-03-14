@@ -91,3 +91,6 @@ SOURCEPATH ..\modules\HTTPClient
 SOURCE HTTPClient.cpp
 SOURCEPATH ..\src
 SOURCE MapView.cpp
+
+SOURCEPATH ..\src
+SOURCE SettingsView.cpp SettingsListBox.cpp

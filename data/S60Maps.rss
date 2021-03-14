@@ -64,6 +64,12 @@ RESOURCE AVKON_VIEW r_map_view
 	cba = R_AVKON_SOFTKEYS_OPTIONS_EXIT;
  }
 
+// Settings view
+RESOURCE AVKON_VIEW r_settings_view
+ {
+	cba = /*R_AVKON_SOFTKEYS_OPTIONS_BACK*/ R_AVKON_SOFTKEYS_BACK;
+ }
+
 
 // -----------------------------------------------------------------------------
 //
@@ -115,6 +121,11 @@ RESOURCE MENU_PANE r_menu
 				//command = ...;
 				txt = qtn_service_title;
 				cascade = r_submenu_service;
+				},
+		MENU_ITEM
+				{
+				command = ESettings;
+				txt = qtn_settings;
 				},
 		MENU_ITEM
 				{
@@ -236,6 +247,7 @@ RESOURCE TBUF r_confirm_exit_dialog_text { buf=qtn_confirm_exit_dialog_text; }
 RESOURCE TBUF r_done { buf=qtn_done; }
 RESOURCE TBUF r_stats_line { buf=qtn_stats_line; }
 RESOURCE TBUF r_stats_total { buf=qtn_stats_total; }
+//RESOURCE TBUF r_settings_title { buf=qtn_settings; }
 
 
 // ---------------------------------------------------------------------------- 
@@ -256,5 +268,20 @@ RESOURCE LOCALISABLE_APP_INFO r_localisable_app_info
 		icon_file = "\\resource\\apps\\S60Maps_0xED689B88.mif";
 		};
 	}
+
+/*
+ * Settings
+ * 
+ */
+
+RESOURCE AVKON_SETTING_ITEM_LIST r_setting_item_list
+  {
+  title = qtn_settings;
+  
+  items = 
+    {
+    
+    };
+  }
 
 // End of File

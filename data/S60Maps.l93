@@ -26,3 +26,5 @@ CHARACTER_SET UTF8
 #define qtn_done "Виконано!"
 #define qtn_stats_line "%S: %d файлів, %S\n"
 #define qtn_stats_total "Всього: %d файлів, %S"
+
+// ToDo: Copy and translate new strings from english file

@@ -67,6 +67,7 @@ private:
 	void HandleHelpL();
 #endif
 	void HandleAboutL();
+	void HandleSettingsL();
 	};
 
 #endif /* __MAPVIEW_H_ */
