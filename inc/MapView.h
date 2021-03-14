@@ -76,6 +76,7 @@ private:
 	void HandleDeleteLandmarkL();
 	void HandleGotoLandmarkL();
 	void HandleGotoCoordinateL();
+	void HandleSettingsL();
 	};
 
 #endif /* __MAPVIEW_H_ */

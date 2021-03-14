@@ -51,3 +51,7 @@ CHARACTER_SET UTF8
 #define qtn_coordinate "Koordynacja"
 #define qtn_latitude "Szerokość geograficzna"
 #define qtn_longitude "Długość geograficzna"
+
+// Added in develop branch
+
+#define qtn_settings "Settings"
