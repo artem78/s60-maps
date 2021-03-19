@@ -72,7 +72,9 @@ void CMapView::DoActivateL(const TVwsViewId& /*aPrevViewId*/,
 	{
 	//if (iMapControl)
 	//	{
-		AppUi()->AddToStackL(iMapControl);
+		CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(AppUi());
+		appUi->AddToStackL(iMapControl);
+		MakeFullScreen(appUi->Settings()->iFullScreen);
 		iMapControl->MakeVisible(ETrue);
 	//	}
 	}
@@ -84,6 +86,7 @@ void CMapView::DoDeactivate()
 		//if (IsControlOnStack(iMapControl))*/
 		//	{
 			AppUi()->RemoveFromStack(iMapControl);
+			MakeFullScreen(EFalse);
 			iMapControl->MakeVisible(EFalse);
 		//	}
 		/*delete iMapControl;
@@ -367,16 +370,24 @@ void CMapView::HandleSettingsL()
 	AppUi()->ActivateLocalViewL(TUid::Uid(ESettingsViewId));
 	}
 
-void CMapView::MakeFullScreen(TBool aEnable)
+void CMapView::MakeFullScreen(TBool aEnable, TBool aShowSoftKeys)
 	{
 	if (aEnable)
 		{
-		//StatusPane()->MakeVisible(EFalse);
-		//Cba()->MakeVisible(EFalse);
-		iMapControl->SetRect(AppUi()/*iAvkonAppUi*/->ApplicationRect()); // Need to resize the view to fullscreen*/
+		if (aShowSoftKeys)
+			{	// Fullscreen with softkeys
+			AppUi()->StatusPane()->MakeVisible(EFalse);
+			iMapControl->SetRect(AppUi()->ClientRect());
+			}
+		else
+			{	// Fullscreen without softkeys
+			AppUi()->StatusPane()->MakeVisible(ETrue);
+			iMapControl->SetRect(AppUi()->ApplicationRect());
+			}
 		}
 	else
-		{
+		{	// Windowed
+		AppUi()->StatusPane()->MakeVisible(ETrue);
 		iMapControl->SetRect(AppUi()->ClientRect());
 		}
 	}

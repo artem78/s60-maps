@@ -71,7 +71,7 @@ private:
 	
 	// New
 public:
-	void MakeFullScreen(TBool aEnable=ETrue);
+	void MakeFullScreen(TBool aEnable=ETrue, TBool aShowSoftKeys=EFalse);
 	
 	};
 

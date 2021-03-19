@@ -12,7 +12,10 @@
 #include "MapControl.h"
 #include <e32math.h>
 #include "Defs.h"
-#include <aknappui.h> 
+#include <aknappui.h>
+#include "S60MapsAppUi.h"
+#include "MapView.h"
+#include "S60Maps.hrh"
 
 // Constants
 const TInt KMovementRepeaterInterval = 200000;
@@ -261,14 +264,19 @@ void CMapControl::HandlePointerEventL(const TPointerEvent& aPointerEvent)
 			}
 		else if (Abs(posDelta.iY) > KSwipingThreshold)
 			{
-			// swiping up/down -> show/hide softkeys
-			if (posDelta.iY < 0)
+			// swiping up/down -> show/hide softkeys (only in fullscreen mode)
+			CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(iAvkonAppUi);
+			if (appUi->Settings()->iFullScreen)
 				{
-				SetRect(iAvkonAppUi->ClientRect());
-				}
-			else
-				{
-				SetRect(iAvkonAppUi->ApplicationRect());
+				CMapView* mapView = static_cast<CMapView*>(appUi->View(TUid::Uid(EMapViewId)));
+				if (posDelta.iY < 0)
+					{
+					mapView->MakeFullScreen(ETrue, ETrue);
+					}
+				else
+					{
+					mapView->MakeFullScreen(ETrue, EFalse);
+					}
 				}
 			}
 		else
