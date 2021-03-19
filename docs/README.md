@@ -13,6 +13,7 @@ Simple map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wi
 - [Technical details](#technical-details)
 - [Roadmap](#roadmap)
 - [LICENSE](#license)
+- [See also](#see-also)
 
 ----
 
