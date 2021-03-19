@@ -85,3 +85,7 @@ Settings store in `store.dat` file. If you have problems with application to run
 ## LICENSE
 
 [GNU GPL v3.0](/LICENSE.txt)
+
+## See also
+
+- [GPS Track recorder for Symbian OS](https://github.com/artem78/s60-gps-tracker#readme)
