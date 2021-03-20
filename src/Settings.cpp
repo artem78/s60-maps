@@ -9,6 +9,7 @@
  */
 
 #include "Settings.h"
+#include "Logger.h"
 
 
 // Constants
@@ -63,15 +64,25 @@ void CSettings::ExternalizeL(RWriteStream& aStream) const
 	aStream << (TInt8) iIsLandmarksVisible;
 	}
 
+void CSettings::DoInternalizeL(RReadStream& aStream)
+	{
+	TCardinality zoom;
+	TInt8 isLandmarksVisible;
+	
+	aStream >> iLat;
+	aStream >> iLon;
+	aStream >> zoom;
+	iZoom = (TInt) zoom;
+	aStream >> iTileProviderId;
+	aStream >> isLandmarksVisible;
+	iIsLandmarksVisible = (TBool) isLandmarksVisible;
+	}
+
 void CSettings::InternalizeL(RReadStream& aStream)
 	{
-	TRAP_IGNORE(aStream >> iLat);
-	TRAP_IGNORE(aStream >> iLon);
-	TCardinality zoom;
-	TRAP_IGNORE(aStream >> zoom);
-	iZoom = (TInt) zoom;
-	TRAP_IGNORE(aStream >> iTileProviderId);
-	TInt8 isLandmarksVisible;
-	TRAP_IGNORE(aStream >> isLandmarksVisible);
-	iIsLandmarksVisible = (TBool) isLandmarksVisible;
+	TRAPD(r, DoInternalizeL(aStream)); // Ignore any errors
+	if (r != KErrNone)
+		{
+		WARNING(_L("Settings file broken or incomplete (code: %d)"), r);
+		}
 	}
