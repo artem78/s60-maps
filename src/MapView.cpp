@@ -372,6 +372,17 @@ void CMapView::HandleSettingsL()
 
 void CMapView::MakeFullScreen(TBool aEnable, TBool aShowSoftKeys)
 	{
+	/* Check if CAknSgcClient singleton object is still alive 
+	 * (i.e. this is not called from view`s DoDeactivate() when AppUi is going to exit).
+	 * Otherwise, it will result AVKON 76 panic (CAknSgcClient singleton object is not found.)
+	 * More discussion here:
+	 *    https://discord.com/channels/431429574975422464/743412813279526914/822867532427034665
+	 * */
+	const TUid KAknSgcClientStaticId = { 0x101f7674 }; // Defined in Symbian`s private sources
+	if (!CCoeEnv::Static(KAknSgcClientStaticId))
+		return;
+	
+	
 	if (aEnable)
 		{
 		if (aShowSoftKeys)
