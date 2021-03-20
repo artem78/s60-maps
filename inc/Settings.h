@@ -59,6 +59,8 @@ private:
 	
 	
 private:
+	void DoInternalizeL(RReadStream& aStream);
+	
 	// Parameters
 	
 	TReal64 iLat;
