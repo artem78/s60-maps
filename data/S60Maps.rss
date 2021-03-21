@@ -59,16 +59,16 @@ RESOURCE EIK_APP_INFO
 
 // Map view
 RESOURCE AVKON_VIEW r_map_view
- {
+	{
 	menubar = r_menubar;
 	//cba = R_AVKON_SOFTKEYS_OPTIONS_EXIT;
- }
+	}
 
 // Settings view
 RESOURCE AVKON_VIEW r_settings_view
- {
+	{
 	cba = /*R_AVKON_SOFTKEYS_OPTIONS_BACK*/ R_AVKON_SOFTKEYS_BACK;
- }
+	}
 
 
 // -----------------------------------------------------------------------------
@@ -223,7 +223,7 @@ RESOURCE DIALOG r_confirm_dialog
 			control = AVKON_CONFIRMATION_QUERY
 				{
 				layout = EConfirmationQueryLayout;
-		        };
+				};
 			}
 		};
 	}
@@ -275,43 +275,42 @@ RESOURCE LOCALISABLE_APP_INFO r_localisable_app_info
  */
 
 RESOURCE AVKON_SETTING_ITEM_LIST r_setting_item_list
-  {
-  title = qtn_settings;
-  
-  items = 
-    {
-    AVKON_SETTING_ITEM
-      {
-      identifier = ESettingFullScreen;
-      setting_page_resource = r_fullscreen_setting_page;
-      associated_resource = r_popup_setting_fullscreen_texts;
-      name = qtn_fullscreen;
-      }
-    };
-  }
+	{
+	title = qtn_settings;
+	items = 
+		{
+		AVKON_SETTING_ITEM
+			{
+			identifier = ESettingFullScreen;
+			setting_page_resource = r_fullscreen_setting_page;
+			associated_resource = r_popup_setting_fullscreen_texts;
+			name = qtn_fullscreen;
+			}
+		};
+	}
 
 // Fullscreen setting
 
 RESOURCE AVKON_SETTING_PAGE r_fullscreen_setting_page
-    {   
-    number = 0;
-    label = qtn_fullscreen;
-    type = EAknCtPopupSettingList;
-    }
+	{
+	number = 0;
+	label = qtn_fullscreen;
+	type = EAknCtPopupSettingList;
+	}
 
 RESOURCE AVKON_POPUP_SETTING_TEXTS r_popup_setting_fullscreen_texts
-    {
-    flags = 0;
-    setting_texts_resource = r_fullscreen_texts;
-    }
+	{
+	flags = 0;
+	setting_texts_resource = r_fullscreen_texts;
+	}
 
 RESOURCE ARRAY r_fullscreen_texts
-    {
-    items =
-        {
-        AVKON_ENUMERATED_TEXT { value=1; text = qtn_on; },
-        AVKON_ENUMERATED_TEXT { value=0; text = qtn_off; }
-        };
-    }
+	{
+	items =
+		{
+		AVKON_ENUMERATED_TEXT { value=1; text = qtn_on; },
+		AVKON_ENUMERATED_TEXT { value=0; text = qtn_off; }
+		};
+	}
 
 // End of File
