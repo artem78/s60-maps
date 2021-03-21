@@ -60,16 +60,16 @@ RESOURCE EIK_APP_INFO
 
 // Map view
 RESOURCE AVKON_VIEW r_map_view
- {
+	{
 	menubar = r_menubar;
 	cba = R_AVKON_SOFTKEYS_OPTIONS_EXIT;
- }
+	}
 
 // Settings view
 RESOURCE AVKON_VIEW r_settings_view
- {
+	{
 	cba = /*R_AVKON_SOFTKEYS_OPTIONS_BACK*/ R_AVKON_SOFTKEYS_BACK;
- }
+	}
 
 
 // -----------------------------------------------------------------------------
@@ -284,7 +284,7 @@ RESOURCE DIALOG r_confirm_dialog
 			control = AVKON_CONFIRMATION_QUERY
 				{
 				layout = EConfirmationQueryLayout;
-		        };
+				};
 			}
 		};
 	}
@@ -485,13 +485,13 @@ RESOURCE LOCALISABLE_APP_INFO r_localisable_app_info
  */
 
 RESOURCE AVKON_SETTING_ITEM_LIST r_setting_item_list
-  {
-  title = qtn_settings;
-  
-  items = 
-    {
-    
-    };
-  }
+	{
+	title = qtn_settings;
+	
+	items = 
+		{
+		
+		};
+	}
 
 // End of File
