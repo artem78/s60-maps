@@ -27,6 +27,7 @@
 #include "MapView.h"
 #include "Defs.h"
 #include "FileUtils.h"
+#include <apgwgnam.h>
 
 
 // ============================ MEMBER FUNCTIONS ===============================
@@ -162,6 +163,26 @@ CS60MapsAppUi::~CS60MapsAppUi()
 	iAvailableTileProviders.DeleteAll();
 	
 	delete iSettings;
+	}
+
+// -----------------------------------------------------------------------------
+// CS60MapsAppUi::HandleCommandL()
+// Takes care of command handling.
+// -----------------------------------------------------------------------------
+//
+void CS60MapsAppUi::HandleCommandL(TInt aCommand)
+	{
+	switch (aCommand)
+		{
+		case EEikCmdExit:
+		case EAknSoftkeyExit:
+			HandleExitL();
+			break;
+			
+		default:
+			Panic(ES60MapsUi);
+			break;
+		}
 	}
 
 // -----------------------------------------------------------------------------
@@ -379,6 +400,38 @@ void CS60MapsAppUi::SaveAndExitL()
 	{
 	SaveL();
 	Exit();
+	}
+
+void CS60MapsAppUi::HandleExitL()
+	{
+	// FixMe: Called twice if "No" key pressed in confirm dialog
+	
+	RWsSession& session = CEikonEnv::Static()->WsSession();
+	TInt WgId = session.GetFocusWindowGroup();
+	CApaWindowGroupName* Wgn = CApaWindowGroupName::NewL(session, WgId);
+	TUid forgroundApp = Wgn->AppUid();
+	delete Wgn;
+	const TUid KAppUid = {_UID3};
+	//If application is in background Symbian OS will show its own quit confirmation.
+	if(forgroundApp == KAppUid)
+		{
+		CAknQueryDialog* dlg = CAknQueryDialog::NewL();
+		dlg->PrepareLC(R_CONFIRM_DIALOG);
+		/*HBufC* title = iEikonEnv->AllocReadResourceLC(R_CONFIRM_EXIT_DIALOG_TITLE);
+		dlg->SetHeaderTextL(*title);
+		CleanupStack::PopAndDestroy(); //title*/
+		HBufC* msg = iEikonEnv->AllocReadResourceLC(R_CONFIRM_EXIT_DIALOG_TEXT);
+		dlg->SetPromptL(*msg);
+		CleanupStack::PopAndDestroy(); //msg
+		TInt res = dlg->RunLD();
+		if (res != EAknSoftkeyYes)
+			{
+			return;
+			}
+		}
+
+	//Exit();
+	SaveAndExitL();
 	}
 
 // End of File

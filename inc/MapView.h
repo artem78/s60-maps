@@ -58,7 +58,6 @@ private:
 	CMapControl* iMapControl;
 	
 	// Command handlers
-	void HandleExitL();
 	void HandleFindMeL();
 	void HandleTileProviderChangeL(TInt aTileProviderIdx);
 	void HandleTilesCacheStatsL();

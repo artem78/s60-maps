@@ -60,6 +60,13 @@ public:
 
 private:
 	// Functions from base classes
+	
+	/**
+	 * From CEikAppUi, HandleCommandL.
+	 * Takes care of command handling.
+	 * @param aCommand Command to be handled.
+	 */
+	void HandleCommandL(TInt aCommand);
 
 	/**
 	 *  HandleStatusPaneSizeChange.
@@ -132,6 +139,10 @@ private:
 	TFixedArray<TTileProvider*, /*5*/ 4> iAvailableTileProviders;
 	//TBuf<64> iTileProviderId
 	TTileProvider* iActiveTileProvider;
+	
+	// Command handlers
+private:
+	void HandleExitL();
 	
 	};
 
