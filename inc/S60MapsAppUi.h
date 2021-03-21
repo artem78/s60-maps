@@ -64,6 +64,13 @@ public:
 
 private:
 	// Functions from base classes
+	
+	/**
+	 * From CEikAppUi, HandleCommandL.
+	 * Takes care of command handling.
+	 * @param aCommand Command to be handled.
+	 */
+	void HandleCommandL(TInt aCommand);
 
 //	/**
 //	 * From CEikAppUi, HandleCommandL.
@@ -157,8 +164,11 @@ private:
 	CPosLmPartialReadParameters* iLandmarkPartialParameters;
 	
 	//static TInt UpdateTilesClearingProgress(TAny* aSelfPtr);
+
 	
-/*	// Command handlers */
+	// Command handlers
+private:
+	void HandleExitL();
 
 	
 public:

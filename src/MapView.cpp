@@ -15,7 +15,6 @@
 #include <avkon.hrh>
 #include "GitInfo.h"
 #include <aknmessagequerydialog.h>
-#include <apgwgnam.h>
 #include <epos_cposlandmarksearch.h>
 
 // CMapView
@@ -101,11 +100,6 @@ void CMapView::HandleCommandL(TInt aCommand)
 	{
 	switch (aCommand)
 		{
-		case EEikCmdExit:
-		case EAknSoftkeyExit:
-			HandleExitL();
-			break;
-			
 		case EFindMe:
 			HandleFindMeL();
 			break;
@@ -169,7 +163,8 @@ void CMapView::HandleCommandL(TInt aCommand)
 			break;
 			
 		default:
-			Panic(ES60MapsUi);
+			// Let the AppUi handle unknown for view commands
+			AppUi()->HandleCommandL(aCommand);
 			break;
 		}
 	}
@@ -228,41 +223,6 @@ void CMapView::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
 		{
 		AppUi()->DynInitMenuPaneL(aMenuID, aMenuPane);
 		}*/
-	}
-
-void CMapView::HandleExitL()
-	{
-	RWsSession& session = CEikonEnv::Static()->WsSession();
-	TInt WgId = session.GetFocusWindowGroup();
-	CApaWindowGroupName* Wgn = CApaWindowGroupName::NewL(session, WgId);
-	TUid forgroundApp = Wgn->AppUid();
-	delete Wgn;
-	const TUid KAppUid = {_UID3};
-	//If application is in background Symbian OS will show its own quit confirmation.
-	if(forgroundApp == KAppUid)
-		{
-		CAknQueryDialog* dlg = CAknQueryDialog::NewL();
-		dlg->PrepareLC(R_CONFIRM_DIALOG);
-		/*HBufC* title = iEikonEnv->AllocReadResourceLC(R_CONFIRM_EXIT_DIALOG_TITLE);
-		dlg->SetHeaderTextL(*title);
-		CleanupStack::PopAndDestroy(); //title*/
-		HBufC* msg = iEikonEnv->AllocReadResourceLC(R_CONFIRM_EXIT_DIALOG_TEXT);
-		dlg->SetPromptL(*msg);
-		CleanupStack::PopAndDestroy(); //msg
-		TInt res = dlg->RunLD();
-		if (res != EAknSoftkeyYes)
-			{
-			return;
-			}
-		}
-
-	//AppUi()->Exit();
-	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(AppUi());
-	
-	// Send window to background to increase visible speed of shutdown
-	appUi->SendAppToBackground();
-
-	appUi->SaveAndExitL();
 	}
 
 void CMapView::HandleFindMeL()

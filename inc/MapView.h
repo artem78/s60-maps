@@ -60,7 +60,6 @@ private:
 	CPosLandmark* GetNearestLandmarkAroundTheCenterL(TBool aPartial = ETrue); // The client takes ownership of the returned landmark object. Returns NULL if nothing found.
 	
 	// Command handlers
-	void HandleExitL();
 	void HandleFindMeL();
 	void HandleTileProviderChangeL(TInt aTileProviderIdx);
 	void HandleTilesCacheStatsL();

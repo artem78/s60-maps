@@ -30,6 +30,7 @@
 //#include <eikprogi.h>
 #include <epos_cposlmnearestcriteria.h>
 #include <epos_cposlandmarksearch.h>
+#include <apgwgnam.h>
 
 
 // ============================ MEMBER FUNCTIONS ===============================
@@ -212,6 +213,26 @@ CS60MapsAppUi::~CS60MapsAppUi()
 //			break;
 //		}
 //	}
+
+// -----------------------------------------------------------------------------
+// CS60MapsAppUi::HandleCommandL()
+// Takes care of command handling.
+// -----------------------------------------------------------------------------
+//
+void CS60MapsAppUi::HandleCommandL(TInt aCommand)
+	{
+	switch (aCommand)
+		{
+		case EEikCmdExit:
+		case EAknSoftkeyExit:
+			HandleExitL();
+			break;
+			
+		default:
+			Panic(ES60MapsUi);
+			break;
+		}
+	}
 
 // -----------------------------------------------------------------------------
 //  Called by the framework when the application status pane
@@ -546,6 +567,40 @@ CPosLandmark* CS60MapsAppUi::GetNearestLandmarkL(const TCoordinate &aCoord,
 		}
 	
 	return landmark;
+	}
+
+void CS60MapsAppUi::HandleExitL()
+	{
+	// FixMe: Called twice if "No" key pressed in confirm dialog
+	
+	RWsSession& session = CEikonEnv::Static()->WsSession();
+	TInt WgId = session.GetFocusWindowGroup();
+	CApaWindowGroupName* Wgn = CApaWindowGroupName::NewL(session, WgId);
+	TUid forgroundApp = Wgn->AppUid();
+	delete Wgn;
+	const TUid KAppUid = {_UID3};
+	//If application is in background Symbian OS will show its own quit confirmation.
+	if(forgroundApp == KAppUid)
+		{
+		CAknQueryDialog* dlg = CAknQueryDialog::NewL();
+		dlg->PrepareLC(R_CONFIRM_DIALOG);
+		/*HBufC* title = iEikonEnv->AllocReadResourceLC(R_CONFIRM_EXIT_DIALOG_TITLE);
+		dlg->SetHeaderTextL(*title);
+		CleanupStack::PopAndDestroy(); //title*/
+		HBufC* msg = iEikonEnv->AllocReadResourceLC(R_CONFIRM_EXIT_DIALOG_TEXT);
+		dlg->SetPromptL(*msg);
+		CleanupStack::PopAndDestroy(); //msg
+		TInt res = dlg->RunLD();
+		if (res != EAknSoftkeyYes)
+			{
+			return;
+			}
+		}
+	
+	// Send window to background to increase visible speed of shutdown
+	SendAppToBackground();
+
+	SaveAndExitL();
 	}
 
 // End of File
