@@ -383,6 +383,7 @@ void CMapView::MakeFullScreen(TBool aEnable, TBool aShowSoftKeys)
 		return;
 	
 	
+	// ToDo: Any better idea how to make fullscreen?
 	if (aEnable)
 		{
 		if (aShowSoftKeys)
