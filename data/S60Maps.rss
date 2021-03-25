@@ -276,7 +276,7 @@ RESOURCE LOCALISABLE_APP_INFO r_localisable_app_info
 
 RESOURCE AVKON_SETTING_ITEM_LIST r_setting_item_list
 	{
-	title = qtn_settings;
+	//title = qtn_settings; // Not used
 	items = 
 		{
 		AVKON_SETTING_ITEM
@@ -285,6 +285,13 @@ RESOURCE AVKON_SETTING_ITEM_LIST r_setting_item_list
 			setting_page_resource = r_fullscreen_setting_page;
 			associated_resource = r_popup_setting_fullscreen_texts;
 			name = qtn_fullscreen;
+			},
+		AVKON_SETTING_ITEM
+			{
+			identifier = ESettingIapConnectionMode;
+			setting_page_resource = r_iap_conn_mode_setting_page;
+			associated_resource = r_popup_setting_iap_conn_mode_texts;
+			name = qtn_iap_conn_mode;
 			}
 		};
 	}
@@ -293,7 +300,7 @@ RESOURCE AVKON_SETTING_ITEM_LIST r_setting_item_list
 
 RESOURCE AVKON_SETTING_PAGE r_fullscreen_setting_page
 	{
-	number = 0;
+	//number = 0;
 	label = qtn_fullscreen;
 	type = EAknCtPopupSettingList;
 	}
@@ -310,6 +317,48 @@ RESOURCE ARRAY r_fullscreen_texts
 		{
 		AVKON_ENUMERATED_TEXT { value=1; text = qtn_on; },
 		AVKON_ENUMERATED_TEXT { value=0; text = qtn_off; }
+		};
+	}
+
+// IAP mode setting
+
+RESOURCE AVKON_SETTING_PAGE r_iap_conn_mode_setting_page
+	{
+	//number = 0;  EAknSettingPageNoOrdinalDisplayed 
+	label = qtn_iap_conn_mode;
+	type = EAknCtPopupSettingList;
+	editor_resource_id = r_iap_conn_mode_popup_setting_list;
+	}
+
+RESOURCE POPUP_SETTING_LIST r_iap_conn_mode_popup_setting_list
+	{
+	flags = 0;
+	}
+
+RESOURCE AVKON_POPUP_SETTING_TEXTS r_popup_setting_iap_conn_mode_texts
+	{
+	//flags = 0;
+	setting_texts_resource   = r_iap_conn_mode_texts1;
+	popped_up_texts_resource = r_iap_conn_mode_texts2;
+	}
+
+RESOURCE ARRAY r_iap_conn_mode_texts1
+	{
+	items =
+		{	// ToDo: Use enum values   ---v
+		AVKON_ENUMERATED_TEXT { value = /*ENotUse*/ 0; text = qtn_do_not_use; },
+		AVKON_ENUMERATED_TEXT { value = /*EAlwaysAsk*/ 1; text = qtn_ask_always; },
+		AVKON_ENUMERATED_TEXT { value = /*ESpecified*/ 2; text = qtn_specified; }
+		};
+	}
+
+RESOURCE ARRAY r_iap_conn_mode_texts2
+	{
+	items =
+		{
+		LBUF { txt = qtn_do_not_use; },
+		LBUF { txt = qtn_ask_always; },
+		LBUF { txt = qtn_specified; }
 		};
 	}
 

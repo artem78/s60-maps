@@ -61,14 +61,26 @@ private:
 private:
 	void DoInternalizeL(RReadStream& aStream);
 	
-	// Parameters
+
+	// Enums
+public:
+	enum TIapConnectionMode
+		{
+		ENotUse = 0, // Do not use network (Offline)
+		EAlwaysAsk,  // Prompt IAP choosing dialog each time
+		ESpecified   // Use specified IAP
+		};
 	
+	
+	// Parameters
+private:	
 	TReal64 iLat;
 	TReal64 iLon;
 	TZoom iZoom;
 	TTileProviderId iTileProviderId;
 public:
 	TBool iFullScreen;
+	TIapConnectionMode iIapConnMode;	
 	
 public:
 	CSettings();

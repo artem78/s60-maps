@@ -27,7 +27,8 @@ CSettings::CSettings() :
 		iLon(KDefaultLon),
 		iZoom(KDefaultZoom),
 		iTileProviderId(KDefaultTileProviderId),
-		iFullScreen(ETrue)
+		iFullScreen(ETrue),
+		iIapConnMode(EAlwaysAsk)
 	{
 	}
 
@@ -62,12 +63,14 @@ void CSettings::ExternalizeL(RWriteStream& aStream) const
 	aStream << TCardinality(iZoom);
 	aStream << iTileProviderId;
 	aStream << (TInt8) iFullScreen; // No buil in bool to stream conversion
+	aStream << (TInt8) iIapConnMode;
 	}
 
 void CSettings::DoInternalizeL(RReadStream& aStream)
 	{
 	TCardinality zoom;
 	TInt8 fullScreen;
+	TInt8 iapConnMode;
 	
 	aStream >> iLat;
 	aStream >> iLon;
@@ -76,6 +79,8 @@ void CSettings::DoInternalizeL(RReadStream& aStream)
 	aStream >> iTileProviderId;
 	aStream >> fullScreen;
 	iFullScreen = (TBool) fullScreen;
+	aStream >> iapConnMode;
+	iIapConnMode = static_cast<TIapConnectionMode>(iapConnMode);
 	}
 
 void CSettings::InternalizeL(RReadStream& aStream)

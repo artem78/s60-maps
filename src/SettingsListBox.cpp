@@ -25,6 +25,14 @@ CAknSettingItem* CSettingsListBox::CreateSettingItemL(TInt aSettingId)
 					appUi->Settings()->iFullScreen);
 			}
 			break;
+			
+		case ESettingIapConnectionMode:
+			{
+			TInt* ptr = (TInt*)(&appUi->Settings()->iIapConnMode); // TIapConnectionMode& --> TInt&
+			settingItem = new (ELeave) CAknEnumeratedTextPopupSettingItem(aSettingId,
+					*ptr);
+			}
+			break;
 		}
 	
 	return settingItem;
@@ -36,7 +44,9 @@ void CSettingsListBox::EditItemL(TInt aIndex, TBool aCalledFromMenu)
 	
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(iCoeEnv->Static()->AppUi());
 	
-	//(*SettingItemArray())[aIndex]->UpdateListBoxTextL();
+	// ToDo: Add validation
+	
+	(*SettingItemArray())[aIndex]->UpdateListBoxTextL();
 	(*SettingItemArray())[aIndex]->StoreL();
 	
 	switch ((*SettingItemArray())[aIndex]->Identifier())
@@ -45,6 +55,12 @@ void CSettingsListBox::EditItemL(TInt aIndex, TBool aCalledFromMenu)
 			{
 			CMapView* mapView = static_cast<CMapView*>(appUi->View(TUid::Uid(EMapViewId)));  
 			mapView->MakeFullScreen(appUi->Settings()->iFullScreen);
+			}
+			break;
+			
+		case ESettingIapConnectionMode:
+			{
+			// ...
 			}
 			break;
 		}

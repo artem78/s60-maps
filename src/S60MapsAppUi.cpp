@@ -278,6 +278,7 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 		}
 	
 	iMapView->MakeFullScreen(iSettings->iFullScreen);
+	// todo: connection...
 	}
 
 MFileManObserver::TControl CS60MapsAppUi::NotifyFileManStarted()
