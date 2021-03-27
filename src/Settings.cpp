@@ -28,7 +28,8 @@ CSettings::CSettings() :
 		iZoom(KDefaultZoom),
 		iTileProviderId(KDefaultTileProviderId),
 		iFullScreen(ETrue),
-		iIapConnMode(EAlwaysAsk)
+		iIapConnMode(EAlwaysAsk),
+		iIapId(0)
 	{
 	}
 
@@ -64,6 +65,7 @@ void CSettings::ExternalizeL(RWriteStream& aStream) const
 	aStream << iTileProviderId;
 	aStream << (TInt8) iFullScreen; // No buil in bool to stream conversion
 	aStream << (TInt8) iIapConnMode;
+	aStream << iIapId;
 	}
 
 void CSettings::DoInternalizeL(RReadStream& aStream)
@@ -81,6 +83,7 @@ void CSettings::DoInternalizeL(RReadStream& aStream)
 	iFullScreen = (TBool) fullScreen;
 	aStream >> iapConnMode;
 	iIapConnMode = static_cast<TIapConnectionMode>(iapConnMode);
+	aStream >> iIapId;
 	}
 
 void CSettings::InternalizeL(RReadStream& aStream)

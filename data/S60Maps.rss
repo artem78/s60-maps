@@ -292,6 +292,13 @@ RESOURCE AVKON_SETTING_ITEM_LIST r_setting_item_list
 			setting_page_resource = r_iap_conn_mode_setting_page;
 			associated_resource = r_popup_setting_iap_conn_mode_texts;
 			name = qtn_iap_conn_mode;
+			},
+		AVKON_SETTING_ITEM
+			{
+			identifier = ESettingIapId;
+			setting_page_resource = r_iap_id_setting_page;
+			associated_resource = r_popup_setting_iap_id_texts;
+			name = qtn_iap;
 			}
 		};
 	}
@@ -359,6 +366,44 @@ RESOURCE ARRAY r_iap_conn_mode_texts2
 		LBUF { txt = qtn_do_not_use; },
 		LBUF { txt = qtn_ask_always; },
 		LBUF { txt = qtn_specified; }
+		};
+	}
+
+// IAP id setting
+
+RESOURCE AVKON_SETTING_PAGE r_iap_id_setting_page
+	{
+	//number = 0;  EAknSettingPageNoOrdinalDisplayed 
+	label = qtn_iap;
+	type = EAknCtPopupSettingList;
+	editor_resource_id = r_iap_id_popup_setting_list;
+	}
+
+RESOURCE POPUP_SETTING_LIST r_iap_id_popup_setting_list
+	{
+	flags = 0;
+	}
+
+RESOURCE AVKON_POPUP_SETTING_TEXTS r_popup_setting_iap_id_texts
+	{
+	//flags = 0;
+	setting_texts_resource   = r_iap_id_texts1; // Actually not used and will be filled at runtime
+	popped_up_texts_resource = r_iap_id_texts2; // Actually not used and will be filled at runtime
+	}
+
+RESOURCE ARRAY r_iap_id_texts1
+	{
+	items =
+		{
+		AVKON_ENUMERATED_TEXT { value = 0; text = ""; }
+		};
+	}
+
+RESOURCE ARRAY r_iap_id_texts2
+	{
+	items =
+		{
+		LBUF { txt = ""; }
 		};
 	}
 

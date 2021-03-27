@@ -21,4 +21,19 @@ public:
 	
 	};
 
+class CIapSettingItem : public CAknEnumeratedTextPopupSettingItem
+	{
+	// From CAknEnumeratedTextPopupSettingItem
+public:
+	CIapSettingItem(TInt aResourceId, TInt& aValue);
+	
+protected:
+	void CompleteConstructionL();
+
+	// New properties and methods
+private:
+	void FillIapsListL(); // Load list of available IAPs
+	
+	};
+
 #endif /* __SETTINGSLISTBOX_H_ */

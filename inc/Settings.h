@@ -80,7 +80,9 @@ private:
 	TTileProviderId iTileProviderId;
 public:
 	TBool iFullScreen;
-	TIapConnectionMode iIapConnMode;	
+	TIapConnectionMode iIapConnMode;
+	TUint32 iIapId; // Used only when iIapConnMode=ESpecified
+	
 	
 public:
 	CSettings();

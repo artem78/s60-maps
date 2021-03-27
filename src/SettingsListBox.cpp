@@ -33,6 +33,14 @@ CAknSettingItem* CSettingsListBox::CreateSettingItemL(TInt aSettingId)
 					*ptr);
 			}
 			break;
+			
+		case ESettingIapId:
+			{
+			TInt* ptr = (TInt*)(&appUi->Settings()->iIapId); // TUint& --> TInt&
+			settingItem = new (ELeave) CIapSettingItem(aSettingId,
+					*ptr);
+			}
+			break;
 		}
 	
 	return settingItem;
@@ -63,5 +71,49 @@ void CSettingsListBox::EditItemL(TInt aIndex, TBool aCalledFromMenu)
 			// ...
 			}
 			break;
+			
+		case ESettingIapId:
+			{
+			// ...
+			}
+			break;
 		}
+	}
+	
+
+
+// CIapSettingItem
+
+CIapSettingItem::CIapSettingItem(TInt aResourceId, TInt& aValue) :
+		CAknEnumeratedTextPopupSettingItem(aResourceId, aValue)
+		{}
+
+void CIapSettingItem::CompleteConstructionL()
+	{
+	CAknEnumeratedTextPopupSettingItem::CompleteConstructionL();
+	
+	FillIapsListL();
+	}
+
+void CIapSettingItem::FillIapsListL()
+	{
+	CArrayPtr<CAknEnumeratedText>* textArray = EnumeratedTextArray();
+	textArray->ResetAndDestroy();
+	
+	////// STUB //////
+	// ToDo: Replace by real code
+	for (TInt i = 1; i <= 5; i++)
+		{
+		TBuf<16> buff;
+		buff.Append(_L("IAP "));
+		buff.AppendNum(i);
+		
+		HBufC* hbuff = buff.AllocLC();
+		CAknEnumeratedText* enumText = new (ELeave) CAknEnumeratedText(i - 1, hbuff);
+		CleanupStack::Pop(hbuff);
+		CleanupStack::PushL(enumText);
+		textArray->AppendL(enumText);
+		CleanupStack::Pop(enumText);
+		}
+	//////////////////
 	}

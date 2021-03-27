@@ -43,7 +43,8 @@ enum TS60MapsViewUids
 enum TS60MapsSettingItemIds
 	{
 	ESettingFullScreen,
-	ESettingIapConnectionMode
+	ESettingIapConnectionMode,
+	ESettingIapId
 	};
 
 #endif // __S60MAPS_HRH__
