@@ -19,6 +19,13 @@ protected:
 public:
 	void EditItemL(TInt aIndex, TBool aCalledFromMenu);
 	
+	// New properties and methods
+public:
+	void CompleteConstructionL(); // Additional initializations
+	
+private:
+	void UpdateIapSettingVisibilityL(); // Update visibility of IAP selection field
+	
 	};
 
 class CIapSettingItem : public CAknEnumeratedTextPopupSettingItem

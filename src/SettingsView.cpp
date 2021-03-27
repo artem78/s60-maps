@@ -101,5 +101,6 @@ void CSettingsView::ConstructContainerL()
 		iListBox = new (ELeave) CSettingsListBox;
 		iListBox->SetMopParent(this);
 		iListBox->ConstructFromResourceL(R_SETTING_ITEM_LIST);
+		iListBox->CompleteConstructionL();
 		}
 	}

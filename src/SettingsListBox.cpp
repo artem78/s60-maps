@@ -68,7 +68,7 @@ void CSettingsListBox::EditItemL(TInt aIndex, TBool aCalledFromMenu)
 			
 		case ESettingIapConnectionMode:
 			{
-			// ...
+			UpdateIapSettingVisibilityL();
 			}
 			break;
 			
@@ -78,6 +78,19 @@ void CSettingsListBox::EditItemL(TInt aIndex, TBool aCalledFromMenu)
 			}
 			break;
 		}
+	}
+
+void CSettingsListBox::CompleteConstructionL()
+	{
+	UpdateIapSettingVisibilityL();
+	}
+
+void CSettingsListBox::UpdateIapSettingVisibilityL()
+	{
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(iCoeEnv->Static()->AppUi());
+	TBool isHidden = appUi->Settings()->iIapConnMode != CSettings::ESpecified;
+	SettingItemArray()->At(ESettingIapId)->SetHidden(isHidden);
+	HandleChangeInItemArrayOrVisibilityL();
 	}
 	
 
