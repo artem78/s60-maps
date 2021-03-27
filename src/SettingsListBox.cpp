@@ -9,6 +9,7 @@
 #include "S60Maps.hrh"
 #include "S60MapsAppUi.h"
 #include "MapView.h"
+#include "IapUtils.h"
 
 // CSettingsListBox
 
@@ -113,20 +114,21 @@ void CIapSettingItem::FillIapsListL()
 	CArrayPtr<CAknEnumeratedText>* textArray = EnumeratedTextArray();
 	textArray->ResetAndDestroy();
 	
-	////// STUB //////
-	// ToDo: Replace by real code
-	for (TInt i = 1; i <= 5; i++)
+	CIapArray* iaps = new (ELeave) CIapArray(5);
+	CleanupStack::PushL(iaps);
+	IapUtils::GetAllIapsL(iaps);
+	
+	for (TInt idx = 0; idx < iaps->Count(); idx++)
 		{
-		TBuf<16> buff;
-		buff.Append(_L("IAP "));
-		buff.AppendNum(i);
+		TIapItem iap = iaps/*[idx]*/->At(idx);
 		
-		HBufC* hbuff = buff.AllocLC();
-		CAknEnumeratedText* enumText = new (ELeave) CAknEnumeratedText(i - 1, hbuff);
-		CleanupStack::Pop(hbuff);
+		HBufC* iapName = iap.iName.AllocLC();
+		CAknEnumeratedText* enumText = new (ELeave) CAknEnumeratedText(iap.iId, iapName);
+		CleanupStack::Pop(iapName);
 		CleanupStack::PushL(enumText);
 		textArray->AppendL(enumText);
 		CleanupStack::Pop(enumText);
 		}
-	//////////////////
+
+	CleanupStack::PopAndDestroy(iaps);
 	}

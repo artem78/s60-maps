@@ -93,4 +93,4 @@ SOURCEPATH ..\src
 SOURCE MapView.cpp
 
 SOURCEPATH ..\src
-SOURCE SettingsView.cpp SettingsListBox.cpp
+SOURCE SettingsView.cpp SettingsListBox.cpp IapUtils.cpp
