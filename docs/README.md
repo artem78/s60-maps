@@ -89,4 +89,5 @@ Settings store in `store.dat` file. If you have problems with application to run
 
 ## See also
 
+- [OpenStreetMap](https://wiki.openstreetmap.org/wiki/About_OpenStreetMap)
 - [GPS Track recorder for Symbian OS](https://github.com/artem78/s60-gps-tracker#readme)
