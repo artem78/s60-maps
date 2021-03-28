@@ -28,6 +28,7 @@
 #include "Defs.h"
 #include "FileUtils.h"
 #include <apgwgnam.h>
+#include "IapUtils.h"
 
 
 // ============================ MEMBER FUNCTIONS ===============================
@@ -278,7 +279,11 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 		}
 	
 	iMapView->MakeFullScreen(iSettings->iFullScreen);
-	// todo: connection...
+	
+	/* IAP settings */
+	// Check current stored IAP exists
+	if (!IapUtils::IsIapAvailableL(iSettings->iIapId))
+		iSettings->iIapId = IapUtils::GetPreferredIapL();
 	}
 
 MFileManObserver::TControl CS60MapsAppUi::NotifyFileManStarted()

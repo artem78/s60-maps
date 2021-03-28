@@ -23,6 +23,8 @@ class IapUtils
 	{
 public:
 	static void GetAllIapsL(CIapArray* anArray); // Get array of all available IAPs
+	static TBool IsIapAvailableL(TUint32 anIapId);
+	static TUint32 GetPreferredIapL();
 	};
 
 #endif /* IAPUTILS_H_ */

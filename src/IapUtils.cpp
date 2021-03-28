@@ -7,6 +7,10 @@
 
 #include "IapUtils.h"
 
+// Constants
+const TInt KDefaultIapArrayGranularity = 5 /*10*/;
+
+
 void IapUtils::GetAllIapsL(CIapArray* anArray)
 	{
 	anArray->Reset();
@@ -22,4 +26,46 @@ void IapUtils::GetAllIapsL(CIapArray* anArray)
 		anArray->AppendL(item);
 		}
 	//////////////////
+	}
+
+TBool IapUtils::IsIapAvailableL(TUint32 anIapId)
+	{
+	CIapArray* iaps = new (ELeave) CIapArray(KDefaultIapArrayGranularity);
+	CleanupStack::PushL(iaps);
+	
+	GetAllIapsL(iaps);
+	
+	TBool isFound = EFalse;
+	for (TInt idx = 0; idx < iaps->Count(); idx++)
+		{
+		if ((*iaps)[idx].iId == anIapId)
+			{
+			isFound = ETrue;
+			break;
+			}
+		}
+	
+	CleanupStack::PopAndDestroy(iaps);
+	
+	return isFound;
+	}
+
+TUint32 IapUtils::GetPreferredIapL()
+	{
+	CIapArray* iaps = new (ELeave) CIapArray(KDefaultIapArrayGranularity);
+	CleanupStack::PushL(iaps);
+	
+	GetAllIapsL(iaps);
+	
+	if (iaps->Count() == 0)
+		User::Leave(KErrNotFound);
+	
+	// ToDo: Use connection preference
+	
+	// Return first IAP in array
+	TUint32 iap = (*iaps)[0].iId;
+	
+	CleanupStack::PopAndDestroy(iaps);
+	
+	return iap;
 	}

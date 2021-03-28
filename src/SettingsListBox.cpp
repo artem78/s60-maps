@@ -37,6 +37,10 @@ CAknSettingItem* CSettingsListBox::CreateSettingItemL(TInt aSettingId)
 			
 		case ESettingIapId:
 			{
+			/*// Check current stored IAP exists
+			if (!IapUtils::IsIapAvailableL(appUi->Settings()->iIapId))
+				appUi->Settings()->iIapId = IapUtils::GetPreferredIapL();*/
+			
 			TInt* ptr = (TInt*)(&appUi->Settings()->iIapId); // TUint& --> TInt&
 			settingItem = new (ELeave) CIapSettingItem(aSettingId,
 					*ptr);
