@@ -283,7 +283,14 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 	/* IAP settings */
 	// Check current stored IAP exists
 	if (!IapUtils::IsIapAvailableL(iSettings->iIapId))
-		iSettings->iIapId = IapUtils::GetPreferredIapL();
+		{
+		TUint32 defIap;
+		TRAPD(r, defIap = IapUtils::GetPreferredIapL());
+		if (r == KErrNone)
+			iSettings->iIapId = defIap;
+		else
+			iSettings->iIapConnMode = CSettings::ENotUse;
+		}
 	}
 
 MFileManObserver::TControl CS60MapsAppUi::NotifyFileManStarted()
