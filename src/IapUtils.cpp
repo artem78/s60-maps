@@ -6,6 +6,7 @@
  */
 
 #include "IapUtils.h"
+#include <commdb.h>
 
 // Constants
 const TInt KDefaultIapArrayGranularity = 5 /*10*/;
@@ -15,17 +16,38 @@ void IapUtils::GetAllIapsL(CIapArray* anArray)
 	{
 	anArray->Reset();
 	
-	////// STUB //////
-	// ToDo: Replace by real code
-	for (TInt i = 1; i <= 5; i++)
+	CCommsDatabase* commsDb = CCommsDatabase::NewL(EDatabaseTypeIAP);
+	CleanupStack::PushL(commsDb);
+	CCommsDbTableView* commsView = commsDb->OpenIAPTableViewMatchingBearerSetLC(
+			ECommDbBearerGPRS | ECommDbBearerWLAN, 
+			ECommDbConnectionDirectionOutgoing);
+	
+	if (commsView->GotoFirstRecord() == KErrNone)
 		{
-		TIapItem item;
-		item.iId = i - 1;
-		item.iName.Copy(_L("IAP "));
-		item.iName.AppendNum(i);
-		anArray->AppendL(item);
+		do
+			{
+			TBuf<KCommsDbSvrMaxColumnNameLength> iapName;
+			TUint32 iapId;
+
+			commsView->ReadTextL(TPtrC(COMMDB_NAME), iapName);
+			commsView->ReadUintL(TPtrC(COMMDB_ID), iapId);
+			
+			TIapItem item;
+			item.iId = iapId;
+			
+			/////////////
+			_LIT(KFmt, "%S (id %d)");
+			item.iName.Format(KFmt, &iapName, iapId);
+			/////////////
+			
+			//item.iName.Copy(iapName); // ToDo: Uncomment this line
+			
+			anArray->AppendL(item);
+			}
+		while (commsView->GotoNextRecord() == KErrNone);
 		}
-	//////////////////
+			
+	CleanupStack::PopAndDestroy(2, commsDb);
 	}
 
 TBool IapUtils::IsIapAvailableL(TUint32 anIapId)
