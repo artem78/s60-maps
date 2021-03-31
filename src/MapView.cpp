@@ -351,7 +351,7 @@ void CMapView::HandleAboutL()
 	{
 	_LIT(KAuthor,	"artem78 (megabyte1024@ya.ru)");
 	_LIT(KWebSite,	"https://github.com/artem78/s60-maps");
-	_LIT(KThanksTo,	"baranovskiykonstantin, Symbian9, Men770, fizolas");
+	_LIT(KThanksTo,	"baranovskiykonstantin, Symbian9, Men770, fizolas, bent");
 	
 	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
 	dlg->PrepareLC(R_QUERY_DIALOG);
