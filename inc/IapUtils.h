@@ -24,7 +24,8 @@ class IapUtils
 public:
 	static void GetAllIapsL(CIapArray* anArray); // Get array of all available IAPs
 	static TBool IsIapAvailableL(TUint32 anIapId);
-	static TUint32 GetPreferredIapL();
+	static TUint32 GetFirstIapL(); // Return first available IAP id
+	//static TUint32 GetPreferredIapL(); // Return preferred IAP id using connection preferences
 	};
 
 #endif /* IAPUTILS_H_ */

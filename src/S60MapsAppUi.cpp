@@ -285,7 +285,7 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 	if (!IapUtils::IsIapAvailableL(iSettings->iIapId))
 		{
 		TUint32 defIap;
-		TRAPD(r, defIap = IapUtils::GetPreferredIapL());
+		TRAPD(r, defIap = IapUtils::GetFirstIapL());
 		if (r == KErrNone)
 			iSettings->iIapId = defIap;
 		else

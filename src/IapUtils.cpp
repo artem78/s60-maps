@@ -72,7 +72,7 @@ TBool IapUtils::IsIapAvailableL(TUint32 anIapId)
 	return isFound;
 	}
 
-TUint32 IapUtils::GetPreferredIapL()
+TUint32 IapUtils::GetFirstIapL()
 	{
 	CIapArray* iaps = new (ELeave) CIapArray(KDefaultIapArrayGranularity);
 	CleanupStack::PushL(iaps);
@@ -82,8 +82,6 @@ TUint32 IapUtils::GetPreferredIapL()
 	if (iaps->Count() == 0)
 		User::Leave(KErrNotFound);
 	
-	// ToDo: Use connection preference
-	
 	// Return first IAP in array
 	TUint32 iap = (*iaps)[0].iId;
 	
@@ -91,3 +89,8 @@ TUint32 IapUtils::GetPreferredIapL()
 	
 	return iap;
 	}
+
+/*TUint32 IapUtils::GetPreferredIapL()
+	{
+	// ToDo: Make this...
+	}*/
