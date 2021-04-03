@@ -15,6 +15,7 @@
 #include <e32std.h>
 #include <e32base.h>
 #include "HTTPClient.h"
+#include "Settings.h"
 
 // CLASS DECLARATION
 
@@ -35,19 +36,19 @@ public:
 	/**
 	 * Two-phased constructor.
 	 */
-	static CNetworkManager* NewL(MHTTPClientObserver* aHttpClientObserver);
+	static CNetworkManager* NewL(CSettings* aSettings, MHTTPClientObserver* aHttpClientObserver);
 
 	/**
 	 * Two-phased constructor.
 	 */
-	static CNetworkManager* NewLC(MHTTPClientObserver* aHttpClientObserver);
+	static CNetworkManager* NewLC(CSettings* aSettings, MHTTPClientObserver* aHttpClientObserver);
 
 private:
 
 	/**
 	 * Constructor for performing 1st stage construction
 	 */
-	CNetworkManager(MHTTPClientObserver* aHttpClientObserver);
+	CNetworkManager(CSettings* aSettings, MHTTPClientObserver* aHttpClientObserver);
 
 	/**
 	 * EPOC default constructor for performing 2nd stage construction
@@ -59,7 +60,7 @@ private:
 public:
 	CHTTPClient* HttpClient();
 	inline TBool IsOfflineMode()
-		{ return iIsOfflineMode; }
+		{ return iSettings->iIapConnMode == CSettings::ENotUse || iIsOfflineMode; }
 	inline void SetOfflineMode(TBool anEnabled = ETrue)
 		{ iIsOfflineMode = anEnabled; }
 	inline void SetHttpClientObserver(MHTTPClientObserver* aHttpClientObserver)
@@ -69,6 +70,7 @@ private:
 	MHTTPClientObserver* iHttpClientObserver;
 	CHTTPClient* iHttpClient;
 	TBool iIsOfflineMode;
+	CSettings* iSettings;
 	
 	void CreateHttpClientL(); // Deferred construction for iHttpClient
 

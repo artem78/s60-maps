@@ -46,7 +46,7 @@ void CS60MapsAppUi::ConstructL()
 	
 	iSettings = new (ELeave) CSettings();
 	
-	iNetworkManager = CNetworkManager::NewL(NULL); // Http observer will be set later in CTileBitmapManager::ConstructL
+	iNetworkManager = CNetworkManager::NewL(iSettings, NULL); // Http observer will be set later in CTileBitmapManager::ConstructL
 	
 	// Set several predefined available tiles providers
 

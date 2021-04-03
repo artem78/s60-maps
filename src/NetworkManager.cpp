@@ -11,10 +11,12 @@
 #include "NetworkManager.h"
 #include "Defs.h"
 
-CNetworkManager::CNetworkManager(MHTTPClientObserver* aHttpClientObserver) :
+CNetworkManager::CNetworkManager(CSettings* aSettings,
+			MHTTPClientObserver* aHttpClientObserver) :
 		iIsOfflineMode(EFalse),
 		iHttpClientObserver(aHttpClientObserver),
-		iHttpClient(NULL)
+		iHttpClient(NULL),
+		iSettings(aSettings)
 	{
 	// No implementation required
 	}
@@ -24,17 +26,19 @@ CNetworkManager::~CNetworkManager()
 	delete iHttpClient;
 	}
 
-CNetworkManager* CNetworkManager::NewLC(MHTTPClientObserver* aHttpClientObserver)
+CNetworkManager* CNetworkManager::NewLC(CSettings* aSettings,
+		MHTTPClientObserver* aHttpClientObserver)
 	{
-	CNetworkManager* self = new (ELeave) CNetworkManager(aHttpClientObserver);
+	CNetworkManager* self = new (ELeave) CNetworkManager(aSettings, aHttpClientObserver);
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	return self;
 	}
 
-CNetworkManager* CNetworkManager::NewL(MHTTPClientObserver* aHttpClientObserver)
+CNetworkManager* CNetworkManager::NewL(CSettings* aSettings,
+		MHTTPClientObserver* aHttpClientObserver)
 	{
-	CNetworkManager* self = CNetworkManager::NewLC(aHttpClientObserver);
+	CNetworkManager* self = CNetworkManager::NewLC(aSettings, aHttpClientObserver);
 	CleanupStack::Pop(); // self;
 	return self;
 	}
