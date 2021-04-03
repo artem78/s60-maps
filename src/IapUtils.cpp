@@ -52,42 +52,41 @@ void IapUtils::GetAllIapsL(CIapArray* anArray)
 
 TBool IapUtils::IsIapAvailableL(TUint32 anIapId)
 	{
-	CIapArray* iaps = new (ELeave) CIapArray(KDefaultIapArrayGranularity);
-	CleanupStack::PushL(iaps);
-	
-	GetAllIapsL(iaps);
-	
 	TBool isFound = EFalse;
-	for (TInt idx = 0; idx < iaps->Count(); idx++)
-		{
-		if ((*iaps)[idx].iId == anIapId)
-			{
-			isFound = ETrue;
-			break;
-			}
-		}
 	
-	CleanupStack::PopAndDestroy(iaps);
+	CCommsDatabase* commsDb = CCommsDatabase::NewL(EDatabaseTypeIAP);
+	CCommsDbTableView* commsView = NULL;
+	TRAPD(r, commsView = commsDb->OpenIAPTableViewMatchingNetworkLC(anIapId);
+				CleanupStack::Pop(commsView));
+	if (r == KErrNone)
+		isFound = commsView->GotoFirstRecord() == KErrNone;
+	else
+		isFound = EFalse;
+	
+	delete commsView;
+	delete commsDb;
 	
 	return isFound;
 	}
 
 TUint32 IapUtils::GetFirstIapL()
-	{
-	CIapArray* iaps = new (ELeave) CIapArray(KDefaultIapArrayGranularity);
-	CleanupStack::PushL(iaps);
+	{	
+	TUint32 iapId = 0;
 	
-	GetAllIapsL(iaps);
+	CCommsDatabase* commsDb = CCommsDatabase::NewL(EDatabaseTypeIAP);
+	CleanupStack::PushL(commsDb);
+	CCommsDbTableView* commsView = commsDb->OpenIAPTableViewMatchingBearerSetLC(
+			ECommDbBearerGPRS | ECommDbBearerWLAN, 
+			ECommDbConnectionDirectionOutgoing);
 	
-	if (iaps->Count() == 0)
+	if (commsView->GotoFirstRecord() == KErrNone)
+		commsView->ReadUintL(TPtrC(COMMDB_ID), iapId);
+	else
 		User::Leave(KErrNotFound);
 	
-	// Return first IAP in array
-	TUint32 iap = (*iaps)[0].iId;
+	CleanupStack::PopAndDestroy(2, commsDb);
 	
-	CleanupStack::PopAndDestroy(iaps);
-	
-	return iap;
+	return iapId;
 	}
 
 /*TUint32 IapUtils::GetPreferredIapL()
