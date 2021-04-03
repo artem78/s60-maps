@@ -23,6 +23,7 @@
 #include "Map.h" // For tile providers
 #include "Settings.h"
 #include "SettingsView.h"
+#include "NetworkManager.h"
 
 // FORWARD DECLARATIONS
 class CMapView;
@@ -127,6 +128,9 @@ public:
 	
 	void ClearTilesCacheL();
 	void SaveAndExitL();
+	
+	inline CNetworkManager* /*NetworkManager*/ NetMgr()
+			{ return iNetworkManager; }
 
 private:
 	CSettings* iSettings;
@@ -139,6 +143,8 @@ private:
 	TFixedArray<TTileProvider*, /*5*/ 4> iAvailableTileProviders;
 	//TBuf<64> iTileProviderId
 	TTileProvider* iActiveTileProvider;
+	
+	CNetworkManager* iNetworkManager;
 	
 	// Command handlers
 private:

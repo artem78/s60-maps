@@ -1,0 +1,77 @@
+/*
+ ============================================================================
+ Name		: NetworkManager.h
+ Author	  : artem78
+ Version	 : 
+ Copyright   : 
+ Description : CNetworkManager declaration
+ ============================================================================
+ */
+
+#ifndef NETWORKMANAGER_H
+#define NETWORKMANAGER_H
+
+// INCLUDES
+#include <e32std.h>
+#include <e32base.h>
+#include "HTTPClient.h"
+
+// CLASS DECLARATION
+
+/**
+ *  CNetworkManager
+ * 
+ */
+class CNetworkManager : public CBase
+	{
+public:
+	// Constructors and destructor
+
+	/**
+	 * Destructor.
+	 */
+	~CNetworkManager();
+
+	/**
+	 * Two-phased constructor.
+	 */
+	static CNetworkManager* NewL(MHTTPClientObserver* aHttpClientObserver);
+
+	/**
+	 * Two-phased constructor.
+	 */
+	static CNetworkManager* NewLC(MHTTPClientObserver* aHttpClientObserver);
+
+private:
+
+	/**
+	 * Constructor for performing 1st stage construction
+	 */
+	CNetworkManager(MHTTPClientObserver* aHttpClientObserver);
+
+	/**
+	 * EPOC default constructor for performing 2nd stage construction
+	 */
+	void ConstructL();
+	
+	
+	// New properties and methods
+public:
+	CHTTPClient* HttpClient();
+	inline TBool IsOfflineMode()
+		{ return iIsOfflineMode; }
+	inline void SetOfflineMode(TBool anEnabled = ETrue)
+		{ iIsOfflineMode = anEnabled; }
+	inline void SetHttpClientObserver(MHTTPClientObserver* aHttpClientObserver)
+		{ iHttpClientObserver = aHttpClientObserver; };
+	
+private:
+	MHTTPClientObserver* iHttpClientObserver;
+	CHTTPClient* iHttpClient;
+	TBool iIsOfflineMode;
+	
+	void CreateHttpClientL(); // Deferred construction for iHttpClient
+
+	};
+
+#endif // NETWORKMANAGER_H

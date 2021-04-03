@@ -17,7 +17,7 @@
 #include "MapMath.h"
 #include <e32base.h>
 #include <e32std.h>		// For RTimer
-#include "HttpClient.h"
+#include "HttpClient.h" // MHTTPClientObserver
 #include "FileUtils.h"
 #include <e32msgqueue.h>
 
@@ -222,7 +222,6 @@ private:
 	/*TInt*/ void Append/*L*/(const TTile &aTile); 
 	
 	RArray<TTile> /*iItemsForLoading*/ iItemsLoadingQueue;
-	CHTTPClient* iHTTPClient;
 	TTileProvider* iTileProvider;
 	//TFileName iCacheDir;
 	//TBool iIsLoading;
@@ -236,7 +235,6 @@ private:
 	CBufferedImageDecoder* iImgDecoder;
 	RFs iFs;
 	TTile iLoadingTile;
-	TBool iIsOfflineMode;
 	CFileTreeMapper* iFileMapper;
 	CTileBitmapSaver* iSaver;
 	

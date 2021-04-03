@@ -641,7 +641,6 @@ CTileBitmapManager::~CTileBitmapManager()
 	iItemsLoadingQueue.Close();
 	iItems.ResetAndDestroy();
 	iItems.Close();
-	delete iHTTPClient;
 	}
 
 CTileBitmapManager* CTileBitmapManager::NewLC(MTileBitmapManagerObserver *aObserver,
@@ -663,28 +662,21 @@ CTileBitmapManager* CTileBitmapManager::NewL(MTileBitmapManagerObserver *aObserv
 
 void CTileBitmapManager::ConstructL(const TDesC &aCacheDir)
 	{
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
+	
 #ifdef __WINSCW__
 	// Add some delay for network services have been started on the emulator,
 	// otherwise CEcmtServer: 3 panic will be raised.
 	User::After(10 * KSecond);
 #endif
-	iHTTPClient = CHTTPClient::NewL(this);
 	
-	TBuf8<32> userAgent;
-	userAgent.Copy(_L8("S60Maps")); // ToDo: Move to constant
-	userAgent.Append(' ');
-	userAgent.Append('v');
-	userAgent.Append(KProgramVersion.Name());
-#ifdef _DEBUG
-	_LIT8(KDebugStr, "DEV");
-	userAgent.Append(' ');
-	userAgent.Append(KDebugStr);
-#endif
-	iHTTPClient->SetUserAgentL(userAgent);
+	appUi->NetMgr()->SetHttpClientObserver(this);
+
+	// ToDo: Add headers to current transaction, NOT http client
 	_LIT8(KAllowedTypes, "image/png"); // At the moment only PNG supported
-	iHTTPClient->SetHeaderL(HTTP::EAccept, KAllowedTypes);
+	appUi->NetMgr()->HttpClient()->SetHeaderL(HTTP::EAccept, KAllowedTypes);
 	_LIT8(KKeepAlive, "Keep-Alive");
-	iHTTPClient->SetHeaderL(HTTP::EConnection, KKeepAlive); // Not mandatory for HTTP 1.1
+	appUi->NetMgr()->HttpClient()->SetHeaderL(HTTP::EConnection, KKeepAlive); // Not mandatory for HTTP 1.1
 	
 	iItems = RPointerArray<CTileBitmapManagerItem>(iLimit);
 	iItemsLoadingQueue = RArray<TTile>(20); // ToDo: Move 20 to constant
@@ -790,7 +782,8 @@ CTileBitmapManagerItem* CTileBitmapManager::Find(const TTile &aTile) const
 
 void CTileBitmapManager::StartDownloadTileL(const TTile &aTile)
 	{
-	if (iIsOfflineMode)
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
+	if (appUi->NetMgr()->IsOfflineMode())
 		return;
 	
 	if (iState != /*TProcessingState::*/EIdle)
@@ -804,7 +797,7 @@ void CTileBitmapManager::StartDownloadTileL(const TTile &aTile)
 	tileUrl.CreateL(iTileProvider->iTileUrlTemplate.Length() + KReserveLength);
 	tileUrl.CleanupClosePushL();
 	iTileProvider->TileUrl(tileUrl, aTile);
-	iHTTPClient->GetL(tileUrl);
+	appUi->NetMgr()->HttpClient()->GetL(tileUrl);
 	// SetActive()
 	DEBUG(_L8("Started download tile %S from url %S"), &aTile.AsDes8(), &tileUrl);
 	CleanupStack::PopAndDestroy(&tileUrl);
@@ -952,7 +945,8 @@ void CTileBitmapManager::OnHTTPError(TInt aError,
 		// (in my case: 2 in emulator, 5-6 on the phone) and only after that
 		// we can catch cancel in this callback
 		// https://github.com/artem78/s60-maps/issues/4
-		iIsOfflineMode = ETrue;
+		CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
+		appUi->NetMgr()->SetOfflineMode(ETrue);
 		INFO(_L("Switched to Offline Mode"));
 		iItemsLoadingQueue.Reset(); // Clear queue of loading tiles
 		}
@@ -1033,8 +1027,9 @@ void CTileBitmapManager::ChangeTileProvider(TTileProvider* aTileProvider,
 
 	INFO(_L("Changing of tile provider from %S to %S"), &iTileProvider->iTitle, &aTileProvider->iTitle);
 	
-	Cancel();	
-	iHTTPClient->CancelRequest();
+	Cancel();
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
+	appUi->NetMgr()->HttpClient()->CancelRequest();
 	iItemsLoadingQueue.Reset(); // Should already be cleared by Cancel() call at previous line
 	iItems.ResetAndDestroy();
 	iTileProvider = aTileProvider;

@@ -46,6 +46,8 @@ void CS60MapsAppUi::ConstructL()
 	
 	iSettings = new (ELeave) CSettings();
 	
+	iNetworkManager = CNetworkManager::NewL(NULL); // Http observer will be set later in CTileBitmapManager::ConstructL
+	
 	// Set several predefined available tiles providers
 
 	// OpenStreetMap standard tile layer
@@ -162,6 +164,8 @@ CS60MapsAppUi::~CS60MapsAppUi()
 	
 	//delete iAvailableTileProviders;
 	iAvailableTileProviders.DeleteAll();
+	
+	delete iNetworkManager;
 	
 	delete iSettings;
 	}
