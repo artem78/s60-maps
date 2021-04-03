@@ -284,12 +284,19 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 	// Check current stored IAP exists
 	if (!IapUtils::IsIapAvailableL(iSettings->iIapId))
 		{
+		WARNING(_L("Saved IAP id=%d not found"), iSettings->iIapId);
 		TUint32 defIap;
 		TRAPD(r, defIap = IapUtils::GetFirstIapL());
 		if (r == KErrNone)
+			{
+			INFO(_L("IAP id changed to first found: %d --> %d"), iSettings->iIapId, defIap);
 			iSettings->iIapId = defIap;
+			}
 		else
+			{
 			iSettings->iIapConnMode = CSettings::ENotUse;
+			INFO(_L("IAP connection mode changed to \"Not use\""));
+			}
 		}
 	}
 
