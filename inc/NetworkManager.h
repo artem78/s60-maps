@@ -16,6 +16,7 @@
 #include <e32base.h>
 #include "HTTPClient.h"
 #include "Settings.h"
+#include <es_sock.h>
 
 // CLASS DECLARATION
 
@@ -62,15 +63,18 @@ public:
 	inline TBool IsOfflineMode()
 		{ return iSettings->iIapConnMode == CSettings::ENotUse || iIsOfflineMode; }
 	inline void SetOfflineMode(TBool anEnabled = ETrue)
-		{ iIsOfflineMode = anEnabled; }
+		{ iIsOfflineMode = anEnabled; if (anEnabled) iConnection.Stop(); }
 	inline void SetHttpClientObserver(MHTTPClientObserver* aHttpClientObserver)
 		{ iHttpClientObserver = aHttpClientObserver; };
+	void /*UpdateNetworkSettings*/ UpdateConnectionSettings(); // Need to be called each time when connections settings have been changed
 	
 private:
 	MHTTPClientObserver* iHttpClientObserver;
 	CHTTPClient* iHttpClient;
 	TBool iIsOfflineMode;
 	CSettings* iSettings;
+	RSocketServ iSocketServ;
+	RConnection iConnection;
 	
 	void CreateHttpClientL(); // Deferred construction for iHttpClient
 

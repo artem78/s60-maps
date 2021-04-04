@@ -302,6 +302,9 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 			INFO(_L("IAP connection mode changed to \"Not use\""));
 			}
 		}
+	// Notify network manager about connection settings was changed
+	NetMgr()->UpdateConnectionSettings();
+
 	}
 
 MFileManObserver::TControl CS60MapsAppUi::NotifyFileManStarted()

@@ -74,12 +74,16 @@ void CSettingsListBox::EditItemL(TInt aIndex, TBool aCalledFromMenu)
 		case ESettingIapConnectionMode:
 			{
 			UpdateIapSettingVisibilityL();
+			
+			// Notify network manager about connection settings was changed
+			appUi->NetMgr()->UpdateConnectionSettings();
 			}
 			break;
 			
 		case ESettingIapId:
 			{
-			// ...
+			// Notify network manager about connection settings was changed
+			appUi->NetMgr()->UpdateConnectionSettings();
 			}
 			break;
 		}

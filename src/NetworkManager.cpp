@@ -10,6 +10,8 @@
 
 #include "NetworkManager.h"
 #include "Defs.h"
+#include <CommDbConnPref.h>
+#include "Logger.h"
 
 CNetworkManager::CNetworkManager(CSettings* aSettings,
 			MHTTPClientObserver* aHttpClientObserver) :
@@ -24,6 +26,10 @@ CNetworkManager::CNetworkManager(CSettings* aSettings,
 CNetworkManager::~CNetworkManager()
 	{
 	delete iHttpClient;
+	iConnection.Close();
+	iSocketServ.Close();
+	
+	DEBUG(_L("Network Manager destroyed"));
 	}
 
 CNetworkManager* CNetworkManager::NewLC(CSettings* aSettings,
@@ -45,13 +51,17 @@ CNetworkManager* CNetworkManager::NewL(CSettings* aSettings,
 
 void CNetworkManager::ConstructL()
 	{
+	User::LeaveIfError(iSocketServ.Connect());
+	User::LeaveIfError(iConnection.Open(iSocketServ));
+	
+	DEBUG(_L("Network Manager constructed"));
 	}
 
 void CNetworkManager::CreateHttpClientL()
 	{
 	if (iHttpClient) return; // Already created
 	
-	iHttpClient = CHTTPClient::NewL(iHttpClientObserver);
+	iHttpClient = CHTTPClient::NewL(iHttpClientObserver, iSocketServ, iConnection);
 	
 	// Set user agent
 	TBuf8<32> userAgent;
@@ -65,6 +75,8 @@ void CNetworkManager::CreateHttpClientL()
 	userAgent.Append(KDebugStr);
 #endif
 	iHttpClient->SetUserAgentL(userAgent);
+	
+	DEBUG(_L("Http Client created"));
 	}
 
 CHTTPClient* CNetworkManager::HttpClient()
@@ -75,4 +87,45 @@ CHTTPClient* CNetworkManager::HttpClient()
 	
 	return iHttpClient;
 	}
+
+void CNetworkManager::UpdateConnectionSettings()
+	{
+	DEBUG(_L("Start update connection settings"));
+	
+	iConnection.Stop();
+	DEBUG(_L("Network connection stopped"));
+	
+	switch (iSettings->iIapConnMode)
+		{
+		case CSettings::ESpecified:
+			{
+			TCommDbConnPref connPref;
+			
+			connPref.SetIapId(iSettings->iIapId);
+			connPref.SetDialogPreference(/*ECommDbDialogPrefPromptIfWrongMode*/ ECommDbDialogPrefDoNotPrompt);
+			//connPref.SetDirection(); // ???
+			//connPref.SetBearerSet(ECommDbBearerGPRS | ECommDbBearerWLAN);
+			
+			// Restart connection with updated preferences
+			iConnection.Start(connPref); // ToDo: Check error code
+			DEBUG(_L("Network connection started with user specified IAP"));
+			}
+			break;
+			
+		case CSettings::EAlwaysAsk:
+			{
+			// Restart connection with default CommDb preferences
+			iConnection.Start(); // ToDo: Check error code
+			DEBUG(_L("Network connection started with default preferences"));
+			}
+			break;
+			
+		case CSettings::ENotUse:
+			{
+			// No need to restart connection (do nothing)
+			}
+			break;
+		}
+	}
+
 
