@@ -672,12 +672,6 @@ void CTileBitmapManager::ConstructL(const TDesC &aCacheDir)
 	
 	appUi->NetMgr()->SetHttpClientObserver(this);
 
-	// ToDo: Add headers to current transaction, NOT http client
-	_LIT8(KAllowedTypes, "image/png"); // At the moment only PNG supported
-	appUi->NetMgr()->HttpClient()->SetHeaderL(HTTP::EAccept, KAllowedTypes);
-	_LIT8(KKeepAlive, "Keep-Alive");
-	appUi->NetMgr()->HttpClient()->SetHeaderL(HTTP::EConnection, KKeepAlive); // Not mandatory for HTTP 1.1
-	
 	iItems = RPointerArray<CTileBitmapManagerItem>(iLimit);
 	iItemsLoadingQueue = RArray<TTile>(20); // ToDo: Move 20 to constant
 	
@@ -792,12 +786,22 @@ void CTileBitmapManager::StartDownloadTileL(const TTile &aTile)
 	iState = /*TProcessingState::*/EDownloading;
 	iLoadingTile = aTile;
 	
+	// URL
 	RBuf8 tileUrl;
 	const TInt KReserveLength = 30; // For variables substitution
 	tileUrl.CreateL(iTileProvider->iTileUrlTemplate.Length() + KReserveLength);
 	tileUrl.CleanupClosePushL();
 	iTileProvider->TileUrl(tileUrl, aTile);
-	appUi->NetMgr()->HttpClient()->GetL(tileUrl);
+	
+	// Headers
+	RHTTPHeaders hdrs = appUi->NetMgr()->HttpClient()->GetRequestHeadersL();
+	_LIT8(KAllowedTypes, "image/png"); // At the moment only PNG supported
+	appUi->NetMgr()->HttpClient()->SetHeaderL(hdrs, HTTP::EAccept, KAllowedTypes);
+	_LIT8(KKeepAlive, "Keep-Alive");
+	appUi->NetMgr()->HttpClient()->SetHeaderL(hdrs, HTTP::EConnection, KKeepAlive); // Not mandatory for HTTP 1.1
+	
+	// Send request
+	appUi->NetMgr()->HttpClient()->GetL(tileUrl/*, &hdrs*/);
 	// SetActive()
 	DEBUG(_L8("Started download tile %S from url %S"), &aTile.AsDes8(), &tileUrl);
 	CleanupStack::PopAndDestroy(&tileUrl);
