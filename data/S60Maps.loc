@@ -13,6 +13,10 @@
 #include "S60Maps.l57"
 #endif
 
+#ifdef LANGUAGE_83
+#include "S60Maps.l83"
+#endif
+
 #ifdef LANGUAGE_93
 #include "S60Maps.l93"
 #endif
