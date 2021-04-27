@@ -26,3 +26,6 @@ CHARACTER_SET UTF8
 #define qtn_done "Feito!"
 #define qtn_stats_line "%S: %d arquivos, %S\n"
 #define qtn_stats_total "Total: %d arquivos, %S"
+
+// ToDo: Translate strings below
+#define qtn_no_gps "GPS is disabled! Positioning won`t work."

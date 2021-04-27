@@ -27,3 +27,6 @@ CHARACTER_SET UTF8
 #define qtn_done "בוצע!"
 #define qtn_stats_line "%S: %d קבצים, %S\n"
 #define qtn_stats_total "סך הכל: %d קבצים, %S"
+
+// ToDo: Translate strings below
+#define qtn_no_gps "GPS is disabled! Positioning won`t work."

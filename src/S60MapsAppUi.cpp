@@ -122,6 +122,11 @@ void CS60MapsAppUi::ConstructL()
 		iPosRequestor->Start(); // Must be started after view created
 	else
 		{
+		HBufC* msg = iEikonEnv->AllocReadResourceLC(R_NO_GPS);
+		//CAknWarningNote* note = new (ELeave) CAknWarningNote;
+		CAknErrorNote* note = new (ELeave) CAknErrorNote;
+		note->ExecuteLD(*msg);
+		CleanupStack::PopAndDestroy(msg);
 		WARNING(_L("Failed to create position requestor (error: %d), continue without GPS"), err);
 		}
 	
