@@ -117,7 +117,16 @@ void CS60MapsAppUi::ConstructL()
 	
 	// Position requestor
 	_LIT(KPosRequestorName, "S60 Maps"); // ToDo: Move to global const
-	TRAPD(err, iPosRequestor = CPositionRequestor::NewL(this, KPosRequestorName));
+#ifdef __WINS__
+	const TPositionModuleId KSimulationModuleId = {0x101f7a81};
+	const TPositionModuleId posModuleId = KSimulationModuleId;
+#else	
+	const TPositionModuleId KInternalGPSModuleId = {0x101FE98A}; // ToDo: Check if this value is the same on all phone models
+	const TPositionModuleId posModuleId = KInternalGPSModuleId;
+#endif
+	TRAPD(err, iPosRequestor = CPositionRequestor::NewL(this, KPosRequestorName,
+			KDefaultPositionUpdateInterval, KDefaultPositionUpdateTimeOut,
+			posModuleId));
 	if (err == KErrNone)
 		iPosRequestor->Start(); // Must be started after view created
 	else
