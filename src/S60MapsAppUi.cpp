@@ -288,7 +288,7 @@ void CS60MapsAppUi::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
 			CEikMenuPaneItem::SData menuItem;
 			menuItem.iCommandId = commandId;
 			menuItem.iCascadeId = 0;
-			//menuItem.iFlags = ???
+			menuItem.iFlags = EEikMenuItemCheckBox;
 			menuItem.iText.Copy(iAvailableTileProviders[idx]->iTitle);
 			//menuItem.iExtraText = ???
 			aMenuPane->AddMenuItemL(menuItem);
