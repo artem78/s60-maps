@@ -26,3 +26,4 @@
 #define qtn_stats_line "%S: %d files, %S\n"
 #define qtn_stats_total "Total: %d files, %S"
 #define qtn_no_gps "GPS is disabled! Positioning won`t work."
+#define qtn_wait "Please wait..."

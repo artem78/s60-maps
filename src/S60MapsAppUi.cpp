@@ -29,6 +29,7 @@
 #include "Defs.h"
 #include "GitInfo.h"
 #include "FileUtils.h"
+//#include <eikprogi.h>
 
 
 // ============================ MEMBER FUNCTIONS ===============================
@@ -105,7 +106,7 @@ void CS60MapsAppUi::ConstructL()
 	iActiveTileProvider = iAvailableTileProviders[0]; // Use first
 	
 	
-	iFileMan = CFileMan::NewL(CCoeEnv::Static()->FsSession(), this);
+	iFileMan = CAsyncFileMan::NewL(CCoeEnv::Static()->FsSession(), this);
 
 	// Set initial map position
 	TCoordinate position = TCoordinate(iSettings->GetLat(), iSettings->GetLon());
@@ -141,6 +142,8 @@ void CS60MapsAppUi::ConstructL()
 									   // app view panic KERN-EXEC 3 happens?
 	//Cba()->MakeVisible(EFalse); // Softkeys not work after this
 	iAppView->SetRect(ApplicationRect()); // Need to resize the view to fullscreen
+	
+	//iCacheResetProgressChecker = CPeriodic::NewL(CActive::EPriorityStandard);
 	}
 // -----------------------------------------------------------------------------
 // CS60MapsAppUi::CS60MapsAppUi()
@@ -162,6 +165,11 @@ CS60MapsAppUi::~CS60MapsAppUi()
 	//delete iCoreTarget;
 	/* Panic KERN-EXEC 3 - Seems that there are no need to manually destroy core target,
 	 because interface selector brings ownership and will delete target by itself. */
+	
+	/*iCacheResetProgressChecker->Cancel();
+	delete iCacheResetProgressChecker;*/
+	
+	//delete iCacheClearingWaitDialog;
 	
 	delete iInterfaceSelector;
 	
@@ -355,34 +363,72 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 
 MFileManObserver::TControl CS60MapsAppUi::NotifyFileManStarted()
 	{
-	return EContinue;
+	return MFileManObserver::EContinue;
 	}
 
 MFileManObserver::TControl CS60MapsAppUi::NotifyFileManOperation()
 	{
-	return EContinue;
+	return MFileManObserver::EContinue;
 	}
 
 MFileManObserver::TControl CS60MapsAppUi::NotifyFileManEnded()
 	{
-	return EContinue;
+	return MFileManObserver::EContinue;
 	}
 
 void CS60MapsAppUi::ClearTilesCacheL()
 	{
 	TFileName cacheDir;
 	static_cast<CS60MapsApplication *>(Application())->CacheDir(cacheDir);
-
-	// ToDo: Show loading/progress bar during operation
-	// ToDo: Do asynchronous
-	iFileMan->RmDir(cacheDir);
 	
-	// Show "Done" message
-	HBufC* msg = iEikonEnv->AllocReadResourceLC(R_DONE);
-	CAknInformationNote* note = new (ELeave) CAknInformationNote;
-	note->ExecuteLD(*msg);
-	CleanupStack::PopAndDestroy(msg);
+	INFO(_L("Start cleaning of cache directory"));
+	iFileMan->Delete(cacheDir, CFileMan::ERecurse);
+	
+	/*// Prepare and show progress dialog
+	iCacheResetProgressDialog = new (ELeave) CAknProgressDialog(
+			REINTERPRET_CAST(CEikDialog**, &iCacheResetProgressDialog)
+	);
+	iCacheResetProgressDialog->ExecuteLD(R_PROGRESS_DIALOG);
+	const KInterval = KSecond / 5;
+	TCallBack callback(UpdateTilesClearingProgress, this);*/
+	//iCacheResetProgressChecker->Start(0/*KInterval*/, KInterval, callback);
+	
+	// Prepare and show wait dialog
+	iCacheClearingWaitDialog = new (ELeave) CAknWaitDialog(
+			REINTERPRET_CAST(CEikDialog**, &iCacheClearingWaitDialog)
+	);
+	iCacheClearingWaitDialog->SetCallback(this);
+	iCacheClearingWaitDialog->ExecuteLD(R_WAIT_DIALOG);
 	}
+
+void CS60MapsAppUi::OnFileManFinished(TInt aStatus)
+	{
+	INFO(_L("FileMan operation ended with code=%d"), aStatus);
+	
+	//iCacheResetProgressDialog->ProcessFinishedL();
+	if (iCacheClearingWaitDialog)
+		iCacheClearingWaitDialog->ProcessFinishedL();
+	
+	if (aStatus == KErrNone)
+		{
+		// Show "Done" message
+		HBufC* msg = iEikonEnv->AllocReadResourceLC(R_DONE);
+		CAknInformationNote* note = new (ELeave) CAknInformationNote;
+		note->ExecuteLD(*msg);
+		CleanupStack::PopAndDestroy(msg);
+		}
+	}
+
+/*TInt CS60MapsAppUi::UpdateTilesClearingProgress(TAny* aSelfPtr)
+	{
+	CS60MapsAppUi* self = static_cast<CS60MapsAppUi*>(aSelfPtr);
+	CEikProgressInfo* progressInfo = self->iCacheResetProgressDialog->GetProgressInfoL();
+	progressInfo->SetFinalValue(self->iFileMan->TotalFiles());
+	progressInfo->SetAndDraw(self->iFileMan->ProcessedFiles());
+	DEBUG(_L("Progress: %d/%d"), self->iFileMan->ProcessedFiles(), self->iFileMan->TotalFiles());
+	
+	return ETrue;
+	}*/
 
 void CS60MapsAppUi::OnPositionUpdated()
 	{
@@ -459,6 +505,16 @@ void CS60MapsAppUi::MrccatoCommand(TRemConCoreApiOperationId aOperationId,
 			break;
 			}
 		}
+	}
+
+void CS60MapsAppUi::DialogDismissedL(TInt aButtonId)
+	{
+	if (aButtonId != EAknSoftkeyCancel)
+		return;
+	
+	iFileMan->Cancel();
+	
+	INFO(_L("Clearing cache operation cancelled"));
 	}
 
 void CS60MapsAppUi::HandleExitL()

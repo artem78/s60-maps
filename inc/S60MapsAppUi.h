@@ -22,6 +22,8 @@
 
 #include "Map.h" // For tile providers
 #include "Settings.h"
+//#include <aknprogressdialog.h> // For CAknProgressDialog
+#include <aknwaitdialog.h> // For CAknWaitDialog 
 
 // FORWARD DECLARATIONS
 class CS60MapsAppView;
@@ -32,8 +34,9 @@ class CS60MapsAppView;
  * Interacts with the user through the UI and request message processing
  * from the handler class
  */
-class CS60MapsAppUi : public CAknAppUi, public MFileManObserver,
-		public MPositionListener, public MRemConCoreApiTargetObserver
+class CS60MapsAppUi : public CAknAppUi, public MAsyncFileManObserver,
+		public MPositionListener, public MRemConCoreApiTargetObserver,
+		public MProgressDialogCallback
 	{
 public:
 	// Constructors and destructor
@@ -98,11 +101,12 @@ public:
 	void ExternalizeL(RWriteStream& aStream) const;
 	void InternalizeL(RReadStream& aStream);
 
-	// MFileManObserver
+	// MAsyncFileManObserver
 public:
 	MFileManObserver::TControl NotifyFileManStarted();
 	MFileManObserver::TControl NotifyFileManOperation();
 	MFileManObserver::TControl NotifyFileManEnded();
+	void OnFileManFinished(TInt aStatus);
 	
 	// MPositionListener
 public:
@@ -117,10 +121,14 @@ public:
 	void MrccatoCommand(TRemConCoreApiOperationId aOperationId,
 			TRemConCoreApiButtonAction aButtonAct);
 	
+	// MProgressDialogCallback
+public:
+	 void DialogDismissedL(TInt aButtonId);
+	
 	// Custom properties and methods
 private:
 	CSettings* iSettings;
-	CFileMan* iFileMan;
+	CAsyncFileMan* iFileMan;
 	CPositionRequestor* iPosRequestor;
 	
 	CRemConInterfaceSelector* iInterfaceSelector;
@@ -130,7 +138,12 @@ private:
 	//TBuf<64> iTileProviderId
 	TTileProvider* iActiveTileProvider;
 	
+	CAknWaitDialog* iCacheClearingWaitDialog;
+	//CAknProgressDialog* iCacheResetProgressDialog;
+	//CPeriodic* iCacheResetProgressChecker;
+	
 	void ClearTilesCacheL();
+	//static TInt UpdateTilesClearingProgress(TAny* aSelfPtr);
 	
 	// Command handlers
 	void HandleExitL();

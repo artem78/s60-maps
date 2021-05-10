@@ -31,4 +31,11 @@ enum TS60MapsIds
 	//ESetOpenTopoMapTileProvider		= /*ESetTileProviderBase + 4*/ 0x6500 + 4
 	};
 
+// Controls
+enum TS60MapsControlIds
+	{
+	//EClearCacheProgressDialog = 1
+	ECacheClearingWaitDialog = 2
+	};
+
 #endif // __S60MAPS_HRH__
