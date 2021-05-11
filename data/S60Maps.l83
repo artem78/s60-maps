@@ -1,0 +1,27 @@
+/*
+========================================================================
+ Name        : S60Maps.l83
+ Author      : Nadie
+ Copyright   : 
+ Description : 
+========================================================================
+*/
+// localized strings for language: Spanish (83)
+
+#define qtn_find_me "Buscar posición"
+//#define qtn_help "Ayuda"
+#define qtn_about "Versión"
+#define qtn_exit "Salir"
+#define qtn_tile_providers_title "Proveedor de mapas"
+#define qtn_service_title "Herramientas"
+#define qtn_tiles_cache_stats "Estadísticas de datos de los mapas"
+#define qtn_reset_tiles_cache "Eliminar mapas"
+//#define qtn_confirm_reset_tiles_cache_dialog_title "Acepta eliminar los mapas"
+#define qtn_confirm_reset_tiles_cache_dialog_text "Esta acción eliminará todos los mapas. ¿Está seguro?"
+#define qtn_about_dialog_title "Acerca de"
+#define qtn_about_dialog_text "Versión S60Maps %S\nBuild: " __DATE__ " " __TIME__ "\nGit: %S %S\nAutor: %S\nWeb: %S\nAgradecimientos: %S"
+//#define qtn_confirm_exit_dialog_title "Acepto salir"
+#define qtn_confirm_exit_dialog_text "¿Desea salir?"
+#define qtn_done "¡Mapas eliminados!"
+#define qtn_stats_line "%S: %d archivos, %S\n"
+#define qtn_stats_total "Total: %d archivos, %S"
