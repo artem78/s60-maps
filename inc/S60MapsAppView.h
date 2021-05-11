@@ -208,6 +208,8 @@ public:
 	void ShowUserPosition();
 	void HideUserPosition();
 	void SetFollowUser(TBool anEnabled = ETrue);
+	inline TBool IsFollowingUser()
+		{ return iIsFollowUser; };
 	void SetTileProviderL(TTileProvider* aTileProvider);
 
 	};

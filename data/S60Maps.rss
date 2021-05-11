@@ -87,6 +87,7 @@ RESOURCE MENU_PANE r_menu
 				{
 				command = EFindMe;
 				txt = qtn_find_me;
+				//flags = EEikMenuItemCheckBox;
 				},
 		// Probably I will add help in the future
 		/*MENU_ITEM
