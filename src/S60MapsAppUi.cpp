@@ -114,6 +114,7 @@ void CS60MapsAppUi::ConstructL()
 	
 	// Create view object
 	iAppView = CS60MapsAppView::NewL(ClientRect(), position, zoom, iActiveTileProvider);
+	iAppView->MakeVisible(EFalse); // Will be shown later after settings will be loaded in CS60MapsAppUi::RestoreL
 	AddToStackL(iAppView);
 	
 	// Position requestor
@@ -328,6 +329,11 @@ void CS60MapsAppUi::RestoreL(const CStreamStore& aStore,
 	stream.OpenLC(aStore, aStreamId);
 	stream >> *this;
 	CleanupStack::PopAndDestroy(&stream);
+	
+	DEBUG(_L("Settings restored"));
+	
+	// Show fully constructed view
+	iAppView->MakeVisible(ETrue);
 	}
 
 void CS60MapsAppUi::ExternalizeL(RWriteStream& aStream) const
