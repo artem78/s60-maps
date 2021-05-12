@@ -555,6 +555,11 @@ void CS60MapsAppUi::HandleExitL()
 			return;
 			}
 		}
+	
+	// Send window to background to increase visible speed of shutdown
+	SendAppToBackground();
+	
+	// Save settings and exit
 	SaveL();
 	Exit();
 	}
@@ -710,6 +715,13 @@ void CS60MapsAppUi::HandleAboutL()
 	dlg->SetMessageTextL(msg);
 	CleanupStack::PopAndDestroy(&msg);
 	dlg->RunLD();
+	}
+
+void CS60MapsAppUi::SendAppToBackground()
+	{
+	TApaTask task(iEikonEnv->WsSession());
+	task.SetWgId(CEikonEnv::Static()->RootWin().Identifier());
+	task.SendToBackground();
 	}
 
 

@@ -144,6 +144,7 @@ private:
 	
 	void ClearTilesCacheL();
 	//static TInt UpdateTilesClearingProgress(TAny* aSelfPtr);
+	void SendAppToBackground(); // Hide application window
 	
 	// Command handlers
 	void HandleExitL();
