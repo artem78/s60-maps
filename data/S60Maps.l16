@@ -20,7 +20,7 @@ CHARACTER_SET UTF8
 //#define qtn_confirm_reset_tiles_cache_dialog_title "Подтверждение очистки"
 #define qtn_confirm_reset_tiles_cache_dialog_text "Кеш для все карт будет полностью очищен. Вы уверены?"
 #define qtn_about_dialog_title "О программе"
-#define qtn_about_dialog_text "S60Maps Версия %S\nСборка: " __DATE__ " " __TIME__ "\nGit: %S %S\nАвтор: %S\nWeb: %S\nБлагодарности: %S"
+#define qtn_about_dialog_text "S60Maps Версия %S\nСборка: " __DATE__ " " __TIME__ "\nGit: %S %S\nАвтор: %S\nWeb: %S\nБлагодарности: %S и другие"
 //#define qtn_confirm_exit_dialog_title "Подтверждение выхода"
 #define qtn_confirm_exit_dialog_text "Выйти?"
 #define qtn_done "Выполнено!"
