@@ -602,12 +602,9 @@ void CS60MapsAppView::HideUserPosition()
 
 void CS60MapsAppView::SetFollowUser(TBool anEnabled)
 	{
-	if (anEnabled && iIsUserPositionRecieved)
-		iIsFollowUser = ETrue;
-	else
-		iIsFollowUser = EFalse;	
+	iIsFollowUser = anEnabled;
 	
-	if (iIsFollowUser)
+	if (iIsFollowUser && iIsUserPositionRecieved)
 		{
 		const TZoom minZoom = 16;
 		if (GetZoom() < minZoom)

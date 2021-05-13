@@ -145,6 +145,8 @@ void CS60MapsAppUi::ConstructL()
 	iAppView->SetRect(ApplicationRect()); // Need to resize the view to fullscreen
 	
 	//iCacheResetProgressChecker = CPeriodic::NewL(CActive::EPriorityStandard);
+	
+	iAppView->SetFollowUser(ETrue);
 	}
 // -----------------------------------------------------------------------------
 // CS60MapsAppUi::CS60MapsAppUi()
