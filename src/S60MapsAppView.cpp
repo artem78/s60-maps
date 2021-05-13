@@ -13,6 +13,7 @@
 #include <e32math.h>
 #include "Defs.h"
 #include <aknappui.h> 
+#include "S60Maps.pan"
 
 // Constants
 const TInt KMovementRepeaterInterval = 200000;
@@ -391,6 +392,10 @@ void CS60MapsAppView::Move(const TPoint &aPoint, TBool aSavePos)
 
 void CS60MapsAppView::Move(const TCoordinate &aPos)
 	{
+	/*__ASSERT_ALWAYS*/
+	__ASSERT_DEBUG(Math::IsFinite(aPos.Latitude()) && Math::IsFinite(aPos.Longitude()),
+			Panic(ES60MapsInvalidPosition)); // Possible may be NaN
+	
 	iCenterPosition = aPos; // Store new position
 	TPoint point = MapMath::GeoCoordsToProjectionPoint(aPos, iZoom);
 	// Convert from center to top left
