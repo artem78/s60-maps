@@ -472,7 +472,6 @@ void CS60MapsAppUi::OnPositionPartialUpdated()
 
 void CS60MapsAppUi::OnPositionRestored()
 	{
-	iAppView->ShowUserPosition();
 	}
 
 void CS60MapsAppUi::OnPositionLost()
