@@ -567,7 +567,7 @@ void CS60MapsAppView::Bounds(TTileReal &aTopLeftTile, TTileReal &aBottomRightTil
 
 void CS60MapsAppView::UpdateUserPosition()
 	{
-	if (iIsFollowUser)
+	if (iIsFollowUser && iIsUserPositionRecieved)
 		Move(iUserPosition);
 	else
 		DrawNow();
