@@ -26,6 +26,9 @@ CHARACTER_SET UTF8
 #define qtn_done "Выполнено!"
 #define qtn_stats_line "%S: %d файлов, %S\n"
 #define qtn_stats_total "Всего: %d файлов, %S"
+
+// Added in version 1.4.0:
+
 #define qtn_positioning_disabled "Определение местоположения недоступно!"
 #define qtn_wait "Подождите..."
 #define qtn_meters_unit_short "м"

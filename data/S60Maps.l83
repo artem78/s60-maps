@@ -26,3 +26,11 @@ CHARACTER_SET UTF8
 #define qtn_done "¡Mapas eliminados!"
 #define qtn_stats_line "%S: %d archivos, %S\n"
 #define qtn_stats_total "Total: %d archivos, %S"
+
+// Added in version 1.4.0:
+// ToDo: Translate strings below
+
+#define qtn_positioning_disabled "Positioning unavailable!"
+#define qtn_wait "Please wait..."
+#define qtn_meters_unit_short "m"
+#define qtn_kilometers_unit_short "km"

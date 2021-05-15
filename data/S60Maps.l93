@@ -27,5 +27,10 @@ CHARACTER_SET UTF8
 #define qtn_stats_line "%S: %d файлів, %S\n"
 #define qtn_stats_total "Всього: %d файлів, %S"
 
+// Added in version 1.4.0:
 // ToDo: Translate strings below
-#define qtn_no_gps "GPS is disabled! Positioning won`t work."
+
+#define qtn_positioning_disabled "Определение местоположения недоступно!"
+#define qtn_wait "Подождите..."
+#define qtn_meters_unit_short "м"
+#define qtn_kilometers_unit_short "км"
