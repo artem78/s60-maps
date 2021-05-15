@@ -465,12 +465,34 @@ void CScaleBarLayer::Draw(CWindowGc &aGc)
 		MapMath::PixelsToMeters(iMapView->GetCenterCoordinate().Latitude(),
 				iMapView->GetZoom(), KBarWidth, horDist, vertDist);
 	}
-	//Math::Round(horDist, horDist, 0);
+	
+	// Getting text
+	_LIT(KMetersUnit, "m");
+	_LIT(KKilometersUnit, "km");
+	_LIT(KFmtInt, "%.0f %S");
+	_LIT(KFmtReal, "%.1f %S");
+	TPtrC unit;
+	TPtrC fmt;
+	if (horDist < 1000) // Less than 1 km
+		{
+		// Round value to meters
+		unit.Set(KMetersUnit);
+		fmt.Set(KFmtInt);
+		}
+	else // More than 1 km
+		{
+		// Round value to kilometers
+		unit.Set(KKilometersUnit);
+		horDist /= 1000.0;
+		if (horDist > 10) // If more than 10 km don`t show fractional part
+			fmt.Set(KFmtInt);
+		else
+			fmt.Set(KFmtReal);
+		}
+	TBuf<16> text;
+	text.Format(fmt, horDist, &unit);
 	
 	// Draw text
-	_LIT(KFmt, "%d m");
-	TBuf<16> text;
-	text.Format(KFmt, static_cast<TInt>(horDist) /*horDist*/);
 	TRect textRect(barStartPoint, barEndPoint);
 	textRect.iTl.iY -= 30;
 	textRect.Move(0, -KTextBottomMargin);
