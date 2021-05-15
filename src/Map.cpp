@@ -18,6 +18,7 @@
 #include "S60MapsApplication.h"
 #include <bautils.h>
 #include "Defs.h"
+#include <S60Maps_0xED689B88.rsg>
 
 CMapLayerBase::CMapLayerBase(/*const*/ CS60MapsAppView* aMapView) :
 		iMapView(aMapView)
@@ -445,6 +446,34 @@ CScaleBarLayer::CScaleBarLayer(CS60MapsAppView* aMapView):
 	{
 	}
 
+CScaleBarLayer::~CScaleBarLayer()
+	{
+	delete iKilometersUnit;
+	delete iMetersUnit;
+	}
+
+CScaleBarLayer* CScaleBarLayer::NewLC(CS60MapsAppView* aMapView)
+	{
+	CScaleBarLayer* self = new (ELeave) CScaleBarLayer(aMapView);
+	CleanupStack::PushL(self);
+	self->ConstructL();
+	return self;
+	}
+
+CScaleBarLayer* CScaleBarLayer::NewL(CS60MapsAppView* aMapView)
+	{
+	CScaleBarLayer* self = CScaleBarLayer::NewLC(aMapView);
+	CleanupStack::Pop(); // self;
+	return self;
+	}
+
+void CScaleBarLayer::ConstructL()
+	{
+	// Read strings from resources
+	iMetersUnit = CCoeEnv::Static()->AllocReadResourceL(R_METERS_UNIT_SHORT);
+	iKilometersUnit = CCoeEnv::Static()->AllocReadResourceL(R_KILOMETERS_UNIT_SHORT);
+	}
+
 void CScaleBarLayer::Draw(CWindowGc &aGc)
 	{
 	const TInt KBarLeftMargin    = 14;
@@ -467,22 +496,20 @@ void CScaleBarLayer::Draw(CWindowGc &aGc)
 	}
 	
 	// Getting text
-	_LIT(KMetersUnit, "m");
-	_LIT(KKilometersUnit, "km");
 	_LIT(KFmtInt, "%.0f %S");
 	_LIT(KFmtReal, "%.1f %S");
-	TPtrC unit;
+	HBufC* unit;
 	TPtrC fmt;
 	if (horDist < 1000) // Less than 1 km
 		{
 		// Round value to meters
-		unit.Set(KMetersUnit);
+		unit = iMetersUnit;
 		fmt.Set(KFmtInt);
 		}
 	else // More than 1 km
 		{
 		// Round value to kilometers
-		unit.Set(KKilometersUnit);
+		unit = iKilometersUnit;
 		horDist /= 1000.0;
 		if (horDist > 10) // If more than 10 km don`t show fractional part
 			fmt.Set(KFmtInt);
@@ -490,7 +517,7 @@ void CScaleBarLayer::Draw(CWindowGc &aGc)
 			fmt.Set(KFmtReal);
 		}
 	TBuf<16> text;
-	text.Format(fmt, horDist, &unit);
+	text.Format(fmt, horDist, &(*unit));
 	
 	// Draw text
 	TRect textRect(barStartPoint, barEndPoint);

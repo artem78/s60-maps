@@ -27,3 +27,5 @@ CHARACTER_SET UTF8
 #define qtn_stats_line "%S: %d файлов, %S\n"
 #define qtn_stats_total "Всего: %d файлов, %S"
 #define qtn_no_gps "GPS отключён! Определение вашего местоположения не будет работать."
+#define qtn_meters_unit_short "м"
+#define qtn_kilometers_unit_short "км"

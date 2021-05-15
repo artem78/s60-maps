@@ -27,3 +27,5 @@
 #define qtn_stats_total "Total: %d files, %S"
 #define qtn_no_gps "GPS is disabled! Positioning won`t work."
 #define qtn_wait "Please wait..."
+#define qtn_meters_unit_short "m"
+#define qtn_kilometers_unit_short "km"

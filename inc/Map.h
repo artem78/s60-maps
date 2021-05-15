@@ -141,9 +141,24 @@ private:
 
 class CScaleBarLayer : public CMapLayerBase
 	{
+	// Constructor / destructor
 public:
+	~CScaleBarLayer();
+	static CScaleBarLayer* NewL(CS60MapsAppView* aMapView);
+	static CScaleBarLayer* NewLC(CS60MapsAppView* aMapView);
+
+private:
 	CScaleBarLayer(CS60MapsAppView* aMapView);
+	void ConstructL();
+	
+	// From CMapLayerBase
+public:
 	void Draw(CWindowGc &aGc);
+	
+	// Own
+private:
+	HBufC* iMetersUnit;
+	HBufC* iKilometersUnit;
 	};
 
 

@@ -274,6 +274,8 @@ RESOURCE TBUF r_stats_line { buf=qtn_stats_line; }
 RESOURCE TBUF r_stats_total { buf=qtn_stats_total; }
 RESOURCE TBUF r_no_gps { buf=qtn_no_gps; }
 //RESOURCE TBUF r_wait { buf=qtn_wait; }
+RESOURCE TBUF r_meters_unit_short { buf=qtn_meters_unit_short; }
+RESOURCE TBUF r_kilometers_unit_short { buf=qtn_kilometers_unit_short; }
 
 
 // ---------------------------------------------------------------------------- 
