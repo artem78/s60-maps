@@ -67,11 +67,12 @@ void CS60MapsAppView::ConstructL(const TRect& aRect, const TCoordinate &aInitial
 	
 	// Create layers
 	TInt i = 0;
-	iLayers[i++] = CTiledMapLayer::NewL(this, aTileProvider); 
+	iLayers[i++] = CTiledMapLayer::NewL(this, aTileProvider);
 #ifdef DEBUG_SHOW_TILE_BORDER_AND_XYZ
 	iLayers[i++] = new (ELeave) CTileBorderAndXYZLayer(this);
 #endif
 	iLayers[i++] = new (ELeave) CUserPositionLayer(this);
+	iLayers[i++] = new (ELeave) CScaleBarLayer(this);
 #ifdef DEBUG_SHOW_ADDITIONAL_INFO
 	iLayers[i++] = new (ELeave) CMapLayerDebugInfo(this);
 #endif

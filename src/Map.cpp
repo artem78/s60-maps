@@ -437,6 +437,52 @@ void CTileBorderAndXYZLayer::DrawTile(CWindowGc &aGc, const TTile &aTile)
 	}
 #endif
 
+
+// CScaleBarLayer
+
+CScaleBarLayer::CScaleBarLayer(CS60MapsAppView* aMapView):
+		CMapLayerBase(aMapView)
+	{
+	}
+
+void CScaleBarLayer::Draw(CWindowGc &aGc)
+	{
+	const TInt KBarLeftMargin    = 14;
+	const TInt KBarBottomMargin  = KBarLeftMargin;
+	const TInt KBarWidth         = 100;
+	const TInt KTextBottomMargin = 6;
+	
+	// Draw scale line
+	TPoint barStartPoint(KBarLeftMargin, iMapView->Rect().iBr.iY - KBarBottomMargin);
+	TPoint barEndPoint(barStartPoint);
+	barEndPoint.iX += KBarWidth;	
+	aGc.DrawLine(barStartPoint, barEndPoint);
+	
+	// Getting distance value
+	TReal32 horDist;
+	{
+		TReal32 vertDist; // unused
+		MapMath::PixelsToMeters(iMapView->GetCenterCoordinate().Latitude(),
+				iMapView->GetZoom(), KBarWidth, horDist, vertDist);
+	}
+	//Math::Round(horDist, horDist, 0);
+	
+	// Draw text
+	_LIT(KFmt, "%d m");
+	TBuf<16> text;
+	text.Format(KFmt, static_cast<TInt>(horDist) /*horDist*/);
+	TRect textRect(barStartPoint, barEndPoint);
+	textRect.iTl.iY -= 30;
+	textRect.Move(0, -KTextBottomMargin);
+	const CFont* font = CEikonEnv::Static()->AnnotationFont();
+	TInt baselineOffset = textRect.Height() /*- font->AscentInPixels()*/; 
+	aGc.UseFont(font);
+	//aGc.DrawText(text, startPoint);
+	aGc.DrawText(text, textRect, baselineOffset, CGraphicsContext::ECenter);
+	aGc.DiscardFont();
+	}
+
+
 // CTileBitmapSaver
 
 _LIT(KSaverThreadName, "TileSaverThread");

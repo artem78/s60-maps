@@ -136,15 +136,15 @@ private:
 				// ToDo: Any ideas how to make it without additional property? 
 #ifdef DEBUG_SHOW_TILE_BORDER_AND_XYZ
 	#ifdef DEBUG_SHOW_ADDITIONAL_INFO
-	TFixedArray<CMapLayerBase*, 4> iLayers;
+	TFixedArray<CMapLayerBase*, 5> iLayers;
 	#else
-	TFixedArray<CMapLayerBase*, 3> iLayers;
+	TFixedArray<CMapLayerBase*, 4> iLayers;
 	#endif
 #else
 	#ifdef DEBUG_SHOW_ADDITIONAL_INFO
-	TFixedArray<CMapLayerBase*, 3> iLayers;
+	TFixedArray<CMapLayerBase*, 4> iLayers;
 	#else
-	TFixedArray<CMapLayerBase*, 2> iLayers;
+	TFixedArray<CMapLayerBase*, 3> iLayers;
 	#endif
 #endif
 	

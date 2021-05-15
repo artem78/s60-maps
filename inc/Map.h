@@ -139,6 +139,14 @@ private:
 #endif
 
 
+class CScaleBarLayer : public CMapLayerBase
+	{
+public:
+	CScaleBarLayer(CS60MapsAppView* aMapView);
+	void Draw(CWindowGc &aGc);
+	};
+
+
 class TSaverQueryItem
 	{
 public:
