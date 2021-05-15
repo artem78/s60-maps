@@ -124,7 +124,7 @@ void CS60MapsAppUi::ConstructL()
 		iPosRequestor->Start(); // Must be started after view created
 	else
 		{
-		HBufC* msg = iEikonEnv->AllocReadResourceLC(R_NO_GPS);
+		HBufC* msg = iEikonEnv->AllocReadResourceLC(R_POSITIONING_DISABLED);
 		//CAknWarningNote* note = new (ELeave) CAknWarningNote;
 		CAknErrorNote* note = new (ELeave) CAknErrorNote;
 		note->ExecuteLD(*msg);
