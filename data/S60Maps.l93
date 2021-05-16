@@ -20,7 +20,7 @@ CHARACTER_SET UTF8
 //#define qtn_confirm_reset_tiles_cache_dialog_title "Підтвердження очищення"
 #define qtn_confirm_reset_tiles_cache_dialog_text "Кеш для усіх мап буде повністю очищено. Ви впевнені?"
 #define qtn_about_dialog_title "Про програму"
-#define qtn_about_dialog_text "S60Maps Версія %S\nЗбірка: " __DATE__ " " __TIME__ "\nGit: %S %S\nАвтор: %S\nWeb: %S\nПодяка: %S"
+#define qtn_about_dialog_text "S60Maps Версія %S\nЗбірка: " __DATE__ " " __TIME__ "\nGit: %S %S\nАвтор: %S\nWeb: %S\nПодяка: %S та іншим"
 //#define qtn_confirm_exit_dialog_title "Підтвердження виходу"
 #define qtn_confirm_exit_dialog_text "Вийти?"
 #define qtn_done "Виконано!"
@@ -28,9 +28,8 @@ CHARACTER_SET UTF8
 #define qtn_stats_total "Всього: %d файлів, %S"
 
 // Added in version 1.4.0:
-// ToDo: Translate strings below
 
-#define qtn_positioning_disabled "Определение местоположения недоступно!"
-#define qtn_wait "Подождите..."
+#define qtn_positioning_disabled "Позиціонування недоступне!"
+#define qtn_wait "Зачекайте..."
 #define qtn_meters_unit_short "м"
 #define qtn_kilometers_unit_short "км"
