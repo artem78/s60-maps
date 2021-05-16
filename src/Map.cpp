@@ -491,13 +491,18 @@ void CScaleBarLayer::Draw(CWindowGc &aGc)
 	const TInt KBarLeftMargin    = 14;
 	const TInt KBarBottomMargin  = KBarLeftMargin;
 	const TInt KBarWidth         = 100;
+	const TInt KBarHeight        = 3;
 	const TInt KTextBottomMargin = 6;
 	
 	// Draw scale line
 	TPoint barStartPoint(KBarLeftMargin, iMapView->Rect().iBr.iY - KBarBottomMargin);
 	TPoint barEndPoint(barStartPoint);
-	barEndPoint.iX += KBarWidth;	
-	aGc.DrawLine(barStartPoint, barEndPoint);
+	barStartPoint.iY -= KBarHeight;
+	barEndPoint.iX += KBarWidth;
+	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
+	aGc.SetBrushColor(KRgbBlack);
+	aGc.DrawRect(TRect(barStartPoint, barEndPoint));
+	aGc.Reset();
 	
 	// Getting distance value
 	TReal32 horDist;
@@ -533,6 +538,7 @@ void CScaleBarLayer::Draw(CWindowGc &aGc)
 	
 	// Draw text
 	TRect textRect(barStartPoint, barEndPoint);
+	textRect.iBr.iY = textRect.iTl.iY; 
 	textRect.iTl.iY -= 30;
 	textRect.Move(0, -KTextBottomMargin);
 	TInt baselineOffset = textRect.Height() /*- font->AscentInPixels()*/; 
