@@ -285,7 +285,7 @@ void CS60MapsAppUi::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
 		//aMenuPane->SetItemButtonState(EFindMe,
 		//		iAppView->IsFollowingUser() ? EEikMenuItemSymbolOn : EEikMenuItemSymbolIndeterminate
 		//);
-		aMenuPane->SetItemDimmed(EFindMe, iAppView->IsFollowingUser());
+		aMenuPane->SetItemDimmed(EFindMe, !iPosRequestor || iAppView->IsFollowingUser());
 		}
 	else if (aMenuID == R_SUBMENU_TILE_PROVIDERS)
 		{
