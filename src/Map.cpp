@@ -448,6 +448,8 @@ CScaleBarLayer::CScaleBarLayer(CS60MapsAppView* aMapView):
 
 CScaleBarLayer::~CScaleBarLayer()
 	{
+	CCoeEnv::Static()->ScreenDevice()->ReleaseFont(iFont);
+	
 	delete iKilometersUnit;
 	delete iMetersUnit;
 	}
@@ -472,6 +474,16 @@ void CScaleBarLayer::ConstructL()
 	// Read strings from resources
 	iMetersUnit = CCoeEnv::Static()->AllocReadResourceL(R_METERS_UNIT_SHORT);
 	iKilometersUnit = CCoeEnv::Static()->AllocReadResourceL(R_KILOMETERS_UNIT_SHORT);
+	
+	// Load font for label text
+	//iFont = const_cast<CFont*>(CEikonEnv::Static()->AnnotationFont());
+	//iFont = CEikonEnv::Static()->AnnotationFont();
+	_LIT(KFontName, /*"OpenSans"*/ "Series 60 Sans SemiBold");
+	const TInt KFontHeightInTwips = 10 * 12; // Twip = 1/12 point
+	TFontSpec fontSpec(KFontName, KFontHeightInTwips);
+	CGraphicsDevice* screenDevice = CCoeEnv::Static()->ScreenDevice();
+	TInt r = screenDevice->/*GetNearestFontToMaxHeightInTwips*/ GetNearestFontInTwips(iFont, fontSpec);
+	User::LeaveIfError(r);
 	}
 
 void CScaleBarLayer::Draw(CWindowGc &aGc)
@@ -523,9 +535,8 @@ void CScaleBarLayer::Draw(CWindowGc &aGc)
 	TRect textRect(barStartPoint, barEndPoint);
 	textRect.iTl.iY -= 30;
 	textRect.Move(0, -KTextBottomMargin);
-	const CFont* font = CEikonEnv::Static()->AnnotationFont();
 	TInt baselineOffset = textRect.Height() /*- font->AscentInPixels()*/; 
-	aGc.UseFont(font);
+	aGc.UseFont(iFont);
 	//aGc.DrawText(text, startPoint);
 	aGc.DrawText(text, textRect, baselineOffset, CGraphicsContext::ECenter);
 	aGc.DiscardFont();

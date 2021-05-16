@@ -159,6 +159,7 @@ public:
 private:
 	HBufC* iMetersUnit;
 	HBufC* iKilometersUnit;
+	/*const*/ CFont* iFont;
 	};
 
 
