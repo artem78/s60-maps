@@ -513,15 +513,19 @@ void CScaleBarLayer::Draw(CWindowGc &aGc)
 	}
 	
 	// Getting text
-	_LIT(KFmtInt, "%.0f %S");
-	_LIT(KFmtReal, "%.1f %S");
 	HBufC* unit;
-	TPtrC fmt;
-	if (horDist < 1000) // Less than 1 km
+	TRealFormat realFmt = TRealFormat();
+	//realFmt.iType = KRealFormatNoExponent; // Don`t work as expected
+	realFmt.iType = KRealFormatFixed;
+	//realFmt.iPlaces = ...; // Will be set later
+	realFmt.iWidth = KDefaultRealWidth;
+	realFmt.iTriad = ' ';
+	realFmt.iTriLen = 1;
+	if (horDist < /*1000*/ 999.5) // Less than 1 km
 		{
 		// Round value to meters
 		unit = iMetersUnit;
-		fmt.Set(KFmtInt);
+		realFmt.iPlaces = 0;
 		}
 	else // More than 1 km
 		{
@@ -529,12 +533,26 @@ void CScaleBarLayer::Draw(CWindowGc &aGc)
 		unit = iKilometersUnit;
 		horDist /= 1000.0;
 		if (horDist > 10) // If more than 10 km don`t show fractional part
-			fmt.Set(KFmtInt);
+			realFmt.iPlaces = 0;
 		else
-			fmt.Set(KFmtReal);
+			realFmt.iPlaces = 1;
 		}
-	TBuf<16> text;
-	text.Format(fmt, horDist, &(*unit));
+	TBuf<32> text;
+	////////////
+	/*DEBUG(_L("realFmt.iPlaces  = %d"), realFmt.iPlaces);
+	DEBUG(_L("realFmt.iPoint   = %c (code=%d)"), realFmt.iPoint, realFmt.iPoint);
+	DEBUG(_L("realFmt.iTriLen  = %d"), realFmt.iTriLen);
+	DEBUG(_L("realFmt.iTriad   = %c (code=%d)"), realFmt.iTriad, realFmt.iTriad);
+	DEBUG(_L("realFmt.iType    = %d"), realFmt.iType);
+	DEBUG(_L("realFmt.iWidth   = %d"), realFmt.iWidth);*/
+	///////////
+	/*TInt r =*/ text.Num(horDist, realFmt);
+	//DEBUG(_L("r = %d"), r);
+	if (text.Length() >= 2 && text[text.Length() - 2] == realFmt.iPoint && text[text.Length() - 1] == '0')
+		text.SetLength(text.Length() - 2); // Remove fractional part if equals to zero
+	text.Append(' ');
+	text.Append(*unit);
+	DEBUG(_L("%f => %S"), horDist, &text);
 	
 	// Draw text
 	TRect textRect(barStartPoint, barEndPoint);
