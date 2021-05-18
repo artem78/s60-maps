@@ -567,6 +567,90 @@ void CScaleBarLayer::Draw(CWindowGc &aGc)
 	}
 
 
+// CLandmarksLayer
+
+CLandmarksLayer::CLandmarksLayer(CS60MapsAppView* aMapView):
+		CMapLayerBase(aMapView)
+	{
+	}
+
+CLandmarksLayer::~CLandmarksLayer()
+	{
+	delete iLandmarksDb;
+	ReleaseLandmarkResources();
+	}
+
+CLandmarksLayer* CLandmarksLayer::NewLC(CS60MapsAppView* aMapView)
+	{
+	CLandmarksLayer* self = new (ELeave) CLandmarksLayer(aMapView);
+	CleanupStack::PushL(self);
+	self->ConstructL();
+	return self;
+	}
+
+CLandmarksLayer* CLandmarksLayer::NewL(CS60MapsAppView* aMapView)
+	{
+	CLandmarksLayer* self = CLandmarksLayer::NewLC(aMapView);
+	CleanupStack::Pop(); // self;
+	return self;
+	}
+
+void CLandmarksLayer::ConstructL()
+	{
+	iLandmarksDb = CPosLandmarkDatabase::OpenL();
+	}
+
+void CLandmarksLayer::Draw(CWindowGc &aGc)
+	{
+	TRAP_IGNORE(DrawL(aGc));
+	}
+
+void CLandmarksLayer::DrawL(CWindowGc &aGc)
+	{
+	aGc.SetBrushColor(KRgbBlue);
+	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
+	aGc.SetPenColor(KRgbDarkBlue);
+	
+	CPosLmItemIterator* landmarkIter = iLandmarksDb->LandmarkIteratorL();
+	CleanupStack::PushL(landmarkIter);
+	
+	TPosLmItemId landmarkId;
+	while ((landmarkId = landmarkIter->NextL()) != KPosLmNullItemId)
+		{
+		CPosLandmark* landmark = iLandmarksDb->ReadLandmarkLC(landmarkId);
+		
+		TPtrC landmarkName;
+		if (landmark->GetLandmarkName(landmarkName) != KErrNone)
+			{
+			landmarkName.Set(KNullDesC);
+			}
+		
+		TLocality landmarkPos;
+		if (landmark->GetPosition(landmarkPos) != KErrNone)
+			{
+			landmarkPos.SetCoordinate(KNaN, KNaN);
+			}
+		
+		
+		DEBUG(_L("Landmark: lat=%f lon=%f name=%S"), landmarkPos.Latitude(),
+				landmarkPos.Longitude(), &landmarkName);
+		
+		if (Math::IsFinite(landmarkPos.Latitude()) && Math::IsFinite(landmarkPos.Longitude()
+				&& iMapView->CheckCoordVisibility(landmarkPos)))
+			{
+			DEBUG(_L("Visible"));
+			TPoint point = iMapView->GeoCoordsToScreenCoords(landmarkPos);
+			TRect rect(point, TSize(1, 1));
+			rect.Grow(TSize(4, 4));
+			aGc.DrawEllipse(rect);
+			}
+		
+		CleanupStack::PopAndDestroy(landmark);
+		}
+	
+	CleanupStack::PopAndDestroy(landmarkIter);
+	}
+
 // CTileBitmapSaver
 
 _LIT(KSaverThreadName, "TileSaverThread");

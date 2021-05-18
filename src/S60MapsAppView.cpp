@@ -73,6 +73,7 @@ void CS60MapsAppView::ConstructL(const TRect& aRect, const TCoordinate &aInitial
 #endif
 	iLayers[i++] = new (ELeave) CUserPositionLayer(this);
 	iLayers[i++] = CScaleBarLayer::NewL(this);
+	iLayers[i++] = CLandmarksLayer::NewL(this);
 #ifdef DEBUG_SHOW_ADDITIONAL_INFO
 	iLayers[i++] = new (ELeave) CMapLayerDebugInfo(this);
 #endif

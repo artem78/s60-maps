@@ -20,6 +20,7 @@
 #include "HttpClient.h"
 #include "FileUtils.h"
 #include <e32msgqueue.h>
+#include <epos_cposlandmarkdatabase.h>
 
 
 // Constants
@@ -160,6 +161,29 @@ private:
 	HBufC* iMetersUnit;
 	HBufC* iKilometersUnit;
 	/*const*/ CFont* iFont;
+	};
+
+class CLandmarksLayer : public CMapLayerBase
+	{
+	// Constructor / destructor
+public:
+	~CLandmarksLayer();
+	static CLandmarksLayer* NewL(CS60MapsAppView* aMapView);
+	static CLandmarksLayer* NewLC(CS60MapsAppView* aMapView);
+
+private:
+	CLandmarksLayer(CS60MapsAppView* aMapView);
+	void ConstructL();
+	
+	// From CMapLayerBase
+public:
+	void Draw(CWindowGc &aGc);
+	
+	// Own
+private:
+	CPosLandmarkDatabase* iLandmarksDb;
+	
+	void DrawL(CWindowGc &aGc);
 	};
 
 
