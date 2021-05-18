@@ -6,7 +6,7 @@
  Description : 
 ========================================================================
 */
-// localized strings for language: Spanish (83)
+// localized strings for language:  Latin American Spanish (83)
 
 #define qtn_find_me "Buscar posición"
 //#define qtn_help "Ayuda"
