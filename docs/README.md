@@ -3,6 +3,7 @@
 
 Simple map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wiki/Symbian#Version_comparison) smartphones powered by [*Series S60 3rd/5th Edition*](https://en.wikipedia.org/wiki/S60_%28software_platform%29#Versions_and_supported_devices).
   
+<!--
 - [Features](#features)
 - [Controls](#controls)
   - [Keys](#keys)
@@ -14,7 +15,7 @@ Simple map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wi
 - [Roadmap](#roadmap)
 - [LICENSE](#license)
 - [See also](#see-also)
-
+-->
 ----
 
 ## Features
