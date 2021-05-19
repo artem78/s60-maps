@@ -644,40 +644,55 @@ void CLandmarksLayer::DrawL(CWindowGc &aGc)
 	CPosLmOperation* landmarkOp = landmarkSearch->StartLandmarkSearchL(*areaCriteria, EFalse);
 	ExecuteAndDeleteLD(landmarkOp);
 	//   landmarkOp->NextStep(...)
-	DEBUG(_L("Visible %u landmarks"), landmarkSearch->NumOfMatches());
-	CPosLmItemIterator* landmarkIter = landmarkSearch->MatchIteratorL();
-	CleanupStack::PushL(landmarkIter);
-	
-	TPosLmItemId landmarkId;
-	while ((landmarkId = landmarkIter->NextL()) != KPosLmNullItemId)
+	TInt landmarksCount = landmarkSearch->NumOfMatches();
+	DEBUG(_L("Visible %d landmarks"), landmarksCount);
+	if (landmarksCount)
 		{
-		CPosLandmark* landmark = iLandmarksDb->ReadPartialLandmarkLC(landmarkId);
+		CPosLmItemIterator* landmarkIter = landmarkSearch->MatchIteratorL();
+		CleanupStack::PushL(landmarkIter);
 		
-		TPtrC landmarkName;
-		if (landmark->GetLandmarkName(landmarkName) != KErrNone)
-			{
-			landmarkName.Set(KNullDesC);
+		RArray<TPosLmItemId> landmarkIds(landmarksCount);
+		CleanupClosePushL(landmarkIds);
+		landmarkIter->GetItemIdsL(landmarkIds, 0, landmarksCount);
+		
+		CPosLmOperation* landmarkOp2 = iLandmarksDb->PreparePartialLandmarksL(landmarkIds);
+		CleanupStack::PushL(landmarkOp2);
+		landmarkOp2->ExecuteL();
+		CArrayPtr<CPosLandmark>* landmarks = iLandmarksDb->TakePreparedPartialLandmarksL(landmarkOp2);
+		
+		for (TInt i = 0; i < landmarks->Count(); i++)
+			{	
+			CPosLandmark* landmark = /*landmarks[i]*/ landmarks->At(i);
+			
+			if (!landmark) continue;
+			
+			TPtrC landmarkName;
+			if (landmark->GetLandmarkName(landmarkName) != KErrNone)
+				{
+				landmarkName.Set(KNullDesC);
+				}
+			
+			TLocality landmarkPos;
+			if (landmark->GetPosition(landmarkPos) != KErrNone)
+				{
+				landmarkPos.SetCoordinate(KNaN, KNaN);
+				}
+			
+			
+			DEBUG(_L("Landmark: lat=%f lon=%f name=%S"), landmarkPos.Latitude(),
+					landmarkPos.Longitude(), &landmarkName);
+			
+			TPoint point = iMapView->GeoCoordsToScreenCoords(landmarkPos);
+			TRect rect(point, TSize(1, 1));
+			rect.Grow(TSize(4, 4));
+			aGc.DrawEllipse(rect);
 			}
 		
-		TLocality landmarkPos;
-		if (landmark->GetPosition(landmarkPos) != KErrNone)
-			{
-			landmarkPos.SetCoordinate(KNaN, KNaN);
-			}
-		
-		
-		DEBUG(_L("Landmark: lat=%f lon=%f name=%S"), landmarkPos.Latitude(),
-				landmarkPos.Longitude(), &landmarkName);
-		
-		TPoint point = iMapView->GeoCoordsToScreenCoords(landmarkPos);
-		TRect rect(point, TSize(1, 1));
-		rect.Grow(TSize(4, 4));
-		aGc.DrawEllipse(rect);
-		
-		CleanupStack::PopAndDestroy(landmark);
+		landmarks->ResetAndDestroy();
+		delete landmarks;
+		CleanupStack::PopAndDestroy(3, landmarkIter);
 		}
-	
-	CleanupStack::PopAndDestroy(3, landmarkSearch);
+	CleanupStack::PopAndDestroy(2, landmarkSearch);
 	
 	DEBUG(_L("Landmarks redrawing ended"));
 	}
