@@ -579,6 +579,8 @@ CLandmarksLayer::CLandmarksLayer(CS60MapsAppView* aMapView):
 CLandmarksLayer::~CLandmarksLayer()
 	{
 	delete iLandmarksDb;
+	delete iLandmarkPartialParameters;
+	
 	ReleaseLandmarkResources();
 	}
 
@@ -599,7 +601,15 @@ CLandmarksLayer* CLandmarksLayer::NewL(CS60MapsAppView* aMapView)
 
 void CLandmarksLayer::ConstructL()
 	{
+	iLandmarkPartialParameters = CPosLmPartialReadParameters::NewLC();
+	CleanupStack::Pop();
+	iLandmarkPartialParameters->SetRequestedAttributes(
+			CPosLandmark::ELandmarkName | CPosLandmark::EPosition
+			/*| CPosLandmark::EIcon*/);
+	//User::LeaveIfError(iLandmarkPartialParameters->SetRequestedPositionFields(...));	
+	
 	iLandmarksDb = CPosLandmarkDatabase::OpenL();
+	iLandmarksDb->SetPartialReadParametersL(*iLandmarkPartialParameters);
 	}
 
 void CLandmarksLayer::Draw(CWindowGc &aGc)
@@ -636,7 +646,7 @@ void CLandmarksLayer::DrawL(CWindowGc &aGc)
 	TPosLmItemId landmarkId;
 	while ((landmarkId = landmarkIter->NextL()) != KPosLmNullItemId)
 		{
-		CPosLandmark* landmark = iLandmarksDb->ReadLandmarkLC(landmarkId);
+		CPosLandmark* landmark = iLandmarksDb->ReadPartialLandmarkLC(landmarkId);
 		
 		TPtrC landmarkName;
 		if (landmark->GetLandmarkName(landmarkName) != KErrNone)

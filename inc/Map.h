@@ -182,6 +182,7 @@ public:
 	// Own
 private:
 	CPosLandmarkDatabase* iLandmarksDb;
+	CPosLmPartialReadParameters* iLandmarkPartialParameters;
 	
 	void DrawL(CWindowGc &aGc);
 	};
