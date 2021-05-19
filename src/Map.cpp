@@ -19,6 +19,8 @@
 #include <bautils.h>
 #include "Defs.h"
 #include <S60Maps_0xED689B88.rsg>
+#include <epos_cposlandmarksearch.h>
+#include <epos_cposlmareacriteria.h>
 
 CMapLayerBase::CMapLayerBase(/*const*/ CS60MapsAppView* aMapView) :
 		iMapView(aMapView)
@@ -607,11 +609,28 @@ void CLandmarksLayer::Draw(CWindowGc &aGc)
 
 void CLandmarksLayer::DrawL(CWindowGc &aGc)
 	{
+	DEBUG(_L("Landmarks redrawing started"));
+	
 	aGc.SetBrushColor(KRgbBlue);
 	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
 	aGc.SetPenColor(KRgbDarkBlue);
 	
-	CPosLmItemIterator* landmarkIter = iLandmarksDb->LandmarkIteratorL();
+	CPosLandmarkSearch* landmarkSearch = CPosLandmarkSearch::NewL(*iLandmarksDb);
+	CleanupStack::PushL(landmarkSearch);
+	landmarkSearch->SetMaxNumOfMatches(50); // Add display limit
+	TCoordinate topLeftCoord, bottomRightCoord;
+	iMapView->Bounds(topLeftCoord, bottomRightCoord);
+	CPosLmAreaCriteria* areaCriteria = CPosLmAreaCriteria::NewLC(
+			bottomRightCoord.Latitude(),
+			topLeftCoord.Latitude(),
+			topLeftCoord.Longitude(),
+			bottomRightCoord.Longitude());
+	CPosLmOperation* landmarkOp = landmarkSearch->StartLandmarkSearchL(*areaCriteria, EFalse);
+	CleanupStack::PushL(landmarkOp);
+	landmarkOp->ExecuteL();
+	//   landmarkOp->NextStep(...)
+	DEBUG(_L("Visible %u landmarks"), landmarkSearch->NumOfMatches());
+	CPosLmItemIterator* landmarkIter = landmarkSearch->MatchIteratorL();
 	CleanupStack::PushL(landmarkIter);
 	
 	TPosLmItemId landmarkId;
@@ -635,20 +654,17 @@ void CLandmarksLayer::DrawL(CWindowGc &aGc)
 		DEBUG(_L("Landmark: lat=%f lon=%f name=%S"), landmarkPos.Latitude(),
 				landmarkPos.Longitude(), &landmarkName);
 		
-		if (Math::IsFinite(landmarkPos.Latitude()) && Math::IsFinite(landmarkPos.Longitude())
-				&& iMapView->CheckCoordVisibility(landmarkPos))
-			{
-			DEBUG(_L("Visible"));
-			TPoint point = iMapView->GeoCoordsToScreenCoords(landmarkPos);
-			TRect rect(point, TSize(1, 1));
-			rect.Grow(TSize(4, 4));
-			aGc.DrawEllipse(rect);
-			}
+		TPoint point = iMapView->GeoCoordsToScreenCoords(landmarkPos);
+		TRect rect(point, TSize(1, 1));
+		rect.Grow(TSize(4, 4));
+		aGc.DrawEllipse(rect);
 		
 		CleanupStack::PopAndDestroy(landmark);
 		}
 	
-	CleanupStack::PopAndDestroy(landmarkIter);
+	CleanupStack::PopAndDestroy(4, landmarkSearch);
+	
+	DEBUG(_L("Landmarks redrawing ended"));
 	}
 
 // CTileBitmapSaver
