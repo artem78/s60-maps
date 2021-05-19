@@ -642,8 +642,7 @@ void CLandmarksLayer::DrawL(CWindowGc &aGc)
 			topLeftCoord.Longitude(),
 			bottomRightCoord.Longitude());
 	CPosLmOperation* landmarkOp = landmarkSearch->StartLandmarkSearchL(*areaCriteria, EFalse);
-	CleanupStack::PushL(landmarkOp);
-	landmarkOp->ExecuteL();
+	ExecuteAndDeleteLD(landmarkOp);
 	//   landmarkOp->NextStep(...)
 	DEBUG(_L("Visible %u landmarks"), landmarkSearch->NumOfMatches());
 	CPosLmItemIterator* landmarkIter = landmarkSearch->MatchIteratorL();
@@ -678,7 +677,7 @@ void CLandmarksLayer::DrawL(CWindowGc &aGc)
 		CleanupStack::PopAndDestroy(landmark);
 		}
 	
-	CleanupStack::PopAndDestroy(4, landmarkSearch);
+	CleanupStack::PopAndDestroy(3, landmarkSearch);
 	
 	DEBUG(_L("Landmarks redrawing ended"));
 	}
