@@ -614,7 +614,11 @@ void CLandmarksLayer::ConstructL()
 
 void CLandmarksLayer::Draw(CWindowGc &aGc)
 	{
-	TRAP_IGNORE(DrawL(aGc));
+	TRAPD(r, DrawL(aGc));
+	if (r != KErrNone)
+		{
+		DEBUG(_L("Leave with code %d"), r);
+		}
 	}
 
 void CLandmarksLayer::DrawL(CWindowGc &aGc)
