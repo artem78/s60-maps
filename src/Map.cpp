@@ -629,9 +629,11 @@ void CLandmarksLayer::DrawL(CWindowGc &aGc)
 	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
 	aGc.SetPenColor(KRgbDarkBlue);
 	
+	const TInt KMaxVisibleLandmarks = 50;
+	
 	CPosLandmarkSearch* landmarkSearch = CPosLandmarkSearch::NewL(*iLandmarksDb);
 	CleanupStack::PushL(landmarkSearch);
-	landmarkSearch->SetMaxNumOfMatches(50); // Add display limit
+	landmarkSearch->SetMaxNumOfMatches(KMaxVisibleLandmarks); // Add display limit
 	TCoordinate topLeftCoord, bottomRightCoord;
 	iMapView->Bounds(topLeftCoord, bottomRightCoord);
 	CPosLmAreaCriteria* areaCriteria = CPosLmAreaCriteria::NewLC(
