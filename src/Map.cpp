@@ -635,8 +635,8 @@ void CLandmarksLayer::DrawL(CWindowGc &aGc)
 		DEBUG(_L("Landmark: lat=%f lon=%f name=%S"), landmarkPos.Latitude(),
 				landmarkPos.Longitude(), &landmarkName);
 		
-		if (Math::IsFinite(landmarkPos.Latitude()) && Math::IsFinite(landmarkPos.Longitude()
-				&& iMapView->CheckCoordVisibility(landmarkPos)))
+		if (Math::IsFinite(landmarkPos.Latitude()) && Math::IsFinite(landmarkPos.Longitude())
+				&& iMapView->CheckCoordVisibility(landmarkPos))
 			{
 			DEBUG(_L("Visible"));
 			TPoint point = iMapView->GeoCoordsToScreenCoords(landmarkPos);
