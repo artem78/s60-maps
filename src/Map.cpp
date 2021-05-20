@@ -687,10 +687,21 @@ void CLandmarksLayer::DrawL(CWindowGc &aGc)
 			DEBUG(_L("Landmark: lat=%f lon=%f name=%S"), landmarkPos.Latitude(),
 					landmarkPos.Longitude(), &landmarkName);
 			
+			// Draw landmark marker
+			const TInt KMarkerSize = 4;
 			TPoint point = iMapView->GeoCoordsToScreenCoords(landmarkPos);
 			TRect rect(point, TSize(1, 1));
-			rect.Grow(TSize(4, 4));
+			rect.Grow(TSize(KMarkerSize, KMarkerSize));
 			aGc.DrawEllipse(rect);
+			
+			// Draw landmark name
+			const TInt KLabelMargin = 5;
+			const CFont* font = CEikonEnv::Static()->LegendFont();
+			point.iX += KMarkerSize + KLabelMargin;
+			point.iY += /*font->HeightInPixels()*/ font->AscentInPixels() / 2;
+			aGc.UseFont(font);
+			aGc.DrawText(landmarkName, point);
+			aGc.DiscardFont();
 			}
 		
 		landmarks->ResetAndDestroy();
