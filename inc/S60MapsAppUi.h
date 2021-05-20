@@ -156,6 +156,7 @@ private:
 	void HandleHelpL();
 #endif
 	void HandleAboutL();
+	void HandleToggleLandmarksVisibility();
 	
 public:
 	inline const CSettings* Settings()

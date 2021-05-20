@@ -218,7 +218,7 @@ void CS60MapsAppUi::HandleCommandL(TInt aCommand)
 		case ESetOsmTransportTileProvider:
 		//case ESetOpenTopoMapTileProvider:
 			HandleTileProviderChangeL(aCommand - ESetTileProviderBase);
-			break;	
+			break;
 			
 		case ETilesCacheStats:
 			HandleTilesCacheStatsL();
@@ -236,6 +236,10 @@ void CS60MapsAppUi::HandleCommandL(TInt aCommand)
 			
 		case EAbout:
 			HandleAboutL();
+			break;
+			
+		case EToggleLandmarksVisibility:
+			HandleToggleLandmarksVisibility();
 			break;
 			
 		default:
@@ -307,6 +311,12 @@ void CS60MapsAppUi::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
 					iAvailableTileProviders[idx] == iActiveTileProvider?
 							EEikMenuItemSymbolOn : EEikMenuItemSymbolIndeterminate);				
 			}
+		}
+	else if (aMenuID == R_SUBMENU_LANDMARKS)
+		{
+		aMenuPane->SetItemButtonState(EToggleLandmarksVisibility,
+				iSettings->GetLandmarksVisibility() ? EEikMenuItemSymbolOn : EEikMenuItemSymbolIndeterminate
+		);
 		}
 	/*else
 		{
@@ -716,6 +726,11 @@ void CS60MapsAppUi::HandleAboutL()
 	dlg->SetMessageTextL(msg);
 	CleanupStack::PopAndDestroy(&msg);
 	dlg->RunLD();
+	}
+
+void CS60MapsAppUi::HandleToggleLandmarksVisibility()
+	{
+	iSettings->SetLandmarksVisibility(!iSettings->GetLandmarksVisibility());
 	}
 
 void CS60MapsAppUi::SendAppToBackground()

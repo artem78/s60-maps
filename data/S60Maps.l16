@@ -33,3 +33,6 @@ CHARACTER_SET UTF8
 #define qtn_wait "Подождите..."
 #define qtn_meters_unit_short "м"
 #define qtn_kilometers_unit_short "км"
+
+#define qtn_landmarks "Ориентиры"
+#define qtn_display "Показывать"

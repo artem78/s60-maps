@@ -32,3 +32,7 @@
 #define qtn_wait "Please wait..."
 #define qtn_meters_unit_short "m"
 #define qtn_kilometers_unit_short "km"
+
+#define qtn_landmarks "Landmarks"
+#define qtn_display "Display"
+

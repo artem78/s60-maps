@@ -65,6 +65,7 @@ private:
 	TReal64 iLon;
 	TZoom iZoom;
 	TTileProviderId iTileProviderId;
+	TBool iIsLandmarksVisible;
 	
 public:
 	CSettings();
@@ -94,6 +95,11 @@ public:
 		{ return iTileProviderId; }
 	inline void SetTileProviderId(const TDesC& aTileProviderId)
 		{ iTileProviderId.Copy(aTileProviderId); }
+	
+	inline TBool GetLandmarksVisibility() const
+		{ return iIsLandmarksVisible; }
+	inline void SetLandmarksVisibility(TBool aVisible = ETrue)
+		{ iIsLandmarksVisible = aVisible; }
 	
 	};
 

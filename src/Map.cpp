@@ -614,6 +614,11 @@ void CLandmarksLayer::ConstructL()
 
 void CLandmarksLayer::Draw(CWindowGc &aGc)
 	{
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CEikonEnv::Static()->AppUi());
+	
+	if (!appUi->Settings()->GetLandmarksVisibility()) // Check display or not
+		return;
+	
 	TRAPD(r, DrawL(aGc));
 	if (r != KErrNone)
 		{
