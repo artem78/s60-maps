@@ -157,6 +157,10 @@ private:
 #endif
 	void HandleAboutL();
 	
+public:
+	inline const CSettings* Settings()
+			{ return iSettings; }
+	
 	};
 
 #endif // __S60MAPSAPPUI_h__
