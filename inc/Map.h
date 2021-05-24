@@ -168,11 +168,11 @@ class CLandmarksLayer : public CMapLayerBase
 	// Constructor / destructor
 public:
 	~CLandmarksLayer();
-	static CLandmarksLayer* NewL(CS60MapsAppView* aMapView);
-	static CLandmarksLayer* NewLC(CS60MapsAppView* aMapView);
+	static CLandmarksLayer* NewL(CS60MapsAppView* aMapView, CPosLandmarkDatabase* aLmDb);
+	static CLandmarksLayer* NewLC(CS60MapsAppView* aMapView, CPosLandmarkDatabase* aLmDb);
 
 private:
-	CLandmarksLayer(CS60MapsAppView* aMapView);
+	CLandmarksLayer(CS60MapsAppView* aMapView, CPosLandmarkDatabase* aLmDb);
 	void ConstructL();
 	
 	// From CMapLayerBase
@@ -181,8 +181,7 @@ public:
 	
 	// Own
 private:
-	CPosLandmarkDatabase* iLandmarksDb;
-	CPosLmPartialReadParameters* iLandmarkPartialParameters;
+	CPosLandmarkDatabase* iLandmarksDb; // Not owned
 	
 	void DrawL(CWindowGc &aGc);
 	};

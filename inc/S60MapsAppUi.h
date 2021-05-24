@@ -24,6 +24,7 @@
 #include "Settings.h"
 //#include <aknprogressdialog.h> // For CAknProgressDialog
 #include <aknwaitdialog.h> // For CAknWaitDialog 
+#include <epos_cposlandmarkdatabase.h> // For CPosLandmarkDatabase
 
 // FORWARD DECLARATIONS
 class CS60MapsAppView;
@@ -141,6 +142,8 @@ private:
 	CAknWaitDialog* iCacheClearingWaitDialog;
 	//CAknProgressDialog* iCacheResetProgressDialog;
 	//CPeriodic* iCacheResetProgressChecker;
+	CPosLandmarkDatabase* iLandmarksDb;
+	CPosLmPartialReadParameters* iLandmarkPartialParameters;
 	
 	void ClearTilesCacheL();
 	//static TInt UpdateTilesClearingProgress(TAny* aSelfPtr);
@@ -161,6 +164,9 @@ private:
 public:
 	inline const CSettings* Settings()
 			{ return iSettings; }
+	
+	inline CPosLandmarkDatabase* LandmarkDb()
+			{ return iLandmarksDb; }
 	
 	};
 

@@ -107,6 +107,17 @@ void CS60MapsAppUi::ConstructL()
 	
 	
 	iFileMan = CAsyncFileMan::NewL(CCoeEnv::Static()->FsSession(), this);
+	
+	// Connect to landmark database
+	iLandmarkPartialParameters = CPosLmPartialReadParameters::NewLC();
+	CleanupStack::Pop();
+	iLandmarkPartialParameters->SetRequestedAttributes(
+			CPosLandmark::ELandmarkName | CPosLandmark::EPosition
+			/*| CPosLandmark::EIcon*/);
+	//User::LeaveIfError(iLandmarkPartialParameters->SetRequestedPositionFields(...));	
+	
+	iLandmarksDb = CPosLandmarkDatabase::OpenL();
+	iLandmarksDb->SetPartialReadParametersL(*iLandmarkPartialParameters);
 
 	// Set initial map position
 	TCoordinate position = TCoordinate(iSettings->GetLat(), iSettings->GetLon());
@@ -185,6 +196,9 @@ CS60MapsAppUi::~CS60MapsAppUi()
 		delete iAppView;
 		iAppView = NULL;
 		}
+	
+	delete iLandmarksDb;
+	delete iLandmarkPartialParameters;
 	
 	delete iFileMan;
 	

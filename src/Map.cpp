@@ -571,45 +571,34 @@ void CScaleBarLayer::Draw(CWindowGc &aGc)
 
 // CLandmarksLayer
 
-CLandmarksLayer::CLandmarksLayer(CS60MapsAppView* aMapView):
-		CMapLayerBase(aMapView)
+CLandmarksLayer::CLandmarksLayer(CS60MapsAppView* aMapView, CPosLandmarkDatabase* aLmDb):
+		CMapLayerBase(aMapView),
+		iLandmarksDb(aLmDb)
 	{
 	}
 
 CLandmarksLayer::~CLandmarksLayer()
 	{
-	delete iLandmarksDb;
-	delete iLandmarkPartialParameters;
-	
 	ReleaseLandmarkResources();
 	}
 
-CLandmarksLayer* CLandmarksLayer::NewLC(CS60MapsAppView* aMapView)
+CLandmarksLayer* CLandmarksLayer::NewLC(CS60MapsAppView* aMapView, CPosLandmarkDatabase* aLmDb)
 	{
-	CLandmarksLayer* self = new (ELeave) CLandmarksLayer(aMapView);
+	CLandmarksLayer* self = new (ELeave) CLandmarksLayer(aMapView, aLmDb);
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	return self;
 	}
 
-CLandmarksLayer* CLandmarksLayer::NewL(CS60MapsAppView* aMapView)
+CLandmarksLayer* CLandmarksLayer::NewL(CS60MapsAppView* aMapView, CPosLandmarkDatabase* aLmDb)
 	{
-	CLandmarksLayer* self = CLandmarksLayer::NewLC(aMapView);
+	CLandmarksLayer* self = CLandmarksLayer::NewLC(aMapView, aLmDb);
 	CleanupStack::Pop(); // self;
 	return self;
 	}
 
 void CLandmarksLayer::ConstructL()
 	{
-	iLandmarkPartialParameters = CPosLmPartialReadParameters::NewLC();
-	CleanupStack::Pop();
-	iLandmarkPartialParameters->SetRequestedAttributes(
-			CPosLandmark::ELandmarkName | CPosLandmark::EPosition
-			/*| CPosLandmark::EIcon*/);
-	//User::LeaveIfError(iLandmarkPartialParameters->SetRequestedPositionFields(...));	
-	
-	iLandmarksDb = CPosLandmarkDatabase::OpenL();
-	iLandmarksDb->SetPartialReadParametersL(*iLandmarkPartialParameters);
 	}
 
 void CLandmarksLayer::Draw(CWindowGc &aGc)
