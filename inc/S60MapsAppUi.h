@@ -160,6 +160,7 @@ private:
 #endif
 	void HandleAboutL();
 	void HandleToggleLandmarksVisibility();
+	void HandleCreateLandmarkL();
 	
 public:
 	inline const CSettings* Settings()

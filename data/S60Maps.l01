@@ -35,4 +35,5 @@
 
 #define qtn_landmarks "Landmarks"
 #define qtn_display "Display"
-
+#define qtn_create "Create"
+#define qtn_input_name "Input name"

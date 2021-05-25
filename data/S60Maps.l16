@@ -36,3 +36,5 @@ CHARACTER_SET UTF8
 
 #define qtn_landmarks "Ориентиры"
 #define qtn_display "Показывать"
+#define qtn_create "Создать"
+#define qtn_input_name "Введите имя"

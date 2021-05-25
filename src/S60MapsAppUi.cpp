@@ -256,6 +256,10 @@ void CS60MapsAppUi::HandleCommandL(TInt aCommand)
 			HandleToggleLandmarksVisibility();
 			break;
 			
+		case ECreateLandmark:
+			HandleCreateLandmarkL();
+			break;
+			
 		default:
 			Panic(ES60MapsUi);
 			break;
@@ -745,6 +749,33 @@ void CS60MapsAppUi::HandleAboutL()
 void CS60MapsAppUi::HandleToggleLandmarksVisibility()
 	{
 	iSettings->SetLandmarksVisibility(!iSettings->GetLandmarksVisibility());
+	}
+
+void CS60MapsAppUi::HandleCreateLandmarkL()
+	{
+	_LIT(KDefaultLandmarkName, "Landmark");
+	
+	RBuf landmarkName;
+	landmarkName.CreateL(KPosLmMaxTextFieldLength);
+	CleanupClosePushL(landmarkName);
+	landmarkName.Copy(KDefaultLandmarkName);
+	
+	// Ask landmark name
+	HBufC* dlgTitle = iEikonEnv->AllocReadResourceLC(R_INPUT_NAME);
+	CAknTextQueryDialog* dlg = new (ELeave) CAknTextQueryDialog(landmarkName);
+	if (dlg->ExecuteLD(R_LANDMARK_NAME_INPUT_QUERY, *dlgTitle) == EAknSoftkeyOk)
+		{
+		// Save landmark to DB	
+		CPosLandmark* newLandmark = CPosLandmark::NewLC();
+		TLocality pos = TLocality(iAppView->GetCenterCoordinate(), KNaN, KNaN);
+		newLandmark->SetPositionL(pos);
+		newLandmark->SetLandmarkNameL(landmarkName);
+		iLandmarksDb->AddLandmarkL(*newLandmark);
+		
+		CleanupStack::PopAndDestroy(newLandmark);
+		}
+	
+	CleanupStack::PopAndDestroy(2, &landmarkName);
 	}
 
 void CS60MapsAppUi::SendAppToBackground()
