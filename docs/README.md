@@ -23,7 +23,7 @@ Simple map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wi
 - Show different map layers: [OpenStreetMap Standard](https://www.openstreetmap.org/), [OpenCycleMap](https://wiki.openstreetmap.org/wiki/OpenCycleMap), [Transport Map](https://wiki.openstreetmap.org/wiki/Transport_Map) and [Humanitarian Map](https://wiki.openstreetmap.org/wiki/Humanitarian_map_style)
 - Retrieve and show phone location using internal GPS
 - Can work without GPS
-- **Offline mode** - all downloaded tiles save in cache on disk and you can view them later without network connection needed
+- All downloaded tiles save in cache on disk and you can view them later without network connection needed
 
 ## Controls
 
