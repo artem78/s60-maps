@@ -183,7 +183,11 @@ public:
 private:
 	CPosLandmarkDatabase* iLandmarksDb; // Not owned
 	
+	// Result may be NULL if nothing found
+	CArrayPtr<CPosLandmark>* GetVisibleLandmarksL(); // ToDo: Is moving to another class needed?
 	void DrawL(CWindowGc &aGc);
+	void DrawLandmarks(CWindowGc &aGc, const CArrayPtr<CPosLandmark>* aLandmarks);
+	void DrawLandmark(CWindowGc &aGc, const CPosLandmark* aLandmark);
 	};
 
 

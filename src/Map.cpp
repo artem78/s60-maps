@@ -615,19 +615,17 @@ void CLandmarksLayer::Draw(CWindowGc &aGc)
 		}
 	}
 
-void CLandmarksLayer::DrawL(CWindowGc &aGc)
+CArrayPtr<CPosLandmark>* CLandmarksLayer::GetVisibleLandmarksL()
 	{
-	DEBUG(_L("Landmarks redrawing started"));
+	const TInt KMaxVisibleLandmarksLimit = 50;
 	
-	aGc.SetBrushColor(KRgbBlue);
-	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
-	aGc.SetPenColor(KRgbDarkBlue);
+	CArrayPtr<CPosLandmark>* landmarks = NULL;
 	
-	const TInt KMaxVisibleLandmarks = 50;
+	DEBUG(_L("Start landmarks queing"));
 	
 	CPosLandmarkSearch* landmarkSearch = CPosLandmarkSearch::NewL(*iLandmarksDb);
 	CleanupStack::PushL(landmarkSearch);
-	landmarkSearch->SetMaxNumOfMatches(KMaxVisibleLandmarks); // Add display limit
+	landmarkSearch->SetMaxNumOfMatches(KMaxVisibleLandmarksLimit); // Set display amount limit
 	TCoordinate topLeftCoord, bottomRightCoord;
 	iMapView->Bounds(topLeftCoord, bottomRightCoord);
 	CPosLmAreaCriteria* areaCriteria = CPosLmAreaCriteria::NewLC(
@@ -639,7 +637,7 @@ void CLandmarksLayer::DrawL(CWindowGc &aGc)
 	ExecuteAndDeleteLD(landmarkOp);
 	//   landmarkOp->NextStep(...)
 	TInt landmarksCount = landmarkSearch->NumOfMatches();
-	DEBUG(_L("Visible %d landmarks"), landmarksCount);
+	//DEBUG(_L("Visible %d landmarks"), landmarksCount);
 	if (landmarksCount)
 		{
 		CPosLmItemIterator* landmarkIter = landmarkSearch->MatchIteratorL();
@@ -652,54 +650,91 @@ void CLandmarksLayer::DrawL(CWindowGc &aGc)
 		CPosLmOperation* landmarkOp2 = iLandmarksDb->PreparePartialLandmarksL(landmarkIds);
 		CleanupStack::PushL(landmarkOp2);
 		landmarkOp2->ExecuteL();
-		CArrayPtr<CPosLandmark>* landmarks = iLandmarksDb->TakePreparedPartialLandmarksL(landmarkOp2);
-		
-		for (TInt i = 0; i < landmarks->Count(); i++)
-			{	
-			CPosLandmark* landmark = /*landmarks[i]*/ landmarks->At(i);
-			
-			if (!landmark) continue;
-			
-			TPtrC landmarkName;
-			if (landmark->GetLandmarkName(landmarkName) != KErrNone)
-				{
-				landmarkName.Set(KNullDesC);
-				}
-			
-			TLocality landmarkPos;
-			if (landmark->GetPosition(landmarkPos) != KErrNone)
-				{
-				landmarkPos.SetCoordinate(KNaN, KNaN);
-				}
-			
-			
-			DEBUG(_L("Landmark: lat=%f lon=%f name=%S"), landmarkPos.Latitude(),
-					landmarkPos.Longitude(), &landmarkName);
-			
-			// Draw landmark marker
-			const TInt KMarkerSize = 4;
-			TPoint point = iMapView->GeoCoordsToScreenCoords(landmarkPos);
-			TRect rect(point, TSize(1, 1));
-			rect.Grow(TSize(KMarkerSize, KMarkerSize));
-			aGc.DrawEllipse(rect);
-			
-			// Draw landmark name
-			const TInt KLabelMargin = 5;
-			const CFont* font = CEikonEnv::Static()->LegendFont();
-			point.iX += KMarkerSize + KLabelMargin;
-			point.iY += /*font->HeightInPixels()*/ font->AscentInPixels() / 2;
-			aGc.UseFont(font);
-			aGc.DrawText(landmarkName, point);
-			aGc.DiscardFont();
-			}
-		
-		landmarks->ResetAndDestroy();
-		delete landmarks;
+		landmarks = iLandmarksDb->TakePreparedPartialLandmarksL(landmarkOp2);
+	
 		CleanupStack::PopAndDestroy(3, landmarkIter);
 		}
+		
 	CleanupStack::PopAndDestroy(2, landmarkSearch);
 	
-	DEBUG(_L("Landmarks redrawing ended"));
+	DEBUG(_L("End landmarks queing (found %d items)"), landmarksCount);
+	
+	return landmarks;
+	}
+
+void CLandmarksLayer::DrawL(CWindowGc &aGc)
+	{
+	CArrayPtr<CPosLandmark>* landmarks = GetVisibleLandmarksL();
+	
+	if (landmarks && landmarks->Count())
+		{
+		DrawLandmarks(aGc, landmarks);
+		
+		landmarks->ResetAndDestroy();
+		}
+	delete landmarks;
+	}
+
+void CLandmarksLayer::DrawLandmarks(CWindowGc &aGc,
+		const CArrayPtr<CPosLandmark>* aLandmarks)
+	{
+	DEBUG(_L("Landmarks redrawing started"));
+	
+	aGc.SetBrushColor(KRgbBlue);
+	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
+	aGc.SetPenColor(KRgbDarkBlue);
+	
+	for (TInt i = 0; i < aLandmarks->Count(); i++)
+		{	
+		CPosLandmark* landmark = /*aLandmarks[i]*/ aLandmarks->At(i);
+		
+		if (!landmark) continue;
+		
+		DrawLandmark(aGc, landmark);
+		}
+	
+	DEBUG(_L("Landmarks redrawing ended"));	
+	}
+
+void CLandmarksLayer::DrawLandmark(CWindowGc &aGc,
+		const CPosLandmark* aLandmark)
+	{
+	// Get landmark position and name
+	TPtrC landmarkName;
+	if (aLandmark->GetLandmarkName(landmarkName) != KErrNone)
+		{
+		landmarkName.Set(KNullDesC);
+		}
+	
+	TLocality landmarkPos;
+	if (aLandmark->GetPosition(landmarkPos) != KErrNone)
+		{
+		landmarkPos.SetCoordinate(KNaN, KNaN);
+		}
+	
+	DEBUG(_L("Drawing landmark: lat=%f lon=%f name=%S"), landmarkPos.Latitude(),
+			landmarkPos.Longitude(), &landmarkName);
+	
+	
+	// Draw landmark marker
+	const TInt KMarkerSize = 4;
+	TPoint point = iMapView->GeoCoordsToScreenCoords(landmarkPos);
+	TRect rect(point, TSize(1, 1));
+	rect.Grow(TSize(KMarkerSize, KMarkerSize));
+	aGc.DrawEllipse(rect);
+	
+	
+	// Draw landmark name
+	if (landmarkName.Length())
+		{
+		const TInt KLabelMargin = 5;
+		const CFont* font = CEikonEnv::Static()->LegendFont();
+		point.iX += KMarkerSize + KLabelMargin;
+		point.iY += /*font->HeightInPixels()*/ font->AscentInPixels() / 2;
+		aGc.UseFont(font);
+		aGc.DrawText(landmarkName, point);
+		aGc.DiscardFont();
+		}
 	}
 
 // CTileBitmapSaver
