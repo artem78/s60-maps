@@ -20,10 +20,25 @@ Simple map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wi
 
 ## Features
 
-- Show different map layers: [OpenStreetMap Standard](https://www.openstreetmap.org/), [OpenCycleMap](https://wiki.openstreetmap.org/wiki/OpenCycleMap), [Transport Map](https://wiki.openstreetmap.org/wiki/Transport_Map) and [Humanitarian Map](https://wiki.openstreetmap.org/wiki/Humanitarian_map_style)
-- Retrieve and show phone location using internal GPS
-- Can work without GPS
-- Map caching - all downloaded tiles save on disk and you can view them later without network connection needed
+- Map with four [OpenStreetMap](https://www.openstreetmap.org/) layers available:
+  - [OSM Standard layer](https://wiki.openstreetmap.org/wiki/Standard_tile_layer)
+  - [Cycle Map layer](https://wiki.openstreetmap.org/wiki/OpenCycleMap)
+  - [Transport Map layer](https://wiki.openstreetmap.org/wiki/Transport_Map)
+  - [Humanitarian Map layer](https://wiki.openstreetmap.org/wiki/Humanitarian_map_style)
+- Show phone location on the map using GPS
+- Can work without GPS (no positioning)
+- Map tiles caching (you can see previously viewed area without network connection)
+- Multilanguage:
+  - English
+  - Spanish
+  - Galician
+  - Portuguese
+  - Russian
+  - Hebrew
+  - Latin American Spanish
+  - Ukrainian
+- Both keypad and touch ui supports
+- Free and Open Source software
 
 ## Controls
 
@@ -87,7 +102,7 @@ Settings store in `store.dat` file. If you have problems with application to run
 
 ## LICENSE
 
-[GNU GPL v3.0](/LICENSE.txt)
+This is Open Source software licensed under [GNU GPL v3.0](/LICENSE.txt)
 
 ## See also
 
