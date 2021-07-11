@@ -191,6 +191,18 @@ private:
 	};
 
 
+class CCrosshairLayer : public CMapLayerBase
+	{
+	// Constructor / Destructor
+public:
+	CCrosshairLayer(CS60MapsAppView* aMapView);
+	
+	// From CMapLayerBase
+public:
+	void Draw(CWindowGc &aGc);
+	};
+
+
 class TSaverQueryItem
 	{
 public:

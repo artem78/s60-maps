@@ -737,6 +737,37 @@ void CLandmarksLayer::DrawLandmark(CWindowGc &aGc,
 		}
 	}
 
+// CLandmarksLayer
+
+CCrosshairLayer::CCrosshairLayer(CS60MapsAppView* aMapView) :
+		CMapLayerBase(aMapView)
+	  {	
+	  }
+
+void CCrosshairLayer::Draw(CWindowGc &aGc)
+	{
+	const TInt KLineHalfLength = 10; // in px
+	TPoint center = iMapView->Rect().Center();
+	
+	aGc.SetPenColor(KRgbBlack);
+	aGc.SetPenSize(TSize(1, 1));
+	aGc.SetPenStyle(CGraphicsContext::ESolidPen);
+	aGc.SetBrushStyle(CGraphicsContext::ENullBrush);
+	
+	TPoint start1 = center;
+	start1.iX += KLineHalfLength;
+	TPoint end1 = center;
+	end1.iX -= (KLineHalfLength + 1);
+	aGc.DrawLine(start1, end1);
+	
+	TPoint start2 = center;
+	start2.iY += KLineHalfLength;
+	TPoint end2 = center;
+	end2.iY -= (KLineHalfLength + 1);
+	aGc.DrawLine(start2, end2);
+	}
+
+
 // CTileBitmapSaver
 
 _LIT(KSaverThreadName, "TileSaverThread");
