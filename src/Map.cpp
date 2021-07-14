@@ -699,7 +699,9 @@ void CLandmarksLayer::DrawLandmarks(CWindowGc &aGc,
 	{
 	DEBUG(_L("Landmarks redrawing started"));
 	
-	aGc.SetPenColor(KRgbDarkBlue);
+	//const TRgb KPenColor(59, 120, 162);
+	const TRgb KPenColor(21, 63, 92);
+	aGc.SetPenColor(KPenColor); // For drawing text
 	
 	for (TInt i = 0; i < aLandmarks->Count(); i++)
 		{	
