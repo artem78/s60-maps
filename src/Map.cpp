@@ -21,6 +21,7 @@
 #include <S60Maps_0xED689B88.rsg>
 #include <epos_cposlandmarksearch.h>
 #include <epos_cposlmareacriteria.h>
+#include "s60maps_icons.mbg"
 
 CMapLayerBase::CMapLayerBase(/*const*/ CS60MapsAppView* aMapView) :
 		iMapView(aMapView)
@@ -580,6 +581,8 @@ CLandmarksLayer::CLandmarksLayer(CS60MapsAppView* aMapView, CPosLandmarkDatabase
 CLandmarksLayer::~CLandmarksLayer()
 	{
 	ReleaseLandmarkResources();
+	delete iIconBitmapMask;
+	delete iIconBitmap;
 	}
 
 CLandmarksLayer* CLandmarksLayer::NewLC(CS60MapsAppView* aMapView, CPosLandmarkDatabase* aLmDb)
@@ -599,6 +602,22 @@ CLandmarksLayer* CLandmarksLayer::NewL(CS60MapsAppView* aMapView, CPosLandmarkDa
 
 void CLandmarksLayer::ConstructL()
 	{
+	_LIT(KMbmFilePathFmt, "%S\\resource\\apps\\s60maps_icons.mbm");
+	
+	// Get drive from current process (path to exe)
+	RProcess proc;
+	TFileName procPath = proc.FileName();
+	TParse parser;
+	parser.Set(procPath, NULL, NULL);
+	
+	TFileName mbmFilePath;
+	mbmFilePath.Format(KMbmFilePathFmt, &parser.Drive());
+	
+	iIconBitmap = new (ELeave) CFbsBitmap();
+	User::LeaveIfError(iIconBitmap->Load(mbmFilePath, EMbmS60maps_iconsStar));
+	
+	iIconBitmapMask = new (ELeave) CFbsBitmap();
+	User::LeaveIfError(iIconBitmapMask->Load(mbmFilePath, EMbmS60maps_iconsStar_mask));
 	}
 
 void CLandmarksLayer::Draw(CWindowGc &aGc)
@@ -680,8 +699,6 @@ void CLandmarksLayer::DrawLandmarks(CWindowGc &aGc,
 	{
 	DEBUG(_L("Landmarks redrawing started"));
 	
-	aGc.SetBrushColor(KRgbBlue);
-	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
 	aGc.SetPenColor(KRgbDarkBlue);
 	
 	for (TInt i = 0; i < aLandmarks->Count(); i++)
@@ -716,12 +733,13 @@ void CLandmarksLayer::DrawLandmark(CWindowGc &aGc,
 			landmarkPos.Longitude(), &landmarkName);
 	
 	
-	// Draw landmark marker
-	const TInt KMarkerSize = 4;
+	// Draw landmark icon
 	TPoint point = iMapView->GeoCoordsToScreenCoords(landmarkPos);
-	TRect rect(point, TSize(1, 1));
-	rect.Grow(TSize(KMarkerSize, KMarkerSize));
-	aGc.DrawEllipse(rect);
+	TSize iconSize = iIconBitmap->SizeInPixels();
+	TRect dstRect(point, TSize(0, 0));
+	dstRect.Grow(iconSize.iWidth / 2, iconSize.iHeight / 2);
+	TRect srcRect(TPoint(0, 0), iconSize);
+	aGc.DrawBitmapMasked(dstRect, iIconBitmap, srcRect, iIconBitmapMask, 0);
 	
 	
 	// Draw landmark name
@@ -729,7 +747,7 @@ void CLandmarksLayer::DrawLandmark(CWindowGc &aGc,
 		{
 		const TInt KLabelMargin = 5;
 		const CFont* font = CEikonEnv::Static()->LegendFont();
-		point.iX += KMarkerSize + KLabelMargin;
+		point.iX += iconSize.iWidth / 2 + KLabelMargin;
 		point.iY += /*font->HeightInPixels()*/ font->AscentInPixels() / 2;
 		aGc.UseFont(font);
 		aGc.DrawText(landmarkName, point);

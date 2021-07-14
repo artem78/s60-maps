@@ -39,6 +39,7 @@
 ;"$(EPOCROOT)Epoc32\data\z\resource\apps\S60Maps_0xED689B88.rsc"		-"!:\resource\apps\S60Maps_0xED689B88.rsc"
 "$(EPOCROOT)Epoc32\data\z\private\10003a3f\apps\S60Maps_0xED689B88_reg.rsc"	-"!:\private\10003a3f\import\apps\S60Maps_0xED689B88_reg.rsc"
 "$(EPOCROOT)Epoc32\data\z\resource\apps\S60Maps_0xED689B88.mif" -"!:\resource\apps\S60Maps_0xED689B88.mif"
+"$(EPOCROOT)Epoc32\data\z\resource\apps\s60maps_icons.mbm" -"!:\resource\apps\s60maps_icons.mbm"
 ;"..\help\S60Maps_0xED689B88.hlp"							 -"!:\resource\help\S60Maps_0xED689B88.hlp"
 
 ; Add any installation notes if applicable

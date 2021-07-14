@@ -89,3 +89,9 @@ LANG 01 04 13 16 57 83 93 103
 
 SOURCEPATH ..\modules\HTTPClient
 SOURCE HTTPClient.cpp
+START BITMAP s60maps_icons.mbm
+	TARGETPATH resource\apps
+	HEADER
+	SOURCEPATH ..\gfx
+	SOURCE c24,8 star.bmp star_mask.bmp
+END
