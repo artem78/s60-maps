@@ -581,7 +581,7 @@ CLandmarksLayer::CLandmarksLayer(CS60MapsAppView* aMapView, CPosLandmarkDatabase
 CLandmarksLayer::~CLandmarksLayer()
 	{
 	ReleaseLandmarkResources();
-	delete iIconBitmapMask;
+	delete iIconMaskBitmap;
 	delete iIconBitmap;
 	}
 
@@ -616,8 +616,8 @@ void CLandmarksLayer::ConstructL()
 	iIconBitmap = new (ELeave) CFbsBitmap();
 	User::LeaveIfError(iIconBitmap->Load(mbmFilePath, EMbmS60maps_iconsStar));
 	
-	iIconBitmapMask = new (ELeave) CFbsBitmap();
-	User::LeaveIfError(iIconBitmapMask->Load(mbmFilePath, EMbmS60maps_iconsStar_mask));
+	iIconMaskBitmap = new (ELeave) CFbsBitmap();
+	User::LeaveIfError(iIconMaskBitmap->Load(mbmFilePath, EMbmS60maps_iconsStar_mask));
 	}
 
 void CLandmarksLayer::Draw(CWindowGc &aGc)
@@ -735,13 +735,16 @@ void CLandmarksLayer::DrawLandmark(CWindowGc &aGc,
 			landmarkPos.Longitude(), &landmarkName);
 	
 	
+	TPoint landmarkPoint = iMapView->GeoCoordsToScreenCoords(landmarkPos);
+	
 	// Draw landmark icon
-	TPoint point = iMapView->GeoCoordsToScreenCoords(landmarkPos);
 	TSize iconSize = iIconBitmap->SizeInPixels();
-	TRect dstRect(point, TSize(0, 0));
-	dstRect.Grow(iconSize.iWidth / 2, iconSize.iHeight / 2);
-	TRect srcRect(TPoint(0, 0), iconSize);
-	aGc.DrawBitmapMasked(dstRect, iIconBitmap, srcRect, iIconBitmapMask, 0);
+	{
+		TRect dstRect(landmarkPoint, TSize(0, 0));
+		dstRect.Grow(iconSize.iWidth / 2, iconSize.iHeight / 2);
+		TRect srcRect(TPoint(0, 0), iconSize);
+		aGc.DrawBitmapMasked(dstRect, iIconBitmap, srcRect, iIconMaskBitmap, 0);
+	}
 	
 	
 	// Draw landmark name
@@ -749,10 +752,11 @@ void CLandmarksLayer::DrawLandmark(CWindowGc &aGc,
 		{
 		const TInt KLabelMargin = 5;
 		const CFont* font = CEikonEnv::Static()->LegendFont();
-		point.iX += iconSize.iWidth / 2 + KLabelMargin;
-		point.iY += /*font->HeightInPixels()*/ font->AscentInPixels() / 2;
+		TPoint labelPoint(landmarkPoint);
+		labelPoint.iX += iconSize.iWidth / 2 + KLabelMargin;
+		labelPoint.iY += /*font->HeightInPixels()*/ font->AscentInPixels() / 2;
 		aGc.UseFont(font);
-		aGc.DrawText(landmarkName, point);
+		aGc.DrawText(landmarkName, labelPoint);
 		aGc.DiscardFont();
 		}
 	}

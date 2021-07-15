@@ -183,7 +183,7 @@ public:
 private:
 	CPosLandmarkDatabase* iLandmarksDb; // Not owned
 	CFbsBitmap* iIconBitmap;
-	CFbsBitmap* iIconBitmapMask;
+	CFbsBitmap* iIconMaskBitmap;
 	
 	// Result may be NULL if nothing found
 	CArrayPtr<CPosLandmark>* GetVisibleLandmarksL(); // ToDo: Is moving to another class needed?
