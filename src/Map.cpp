@@ -602,16 +602,10 @@ CLandmarksLayer* CLandmarksLayer::NewL(CS60MapsAppView* aMapView, CPosLandmarkDa
 
 void CLandmarksLayer::ConstructL()
 	{
-	_LIT(KMbmFilePathFmt, "%S\\resource\\apps\\s60maps_icons.mbm");
-	
-	// Get drive from current process (path to exe)
-	RProcess proc;
-	TFileName procPath = proc.FileName();
-	TParse parser;
-	parser.Set(procPath, NULL, NULL);
+	_LIT(KMbmFilePathFmt, "%c:\\resource\\apps\\s60maps_icons.mbm");
 	
 	TFileName mbmFilePath;
-	mbmFilePath.Format(KMbmFilePathFmt, &parser.Drive());
+	mbmFilePath.Format(KMbmFilePathFmt, FileUtils::InstallationDrive());
 	
 	iIconBitmap = new (ELeave) CFbsBitmap();
 	User::LeaveIfError(iIconBitmap->Load(mbmFilePath, EMbmS60maps_iconsStar));
