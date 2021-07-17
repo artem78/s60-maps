@@ -788,6 +788,8 @@ void CS60MapsAppUi::HandleRenameLandmarkL()
 	{
 	TCoordinate center = iAppView->GetCenterCoordinate();
 	CPosLandmark* landmark = GetNearestLandmarkL(center, EFalse);
+	if (!landmark)
+		return; // Nothing to do
 	CleanupStack::PushL(landmark);
 	
 	RBuf landmarkName;
