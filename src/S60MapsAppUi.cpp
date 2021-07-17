@@ -788,6 +788,7 @@ void CS60MapsAppUi::HandleRenameLandmarkL()
 	{
 	TCoordinate center = iAppView->GetCenterCoordinate();
 	CPosLandmark* landmark = GetNearestLandmarkL(center, EFalse);
+	CleanupStack::PushL(landmark);
 	
 	RBuf landmarkName;
 	landmarkName.CreateL(KPosLmMaxTextFieldLength);
@@ -807,9 +808,7 @@ void CS60MapsAppUi::HandleRenameLandmarkL()
 		iLandmarksDb->UpdateLandmarkL(*landmark);
 		}
 	
-	CleanupStack::PopAndDestroy(2, &landmarkName);
-	
-	delete landmark;
+	CleanupStack::PopAndDestroy(3, landmark);
 	}
 
 void CS60MapsAppUi::SendAppToBackground()
