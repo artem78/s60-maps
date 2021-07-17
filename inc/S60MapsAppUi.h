@@ -163,6 +163,7 @@ private:
 	void HandleToggleLandmarksVisibility();
 	void HandleCreateLandmarkL();
 	void HandleRenameLandmarkL();
+	void HandleDeleteLandmarkL();
 	
 public:
 	inline const CSettings* Settings()

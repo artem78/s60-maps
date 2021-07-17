@@ -38,3 +38,4 @@
 #define qtn_create "Create"
 #define qtn_input_name "Input name"
 #define qtn_rename "Rename"
+#define qtn_delete "Delete"
