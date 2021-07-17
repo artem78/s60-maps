@@ -39,3 +39,4 @@
 #define qtn_input_name "Input name"
 #define qtn_rename "Rename"
 #define qtn_delete "Delete"
+#define qtn_confirm_landmark_deletion "Delete \"%S\" landmark?"

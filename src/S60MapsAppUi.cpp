@@ -823,10 +823,23 @@ void CS60MapsAppUi::HandleDeleteLandmarkL()
 	CPosLandmark* landmark = GetNearestLandmarkL(center, ETrue);
 	if (!landmark)
 		return;
-	TPosLmItemId landmarkId = landmark->LandmarkId();
-	delete landmark;
+	CleanupStack::PushL(landmark);
 	
-	iLandmarksDb->RemoveLandmarkL(landmarkId);
+	// Ask for confirmation
+	CAknQueryDialog* dlg = CAknQueryDialog::NewL();
+	dlg->PrepareLC(R_CONFIRM_DIALOG);
+	TPtrC landmarkName;
+	landmark->GetLandmarkName(landmarkName);
+	TBuf<128/*256*/> msg;
+	iEikonEnv->Format128(msg, R_CONFIRM_LANDMARK_DELETION, &landmarkName);
+	dlg->SetPromptL(msg);
+	if (dlg->RunLD() == EAknSoftkeyYes)
+		{
+		// Remove landmark from DB
+		iLandmarksDb->RemoveLandmarkL(landmark->LandmarkId());
+		}
+	
+	CleanupStack::PopAndDestroy(landmark);
 	}
 
 void CS60MapsAppUi::SendAppToBackground()

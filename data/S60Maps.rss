@@ -351,6 +351,7 @@ RESOURCE TBUF r_kilometers_unit_short { buf=qtn_kilometers_unit_short; }
 RESOURCE TBUF r_input_name { buf=qtn_input_name; }
 //RESOURCE TBUF r_rename { buf=qtn_rename; }
 //RESOURCE TBUF r_delete { buf=qtn_delete; }
+RESOURCE TBUF r_confirm_landmark_deletion { buf=qtn_confirm_landmark_deletion; }
 
 // ---------------------------------------------------------------------------- 
 //
