@@ -38,3 +38,6 @@ CHARACTER_SET UTF8
 #define qtn_display "Показывать"
 #define qtn_create "Создать"
 #define qtn_input_name "Введите имя"
+#define qtn_rename "Переименовать"
+#define qtn_delete "Удалить"
+#define qtn_confirm_landmark_deletion "Удалить ориентир \"%S\"?"
