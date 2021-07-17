@@ -30,6 +30,8 @@
 #include "GitInfo.h"
 #include "FileUtils.h"
 //#include <eikprogi.h>
+#include <epos_cposlmnearestcriteria.h>
+#include <epos_cposlandmarksearch.h>
 
 
 // ============================ MEMBER FUNCTIONS ===============================
@@ -258,6 +260,10 @@ void CS60MapsAppUi::HandleCommandL(TInt aCommand)
 			
 		case ECreateLandmark:
 			HandleCreateLandmarkL();
+			break;
+			
+		case ERenameLandmark:
+			HandleRenameLandmarkL();
 			break;
 			
 		default:
@@ -778,6 +784,34 @@ void CS60MapsAppUi::HandleCreateLandmarkL()
 	CleanupStack::PopAndDestroy(2, &landmarkName);
 	}
 
+void CS60MapsAppUi::HandleRenameLandmarkL()
+	{
+	TCoordinate center = iAppView->GetCenterCoordinate();
+	CPosLandmark* landmark = GetNearestLandmarkL(center, EFalse);
+	
+	RBuf landmarkName;
+	landmarkName.CreateL(KPosLmMaxTextFieldLength);
+	CleanupClosePushL(landmarkName);
+	
+	TPtrC oldLandmarkName;
+	landmark->GetLandmarkName(oldLandmarkName);
+	landmarkName.Copy(oldLandmarkName);
+	
+	// Ask landmark new name
+	HBufC* dlgTitle = iEikonEnv->AllocReadResourceLC(R_INPUT_NAME);
+	CAknTextQueryDialog* dlg = new (ELeave) CAknTextQueryDialog(landmarkName);
+	if (dlg->ExecuteLD(R_LANDMARK_NAME_INPUT_QUERY, *dlgTitle) == EAknSoftkeyOk)
+		{
+		// Update landmark in DB	
+		landmark->SetLandmarkNameL(landmarkName);
+		iLandmarksDb->UpdateLandmarkL(*landmark);
+		}
+	
+	CleanupStack::PopAndDestroy(2, &landmarkName);
+	
+	delete landmark;
+	}
+
 void CS60MapsAppUi::SendAppToBackground()
 	{
 	TApaTask task(iEikonEnv->WsSession());
@@ -785,5 +819,49 @@ void CS60MapsAppUi::SendAppToBackground()
 	task.SendToBackground();
 	}
 
+CPosLandmark* CS60MapsAppUi::GetNearestLandmarkL(const TCoordinate &aCoord, TBool aPartial)
+	{
+	CPosLandmark* landmark = NULL; // Returned value
+	
+	DEBUG(_L("Start nearest landmark queing"));
+	
+	CPosLandmarkSearch* landmarkSearch = CPosLandmarkSearch::NewL(*iLandmarksDb);
+	CleanupStack::PushL(landmarkSearch);
+	landmarkSearch->SetMaxNumOfMatches(1);
+	CPosLmNearestCriteria* nearestCriteria = CPosLmNearestCriteria::NewLC(aCoord);
+	//nearestCriteria->SetMaxDistance(...)
+	CPosLmOperation* landmarkOp = landmarkSearch->StartLandmarkSearchL(*nearestCriteria, EFalse);
+	ExecuteAndDeleteLD(landmarkOp);
+	if (landmarkSearch->NumOfMatches())
+		{		
+		CPosLmItemIterator* landmarkIter = landmarkSearch->MatchIteratorL();
+		CleanupStack::PushL(landmarkIter);
+		
+		landmarkIter->Reset();
+		TPosLmItemId landmarkId = landmarkIter->NextL();
+		if (landmarkId == KPosLmNullItemId)
+			User::Leave(KErrNotFound);
+		
+		if (aPartial)
+			landmark = iLandmarksDb->ReadPartialLandmarkLC(landmarkId);
+		else
+			landmark = iLandmarksDb->ReadLandmarkLC(landmarkId);
+		
+		CleanupStack::Pop(); // landmark
+		
+		CleanupStack::PopAndDestroy(landmarkIter);		
+		}
+		
+	CleanupStack::PopAndDestroy(2, landmarkSearch);
+	
+	DEBUG(_L("End nearest landmark queing"));
+	
+	if (!landmark)
+		{
+		DEBUG(_L("Nothing found"));
+		}
+	
+	return landmark;
+	}
 
 // End of File

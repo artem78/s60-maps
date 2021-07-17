@@ -148,6 +148,7 @@ private:
 	void ClearTilesCacheL();
 	//static TInt UpdateTilesClearingProgress(TAny* aSelfPtr);
 	void SendAppToBackground(); // Hide application window
+	CPosLandmark* GetNearestLandmarkL(const TCoordinate &aCoord, TBool aPartial = ETrue); // The client takes ownership of the returned landmark object. Returns NULL if nothing found.
 	
 	// Command handlers
 	void HandleExitL();
@@ -161,6 +162,7 @@ private:
 	void HandleAboutL();
 	void HandleToggleLandmarksVisibility();
 	void HandleCreateLandmarkL();
+	void HandleRenameLandmarkL();
 	
 public:
 	inline const CSettings* Settings()

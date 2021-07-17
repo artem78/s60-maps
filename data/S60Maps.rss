@@ -148,6 +148,11 @@ RESOURCE MENU_PANE r_submenu_landmarks
 			{
 			command = ECreateLandmark;
 			txt = qtn_create;
+			},
+		MENU_ITEM
+			{
+			command = ERenameLandmark;
+			txt = qtn_rename;
 			}
 		};
 	}
@@ -339,6 +344,7 @@ RESOURCE TBUF r_kilometers_unit_short { buf=qtn_kilometers_unit_short; }
 //RESOURCE TBUD r_display { buf=qtn_display; }
 //RESOURCE TBUD r_create { buf=qtn_create; }
 RESOURCE TBUF r_input_name { buf=qtn_input_name; }
+//RESOURCE TBUF r_rename { buf=qtn_rename; }
 
 // ---------------------------------------------------------------------------- 
 //
