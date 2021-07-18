@@ -345,6 +345,8 @@ void CS60MapsAppUi::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
 		aMenuPane->SetItemButtonState(EToggleLandmarksVisibility,
 				iSettings->GetLandmarksVisibility() ? EEikMenuItemSymbolOn : EEikMenuItemSymbolIndeterminate
 		);
+		aMenuPane->SetItemDimmed(ERenameLandmark, !iSettings->GetLandmarksVisibility());
+		aMenuPane->SetItemDimmed(EDeleteLandmark, !iSettings->GetLandmarksVisibility());
 		}
 	/*else
 		{
