@@ -345,8 +345,11 @@ void CS60MapsAppUi::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
 		aMenuPane->SetItemButtonState(EToggleLandmarksVisibility,
 				iSettings->GetLandmarksVisibility() ? EEikMenuItemSymbolOn : EEikMenuItemSymbolIndeterminate
 		);
-		aMenuPane->SetItemDimmed(ERenameLandmark, !iSettings->GetLandmarksVisibility());
-		aMenuPane->SetItemDimmed(EDeleteLandmark, !iSettings->GetLandmarksVisibility());
+		CPosLandmark* nearestLandmark = GetNearestLandmarkAroundTheCenterL();
+		TBool isDisplayEditOrDeleteLandmark = iSettings->GetLandmarksVisibility() && nearestLandmark;
+		delete nearestLandmark;
+		aMenuPane->SetItemDimmed(ERenameLandmark, !isDisplayEditOrDeleteLandmark);
+		aMenuPane->SetItemDimmed(EDeleteLandmark, !isDisplayEditOrDeleteLandmark);
 		}
 	/*else
 		{
@@ -792,8 +795,7 @@ void CS60MapsAppUi::HandleCreateLandmarkL()
 
 void CS60MapsAppUi::HandleRenameLandmarkL()
 	{
-	TCoordinate center = iAppView->GetCenterCoordinate();
-	CPosLandmark* landmark = GetNearestLandmarkL(center, EFalse);
+	CPosLandmark* landmark = GetNearestLandmarkAroundTheCenterL(EFalse);
 	if (!landmark)
 		return; // Nothing to do
 	CleanupStack::PushL(landmark);
@@ -821,8 +823,7 @@ void CS60MapsAppUi::HandleRenameLandmarkL()
 
 void CS60MapsAppUi::HandleDeleteLandmarkL()
 	{
-	TCoordinate center = iAppView->GetCenterCoordinate();
-	CPosLandmark* landmark = GetNearestLandmarkL(center, ETrue);
+	CPosLandmark* landmark = GetNearestLandmarkAroundTheCenterL(ETrue);
 	if (!landmark)
 		return;
 	CleanupStack::PushL(landmark);
@@ -851,17 +852,18 @@ void CS60MapsAppUi::SendAppToBackground()
 	task.SendToBackground();
 	}
 
-CPosLandmark* CS60MapsAppUi::GetNearestLandmarkL(const TCoordinate &aCoord, TBool aPartial)
+CPosLandmark* CS60MapsAppUi::GetNearestLandmarkL(const TCoordinate &aCoord,
+		TBool aPartial, TReal32 aMaxDistance)
 	{
 	CPosLandmark* landmark = NULL; // Returned value
 	
-	DEBUG(_L("Start nearest landmark queing"));
+	DEBUG(_L("Start nearest landmark queing (max distance = %f m.)"), aMaxDistance);
 	
 	CPosLandmarkSearch* landmarkSearch = CPosLandmarkSearch::NewL(*iLandmarksDb);
 	CleanupStack::PushL(landmarkSearch);
 	landmarkSearch->SetMaxNumOfMatches(1);
 	CPosLmNearestCriteria* nearestCriteria = CPosLmNearestCriteria::NewLC(aCoord);
-	//nearestCriteria->SetMaxDistance(...)
+	nearestCriteria->SetMaxDistance(aMaxDistance);
 	CPosLmOperation* landmarkOp = landmarkSearch->StartLandmarkSearchL(*nearestCriteria, EFalse);
 	ExecuteAndDeleteLD(landmarkOp);
 	if (landmarkSearch->NumOfMatches())
@@ -894,6 +896,17 @@ CPosLandmark* CS60MapsAppUi::GetNearestLandmarkL(const TCoordinate &aCoord, TBoo
 		}
 	
 	return landmark;
+	}
+
+CPosLandmark* CS60MapsAppUi::GetNearestLandmarkAroundTheCenterL(TBool aPartial)
+	{
+	const TInt KMaxDistanceInPixels = 25;
+	
+	TCoordinate center = iAppView->GetCenterCoordinate();
+	TReal32 maxDistance /* in meters */, unused;
+	MapMath::PixelsToMeters(center.Latitude(), iAppView->GetZoom(),
+			KMaxDistanceInPixels, maxDistance, unused);
+	return GetNearestLandmarkL(center, aPartial, maxDistance);
 	}
 
 // End of File
