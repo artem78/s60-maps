@@ -21,7 +21,7 @@
 #include <S60Maps_0xED689B88.rsg>
 #include <epos_cposlandmarksearch.h>
 #include <epos_cposlmareacriteria.h>
-#include "s60maps_icons.mbg"
+#include "S60Maps_0xED689B88_icons.mbg"
 
 CMapLayerBase::CMapLayerBase(/*const*/ CS60MapsAppView* aMapView) :
 		iMapView(aMapView)
@@ -602,16 +602,20 @@ CLandmarksLayer* CLandmarksLayer::NewL(CS60MapsAppView* aMapView, CPosLandmarkDa
 
 void CLandmarksLayer::ConstructL()
 	{
-	_LIT(KMbmFilePathFmt, "%c:\\resource\\apps\\s60maps_icons.mbm");
+	_LIT(KMbmFilePathFmt, "%c:\\resource\\apps\\S60Maps_%S_icons.mbm");
+	TBuf<2+8> uid;
+	uid.Append('0');
+	uid.Append('x');
+	uid.AppendNumUC(_UID3, EHex);
 	
 	TFileName mbmFilePath;
-	mbmFilePath.Format(KMbmFilePathFmt, FileUtils::InstallationDrive());
+	mbmFilePath.Format(KMbmFilePathFmt, FileUtils::InstallationDrive(), &uid);
 	
 	iIconBitmap = new (ELeave) CFbsBitmap();
-	User::LeaveIfError(iIconBitmap->Load(mbmFilePath, EMbmS60maps_iconsStar));
+	User::LeaveIfError(iIconBitmap->Load(mbmFilePath, EMbmS60maps_0xed689b88_iconsStar));
 	
 	iIconMaskBitmap = new (ELeave) CFbsBitmap();
-	User::LeaveIfError(iIconMaskBitmap->Load(mbmFilePath, EMbmS60maps_iconsStar_mask));
+	User::LeaveIfError(iIconMaskBitmap->Load(mbmFilePath, EMbmS60maps_0xed689b88_iconsStar_mask));
 	}
 
 void CLandmarksLayer::Draw(CWindowGc &aGc)

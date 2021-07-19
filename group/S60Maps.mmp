@@ -89,7 +89,7 @@ LANG 01 04 13 16 57 83 93 103
 
 SOURCEPATH ..\modules\HTTPClient
 SOURCE HTTPClient.cpp
-START BITMAP s60maps_icons.mbm
+START BITMAP S60Maps_0xED689B88_icons.mbm
 	TARGETPATH resource\apps
 	HEADER
 	SOURCEPATH ..\gfx
