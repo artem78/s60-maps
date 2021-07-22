@@ -43,7 +43,7 @@ Simple map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wi
 
 ## Screenshots
 
-![](images/launch_icon.png "Application launch icon") ![](images/about.png "About dialog") ![](images/menu.png "Main menu") ![](images/demo_video.gif "Demo") ![](images/layers.gif "Different map layers") ![](images/map_with_marker.png "Showing location")
+![](images/launch_icon.png "Application launch icon") ![](images/about.png "About dialog") ![](images/menu.png "Main menu") ![](images/demo_video.gif "Demo") ![](images/layers.gif "Different map layers") ![](images/map_with_marker.png "Showing location") ![](images/landmarks.png "Landmarks view")
 
 ## Supported devices
 
