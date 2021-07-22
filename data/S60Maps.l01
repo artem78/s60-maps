@@ -33,6 +33,8 @@
 #define qtn_meters_unit_short "m"
 #define qtn_kilometers_unit_short "km"
 
+// Added in version 1.5.0:
+
 #define qtn_landmarks "Landmarks"
 #define qtn_display "Display"
 #define qtn_create "Create"

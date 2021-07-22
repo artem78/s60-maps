@@ -34,6 +34,8 @@ CHARACTER_SET UTF8
 #define qtn_meters_unit_short "м"
 #define qtn_kilometers_unit_short "км"
 
+// Added in version 1.5.0:
+
 #define qtn_landmarks "Ориентиры"
 #define qtn_display "Показывать"
 #define qtn_create "Создать"
