@@ -24,6 +24,7 @@ Simple map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wi
 - Retrieve and show phone location using internal GPS
 - Can work without GPS
 - **Offline mode** - all downloaded tiles save in cache on disk and you can view them later without network connection needed
+- Display and edit landmarks
 
 ## Controls
 
