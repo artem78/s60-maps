@@ -81,7 +81,7 @@ Settings store in `store.dat` file. If you have problems with application to run
 - [x] Add support for other map layers and WMS services (like OSM bicycle, OSM humanitarian, OpenTopoMap, etc...) 
 - [ ] Add ability to define custom map layers providing tile\`s URLs
 - [ ] Update old cached tiles
-- [ ] Display landmarks
+- [x] Display and edit landmarks
 - [ ] Search (using [Nominatim](https://nominatim.openstreetmap.org/))
 - [ ] Show satellites info (amount, signal strength, etc...)
 
