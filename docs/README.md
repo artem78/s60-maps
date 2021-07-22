@@ -24,6 +24,7 @@ Simple map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wi
 - Retrieve and show phone location using internal GPS
 - Can work without GPS
 - **Offline mode** - all downloaded tiles save in cache on disk and you can view them later without network connection needed
+- Display and edit landmarks
 
 ## Controls
 
@@ -42,7 +43,7 @@ Simple map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wi
 
 ## Screenshots
 
-![](images/launch_icon.png "Application launch icon") ![](images/about.png "About dialog") ![](images/menu.png "Main menu") ![](images/demo_video.gif "Demo") ![](images/layers.gif "Different map layers") ![](images/map_with_marker.png "Showing location")
+![](images/launch_icon.png "Application launch icon") ![](images/about.png "About dialog") ![](images/menu.png "Main menu") ![](images/demo_video.gif "Demo") ![](images/layers.gif "Different map layers") ![](images/map_with_marker.png "Showing location") ![](images/landmarks.png "Landmarks view")
 
 ## Supported devices
 
@@ -81,7 +82,7 @@ Settings store in `store.dat` file. If you have problems with application to run
 - [x] Add support for other map layers and WMS services (like OSM bicycle, OSM humanitarian, OpenTopoMap, etc...) 
 - [ ] Add ability to define custom map layers providing tile\`s URLs
 - [ ] Update old cached tiles
-- [ ] Display landmarks
+- [x] Display and edit landmarks
 - [ ] Search (using [Nominatim](https://nominatim.openstreetmap.org/))
 - [ ] Show satellites info (amount, signal strength, etc...)
 

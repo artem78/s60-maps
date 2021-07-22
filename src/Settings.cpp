@@ -25,7 +25,8 @@ CSettings::CSettings() :
 		iLat(KDefaultLat),
 		iLon(KDefaultLon),
 		iZoom(KDefaultZoom),
-		iTileProviderId(KDefaultTileProviderId)
+		iTileProviderId(KDefaultTileProviderId),
+		iIsLandmarksVisible(EFalse)
 	{
 	}
 
@@ -59,6 +60,7 @@ void CSettings::ExternalizeL(RWriteStream& aStream) const
 	aStream << iLon;
 	aStream << TCardinality(iZoom);
 	aStream << iTileProviderId;
+	aStream << (TInt8) iIsLandmarksVisible;
 	}
 
 void CSettings::InternalizeL(RReadStream& aStream)
@@ -69,4 +71,7 @@ void CSettings::InternalizeL(RReadStream& aStream)
 	TRAP_IGNORE(aStream >> zoom);
 	iZoom = (TInt) zoom;
 	TRAP_IGNORE(aStream >> iTileProviderId);
+	TInt8 isLandmarksVisible;
+	TRAP_IGNORE(aStream >> isLandmarksVisible);
+	iIsLandmarksVisible = (TBool) isLandmarksVisible;
 	}

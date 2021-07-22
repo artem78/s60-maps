@@ -104,6 +104,12 @@ RESOURCE MENU_PANE r_menu
 		MENU_ITEM
 				{
 				//command = ...;
+				txt = qtn_landmarks;
+				cascade = r_submenu_landmarks;
+				},
+		MENU_ITEM
+				{
+				//command = ...;
 				txt = qtn_service_title;
 				cascade = r_submenu_service;
 				},
@@ -125,6 +131,35 @@ RESOURCE MENU_PANE r_submenu_tile_providers
 	{
 	items =
 		{}; // Will be filled at runtime
+	}
+
+// Landmarks submenu
+RESOURCE MENU_PANE r_submenu_landmarks
+	{
+	items =
+		{
+		MENU_ITEM
+			{
+			flags = EEikMenuItemCheckBox;
+			command = EToggleLandmarksVisibility;
+			txt = qtn_display;
+			},
+		MENU_ITEM
+			{
+			command = ECreateLandmark;
+			txt = qtn_create;
+			},
+		MENU_ITEM
+			{
+			command = ERenameLandmark;
+			txt = qtn_rename;
+			},
+		MENU_ITEM
+			{
+			command = EDeleteLandmark;
+			txt = qtn_delete;
+			}
+		};
 	}
 
 // Service submenu
@@ -253,6 +288,40 @@ RESOURCE DIALOG r_wait_dialog
 		};
 	}
 
+// New landmark name input dualog
+RESOURCE DIALOG r_landmark_name_input_query
+  {
+  flags = EGeneralQueryFlags;
+  buttons = R_AVKON_SOFTKEYS_OK_CANCEL;
+  items =
+    {
+    DLG_LINE
+      {
+      type = EAknCtQuery;
+      id = EGeneralQuery;
+      control = AVKON_DATA_QUERY
+        {
+        layout = EDataLayout;
+        label = qtn_input_name;
+        control = EDWIN
+          {
+          flags = EEikEdwinNoHorizScrolling | EEikEdwinResizable;
+//        width = AKNTAQUERY_EDWIN_WIDTH;
+//        maxlength = AKNTAQUERY_EDWIN_MAXLENGTH;
+          // added to limit expanding in forms. 
+          // If you want full screen use 6 here
+//        max_view_height_in_lines = AKNEXQUERY_EDWIN_LINES; 
+          // if you have the line above, you must have this. 
+          // It's calculable from LAF
+          base_line_delta = 21; 
+          };
+        };
+      }
+    };
+  }
+
+
+
 // -----------------------------------------------------------------------------
 //
 // Resources for messages.
@@ -276,7 +345,13 @@ RESOURCE TBUF r_positioning_disabled { buf=qtn_positioning_disabled; }
 //RESOURCE TBUF r_wait { buf=qtn_wait; }
 RESOURCE TBUF r_meters_unit_short { buf=qtn_meters_unit_short; }
 RESOURCE TBUF r_kilometers_unit_short { buf=qtn_kilometers_unit_short; }
-
+//RESOURCE TBUF r_landmarks { buf=qtn_landmarks; }
+//RESOURCE TBUD r_display { buf=qtn_display; }
+//RESOURCE TBUD r_create { buf=qtn_create; }
+RESOURCE TBUF r_input_name { buf=qtn_input_name; }
+//RESOURCE TBUF r_rename { buf=qtn_rename; }
+//RESOURCE TBUF r_delete { buf=qtn_delete; }
+RESOURCE TBUF r_confirm_landmark_deletion { buf=qtn_confirm_landmark_deletion; }
 
 // ---------------------------------------------------------------------------- 
 //

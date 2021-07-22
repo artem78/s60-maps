@@ -24,6 +24,7 @@
 #include "Settings.h"
 //#include <aknprogressdialog.h> // For CAknProgressDialog
 #include <aknwaitdialog.h> // For CAknWaitDialog 
+#include <epos_cposlandmarkdatabase.h> // For CPosLandmarkDatabase
 
 // FORWARD DECLARATIONS
 class CS60MapsAppView;
@@ -141,10 +142,15 @@ private:
 	CAknWaitDialog* iCacheClearingWaitDialog;
 	//CAknProgressDialog* iCacheResetProgressDialog;
 	//CPeriodic* iCacheResetProgressChecker;
+	CPosLandmarkDatabase* iLandmarksDb;
+	CPosLmPartialReadParameters* iLandmarkPartialParameters;
 	
 	void ClearTilesCacheL();
 	//static TInt UpdateTilesClearingProgress(TAny* aSelfPtr);
 	void SendAppToBackground(); // Hide application window
+	CPosLandmark* GetNearestLandmarkL(const TCoordinate &aCoord, TBool aPartial = ETrue,
+			TReal32 aMaxDistance = KNaN); // The client takes ownership of the returned landmark object. Returns NULL if nothing found.
+	CPosLandmark* GetNearestLandmarkAroundTheCenterL(TBool aPartial = ETrue); // The client takes ownership of the returned landmark object. Returns NULL if nothing found.
 	
 	// Command handlers
 	void HandleExitL();
@@ -156,6 +162,17 @@ private:
 	void HandleHelpL();
 #endif
 	void HandleAboutL();
+	void HandleToggleLandmarksVisibility();
+	void HandleCreateLandmarkL();
+	void HandleRenameLandmarkL();
+	void HandleDeleteLandmarkL();
+	
+public:
+	inline const CSettings* Settings()
+			{ return iSettings; }
+	
+	inline CPosLandmarkDatabase* LandmarkDb()
+			{ return iLandmarksDb; }
 	
 	};
 
