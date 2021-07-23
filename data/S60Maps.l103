@@ -35,12 +35,11 @@ CHARACTER_SET UTF8
 #define qtn_kilometers_unit_short "km"
 
 // Added in version 1.5.0:
-// ToDo: Translate strings below
 
-#define qtn_landmarks "Landmarks"
-#define qtn_display "Display"
-#define qtn_create "Create"
-#define qtn_input_name "Input name"
-#define qtn_rename "Rename"
-#define qtn_delete "Delete"
-#define qtn_confirm_landmark_deletion "Delete \"%S\" landmark?"
+#define qtn_landmarks "Marcadores"
+#define qtn_display "Amosar"
+#define qtn_create "Criar"
+#define qtn_input_name "Introduce o nome"
+#define qtn_rename "Renomear"
+#define qtn_delete "Apagar"
+#define qtn_confirm_landmark_deletion "Apagar \"%S\" marcador?"
