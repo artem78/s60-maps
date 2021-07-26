@@ -35,12 +35,11 @@ CHARACTER_SET UTF8
 #define qtn_kilometers_unit_short "км"
 
 // Added in version 1.5.0:
-// ToDo: Translate strings below
 
-#define qtn_landmarks "Ориентиры"
-#define qtn_display "Показывать"
-#define qtn_create "Создать"
-#define qtn_input_name "Введите имя"
-#define qtn_rename "Переименовать"
-#define qtn_delete "Удалить"
-#define qtn_confirm_landmark_deletion "Удалить ориентир \"%S\"?"
+#define qtn_landmarks "Орієнтири"
+#define qtn_display "Показувати"
+#define qtn_create "Створити"
+#define qtn_input_name "Введіть ім'я"
+#define qtn_rename "Перейменувати"
+#define qtn_delete "Видалити"
+#define qtn_confirm_landmark_deletion "Видалити орієнтир \"%S\"?"
