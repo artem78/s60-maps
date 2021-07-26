@@ -33,3 +33,13 @@ CHARACTER_SET UTF8
 #define qtn_wait "Por favor, espera..."
 #define qtn_meters_unit_short "m"
 #define qtn_kilometers_unit_short "km"
+
+// Added in version 1.5.0:
+
+#define qtn_landmarks "Marcadores"
+#define qtn_display "Mostrar"
+#define qtn_create "Crear"
+#define qtn_input_name "Introduce nombre"
+#define qtn_rename "Renombrar"
+#define qtn_delete "Borrar"
+#define qtn_confirm_landmark_deletion "Borrar \"%S\" marcador?"

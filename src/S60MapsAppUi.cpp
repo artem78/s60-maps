@@ -30,6 +30,8 @@
 #include "GitInfo.h"
 #include "FileUtils.h"
 //#include <eikprogi.h>
+#include <epos_cposlmnearestcriteria.h>
+#include <epos_cposlandmarksearch.h>
 
 
 // ============================ MEMBER FUNCTIONS ===============================
@@ -107,6 +109,17 @@ void CS60MapsAppUi::ConstructL()
 	
 	
 	iFileMan = CAsyncFileMan::NewL(CCoeEnv::Static()->FsSession(), this);
+	
+	// Connect to landmark database
+	iLandmarkPartialParameters = CPosLmPartialReadParameters::NewLC();
+	CleanupStack::Pop();
+	iLandmarkPartialParameters->SetRequestedAttributes(
+			CPosLandmark::ELandmarkName | CPosLandmark::EPosition
+			/*| CPosLandmark::EIcon*/);
+	//User::LeaveIfError(iLandmarkPartialParameters->SetRequestedPositionFields(...));	
+	
+	iLandmarksDb = CPosLandmarkDatabase::OpenL();
+	iLandmarksDb->SetPartialReadParametersL(*iLandmarkPartialParameters);
 
 	// Set initial map position
 	TCoordinate position = TCoordinate(iSettings->GetLat(), iSettings->GetLon());
@@ -186,6 +199,9 @@ CS60MapsAppUi::~CS60MapsAppUi()
 		iAppView = NULL;
 		}
 	
+	delete iLandmarksDb;
+	delete iLandmarkPartialParameters;
+	
 	delete iFileMan;
 	
 	//delete iAvailableTileProviders;
@@ -218,7 +234,7 @@ void CS60MapsAppUi::HandleCommandL(TInt aCommand)
 		case ESetOsmTransportTileProvider:
 		//case ESetOpenTopoMapTileProvider:
 			HandleTileProviderChangeL(aCommand - ESetTileProviderBase);
-			break;	
+			break;
 			
 		case ETilesCacheStats:
 			HandleTilesCacheStatsL();
@@ -236,6 +252,22 @@ void CS60MapsAppUi::HandleCommandL(TInt aCommand)
 			
 		case EAbout:
 			HandleAboutL();
+			break;
+			
+		case EToggleLandmarksVisibility:
+			HandleToggleLandmarksVisibility();
+			break;
+			
+		case ECreateLandmark:
+			HandleCreateLandmarkL();
+			break;
+			
+		case ERenameLandmark:
+			HandleRenameLandmarkL();
+			break;
+			
+		case EDeleteLandmark:
+			HandleDeleteLandmarkL();
 			break;
 			
 		default:
@@ -307,6 +339,17 @@ void CS60MapsAppUi::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
 					iAvailableTileProviders[idx] == iActiveTileProvider?
 							EEikMenuItemSymbolOn : EEikMenuItemSymbolIndeterminate);				
 			}
+		}
+	else if (aMenuID == R_SUBMENU_LANDMARKS)
+		{
+		aMenuPane->SetItemButtonState(EToggleLandmarksVisibility,
+				iSettings->GetLandmarksVisibility() ? EEikMenuItemSymbolOn : EEikMenuItemSymbolIndeterminate
+		);
+		CPosLandmark* nearestLandmark = GetNearestLandmarkAroundTheCenterL();
+		TBool isDisplayEditOrDeleteLandmark = iSettings->GetLandmarksVisibility() && nearestLandmark;
+		delete nearestLandmark;
+		aMenuPane->SetItemDimmed(ERenameLandmark, !isDisplayEditOrDeleteLandmark);
+		aMenuPane->SetItemDimmed(EDeleteLandmark, !isDisplayEditOrDeleteLandmark);
 		}
 	/*else
 		{
@@ -718,6 +761,90 @@ void CS60MapsAppUi::HandleAboutL()
 	dlg->RunLD();
 	}
 
+void CS60MapsAppUi::HandleToggleLandmarksVisibility()
+	{
+	iSettings->SetLandmarksVisibility(!iSettings->GetLandmarksVisibility());
+	}
+
+void CS60MapsAppUi::HandleCreateLandmarkL()
+	{
+	_LIT(KDefaultLandmarkName, "Landmark");
+	
+	RBuf landmarkName;
+	landmarkName.CreateL(KPosLmMaxTextFieldLength);
+	CleanupClosePushL(landmarkName);
+	landmarkName.Copy(KDefaultLandmarkName);
+	
+	// Ask landmark name
+	HBufC* dlgTitle = iEikonEnv->AllocReadResourceLC(R_INPUT_NAME);
+	CAknTextQueryDialog* dlg = new (ELeave) CAknTextQueryDialog(landmarkName);
+	if (dlg->ExecuteLD(R_LANDMARK_NAME_INPUT_QUERY, *dlgTitle) == EAknSoftkeyOk)
+		{
+		// Save landmark to DB	
+		CPosLandmark* newLandmark = CPosLandmark::NewLC();
+		TLocality pos = TLocality(iAppView->GetCenterCoordinate(), KNaN, KNaN);
+		newLandmark->SetPositionL(pos);
+		newLandmark->SetLandmarkNameL(landmarkName);
+		iLandmarksDb->AddLandmarkL(*newLandmark);
+		
+		CleanupStack::PopAndDestroy(newLandmark);
+		}
+	
+	CleanupStack::PopAndDestroy(2, &landmarkName);
+	}
+
+void CS60MapsAppUi::HandleRenameLandmarkL()
+	{
+	CPosLandmark* landmark = GetNearestLandmarkAroundTheCenterL(EFalse);
+	if (!landmark)
+		return; // Nothing to do
+	CleanupStack::PushL(landmark);
+	
+	RBuf landmarkName;
+	landmarkName.CreateL(KPosLmMaxTextFieldLength);
+	CleanupClosePushL(landmarkName);
+	
+	TPtrC oldLandmarkName;
+	landmark->GetLandmarkName(oldLandmarkName);
+	landmarkName.Copy(oldLandmarkName);
+	
+	// Ask landmark new name
+	HBufC* dlgTitle = iEikonEnv->AllocReadResourceLC(R_INPUT_NAME);
+	CAknTextQueryDialog* dlg = new (ELeave) CAknTextQueryDialog(landmarkName);
+	if (dlg->ExecuteLD(R_LANDMARK_NAME_INPUT_QUERY, *dlgTitle) == EAknSoftkeyOk)
+		{
+		// Update landmark in DB	
+		landmark->SetLandmarkNameL(landmarkName);
+		iLandmarksDb->UpdateLandmarkL(*landmark);
+		}
+	
+	CleanupStack::PopAndDestroy(3, landmark);
+	}
+
+void CS60MapsAppUi::HandleDeleteLandmarkL()
+	{
+	CPosLandmark* landmark = GetNearestLandmarkAroundTheCenterL(ETrue);
+	if (!landmark)
+		return;
+	CleanupStack::PushL(landmark);
+	
+	// Ask for confirmation
+	CAknQueryDialog* dlg = CAknQueryDialog::NewL();
+	dlg->PrepareLC(R_CONFIRM_DIALOG);
+	TPtrC landmarkName;
+	landmark->GetLandmarkName(landmarkName);
+	TBuf<128/*256*/> msg;
+	iEikonEnv->Format128(msg, R_CONFIRM_LANDMARK_DELETION, &landmarkName);
+	dlg->SetPromptL(msg);
+	if (dlg->RunLD() == EAknSoftkeyYes)
+		{
+		// Remove landmark from DB
+		iLandmarksDb->RemoveLandmarkL(landmark->LandmarkId());
+		}
+	
+	CleanupStack::PopAndDestroy(landmark);
+	}
+
 void CS60MapsAppUi::SendAppToBackground()
 	{
 	TApaTask task(iEikonEnv->WsSession());
@@ -725,5 +852,61 @@ void CS60MapsAppUi::SendAppToBackground()
 	task.SendToBackground();
 	}
 
+CPosLandmark* CS60MapsAppUi::GetNearestLandmarkL(const TCoordinate &aCoord,
+		TBool aPartial, TReal32 aMaxDistance)
+	{
+	CPosLandmark* landmark = NULL; // Returned value
+	
+	DEBUG(_L("Start nearest landmark queing (max distance = %f m.)"), aMaxDistance);
+	
+	CPosLandmarkSearch* landmarkSearch = CPosLandmarkSearch::NewL(*iLandmarksDb);
+	CleanupStack::PushL(landmarkSearch);
+	landmarkSearch->SetMaxNumOfMatches(1);
+	CPosLmNearestCriteria* nearestCriteria = CPosLmNearestCriteria::NewLC(aCoord);
+	nearestCriteria->SetMaxDistance(aMaxDistance);
+	CPosLmOperation* landmarkOp = landmarkSearch->StartLandmarkSearchL(*nearestCriteria, EFalse);
+	ExecuteAndDeleteLD(landmarkOp);
+	if (landmarkSearch->NumOfMatches())
+		{		
+		CPosLmItemIterator* landmarkIter = landmarkSearch->MatchIteratorL();
+		CleanupStack::PushL(landmarkIter);
+		
+		landmarkIter->Reset();
+		TPosLmItemId landmarkId = landmarkIter->NextL();
+		if (landmarkId == KPosLmNullItemId)
+			User::Leave(KErrNotFound);
+		
+		if (aPartial)
+			landmark = iLandmarksDb->ReadPartialLandmarkLC(landmarkId);
+		else
+			landmark = iLandmarksDb->ReadLandmarkLC(landmarkId);
+		
+		CleanupStack::Pop(); // landmark
+		
+		CleanupStack::PopAndDestroy(landmarkIter);		
+		}
+		
+	CleanupStack::PopAndDestroy(2, landmarkSearch);
+	
+	DEBUG(_L("End nearest landmark queing"));
+	
+	if (!landmark)
+		{
+		DEBUG(_L("Nothing found"));
+		}
+	
+	return landmark;
+	}
+
+CPosLandmark* CS60MapsAppUi::GetNearestLandmarkAroundTheCenterL(TBool aPartial)
+	{
+	const TInt KMaxDistanceInPixels = 25;
+	
+	TCoordinate center = iAppView->GetCenterCoordinate();
+	TReal32 maxDistance /* in meters */, unused;
+	MapMath::PixelsToMeters(center.Latitude(), iAppView->GetZoom(),
+			KMaxDistanceInPixels, maxDistance, unused);
+	return GetNearestLandmarkL(center, aPartial, maxDistance);
+	}
 
 // End of File

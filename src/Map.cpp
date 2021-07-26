@@ -19,6 +19,9 @@
 #include <bautils.h>
 #include "Defs.h"
 #include <S60Maps_0xED689B88.rsg>
+#include <epos_cposlandmarksearch.h>
+#include <epos_cposlmareacriteria.h>
+#include "icons.mbg"
 
 CMapLayerBase::CMapLayerBase(/*const*/ CS60MapsAppView* aMapView) :
 		iMapView(aMapView)
@@ -564,6 +567,224 @@ void CScaleBarLayer::Draw(CWindowGc &aGc)
 	//aGc.DrawText(text, startPoint);
 	aGc.DrawText(text, textRect, baselineOffset, CGraphicsContext::ECenter);
 	aGc.DiscardFont();
+	}
+
+
+// CLandmarksLayer
+
+CLandmarksLayer::CLandmarksLayer(CS60MapsAppView* aMapView, CPosLandmarkDatabase* aLmDb):
+		CMapLayerBase(aMapView),
+		iLandmarksDb(aLmDb)
+	{
+	}
+
+CLandmarksLayer::~CLandmarksLayer()
+	{
+	ReleaseLandmarkResources();
+	delete iIconMaskBitmap;
+	delete iIconBitmap;
+	}
+
+CLandmarksLayer* CLandmarksLayer::NewLC(CS60MapsAppView* aMapView, CPosLandmarkDatabase* aLmDb)
+	{
+	CLandmarksLayer* self = new (ELeave) CLandmarksLayer(aMapView, aLmDb);
+	CleanupStack::PushL(self);
+	self->ConstructL();
+	return self;
+	}
+
+CLandmarksLayer* CLandmarksLayer::NewL(CS60MapsAppView* aMapView, CPosLandmarkDatabase* aLmDb)
+	{
+	CLandmarksLayer* self = CLandmarksLayer::NewLC(aMapView, aLmDb);
+	CleanupStack::Pop(); // self;
+	return self;
+	}
+
+void CLandmarksLayer::ConstructL()
+	{
+	_LIT(KMbmFilePathFmt, "%c:%Sicons.mbm");
+	
+	TFileName privateDir;
+	User::LeaveIfError(CEikonEnv::Static()->FsSession().PrivatePath(privateDir));
+	TFileName mbmFilePath;
+	mbmFilePath.Format(KMbmFilePathFmt, FileUtils::InstallationDrive(), &privateDir);
+	
+	iIconBitmap = new (ELeave) CFbsBitmap();
+	User::LeaveIfError(iIconBitmap->Load(mbmFilePath, EMbmIconsStar));
+	
+	iIconMaskBitmap = new (ELeave) CFbsBitmap();
+	User::LeaveIfError(iIconMaskBitmap->Load(mbmFilePath, EMbmIconsStar_mask));
+	}
+
+void CLandmarksLayer::Draw(CWindowGc &aGc)
+	{
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CEikonEnv::Static()->AppUi());
+	
+	if (!appUi->Settings()->GetLandmarksVisibility()) // Check display or not
+		return;
+	
+	TRAPD(r, DrawL(aGc));
+	if (r != KErrNone)
+		{
+		DEBUG(_L("Leave with code %d"), r);
+		}
+	}
+
+CArrayPtr<CPosLandmark>* CLandmarksLayer::GetVisibleLandmarksL()
+	{
+	const TInt KMaxVisibleLandmarksLimit = 50;
+	
+	CArrayPtr<CPosLandmark>* landmarks = NULL;
+	
+	DEBUG(_L("Start landmarks queing"));
+	
+	CPosLandmarkSearch* landmarkSearch = CPosLandmarkSearch::NewL(*iLandmarksDb);
+	CleanupStack::PushL(landmarkSearch);
+	landmarkSearch->SetMaxNumOfMatches(KMaxVisibleLandmarksLimit); // Set display amount limit
+	TCoordinate topLeftCoord, bottomRightCoord;
+	iMapView->Bounds(topLeftCoord, bottomRightCoord);
+	CPosLmAreaCriteria* areaCriteria = CPosLmAreaCriteria::NewLC(
+			bottomRightCoord.Latitude(),
+			topLeftCoord.Latitude(),
+			topLeftCoord.Longitude(),
+			bottomRightCoord.Longitude());
+	CPosLmOperation* landmarkOp = landmarkSearch->StartLandmarkSearchL(*areaCriteria, EFalse);
+	ExecuteAndDeleteLD(landmarkOp);
+	//   landmarkOp->NextStep(...)
+	TInt landmarksCount = landmarkSearch->NumOfMatches();
+	//DEBUG(_L("Visible %d landmarks"), landmarksCount);
+	if (landmarksCount)
+		{
+		CPosLmItemIterator* landmarkIter = landmarkSearch->MatchIteratorL();
+		CleanupStack::PushL(landmarkIter);
+		
+		RArray<TPosLmItemId> landmarkIds(landmarksCount);
+		CleanupClosePushL(landmarkIds);
+		landmarkIter->GetItemIdsL(landmarkIds, 0, landmarksCount);
+		
+		CPosLmOperation* landmarkOp2 = iLandmarksDb->PreparePartialLandmarksL(landmarkIds);
+		CleanupStack::PushL(landmarkOp2);
+		landmarkOp2->ExecuteL();
+		landmarks = iLandmarksDb->TakePreparedPartialLandmarksL(landmarkOp2);
+	
+		CleanupStack::PopAndDestroy(3, landmarkIter);
+		}
+		
+	CleanupStack::PopAndDestroy(2, landmarkSearch);
+	
+	DEBUG(_L("End landmarks queing (found %d items)"), landmarksCount);
+	
+	return landmarks;
+	}
+
+void CLandmarksLayer::DrawL(CWindowGc &aGc)
+	{
+	CArrayPtr<CPosLandmark>* landmarks = GetVisibleLandmarksL();
+	
+	if (landmarks && landmarks->Count())
+		{
+		DrawLandmarks(aGc, landmarks);
+		
+		landmarks->ResetAndDestroy();
+		}
+	delete landmarks;
+	}
+
+void CLandmarksLayer::DrawLandmarks(CWindowGc &aGc,
+		const CArrayPtr<CPosLandmark>* aLandmarks)
+	{
+	DEBUG(_L("Landmarks redrawing started"));
+	
+	//const TRgb KPenColor(59, 120, 162);
+	const TRgb KPenColor(21, 63, 92);
+	aGc.SetPenColor(KPenColor); // For drawing text
+	
+	for (TInt i = 0; i < aLandmarks->Count(); i++)
+		{	
+		CPosLandmark* landmark = /*aLandmarks[i]*/ aLandmarks->At(i);
+		
+		if (!landmark) continue;
+		
+		DrawLandmark(aGc, landmark);
+		}
+	
+	DEBUG(_L("Landmarks redrawing ended"));	
+	}
+
+void CLandmarksLayer::DrawLandmark(CWindowGc &aGc,
+		const CPosLandmark* aLandmark)
+	{
+	// Get landmark position and name
+	TPtrC landmarkName;
+	if (aLandmark->GetLandmarkName(landmarkName) != KErrNone)
+		{
+		landmarkName.Set(KNullDesC);
+		}
+	
+	TLocality landmarkPos;
+	if (aLandmark->GetPosition(landmarkPos) != KErrNone)
+		{
+		landmarkPos.SetCoordinate(KNaN, KNaN);
+		}
+	
+	DEBUG(_L("Drawing landmark: lat=%f lon=%f name=%S"), landmarkPos.Latitude(),
+			landmarkPos.Longitude(), &landmarkName);
+	
+	
+	TPoint landmarkPoint = iMapView->GeoCoordsToScreenCoords(landmarkPos);
+	
+	// Draw landmark icon
+	TSize iconSize = iIconBitmap->SizeInPixels();
+	{
+		TRect dstRect(landmarkPoint, TSize(0, 0));
+		dstRect.Grow(iconSize.iWidth / 2, iconSize.iHeight / 2);
+		TRect srcRect(TPoint(0, 0), iconSize);
+		aGc.DrawBitmapMasked(dstRect, iIconBitmap, srcRect, iIconMaskBitmap, 0);
+	}
+	
+	
+	// Draw landmark name
+	if (landmarkName.Length())
+		{
+		const TInt KLabelMargin = 5;
+		const CFont* font = CEikonEnv::Static()->LegendFont();
+		TPoint labelPoint(landmarkPoint);
+		labelPoint.iX += iconSize.iWidth / 2 + KLabelMargin;
+		labelPoint.iY += /*font->HeightInPixels()*/ font->AscentInPixels() / 2;
+		aGc.UseFont(font);
+		aGc.DrawText(landmarkName, labelPoint);
+		aGc.DiscardFont();
+		}
+	}
+
+// CLandmarksLayer
+
+CCrosshairLayer::CCrosshairLayer(CS60MapsAppView* aMapView) :
+		CMapLayerBase(aMapView)
+	  {	
+	  }
+
+void CCrosshairLayer::Draw(CWindowGc &aGc)
+	{
+	const TInt KLineHalfLength = 10; // in px
+	TPoint center = iMapView->Rect().Center();
+	
+	aGc.SetPenColor(KRgbBlack);
+	aGc.SetPenSize(TSize(1, 1));
+	aGc.SetPenStyle(CGraphicsContext::ESolidPen);
+	aGc.SetBrushStyle(CGraphicsContext::ENullBrush);
+	
+	TPoint start1 = center;
+	start1.iX += KLineHalfLength;
+	TPoint end1 = center;
+	end1.iX -= (KLineHalfLength + 1);
+	aGc.DrawLine(start1, end1);
+	
+	TPoint start2 = center;
+	start2.iY += KLineHalfLength;
+	TPoint end2 = center;
+	end2.iY -= (KLineHalfLength + 1);
+	aGc.DrawLine(start2, end2);
 	}
 
 

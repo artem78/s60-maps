@@ -33,3 +33,13 @@ CHARACTER_SET UTF8
 #define qtn_wait "Зачекайте..."
 #define qtn_meters_unit_short "м"
 #define qtn_kilometers_unit_short "км"
+
+// Added in version 1.5.0:
+
+#define qtn_landmarks "Орієнтири"
+#define qtn_display "Показувати"
+#define qtn_create "Створити"
+#define qtn_input_name "Введіть ім'я"
+#define qtn_rename "Перейменувати"
+#define qtn_delete "Видалити"
+#define qtn_confirm_landmark_deletion "Видалити орієнтир \"%S\"?"

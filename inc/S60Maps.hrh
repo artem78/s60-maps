@@ -22,6 +22,10 @@ enum TS60MapsIds
 	EAbout,
 	ETilesCacheStats,
 	EResetTilesCache,
+	EToggleLandmarksVisibility,
+	ECreateLandmark,
+	ERenameLandmark,
+	EDeleteLandmark,
 	
 	ESetTileProviderBase = 0x6500, // Start id for tile providers
 	ESetOsmStandardTileProvider		= /*ESetTileProviderBase + 0*/ 0x6500 + 0,

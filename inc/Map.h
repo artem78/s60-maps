@@ -20,6 +20,7 @@
 #include "HttpClient.h"
 #include "FileUtils.h"
 #include <e32msgqueue.h>
+#include <epos_cposlandmarkdatabase.h>
 
 
 // Constants
@@ -160,6 +161,47 @@ private:
 	HBufC* iMetersUnit;
 	HBufC* iKilometersUnit;
 	/*const*/ CFont* iFont;
+	};
+
+class CLandmarksLayer : public CMapLayerBase
+	{
+	// Constructor / destructor
+public:
+	~CLandmarksLayer();
+	static CLandmarksLayer* NewL(CS60MapsAppView* aMapView, CPosLandmarkDatabase* aLmDb);
+	static CLandmarksLayer* NewLC(CS60MapsAppView* aMapView, CPosLandmarkDatabase* aLmDb);
+
+private:
+	CLandmarksLayer(CS60MapsAppView* aMapView, CPosLandmarkDatabase* aLmDb);
+	void ConstructL();
+	
+	// From CMapLayerBase
+public:
+	void Draw(CWindowGc &aGc);
+	
+	// Own
+private:
+	CPosLandmarkDatabase* iLandmarksDb; // Not owned
+	CFbsBitmap* iIconBitmap;
+	CFbsBitmap* iIconMaskBitmap;
+	
+	// Result may be NULL if nothing found
+	CArrayPtr<CPosLandmark>* GetVisibleLandmarksL(); // ToDo: Is moving to another class needed?
+	void DrawL(CWindowGc &aGc);
+	void DrawLandmarks(CWindowGc &aGc, const CArrayPtr<CPosLandmark>* aLandmarks);
+	void DrawLandmark(CWindowGc &aGc, const CPosLandmark* aLandmark);
+	};
+
+
+class CCrosshairLayer : public CMapLayerBase
+	{
+	// Constructor / Destructor
+public:
+	CCrosshairLayer(CS60MapsAppView* aMapView);
+	
+	// From CMapLayerBase
+public:
+	void Draw(CWindowGc &aGc);
 	};
 
 

@@ -14,6 +14,7 @@
 #include "Defs.h"
 #include <aknappui.h> 
 #include "S60Maps.pan"
+#include "S60MapsAppUi.h"
 
 // Constants
 const TInt KMovementRepeaterInterval = 200000;
@@ -61,21 +62,25 @@ void CS60MapsAppView::ConstructL(const TRect& aRect, const TCoordinate &aInitial
 		//TZoom aMinZoom, TZoom aMaxZoom,
 		TTileProvider* aTileProvider)
 	{
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CEikonEnv::Static()->AppUi());
+	
 	//SetZoomBounds(aMinZoom, aMaxZoom);
 	//SetZoomBounds(aTileProvider->MinZoomLevel(), aTileProvider->MaxZoomLevel());
 //	SetTileProviderL(aTileProvider);
 	
 	// Create layers
-	TInt i = 0;
-	iLayers[i++] = CTiledMapLayer::NewL(this, aTileProvider);
+	iLayers = RPointerArray<CMapLayerBase>(10);
+	iLayers.Append(CTiledMapLayer::NewL(this, aTileProvider));
 #ifdef DEBUG_SHOW_TILE_BORDER_AND_XYZ
-	iLayers[i++] = new (ELeave) CTileBorderAndXYZLayer(this);
+	iLayers.Append(new (ELeave) CTileBorderAndXYZLayer(this));
 #endif
-	iLayers[i++] = new (ELeave) CUserPositionLayer(this);
-	iLayers[i++] = CScaleBarLayer::NewL(this);
+	iLayers.Append(new (ELeave) CUserPositionLayer(this));
+	iLayers.Append(CScaleBarLayer::NewL(this));
+	iLayers.Append(CLandmarksLayer::NewL(this, appUi->LandmarkDb()));
 #ifdef DEBUG_SHOW_ADDITIONAL_INFO
-	iLayers[i++] = new (ELeave) CMapLayerDebugInfo(this);
+	iLayers.Append(new (ELeave) CMapLayerDebugInfo(this));
 #endif
+	iLayers.Append(new (ELeave) CCrosshairLayer(this));
 	
 	SetTileProviderL(aTileProvider);
 
@@ -115,7 +120,7 @@ CS60MapsAppView::CS60MapsAppView(TZoom aInitialZoom) :
 CS60MapsAppView::~CS60MapsAppView()
 	{
 	// Destroy all layers
-	iLayers.DeleteAll();
+	iLayers.ResetAndDestroy();
 
 	iMovementRepeater->Cancel();
 	delete iMovementRepeater;
