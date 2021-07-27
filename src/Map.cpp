@@ -77,6 +77,7 @@ void CMapLayerDebugInfo::DrawInfoL(CWindowGc &aGc)
 	aGc.SetPenColor(KRgbDarkBlue);
 	
 	// FixMe: Fails with Panic KERN-EXEC 3 when program are going to exit
+	// Similar problem: https://discord.com/channels/431429574975422464/743412813279526914/822891924712980501
 	const CFont* font = CEikonEnv::Static()->AnnotationFont();
 	aGc.UseFont(font);
 	TRect area = iMapView->Rect();
@@ -747,6 +748,9 @@ void CLandmarksLayer::DrawLandmark(CWindowGc &aGc,
 	if (landmarkName.Length())
 		{
 		const TInt KLabelMargin = 5;
+		/* FixMe: Next line fails with Panic KERN-EXEC 3 when program are going to exit
+		 * Similar problem: https://discord.com/channels/431429574975422464/743412813279526914/822891924712980501
+		*/
 		const CFont* font = CEikonEnv::Static()->LegendFont();
 		TPoint labelPoint(landmarkPoint);
 		labelPoint.iX += iconSize.iWidth / 2 + KLabelMargin;
