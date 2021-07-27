@@ -775,21 +775,21 @@ void CS60MapsAppUi::HandleCreateLandmarkL()
 	CleanupClosePushL(landmarkName);
 	landmarkName.Copy(KDefaultLandmarkName);
 	
+	// Create landmark
+	CPosLandmark* newLandmark = CPosLandmark::NewLC();
+	TLocality pos = TLocality(iAppView->GetCenterCoordinate(), KNaN, KNaN);
+	newLandmark->SetPositionL(pos);
 	// Ask landmark name
 	HBufC* dlgTitle = iEikonEnv->AllocReadResourceLC(R_INPUT_NAME);
 	CAknTextQueryDialog* dlg = new (ELeave) CAknTextQueryDialog(landmarkName);
 	if (dlg->ExecuteLD(R_LANDMARK_NAME_INPUT_QUERY, *dlgTitle) == EAknSoftkeyOk)
 		{
 		// Save landmark to DB	
-		CPosLandmark* newLandmark = CPosLandmark::NewLC();
-		TLocality pos = TLocality(iAppView->GetCenterCoordinate(), KNaN, KNaN);
-		newLandmark->SetPositionL(pos);
 		newLandmark->SetLandmarkNameL(landmarkName);
 		iLandmarksDb->AddLandmarkL(*newLandmark);
-		
-		CleanupStack::PopAndDestroy(newLandmark);
 		}
-	
+
+	CleanupStack::PopAndDestroy(newLandmark);
 	CleanupStack::PopAndDestroy(2, &landmarkName);
 	}
 
