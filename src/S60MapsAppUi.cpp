@@ -275,6 +275,7 @@ void CS60MapsAppUi::HandleCommandL(TInt aCommand)
 			break;
 		}
 	}
+
 // -----------------------------------------------------------------------------
 //  Called by the framework when the application status pane
 //  size is changed.  Passes the new client rectangle to the
@@ -283,8 +284,14 @@ void CS60MapsAppUi::HandleCommandL(TInt aCommand)
 //
 void CS60MapsAppUi::HandleStatusPaneSizeChange()
 	{
-	//iAppView->SetRect(ClientRect());
-	iAppView->SetRect(ApplicationRect());
+	if (iAppView->IsSoftkeysShown())
+		{
+		iAppView->SetRect(ClientRect());
+		}
+	else
+		{
+		iAppView->SetRect(ApplicationRect());
+		}
 	}
 
 CArrayFix<TCoeHelpContext>* CS60MapsAppUi::HelpContextL() const

@@ -106,7 +106,8 @@ void CS60MapsAppView::ConstructL(const TRect& aRect, const TCoordinate &aInitial
 // -----------------------------------------------------------------------------
 //
 CS60MapsAppView::CS60MapsAppView(TZoom aInitialZoom) :
-	iZoom(aInitialZoom)
+	iZoom(aInitialZoom),
+	iIsSoftkeysShown(EFalse)
 	// Position will be set later in ConstructL
 	{
 	// No implementation required
@@ -272,10 +273,12 @@ void CS60MapsAppView::HandlePointerEventL(const TPointerEvent& aPointerEvent)
 			if (posDelta.iY < 0)
 				{
 				SetRect(iAvkonAppUi->ClientRect());
+				iIsSoftkeysShown = ETrue;
 				}
 			else
 				{
 				SetRect(iAvkonAppUi->ApplicationRect());
+				iIsSoftkeysShown = EFalse;
 				}
 			}
 		else

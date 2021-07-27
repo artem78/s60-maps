@@ -154,6 +154,8 @@ private:
 	S60MapsMovement iMovement;
 	CPeriodic* iMovementRepeater;
 	
+	TBool iIsSoftkeysShown;
+	
 	void Move(const TPoint &aPoint, TBool savePos = ETrue); // Used by all another Move methods
 public:
 	void Move(const TCoordinate &aPos);
@@ -199,6 +201,8 @@ public:
 	inline TBool IsFollowingUser()
 		{ return iIsFollowUser; };
 	void SetTileProviderL(TTileProvider* aTileProvider);
+	inline TBool IsSoftkeysShown()
+		{ return iIsSoftkeysShown; };
 
 	};
 	
