@@ -581,6 +581,7 @@ CLandmarksLayer::CLandmarksLayer(CS60MapsAppView* aMapView, CPosLandmarkDatabase
 
 CLandmarksLayer::~CLandmarksLayer()
 	{
+	CCoeEnv::Static()->ScreenDevice()->ReleaseFont(iFont);
 	ReleaseLandmarkResources();
 	delete iIconMaskBitmap;
 	delete iIconBitmap;
@@ -615,6 +616,13 @@ void CLandmarksLayer::ConstructL()
 	
 	iIconMaskBitmap = new (ELeave) CFbsBitmap();
 	User::LeaveIfError(iIconMaskBitmap->Load(mbmFilePath, EMbmIconsStar_mask));
+	
+	// Load font
+	_LIT(KFontName, /*"OpenSans"*/ "Series 60 Sans SemiBold");
+	const TInt KFontHeightInTwips = 12 * 12; // Twip = 1/12 point
+	TFontSpec fontSpec(KFontName, KFontHeightInTwips);
+	CGraphicsDevice* screenDevice = CCoeEnv::Static()->ScreenDevice();
+	User::LeaveIfError(screenDevice->/*GetNearestFontToMaxHeightInTwips*/ GetNearestFontInTwips(iFont, fontSpec));
 	}
 
 void CLandmarksLayer::Draw(CWindowGc &aGc)
@@ -748,14 +756,10 @@ void CLandmarksLayer::DrawLandmark(CWindowGc &aGc,
 	if (landmarkName.Length())
 		{
 		const TInt KLabelMargin = 5;
-		/* FixMe: Next line fails with Panic KERN-EXEC 3 when program are going to exit
-		 * Similar problem: https://discord.com/channels/431429574975422464/743412813279526914/822891924712980501
-		*/
-		const CFont* font = CEikonEnv::Static()->LegendFont();
 		TPoint labelPoint(landmarkPoint);
 		labelPoint.iX += iconSize.iWidth / 2 + KLabelMargin;
-		labelPoint.iY += /*font->HeightInPixels()*/ font->AscentInPixels() / 2;
-		aGc.UseFont(font);
+		labelPoint.iY += /*iFont->HeightInPixels()*/ iFont->AscentInPixels() / 2;
+		aGc.UseFont(iFont);
 		aGc.DrawText(landmarkName, labelPoint);
 		aGc.DiscardFont();
 		}

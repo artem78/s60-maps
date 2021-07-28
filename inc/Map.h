@@ -184,6 +184,7 @@ private:
 	CPosLandmarkDatabase* iLandmarksDb; // Not owned
 	CFbsBitmap* iIconBitmap;
 	CFbsBitmap* iIconMaskBitmap;
+	CFont* iFont; // For drawing labels
 	
 	// Result may be NULL if nothing found
 	CArrayPtr<CPosLandmark>* GetVisibleLandmarksL(); // ToDo: Is moving to another class needed?
