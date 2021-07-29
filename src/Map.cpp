@@ -482,9 +482,11 @@ void CScaleBarLayer::ConstructL()
 	// Load font for label text
 	//iFont = const_cast<CFont*>(CEikonEnv::Static()->AnnotationFont());
 	//iFont = CEikonEnv::Static()->AnnotationFont();
-	_LIT(KFontName, /*"OpenSans"*/ "Series 60 Sans SemiBold");
-	const TInt KFontHeightInTwips = 10 * 12; // Twip = 1/12 point
+	_LIT(KFontName, /*"OpenSans"*/ "Series 60 Sans");
+	const TInt KFontHeightInTwips = /*9*/ 10 * 12; // Twip = 1/12 point
 	TFontSpec fontSpec(KFontName, KFontHeightInTwips);
+	fontSpec.iTypeface.SetIsSerif(EFalse);
+	fontSpec.iFontStyle.SetStrokeWeight(EStrokeWeightBold);
 	CGraphicsDevice* screenDevice = CCoeEnv::Static()->ScreenDevice();
 	TInt r = screenDevice->/*GetNearestFontToMaxHeightInTwips*/ GetNearestFontInTwips(iFont, fontSpec);
 	User::LeaveIfError(r);
@@ -618,9 +620,11 @@ void CLandmarksLayer::ConstructL()
 	User::LeaveIfError(iIconMaskBitmap->Load(mbmFilePath, EMbmIconsStar_mask));
 	
 	// Load font
-	_LIT(KFontName, /*"OpenSans"*/ "Series 60 Sans SemiBold");
-	const TInt KFontHeightInTwips = 12 * 12; // Twip = 1/12 point
+	_LIT(KFontName, /*"OpenSans"*/ "Series 60 Sans");
+	const TInt KFontHeightInTwips = 10 /*12*/ * 12; // Twip = 1/12 point
 	TFontSpec fontSpec(KFontName, KFontHeightInTwips);
+	fontSpec.iTypeface.SetIsSerif(EFalse);
+	fontSpec.iFontStyle.SetStrokeWeight(EStrokeWeightBold);
 	CGraphicsDevice* screenDevice = CCoeEnv::Static()->ScreenDevice();
 	User::LeaveIfError(screenDevice->/*GetNearestFontToMaxHeightInTwips*/ GetNearestFontInTwips(iFont, fontSpec));
 	}
