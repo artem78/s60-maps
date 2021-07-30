@@ -27,7 +27,21 @@ const TZoom KMinZoomLevel = /*0*/ 1;
 const TZoom KMaxZoomLevel = 19;
 
 // CLASS DECLARATION
-class CS60MapsAppView : public CCoeControl
+
+class CCoeControlWithDelayedDraw : public CCoeControl
+	{ // ToDo: Write instruction how to use this
+private:
+	TInt iCounter;
+	TBool iIsDrawNeeded;
+
+protected:
+	void EnableDraw();
+	void DisableDraw();
+	void DrawDelayed();
+	};
+
+
+class CS60MapsAppView : public CCoeControlWithDelayedDraw
 	{
 public:
 	enum S60MapsMovement

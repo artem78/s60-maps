@@ -21,6 +21,44 @@ const TInt KMovementRepeaterInterval = 200000;
 
 // ============================ MEMBER FUNCTIONS ===============================
 
+// CCoeControlWithDelayedDraw
+
+// ToDo: Add some asserts for iCounter
+
+void CCoeControlWithDelayedDraw::EnableDraw()
+{
+	iCounter--;
+	
+	DEBUG(_L("iCounter=%d iIsDrawNeeded=%d"), iCounter, iIsDrawNeeded);
+	
+	if (iCounter == 0)
+	{
+		if (iIsDrawNeeded)
+		{
+			DrawNow();
+		}
+			
+		iIsDrawNeeded = EFalse;
+	}
+};
+
+void CCoeControlWithDelayedDraw::DisableDraw()
+{
+	iCounter++;
+	
+	DEBUG(_L("iCounter=%d iIsDrawNeeded=%d"), iCounter, iIsDrawNeeded);
+};
+
+void CCoeControlWithDelayedDraw::DrawDelayed()
+{
+	iIsDrawNeeded = ETrue;
+	
+	DEBUG(_L("iCounter=%d iIsDrawNeeded=%d"), iCounter, iIsDrawNeeded);
+};
+
+
+// CS60MapsAppView
+
 // -----------------------------------------------------------------------------
 // CS60MapsAppView::NewL()
 // Two-phased constructor.
@@ -300,8 +338,10 @@ TKeyResponse CS60MapsAppView::OfferKeyEventL(const TKeyEvent &aKeyEvent,
 			case '2':
 			//case EStdKeyNkp2:
 				{
+				DisableDraw();
 				SetFollowUser(EFalse);
 				MoveUp();
+				EnableDraw();
 				return EKeyWasConsumed;
 				//break;
 				}
@@ -310,8 +350,10 @@ TKeyResponse CS60MapsAppView::OfferKeyEventL(const TKeyEvent &aKeyEvent,
 			case '8':
 			//case EStdKeyNkp8:
 				{
+				DisableDraw();
 				SetFollowUser(EFalse);
 				MoveDown();
+				EnableDraw();
 				return EKeyWasConsumed;
 				//break;
 				}
@@ -320,8 +362,10 @@ TKeyResponse CS60MapsAppView::OfferKeyEventL(const TKeyEvent &aKeyEvent,
 			case '4':
 			//case EStdKeyNkp4:
 				{
+				DisableDraw();
 				SetFollowUser(EFalse);
 				MoveLeft();
+				EnableDraw();
 				return EKeyWasConsumed;
 				//break;
 				}
@@ -330,8 +374,10 @@ TKeyResponse CS60MapsAppView::OfferKeyEventL(const TKeyEvent &aKeyEvent,
 			case '6':
 			//case EStdKeyNkp6:
 				{
+				DisableDraw();
 				SetFollowUser(EFalse);
 				MoveRight();
+				EnableDraw();
 				return EKeyWasConsumed;
 				//break;
 				}
@@ -359,6 +405,8 @@ TKeyResponse CS60MapsAppView::OfferKeyEventL(const TKeyEvent &aKeyEvent,
 
 void CS60MapsAppView::Move(const TPoint &aPoint, TBool aSavePos)
 	{
+	DisableDraw();
+	
 	// Check that position has changed
 	if (iTopLeftPosition != aPoint)
 		{
@@ -392,12 +440,16 @@ void CS60MapsAppView::Move(const TPoint &aPoint, TBool aSavePos)
 			iTopLeftPosition.iX = maxXY - viewRect.Width() + 1;
 		
 		
-		DrawNow();
+		DrawDelayed();
 		}
+	
+	EnableDraw();
 	}
 
 void CS60MapsAppView::Move(const TCoordinate &aPos)
 	{
+	DisableDraw();
+	
 	/*__ASSERT_ALWAYS*/
 	__ASSERT_DEBUG(Math::IsFinite(aPos.Latitude()) && Math::IsFinite(aPos.Longitude()),
 			Panic(ES60MapsInvalidPosition)); // Possible may be NaN
@@ -408,24 +460,37 @@ void CS60MapsAppView::Move(const TCoordinate &aPos)
 	point.iX -= Rect().Width() / 2;
 	point.iY -= Rect().Height() / 2;
 	Move(point, EFalse);
+	
+	EnableDraw();
 	}
 
 void CS60MapsAppView::Move(const TCoordinate &aPos, TZoom aZoom)
 	{
-	// FixMe: Redrawing called twice
+	DisableDraw();
+	
 	Move(aPos);
 	SetZoom(aZoom);
+	
+	EnableDraw();
 	}
 
 void CS60MapsAppView::Move(TReal64 aLat, TReal64 aLon)
 	{
+	DisableDraw();
+	
 	Move(aLat, aLon, iZoom);
+	
+	EnableDraw();
 	}
 
 void CS60MapsAppView::Move(TReal64 aLat, TReal64 aLon, TZoom aZoom)
 	{
+	DisableDraw();
+	
 	TCoordinate coord(aLat, aLon);
 	Move(coord, aZoom);
+	
+	EnableDraw();
 	}
 
 void CS60MapsAppView::SetZoomBounds(TZoom aMinZoom, TZoom aMaxZoom)
@@ -448,6 +513,8 @@ void CS60MapsAppView::SetZoomBounds(TZoom aMinZoom, TZoom aMaxZoom)
 
 void CS60MapsAppView::SetZoom(TZoom aZoom)
 	{
+	DisableDraw();
+	
 	// ToDo: Return error code KErrArgument or panic if zoom out of bounds
 	if (aZoom >= iMinZoom and aZoom <= iMaxZoom)
 		{
@@ -455,9 +522,11 @@ void CS60MapsAppView::SetZoom(TZoom aZoom)
 			{
 			iZoom = aZoom;
 			Move(iCenterPosition);
-			DrawNow();
+			DrawDelayed();
 			}
 		}
+	
+	EnableDraw();
 	}
 
 void CS60MapsAppView::ZoomIn()
@@ -573,10 +642,14 @@ void CS60MapsAppView::Bounds(TTileReal &aTopLeftTile, TTileReal &aBottomRightTil
 
 void CS60MapsAppView::UpdateUserPosition()
 	{
+	DisableDraw();
+	
 	if (iIsFollowUser && iIsUserPositionRecieved)
 		Move(iUserPosition);
 	else
-		DrawNow();
+		DrawDelayed();
+	
+	EnableDraw();
 	}
 
 void CS60MapsAppView::SetUserPosition(const TCoordinateEx& aPos)
@@ -631,26 +704,34 @@ void CS60MapsAppView::ExecuteMovement()
 		{
 		case EMoveUp:
 			{
+			DisableDraw();
 			SetFollowUser(EFalse);
 			MoveUp();
+			EnableDraw();
 			break;
 			}
 		case EMoveDown:
 			{
+			DisableDraw();
 			SetFollowUser(EFalse);
 			MoveDown();
+			EnableDraw();
 			break;
 			}
 		case EMoveLeft:
 			{
+			DisableDraw();
 			SetFollowUser(EFalse);
 			MoveLeft();
+			EnableDraw();
 			break;
 			}
 		case EMoveRight:
 			{
+			DisableDraw();
 			SetFollowUser(EFalse);
 			MoveRight();
+			EnableDraw();
 			break;
 			}
 		case EMoveNone:
