@@ -340,8 +340,8 @@ void CUserPositionLayer::DrawDirectionMarkL(CWindowGc &aGc, const TPoint &aScree
 		User::LeaveIfError(ret);
 		ret = Math::Round(newY, newY, 0);
 		User::LeaveIfError(ret);
-		points->At(i).iX = newX;
-		points->At(i).iY = newY;
+		points->At(i).iX = static_cast<TInt>(newX);
+		points->At(i).iY = static_cast<TInt>(newY);
 		}
 	
 	// Add drawing offset
