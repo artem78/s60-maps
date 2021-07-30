@@ -43,3 +43,7 @@ CHARACTER_SET UTF8
 #define qtn_rename "Renombrar"
 #define qtn_delete "Borrar"
 #define qtn_confirm_landmark_deletion "Borrar \"%S\" marcador?"
+
+// Added in develop
+
+#define qtn_goto "Go to..."

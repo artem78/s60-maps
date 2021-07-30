@@ -270,6 +270,10 @@ void CS60MapsAppUi::HandleCommandL(TInt aCommand)
 			HandleDeleteLandmarkL();
 			break;
 			
+		case EGotoLandmark:
+			HandleGotoLandmarkL();
+			break;
+			
 		default:
 			Panic(ES60MapsUi);
 			break;
@@ -359,6 +363,10 @@ void CS60MapsAppUi::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
 		delete nearestLandmark;
 		aMenuPane->SetItemDimmed(ERenameLandmark, !isDisplayEditOrDeleteLandmark);
 		aMenuPane->SetItemDimmed(EDeleteLandmark, !isDisplayEditOrDeleteLandmark);
+		CPosLmItemIterator* landmarkIterator = iLandmarksDb->LandmarkIteratorL();
+		if (!(landmarkIterator && landmarkIterator->NumOfItemsL() > 0))
+			aMenuPane->SetItemDimmed(EGotoLandmark, ETrue);
+		delete landmarkIterator;
 		}
 	/*else
 		{
@@ -854,6 +862,46 @@ void CS60MapsAppUi::HandleDeleteLandmarkL()
 		}
 	
 	CleanupStack::PopAndDestroy(landmark);
+	}
+
+void CS60MapsAppUi::HandleGotoLandmarkL()
+	{
+	CDesCArraySeg* lmNameArray = new (ELeave) CDesCArraySeg(4);
+	CleanupStack::PushL(lmNameArray);
+	CArrayFixFlat<TPosLmItemId>* lmIdArray = new (ELeave) CArrayFixFlat<TPosLmItemId>(4);
+	CleanupStack::PushL(lmIdArray);
+	CPosLmItemIterator* lmIterator = iLandmarksDb->LandmarkIteratorL();
+	CleanupStack::PushL(lmIterator);
+
+	TPosLmItemId lmId;
+	lmId = lmIterator->NextL();
+	while (lmId != KPosLmNullItemId)
+		{
+		CPosLandmark* lm = iLandmarksDb->ReadLandmarkLC(lmId);
+		TPtrC lmName;
+		lm->GetLandmarkName(lmName);
+		lmNameArray->AppendL(lmName);
+		CleanupStack::PopAndDestroy(lm);
+		lmIdArray->AppendL(lmId);
+		lmId = lmIterator->NextL();
+		}
+
+	TInt chosenItem;
+	CAknListQueryDialog* dlg = new(ELeave) CAknListQueryDialog(&chosenItem);
+	dlg->PrepareLC(R_LANDMARKS_QUERY_DIALOG);
+	dlg->SetItemTextArray(lmNameArray);
+	dlg->SetOwnershipType(ELbmDoesNotOwnItemArray);
+	TInt answer = dlg->RunLD();
+	if (EAknSoftkeyOk == answer)
+		{
+		CPosLandmark* lm = iLandmarksDb->ReadLandmarkLC(lmIdArray->At(chosenItem));
+		TLocality pos;
+		lm->GetPosition(pos);
+		iAppView->Move(pos);
+		CleanupStack::PopAndDestroy(lm);
+		}
+
+	CleanupStack::PopAndDestroy(3, lmNameArray);
 	}
 
 void CS60MapsAppUi::SendAppToBackground()

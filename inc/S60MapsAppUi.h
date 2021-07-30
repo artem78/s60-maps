@@ -166,6 +166,7 @@ private:
 	void HandleCreateLandmarkL();
 	void HandleRenameLandmarkL();
 	void HandleDeleteLandmarkL();
+	void HandleGotoLandmarkL();
 	
 public:
 	inline const CSettings* Settings()
