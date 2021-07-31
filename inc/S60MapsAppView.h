@@ -31,8 +31,8 @@ const TZoom KMaxZoomLevel = 19;
 class CCoeControlWithDelayedDraw : public CCoeControl
 	{ // ToDo: Write instruction how to use this
 private:
-	TInt iCounter;
-	TBool iIsDrawNeeded;
+	TInt iCounter; // Nesting level of sections with disabled redrawings
+	TBool iIsDrawNeeded; // Flag indicates if redrawing is needed after redrawings fully enabled
 	
 	enum TPanic
 		{
