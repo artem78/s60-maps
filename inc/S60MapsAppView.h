@@ -44,7 +44,7 @@ protected:
 class CS60MapsAppView : public CCoeControlWithDelayedDraw
 	{
 public:
-	enum S60MapsMovement
+	enum TS60MapsMovement
 		{
 		EMoveNone,
 		EMoveUp,
@@ -165,7 +165,7 @@ private:
 	 * are used to repeat the movement
 	 * at long touching (holding).
 	 */
-	S60MapsMovement iMovement;
+	TS60MapsMovement iMovement;
 	CPeriodic* iMovementRepeater;
 	
 	void Move(const TPoint &aPoint, TBool savePos = ETrue); // Used by all another Move methods
