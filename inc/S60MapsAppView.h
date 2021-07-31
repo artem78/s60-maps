@@ -162,7 +162,7 @@ private:
 	RPointerArray<CMapLayerBase> iLayers;
 	
 	TCoordinateEx iUserPosition;
-	TBool iIsUserPositionRecieved;
+	TBool iIsUserPositionRecieved; // Todo: Redundant flag - iUserPosition with lat=NaN and lon=NaN can indicates unknown position 
 	TBool iIsFollowUser;
 
 	/*
