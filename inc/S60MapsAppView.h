@@ -164,6 +164,7 @@ private:
 	TCoordinateEx iUserPosition;
 	TBool iIsUserPositionRecieved; // Todo: Redundant flag - iUserPosition with lat=NaN and lon=NaN can indicates unknown position 
 	TBool iIsFollowUser;
+	TBool iIsUserPositionVisiblePrev; // Todo: Redundant?
 
 	/*
 	 * iPointerDownPosition
@@ -204,6 +205,8 @@ private:
 	/*inline*/ TPoint ScreenCoordsToProjectionCoords(const TPoint &aPoint) const;
 	
 	void UpdateUserPosition();
+	inline TBool IsUserPositionVisible() // Note: Location marker size ignored (i.e. like a point)
+			{ return iIsUserPositionRecieved && CheckCoordVisibility(iUserPosition); };
 	
 public:
 	/*inline*/ TZoom GetZoom() const;

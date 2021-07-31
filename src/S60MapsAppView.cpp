@@ -654,10 +654,19 @@ void CS60MapsAppView::UpdateUserPosition()
 	{
 	DisableDraw();
 	
+	TBool isUserPositionVisibleNow = IsUserPositionVisible(); 
+	
 	if (iIsFollowUser && iIsUserPositionRecieved)
 		Move(iUserPosition);
 	else
-		DrawDelayed();
+		{
+		if (isUserPositionVisibleNow || iIsUserPositionVisiblePrev) // Checks if user location mark visible on the screen or just disappeared
+			{
+			DrawDelayed();
+			}
+		}
+	
+	iIsUserPositionVisiblePrev = isUserPositionVisibleNow;
 	
 	EnableDraw();
 	}
