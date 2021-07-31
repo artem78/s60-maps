@@ -24,36 +24,36 @@ const TInt KMovementRepeaterInterval = 200000;
 // CCoeControlWithDelayedDraw
 
 void CCoeControlWithDelayedDraw::EnableDraw()
-{
+	{
 	iCounter--;
 	__ASSERT_DEBUG(iCounter >= 0, RaisePanic(ENegativeCounter));
 	
 	DEBUG(_L("iCounter=%d iIsDrawNeeded=%d"), iCounter, iIsDrawNeeded);
 	
 	if (iCounter == 0)
-	{
-		if (iIsDrawNeeded)
 		{
+		if (iIsDrawNeeded)
+			{
 			DrawNow();
-		}
+			}
 			
 		iIsDrawNeeded = EFalse;
-	}
-};
+		}
+	};
 
 void CCoeControlWithDelayedDraw::DisableDraw()
-{
+	{
 	iCounter++;
 	
 	DEBUG(_L("iCounter=%d iIsDrawNeeded=%d"), iCounter, iIsDrawNeeded);
-};
+	};
 
 void CCoeControlWithDelayedDraw::DrawDelayed()
-{
+	{
 	iIsDrawNeeded = ETrue;
 	
 	DEBUG(_L("iCounter=%d iIsDrawNeeded=%d"), iCounter, iIsDrawNeeded);
-};
+	};
 
 void CCoeControlWithDelayedDraw::RaisePanic(TPanic aPanicCode)
 	{
