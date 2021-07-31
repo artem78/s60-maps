@@ -2,20 +2,7 @@
 # S60Maps
 
 Simple map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wiki/Symbian#Version_comparison) smartphones powered by [*Series S60 3rd/5th Edition*](https://en.wikipedia.org/wiki/S60_%28software_platform%29#Versions_and_supported_devices).
-  
-<!--
-- [Features](#features)
-- [Controls](#controls)
-  - [Keys](#keys)
-  - [Touchscreen](#touchscreen)
-- [Screenshots](#screenshots)
-- [Supported devices](#supported-devices)
-- [Download](#download)
-- [Technical details](#technical-details)
-- [Roadmap](#roadmap)
-- [LICENSE](#license)
-- [See also](#see-also)
--->
+
 ----
 
 ## Features
@@ -100,6 +87,7 @@ Settings store in `store.dat` file. If you have problems with application to run
 - [x] Display and edit landmarks
 - [ ] Search (using [Nominatim](https://nominatim.openstreetmap.org/))
 - [ ] Show satellites info (amount, signal strength, etc...)
+- [ ] Offline maps (zipped set of PNGs)
 
 ## LICENSE
 
