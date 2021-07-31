@@ -39,6 +39,37 @@ CMapLayerDebugInfo::CMapLayerDebugInfo(/*const*/ CS60MapsAppView* aMapView) :
 	{
 	}
 
+CMapLayerDebugInfo* CMapLayerDebugInfo::NewLC(CS60MapsAppView* aMapView)
+	{
+	CMapLayerDebugInfo* self = new (ELeave) CMapLayerDebugInfo(aMapView);
+	CleanupStack::PushL(self);
+	self->ConstructL();
+	return self;
+	}
+
+CMapLayerDebugInfo* CMapLayerDebugInfo::NewL(CS60MapsAppView* aMapView)
+	{
+	CMapLayerDebugInfo* self = CMapLayerDebugInfo::NewLC(aMapView);
+	CleanupStack::Pop(); // self;
+	return self;
+	}
+
+void CMapLayerDebugInfo::ConstructL()
+	{
+	// Set font
+	_LIT(KFontName, "Series 60 Sans");
+	const TInt KFontHeightInTwips = 11 * 12;
+	TFontSpec fontSpec(KFontName, KFontHeightInTwips);
+	fontSpec.iFontStyle.SetStrokeWeight(EStrokeWeightBold);
+	CGraphicsDevice* screenDevice = CCoeEnv::Static()->ScreenDevice();
+	User::LeaveIfError(screenDevice->GetNearestFontInTwips(iFont, fontSpec));
+	}
+
+CMapLayerDebugInfo::~CMapLayerDebugInfo()
+	{
+	CCoeEnv::Static()->ScreenDevice()->ReleaseFont(iFont);
+	}
+
 void CMapLayerDebugInfo::Draw(CWindowGc &aGc)
 	{
 	TRAP_IGNORE(DrawInfoL(aGc));
@@ -76,16 +107,13 @@ void CMapLayerDebugInfo::DrawInfoL(CWindowGc &aGc)
 	aGc.Reset();
 	aGc.SetPenColor(KRgbDarkBlue);
 	
-	// FixMe: Fails with Panic KERN-EXEC 3 when program are going to exit
-	// Similar problem: https://discord.com/channels/431429574975422464/743412813279526914/822891924712980501
-	const CFont* font = CEikonEnv::Static()->AnnotationFont();
-	aGc.UseFont(font);
+	aGc.UseFont(iFont);
 	TRect area = iMapView->Rect();
 	area.Shrink(4, 4);
 	TInt baselineOffset = 0;
 	for (TInt i = 0; i < strings->Count(); i++)
 		{
-		baselineOffset += font->AscentInPixels() + 5;
+		baselineOffset += iFont->AscentInPixels() + 5;
 		aGc.DrawText((*strings)[i], area, baselineOffset, CGraphicsContext::ERight);
 		}
 	aGc.DiscardFont();

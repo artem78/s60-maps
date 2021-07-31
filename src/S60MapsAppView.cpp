@@ -126,7 +126,7 @@ void CS60MapsAppView::ConstructL(const TRect& aRect, const TCoordinate &aInitial
 	iLayers.Append(CScaleBarLayer::NewL(this));
 	iLayers.Append(CLandmarksLayer::NewL(this, appUi->LandmarkDb()));
 #ifdef DEBUG_SHOW_ADDITIONAL_INFO
-	iLayers.Append(new (ELeave) CMapLayerDebugInfo(this));
+	iLayers.Append(CMapLayerDebugInfo::NewL(this));
 #endif
 	iLayers.Append(new (ELeave) CCrosshairLayer(this));
 	
