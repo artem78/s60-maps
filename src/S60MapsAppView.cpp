@@ -23,11 +23,10 @@ const TInt KMovementRepeaterInterval = 200000;
 
 // CCoeControlWithDelayedDraw
 
-// ToDo: Add some asserts for iCounter
-
 void CCoeControlWithDelayedDraw::EnableDraw()
 {
 	iCounter--;
+	__ASSERT_DEBUG(iCounter >= 0, RaisePanic(ENegativeCounter));
 	
 	DEBUG(_L("iCounter=%d iIsDrawNeeded=%d"), iCounter, iIsDrawNeeded);
 	
@@ -55,6 +54,17 @@ void CCoeControlWithDelayedDraw::DrawDelayed()
 	
 	DEBUG(_L("iCounter=%d iIsDrawNeeded=%d"), iCounter, iIsDrawNeeded);
 };
+
+void CCoeControlWithDelayedDraw::RaisePanic(TPanic aPanicCode)
+	{
+	_LIT(KPanicCategory, "Delayed Draw");
+	User::Panic(KPanicCategory, aPanicCode);
+	}
+
+CCoeControlWithDelayedDraw::~CCoeControlWithDelayedDraw()
+	{
+	__ASSERT_DEBUG(iCounter == 0, RaisePanic(ENonZeroCounterInDestructor));
+	}
 
 
 // CS60MapsAppView
@@ -549,7 +559,7 @@ void CS60MapsAppView::MoveUp(TUint aPixels)
 	}
 
 void CS60MapsAppView::MoveDown(TUint aPixels)
-	{
+	{	
 	TPoint point = iTopLeftPosition;
 	point.iY += aPixels;
 	Move(point);

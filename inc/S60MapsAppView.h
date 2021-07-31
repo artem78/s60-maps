@@ -33,11 +33,22 @@ class CCoeControlWithDelayedDraw : public CCoeControl
 private:
 	TInt iCounter;
 	TBool iIsDrawNeeded;
+	
+	enum TPanic
+		{
+		ENegativeCounter = 1,		// iCounter < 0
+		ENonZeroCounterInDestructor	// iCounter != 0
+		};
+	
+	void RaisePanic(TPanic aPanicCode);
 
 protected:
 	void EnableDraw();
 	void DisableDraw();
 	void DrawDelayed();
+	
+public:
+	virtual ~CCoeControlWithDelayedDraw();
 	};
 
 
