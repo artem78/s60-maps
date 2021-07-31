@@ -417,8 +417,10 @@ void CS60MapsAppView::Move(const TPoint &aPoint, TBool aSavePos)
 	{
 	DisableDraw();
 	
+	TPoint oldPoint = iTopLeftPosition;
+	
 	// Check that position has changed
-	if (iTopLeftPosition != aPoint)
+	if (oldPoint != aPoint)
 		{
 		iTopLeftPosition = aPoint;	
 		if (aSavePos)
@@ -449,8 +451,8 @@ void CS60MapsAppView::Move(const TPoint &aPoint, TBool aSavePos)
 		else if (viewRect.iBr.iX > maxXY)
 			iTopLeftPosition.iX = maxXY - viewRect.Width() + 1;
 		
-		
-		DrawDelayed();
+		if (iTopLeftPosition != oldPoint) // Check if position really changed
+			DrawDelayed();
 		}
 	
 	EnableDraw();
