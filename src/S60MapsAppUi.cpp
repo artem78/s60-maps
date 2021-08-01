@@ -794,10 +794,10 @@ void CS60MapsAppUi::HandleCreateLandmarkL()
 		// Save landmark to DB	
 		newLandmark->SetLandmarkNameL(landmarkName);
 		iLandmarksDb->AddLandmarkL(*newLandmark);
+		iAppView->DrawDeferred();
 		}
 
-	CleanupStack::PopAndDestroy(newLandmark);
-	CleanupStack::PopAndDestroy(2, &landmarkName);
+	CleanupStack::PopAndDestroy(3, &landmarkName);
 	}
 
 void CS60MapsAppUi::HandleRenameLandmarkL()
@@ -823,6 +823,7 @@ void CS60MapsAppUi::HandleRenameLandmarkL()
 		// Update landmark in DB	
 		landmark->SetLandmarkNameL(landmarkName);
 		iLandmarksDb->UpdateLandmarkL(*landmark);
+		iAppView->DrawDeferred();
 		}
 	
 	CleanupStack::PopAndDestroy(3, landmark);
@@ -847,6 +848,7 @@ void CS60MapsAppUi::HandleDeleteLandmarkL()
 		{
 		// Remove landmark from DB
 		iLandmarksDb->RemoveLandmarkL(landmark->LandmarkId());
+		iAppView->DrawDeferred();
 		}
 	
 	CleanupStack::PopAndDestroy(landmark);
