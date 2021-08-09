@@ -27,10 +27,35 @@ const TZoom KMinZoomLevel = /*0*/ 1;
 const TZoom KMaxZoomLevel = 19;
 
 // CLASS DECLARATION
-class CS60MapsAppView : public CCoeControl
+
+class CCoeControlWithDelayedDraw : public CCoeControl
+	{ // ToDo: Write instruction how to use this
+private:
+	TInt iCounter; // Nesting level of sections with disabled redrawings
+	TBool iIsDrawNeeded; // Flag indicates if redrawing is needed after redrawings fully enabled
+	
+	enum TPanic
+		{
+		ENegativeCounter = 1,		// iCounter < 0
+		ENonZeroCounterInDestructor	// iCounter != 0
+		};
+	
+	void RaisePanic(TPanic aPanicCode);
+
+protected:
+	void EnableDraw();
+	void DisableDraw();
+	void DrawDelayed();
+	
+public:
+	virtual ~CCoeControlWithDelayedDraw();
+	};
+
+
+class CS60MapsAppView : public CCoeControlWithDelayedDraw
 	{
 public:
-	enum S60MapsMovement
+	enum TS60MapsMovement
 		{
 		EMoveNone,
 		EMoveUp,
@@ -137,8 +162,9 @@ private:
 	RPointerArray<CMapLayerBase> iLayers;
 	
 	TCoordinateEx iUserPosition;
-	TBool iIsUserPositionRecieved;
+	TBool iIsUserPositionRecieved; // Todo: Redundant flag - iUserPosition with lat=NaN and lon=NaN can indicates unknown position 
 	TBool iIsFollowUser;
+	TBool iIsUserPositionVisiblePrev; // Todo: Redundant?
 
 	/*
 	 * iPointerDownPosition
@@ -151,8 +177,10 @@ private:
 	 * are used to repeat the movement
 	 * at long touching (holding).
 	 */
-	S60MapsMovement iMovement;
+	TS60MapsMovement iMovement;
 	CPeriodic* iMovementRepeater;
+	
+	TBool iIsSoftkeysShown;
 	
 	void Move(const TPoint &aPoint, TBool savePos = ETrue); // Used by all another Move methods
 public:
@@ -179,6 +207,8 @@ private:
 	/*inline*/ TPoint ScreenCoordsToProjectionCoords(const TPoint &aPoint) const;
 	
 	void UpdateUserPosition();
+	inline TBool IsUserPositionVisible() // Note: Location marker size ignored (i.e. like a point)
+			{ return iIsUserPositionRecieved && CheckCoordVisibility(iUserPosition); };
 	
 public:
 	/*inline*/ TZoom GetZoom() const;
@@ -199,6 +229,8 @@ public:
 	inline TBool IsFollowingUser()
 		{ return iIsFollowUser; };
 	void SetTileProviderL(TTileProvider* aTileProvider);
+	inline TBool IsSoftkeysShown()
+		{ return iIsSoftkeysShown; };
 
 	};
 	

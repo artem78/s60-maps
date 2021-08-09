@@ -39,6 +39,37 @@ CMapLayerDebugInfo::CMapLayerDebugInfo(/*const*/ CS60MapsAppView* aMapView) :
 	{
 	}
 
+CMapLayerDebugInfo* CMapLayerDebugInfo::NewLC(CS60MapsAppView* aMapView)
+	{
+	CMapLayerDebugInfo* self = new (ELeave) CMapLayerDebugInfo(aMapView);
+	CleanupStack::PushL(self);
+	self->ConstructL();
+	return self;
+	}
+
+CMapLayerDebugInfo* CMapLayerDebugInfo::NewL(CS60MapsAppView* aMapView)
+	{
+	CMapLayerDebugInfo* self = CMapLayerDebugInfo::NewLC(aMapView);
+	CleanupStack::Pop(); // self;
+	return self;
+	}
+
+void CMapLayerDebugInfo::ConstructL()
+	{
+	// Set font
+	_LIT(KFontName, "Series 60 Sans");
+	const TInt KFontHeightInTwips = 11 * 12;
+	TFontSpec fontSpec(KFontName, KFontHeightInTwips);
+	fontSpec.iFontStyle.SetStrokeWeight(EStrokeWeightBold);
+	CGraphicsDevice* screenDevice = CCoeEnv::Static()->ScreenDevice();
+	User::LeaveIfError(screenDevice->GetNearestFontInTwips(iFont, fontSpec));
+	}
+
+CMapLayerDebugInfo::~CMapLayerDebugInfo()
+	{
+	CCoeEnv::Static()->ScreenDevice()->ReleaseFont(iFont);
+	}
+
 void CMapLayerDebugInfo::Draw(CWindowGc &aGc)
 	{
 	TRAP_IGNORE(DrawInfoL(aGc));
@@ -76,15 +107,13 @@ void CMapLayerDebugInfo::DrawInfoL(CWindowGc &aGc)
 	aGc.Reset();
 	aGc.SetPenColor(KRgbDarkBlue);
 	
-	// FixMe: Fails with Panic KERN-EXEC 3 when program are going to exit
-	const CFont* font = CEikonEnv::Static()->AnnotationFont();
-	aGc.UseFont(font);
+	aGc.UseFont(iFont);
 	TRect area = iMapView->Rect();
 	area.Shrink(4, 4);
 	TInt baselineOffset = 0;
 	for (TInt i = 0; i < strings->Count(); i++)
 		{
-		baselineOffset += font->AscentInPixels() + 5;
+		baselineOffset += iFont->AscentInPixels() + 5;
 		aGc.DrawText((*strings)[i], area, baselineOffset, CGraphicsContext::ERight);
 		}
 	aGc.DiscardFont();
@@ -339,8 +368,8 @@ void CUserPositionLayer::DrawDirectionMarkL(CWindowGc &aGc, const TPoint &aScree
 		User::LeaveIfError(ret);
 		ret = Math::Round(newY, newY, 0);
 		User::LeaveIfError(ret);
-		points->At(i).iX = newX;
-		points->At(i).iY = newY;
+		points->At(i).iX = static_cast<TInt>(newX);
+		points->At(i).iY = static_cast<TInt>(newY);
 		}
 	
 	// Add drawing offset
@@ -481,9 +510,11 @@ void CScaleBarLayer::ConstructL()
 	// Load font for label text
 	//iFont = const_cast<CFont*>(CEikonEnv::Static()->AnnotationFont());
 	//iFont = CEikonEnv::Static()->AnnotationFont();
-	_LIT(KFontName, /*"OpenSans"*/ "Series 60 Sans SemiBold");
-	const TInt KFontHeightInTwips = 10 * 12; // Twip = 1/12 point
+	_LIT(KFontName, /*"OpenSans"*/ "Series 60 Sans");
+	const TInt KFontHeightInTwips = /*9*/ 10 * 12; // Twip = 1/12 point
 	TFontSpec fontSpec(KFontName, KFontHeightInTwips);
+	fontSpec.iTypeface.SetIsSerif(EFalse);
+	fontSpec.iFontStyle.SetStrokeWeight(EStrokeWeightBold);
 	CGraphicsDevice* screenDevice = CCoeEnv::Static()->ScreenDevice();
 	TInt r = screenDevice->/*GetNearestFontToMaxHeightInTwips*/ GetNearestFontInTwips(iFont, fontSpec);
 	User::LeaveIfError(r);
@@ -580,6 +611,7 @@ CLandmarksLayer::CLandmarksLayer(CS60MapsAppView* aMapView, CPosLandmarkDatabase
 
 CLandmarksLayer::~CLandmarksLayer()
 	{
+	CCoeEnv::Static()->ScreenDevice()->ReleaseFont(iFont);
 	ReleaseLandmarkResources();
 	delete iIconMaskBitmap;
 	delete iIconBitmap;
@@ -614,6 +646,15 @@ void CLandmarksLayer::ConstructL()
 	
 	iIconMaskBitmap = new (ELeave) CFbsBitmap();
 	User::LeaveIfError(iIconMaskBitmap->Load(mbmFilePath, EMbmIconsStar_mask));
+	
+	// Load font
+	_LIT(KFontName, /*"OpenSans"*/ "Series 60 Sans");
+	const TInt KFontHeightInTwips = 10 /*12*/ * 12; // Twip = 1/12 point
+	TFontSpec fontSpec(KFontName, KFontHeightInTwips);
+	fontSpec.iTypeface.SetIsSerif(EFalse);
+	fontSpec.iFontStyle.SetStrokeWeight(EStrokeWeightBold);
+	CGraphicsDevice* screenDevice = CCoeEnv::Static()->ScreenDevice();
+	User::LeaveIfError(screenDevice->/*GetNearestFontToMaxHeightInTwips*/ GetNearestFontInTwips(iFont, fontSpec));
 	}
 
 void CLandmarksLayer::Draw(CWindowGc &aGc)
@@ -632,7 +673,7 @@ void CLandmarksLayer::Draw(CWindowGc &aGc)
 
 CArrayPtr<CPosLandmark>* CLandmarksLayer::GetVisibleLandmarksL()
 	{
-	const TInt KMaxVisibleLandmarksLimit = 50;
+	const TInt KMaxVisibleLandmarksLimit = 100;
 	
 	CArrayPtr<CPosLandmark>* landmarks = NULL;
 	
@@ -698,6 +739,7 @@ void CLandmarksLayer::DrawLandmarks(CWindowGc &aGc,
 	//const TRgb KPenColor(59, 120, 162);
 	const TRgb KPenColor(21, 63, 92);
 	aGc.SetPenColor(KPenColor); // For drawing text
+	aGc.UseFont(iFont);
 	
 	for (TInt i = 0; i < aLandmarks->Count(); i++)
 		{	
@@ -707,6 +749,8 @@ void CLandmarksLayer::DrawLandmarks(CWindowGc &aGc,
 		
 		DrawLandmark(aGc, landmark);
 		}
+	
+	aGc.DiscardFont();
 	
 	DEBUG(_L("Landmarks redrawing ended"));	
 	}
@@ -747,13 +791,10 @@ void CLandmarksLayer::DrawLandmark(CWindowGc &aGc,
 	if (landmarkName.Length())
 		{
 		const TInt KLabelMargin = 5;
-		const CFont* font = CEikonEnv::Static()->LegendFont();
 		TPoint labelPoint(landmarkPoint);
 		labelPoint.iX += iconSize.iWidth / 2 + KLabelMargin;
-		labelPoint.iY += /*font->HeightInPixels()*/ font->AscentInPixels() / 2;
-		aGc.UseFont(font);
+		labelPoint.iY += /*iFont->HeightInPixels()*/ iFont->AscentInPixels() / 2;
 		aGc.DrawText(landmarkName, labelPoint);
-		aGc.DiscardFont();
 		}
 	}
 

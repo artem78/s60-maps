@@ -50,13 +50,25 @@ public:
 // Debug layer with additional info
 class CMapLayerDebugInfo : public CMapLayerBase
 	{
-public:
+	// Constructor/destructor
+private:
 	CMapLayerDebugInfo(/*const*/ CS60MapsAppView* aMapView);
+	void ConstructL();
+	
+public:
+	static CMapLayerDebugInfo* NewL(CS60MapsAppView* aMapView);
+	static CMapLayerDebugInfo* NewLC(CS60MapsAppView* aMapView);
+	~CMapLayerDebugInfo();
+	
+	// From CMapLayerBase
+public:
 	void Draw(CWindowGc &aGc);
 	
+	// Own
 private:
 	TInt iRedrawingsCount;
-	
+	CFont* iFont;
+
 	void DrawInfoL(CWindowGc &aGc);
 	};
 #endif
@@ -184,6 +196,7 @@ private:
 	CPosLandmarkDatabase* iLandmarksDb; // Not owned
 	CFbsBitmap* iIconBitmap;
 	CFbsBitmap* iIconMaskBitmap;
+	CFont* iFont; // For drawing labels
 	
 	// Result may be NULL if nothing found
 	CArrayPtr<CPosLandmark>* GetVisibleLandmarksL(); // ToDo: Is moving to another class needed?

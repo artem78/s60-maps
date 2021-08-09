@@ -275,6 +275,7 @@ void CS60MapsAppUi::HandleCommandL(TInt aCommand)
 			break;
 		}
 	}
+
 // -----------------------------------------------------------------------------
 //  Called by the framework when the application status pane
 //  size is changed.  Passes the new client rectangle to the
@@ -283,8 +284,16 @@ void CS60MapsAppUi::HandleCommandL(TInt aCommand)
 //
 void CS60MapsAppUi::HandleStatusPaneSizeChange()
 	{
-	//iAppView->SetRect(ClientRect());
-	iAppView->SetRect(ApplicationRect());
+	TCoordinate coord = iAppView->GetCenterCoordinate();
+	if (iAppView->IsSoftkeysShown())
+		{
+		iAppView->SetRect(ClientRect());
+		}
+	else
+		{
+		iAppView->SetRect(ApplicationRect());
+		}
+	iAppView->Move(coord);
 	}
 
 CArrayFix<TCoeHelpContext>* CS60MapsAppUi::HelpContextL() const
@@ -775,22 +784,22 @@ void CS60MapsAppUi::HandleCreateLandmarkL()
 	CleanupClosePushL(landmarkName);
 	landmarkName.Copy(KDefaultLandmarkName);
 	
+	// Create landmark
+	CPosLandmark* newLandmark = CPosLandmark::NewLC();
+	TLocality pos = TLocality(iAppView->GetCenterCoordinate(), KNaN, KNaN);
+	newLandmark->SetPositionL(pos);
 	// Ask landmark name
 	HBufC* dlgTitle = iEikonEnv->AllocReadResourceLC(R_INPUT_NAME);
 	CAknTextQueryDialog* dlg = new (ELeave) CAknTextQueryDialog(landmarkName);
 	if (dlg->ExecuteLD(R_LANDMARK_NAME_INPUT_QUERY, *dlgTitle) == EAknSoftkeyOk)
 		{
 		// Save landmark to DB	
-		CPosLandmark* newLandmark = CPosLandmark::NewLC();
-		TLocality pos = TLocality(iAppView->GetCenterCoordinate(), KNaN, KNaN);
-		newLandmark->SetPositionL(pos);
 		newLandmark->SetLandmarkNameL(landmarkName);
 		iLandmarksDb->AddLandmarkL(*newLandmark);
-		
-		CleanupStack::PopAndDestroy(newLandmark);
+		iAppView->DrawDeferred();
 		}
-	
-	CleanupStack::PopAndDestroy(2, &landmarkName);
+
+	CleanupStack::PopAndDestroy(3, &landmarkName);
 	}
 
 void CS60MapsAppUi::HandleRenameLandmarkL()
@@ -816,6 +825,7 @@ void CS60MapsAppUi::HandleRenameLandmarkL()
 		// Update landmark in DB	
 		landmark->SetLandmarkNameL(landmarkName);
 		iLandmarksDb->UpdateLandmarkL(*landmark);
+		iAppView->DrawDeferred();
 		}
 	
 	CleanupStack::PopAndDestroy(3, landmark);
@@ -840,6 +850,7 @@ void CS60MapsAppUi::HandleDeleteLandmarkL()
 		{
 		// Remove landmark from DB
 		iLandmarksDb->RemoveLandmarkL(landmark->LandmarkId());
+		iAppView->DrawDeferred();
 		}
 	
 	CleanupStack::PopAndDestroy(landmark);
