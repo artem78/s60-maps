@@ -673,7 +673,7 @@ void CLandmarksLayer::Draw(CWindowGc &aGc)
 
 CArrayPtr<CPosLandmark>* CLandmarksLayer::GetVisibleLandmarksL()
 	{
-	const TInt KMaxVisibleLandmarksLimit = 50;
+	const TInt KMaxVisibleLandmarksLimit = 100;
 	
 	CArrayPtr<CPosLandmark>* landmarks = NULL;
 	
