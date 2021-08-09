@@ -318,6 +318,7 @@ void CS60MapsAppView::HandlePointerEventL(const TPointerEvent& aPointerEvent)
 		else if (Abs(posDelta.iY) > KSwipingThreshold)
 			{
 			// swiping up/down -> show/hide softkeys
+			TCoordinate coord = GetCenterCoordinate();
 			if (posDelta.iY < 0)
 				{
 				SetRect(iAvkonAppUi->ClientRect());
@@ -328,6 +329,7 @@ void CS60MapsAppView::HandlePointerEventL(const TPointerEvent& aPointerEvent)
 				SetRect(iAvkonAppUi->ApplicationRect());
 				iIsSoftkeysShown = EFalse;
 				}
+			Move(coord);
 			}
 		else
 			{

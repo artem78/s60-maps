@@ -284,6 +284,7 @@ void CS60MapsAppUi::HandleCommandL(TInt aCommand)
 //
 void CS60MapsAppUi::HandleStatusPaneSizeChange()
 	{
+	TCoordinate coord = iAppView->GetCenterCoordinate();
 	if (iAppView->IsSoftkeysShown())
 		{
 		iAppView->SetRect(ClientRect());
@@ -292,6 +293,7 @@ void CS60MapsAppUi::HandleStatusPaneSizeChange()
 		{
 		iAppView->SetRect(ApplicationRect());
 		}
+	iAppView->Move(coord);
 	}
 
 CArrayFix<TCoeHelpContext>* CS60MapsAppUi::HelpContextL() const
