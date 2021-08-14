@@ -837,6 +837,9 @@ void CS60MapsAppUi::HandleCreateLandmarkL()
 
 void CS60MapsAppUi::HandleRenameLandmarkL()
 	{
+	if (!iSettings->GetLandmarksVisibility())
+		return;
+	
 	CPosLandmark* landmark = GetNearestLandmarkAroundTheCenterL(EFalse);
 	if (!landmark)
 		return; // Nothing to do
@@ -866,6 +869,9 @@ void CS60MapsAppUi::HandleRenameLandmarkL()
 
 void CS60MapsAppUi::HandleDeleteLandmarkL()
 	{
+	if (!iSettings->GetLandmarksVisibility())
+		return;
+	
 	CPosLandmark* landmark = GetNearestLandmarkAroundTheCenterL(ETrue);
 	if (!landmark)
 		return;
