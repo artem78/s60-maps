@@ -793,6 +793,7 @@ void CS60MapsAppUi::HandleToggleLandmarksVisibility()
 void CS60MapsAppUi::HandleCreateLandmarkL()
 	{
 	_LIT(KDefaultLandmarkName, "Landmark");
+	_LIT(KLandmarkCategoryName, "S60Maps");
 	
 	RBuf landmarkName;
 	landmarkName.CreateL(KPosLmMaxTextFieldLength);
@@ -808,10 +809,27 @@ void CS60MapsAppUi::HandleCreateLandmarkL()
 	CAknTextQueryDialog* dlg = new (ELeave) CAknTextQueryDialog(landmarkName);
 	if (dlg->ExecuteLD(R_LANDMARK_NAME_INPUT_QUERY, *dlgTitle) == EAknSoftkeyOk)
 		{
-		// Save landmark to DB	
+		// Set landmark name
 		newLandmark->SetLandmarkNameL(landmarkName);
+		
+		// Set landmark category
+		CPosLmCategoryManager* catMgr = CPosLmCategoryManager::NewL(*iLandmarksDb);
+		CleanupStack::PushL(catMgr);
+		TPosLmItemId catId = catMgr->GetCategoryL(KLandmarkCategoryName);
+		if (catId == KPosLmNullItemId)
+			{ // If category didn`t found, create it
+			CPosLandmarkCategory* category = CPosLandmarkCategory::NewLC();
+			category->SetCategoryNameL(KLandmarkCategoryName);
+			catId = catMgr->AddCategoryL(*category);	
+			CleanupStack::PopAndDestroy(category);
+			}
+		newLandmark->AddCategoryL(catId);
+		
+		// Save landmark to DB
 		iLandmarksDb->AddLandmarkL(*newLandmark);
 		iAppView->DrawDeferred();
+		
+		CleanupStack::PopAndDestroy(catMgr);
 		}
 
 	CleanupStack::PopAndDestroy(3, &landmarkName);
