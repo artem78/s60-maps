@@ -38,6 +38,7 @@ Simple map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wi
 - Move: <kbd>←</kbd>/<kbd>↑</kbd>/<kbd>→</kbd>/<kbd>↓</kbd> (or <kbd>2</kbd>/<kbd>4</kbd>/<kbd>6</kbd>/<kbd>8</kbd>)
 - Zoom in: <kbd>▲</kbd> volume key (or <kbd>1</kbd>)
 - Zoom out: <kbd>▼</kbd> volume key (or <kbd>3</kbd>)
+- Delete landmark: <kbd>C</kbd>
 
 ### Touchscreen
 

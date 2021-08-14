@@ -15,6 +15,7 @@
 #include <aknappui.h> 
 #include "S60Maps.pan"
 #include "S60MapsAppUi.h"
+#include "S60Maps.hrh"
 
 // Constants
 const TInt KMovementRepeaterInterval = 200000;
@@ -419,6 +420,12 @@ TKeyResponse CS60MapsAppView::OfferKeyEventL(const TKeyEvent &aKeyEvent,
 				ZoomOut();
 				return EKeyWasConsumed;
 				//break;
+				}
+				
+			case EStdKeyBackspace: // "C" key
+				{
+				iAvkonAppUi->ProcessCommandL(EDeleteLandmark);
+				return EKeyWasConsumed;
 				}
 			}
 		}
