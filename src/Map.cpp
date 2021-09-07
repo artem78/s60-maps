@@ -1092,37 +1092,31 @@ void CTileBitmapManager::AddToLoading(const TTile &aTile)
 	CTileBitmapManagerItem* item = CTileBitmapManagerItem::NewL(aTile/*, iObserver*/);
 	iItems.Append(item);
 	
-	if (iWebTileProvider->State() == CWebTileProvider::EIdle)
+
+	// Try to find on disk first
+	if (IsTileFileExists(aTile))
 		{
-		// Try to find on disk first
-		if (IsTileFileExists(aTile))
+		item->CreateBitmapIfNotExistL();
+		TRAPD(r, LoadBitmapL(aTile, item->Bitmap()));
+		if (r == KErrNone)
 			{
-			item->CreateBitmapIfNotExistL();
-			TRAPD(r, LoadBitmapL(aTile, item->Bitmap()));
-			if (r == KErrNone)
-				{
-				item->SetReady();
-				}
-			else // If read error, try to download
-				{
-				ERROR(_L("Error while reading %S from file (code: %d)"),
-						&aTile.AsDes(), r);
-				
-				iWebTileProvider->RequestTileL(aTile);
-				}
+			item->SetReady();
 			}
-		else
+		else // If read error, try to download
 			{
-			DEBUG(_L("Tile %S not found in cache dir"), &aTile.AsDes());
-			// Start download now
+			ERROR(_L("Error while reading %S from file (code: %d)"),
+					&aTile.AsDes(), r);
+			
 			iWebTileProvider->RequestTileL(aTile);
 			}
 		}
 	else
 		{
-		// Add to loading queue
+		DEBUG(_L("Tile %S not found in cache dir"), &aTile.AsDes());
+		// Start download now
 		iWebTileProvider->RequestTileL(aTile);
 		}
+
 	DEBUG(_L("Now %d items in bitmap cache"), iItems.Count());
 	}
 
