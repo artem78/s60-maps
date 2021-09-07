@@ -1346,20 +1346,20 @@ void CTileBitmapManager::AddToLoading(const TTile &aTile, TBool aForce)
 				ERROR(_L("Error while reading %S from file (code: %d)"),
 						&aTile.AsDes(), r);
 				
-				iWebTileProvider->StartDownloadTileL(aTile);
+				iWebTileProvider->RequestTileL(aTile);
 				}
 			}
 		else
 			{
 			DEBUG(_L("Tile %S not found in cache dir"), &aTile.AsDes());
 			// Start download now
-			iWebTileProvider->StartDownloadTileL(aTile);
+			iWebTileProvider->RequestTileL(aTile);
 			}
 		}
 	else
 		{
 		// Add to loading queue
-		iWebTileProvider->AddToDownloadQueue(aTile);
+		iWebTileProvider->RequestTileL(aTile);
 		}
 	DEBUG(_L("Now %d items in bitmap cache"), iItems.Count());
 	}
@@ -1814,7 +1814,6 @@ void CWebTileProvider::StartDownloadTileL(const TTile &aTile)
 	CleanupStack::PopAndDestroy(&tileUrl);
 	}
 
-////////
 void CWebTileProvider::AddToDownloadQueue(const TTile &aTile)
 	{
 	// ToDo: Check array is not full
@@ -1822,7 +1821,18 @@ void CWebTileProvider::AddToDownloadQueue(const TTile &aTile)
 	DEBUG(_L("Tile %S appended to download queue"), &aTile.AsDes());
 	DEBUG(_L("Total %d tiles in download queue"), iItemsLoadingQueue.Count());
 	}
-////////
+
+void CWebTileProvider::RequestTileL(const TTile &aTile)
+	{
+	if (iState == EIdle)
+		{ // Start download now
+		StartDownloadTileL(aTile);
+		}
+	else
+		{ // Add to loading queue
+		AddToDownloadQueue(aTile);
+		}
+	}
 
 void CWebTileProvider::DoCancel()
 	{
