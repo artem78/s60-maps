@@ -1237,12 +1237,8 @@ void CTileBitmapSaver::SaveL(const TSaverQueryItem &anItem, RFs &aFs)
 
 // CTileBitmapManager
 
-CTileBitmapManager::CTileBitmapManager(MTileBitmapManagerObserver *aObserver,
-		RFs aFs, TTileProvider* aTileProvider, TInt aLimit) :
-		CActive(EPriorityStandard),
-		iObserver(aObserver),
+CTileBitmapManager::CTileBitmapManager(RFs aFs, TTileProvider* aTileProvider, TInt aLimit) :
 		iLimit(aLimit),
-		iState(/*TProcessingState::*/EIdle),
 		iFs(aFs),
 		iTileProvider(aTileProvider)
 	{
@@ -1251,22 +1247,18 @@ CTileBitmapManager::CTileBitmapManager(MTileBitmapManagerObserver *aObserver,
 
 CTileBitmapManager::~CTileBitmapManager()
 	{
-	delete iSaver;
-	// cancel()
+	delete iWebTileProvider;
 	delete iFileMapper;
-	delete iImgDecoder;
-	iItemsLoadingQueue.Close();
 	iItems.ResetAndDestroy();
 	iItems.Close();
-	delete iHTTPClient;
 	}
 
 CTileBitmapManager* CTileBitmapManager::NewLC(MTileBitmapManagerObserver *aObserver,
 		RFs aFs, TTileProvider* aTileProvider, const TDesC &aCacheDir, TInt aLimit)
 	{
-	CTileBitmapManager* self = new (ELeave) CTileBitmapManager(aObserver, aFs, aTileProvider, aLimit);
+	CTileBitmapManager* self = new (ELeave) CTileBitmapManager(aFs, aTileProvider, aLimit);
 	CleanupStack::PushL(self);
-	self->ConstructL(aCacheDir);
+	self->ConstructL(aObserver, aCacheDir);
 	return self;
 	}
 
@@ -1278,41 +1270,13 @@ CTileBitmapManager* CTileBitmapManager::NewL(MTileBitmapManagerObserver *aObserv
 	return self;
 	}
 
-void CTileBitmapManager::ConstructL(const TDesC &aCacheDir)
+void CTileBitmapManager::ConstructL(MTileBitmapManagerObserver *aObserver, const TDesC &aCacheDir)
 	{
-#ifdef __WINSCW__
-	// Add some delay for network services have been started on the emulator,
-	// otherwise CEcmtServer: 3 panic will be raised.
-	User::After(10 * KSecond);
-#endif
-	iHTTPClient = CHTTPClient::NewL(this);
-	
-	TBuf8<32> userAgent;
-	userAgent.Copy(_L8("S60Maps")); // ToDo: Move to constant
-	userAgent.Append(' ');
-	userAgent.Append('v');
-	userAgent.Append(KProgramVersion.Name());
-#ifdef _DEBUG
-	_LIT8(KDebugStr, "DEV");
-	userAgent.Append(' ');
-	userAgent.Append(KDebugStr);
-#endif
-	iHTTPClient->SetUserAgentL(userAgent);
-	_LIT8(KAllowedTypes, "image/png"); // At the moment only PNG supported
-	iHTTPClient->SetHeaderL(HTTP::EAccept, KAllowedTypes);
-	_LIT8(KKeepAlive, "Keep-Alive");
-	iHTTPClient->SetHeaderL(HTTP::EConnection, KKeepAlive); // Not mandatory for HTTP 1.1
-	
 	iItems = RPointerArray<CTileBitmapManagerItem>(iLimit);
-	iItemsLoadingQueue = RArray<TTile>(20); // ToDo: Move 20 to constant
-	
-	iImgDecoder = CBufferedImageDecoder::NewL(iFs);
 	
 	iFileMapper = CFileTreeMapper::NewL(aCacheDir, 2, 1, ETrue);
-	iSaver = CTileBitmapSaver::NewL(this);
-	// ToDo: Start saver thread only when needed (at first downloaded tile)
 	
-	CActiveScheduler::Add(this);
+	iWebTileProvider = CWebTileProvider::NewL(aObserver, iFs, iTileProvider, this);
 	}
 
 TInt CTileBitmapManager::GetTileBitmap(const TTile &aTile, CFbsBitmap* &aBitmap)
@@ -1366,7 +1330,7 @@ void CTileBitmapManager::AddToLoading(const TTile &aTile, TBool aForce)
 	CTileBitmapManagerItem* item = CTileBitmapManagerItem::NewL(aTile/*, iObserver*/);
 	iItems.Append(item);
 	
-	if (iState == EIdle)
+	if (iWebTileProvider->State() == CWebTileProvider::EIdle)
 		{
 		// Try to find on disk first
 		if (IsTileFileExists(aTile))
@@ -1382,23 +1346,20 @@ void CTileBitmapManager::AddToLoading(const TTile &aTile, TBool aForce)
 				ERROR(_L("Error while reading %S from file (code: %d)"),
 						&aTile.AsDes(), r);
 				
-				StartDownloadTileL(aTile);
+				iWebTileProvider->StartDownloadTileL(aTile);
 				}
 			}
 		else
 			{
 			DEBUG(_L("Tile %S not found in cache dir"), &aTile.AsDes());
 			// Start download now
-			StartDownloadTileL(aTile);
+			iWebTileProvider->StartDownloadTileL(aTile);
 			}
 		}
 	else
 		{
 		// Add to loading queue
-		// ToDo: Check array is not full
-		iItemsLoadingQueue.Append(aTile);
-		DEBUG(_L("Tile %S appended to download queue"), &aTile.AsDes());
-		DEBUG(_L("Total %d tiles in download queue"), iItemsLoadingQueue.Count());
+		iWebTileProvider->AddToDownloadQueue(aTile);
 		}
 	DEBUG(_L("Now %d items in bitmap cache"), iItems.Count());
 	}
@@ -1418,205 +1379,6 @@ CTileBitmapManagerItem* CTileBitmapManager::Find(const TTile &aTile) const
 	return NULL;
 	}
 
-void CTileBitmapManager::StartDownloadTileL(const TTile &aTile)
-	{
-	if (iIsOfflineMode)
-		return;
-	
-	if (iState != /*TProcessingState::*/EIdle)
-		return;
-	
-	iState = /*TProcessingState::*/EDownloading;
-	iLoadingTile = aTile;
-	
-	RBuf8 tileUrl;
-	const TInt KReserveLength = 30; // For variables substitution
-	tileUrl.CreateL(iTileProvider->iTileUrlTemplate.Length() + KReserveLength);
-	tileUrl.CleanupClosePushL();
-	iTileProvider->TileUrl(tileUrl, aTile);
-	iHTTPClient->GetL(tileUrl);
-	// SetActive()
-	DEBUG(_L8("Started download tile %S from url %S"), &aTile.AsDes8(), &tileUrl);
-	CleanupStack::PopAndDestroy(&tileUrl);
-	}
-
-void CTileBitmapManager::DoCancel()
-	{
-	DEBUG(_L("Cancel"));
-//	iHTTPClient->CancelRequest();
-	iImgDecoder->Cancel();
-	}
-
-void CTileBitmapManager::RunL()
-	{
-	DEBUG(_L("CTileBitmapManager::RunL"));
-	if (iStatus.Int() == KErrNone)
-		{
-		/*CFbsBitmap* bitmap;
-		TInt r = GetTileBitmap(iLoadingTile, bitmap);
-		__ASSERT_DEBUG(r == KErrNone, User::Leave(KErrNotFound));
-		CTileBitmapManagerItem* item = Find(iLoadingTile);
-		__ASSERT_DEBUG(item != NULL, User::Leave(KErrNotFound));*/
-		CTileBitmapManagerItem* item = Find(iLoadingTile);
-		__ASSERT_DEBUG(item != NULL, Panic(ES60MapsTileBitmapManagerItemNotFoundPanic));
-		__ASSERT_DEBUG(item->Bitmap() != NULL, Panic(ES60MapsTileBitmapIsNullPanic));
-		
-		item->SetReady();
-		
-		INFO(_L("Tile %S downloaded and decoded"), &iLoadingTile.AsDes());
-		iObserver->OnTileLoaded(iLoadingTile, item->Bitmap());
-		
-		SaveBitmapInBackgroundL(iLoadingTile, item->Bitmap());
-		}
-	else
-		{
-		ERROR(_L("Image decoding error: %d"), iStatus.Int());
-		iObserver->OnTileLoadingFailed(iLoadingTile, iStatus.Int());
-		}
-	
-	
-	iImgDecoder->Reset();
-	iState = /*TProcessingState::*/EIdle;
-	
-	// Start download next tile in queue
-	if (iItemsLoadingQueue.Count())
-		{
-		TTile tile = iItemsLoadingQueue[0]; 
-		iItemsLoadingQueue.Remove(0);
-		
-		StartDownloadTileL(tile);
-		}
-	}
-
-/*TInt CTileBitmapManager::RunError(TInt aError)
-	{
-	return aError;
-	}*/
-
-void CTileBitmapManager::OnHTTPResponseDataChunkRecieved(
-		const RHTTPTransaction aTransaction, const TDesC8 &aDataChunk,
-		TInt /*anOverallDataSize*/, TBool /*anIsLastChunk*/)
-	{
-	DEBUG(_L("HTTP chunk recieved"));
-	
-	// Checking that mime-type is PNG
-	// (If any error (for example: 404 Not Found) chunk may contains
-	// HTML/text data instead correct PNG image. In this case, 
-	// we need to skip any processing.)
-	RStringPool strP = aTransaction.Session().StringPool();
-	RHTTPHeaders respHeaders = aTransaction.Response().GetHeaderCollection();
-	RStringF fieldName = strP.StringF(HTTP::EContentType, RHTTPSession::GetTable());
-	THTTPHdrVal fieldVal;
-	TInt r = respHeaders.GetField(fieldName, 0, fieldVal);
-	__ASSERT_DEBUG(r == KErrNone, Panic(ES60MapsNoRequiredHeaderInResponse)); // Unlikely if response don`t contains Content-Type header
-	if (r != KErrNone)
-		return;
-	
-	_LIT8(KPNGMimeType, "image/png");
-	RStringF pngMimeType = strP.OpenFStringL(KPNGMimeType);
-	if (fieldVal.StrF() != pngMimeType)
-		{
-		pngMimeType.Close();
-		return; // Skip other types exept PNG
-		}
-	pngMimeType.Close();
-	
-	
-	// Append data to decoder`s buffer
-	iImgDecoder->AppendDataL(aDataChunk);
-	
-	if (!iImgDecoder->ValidDecoder())
-		iImgDecoder->ContinueOpenL();
-	
-	if (!iImgDecoder->ValidDecoder())
-		return; // Next function will leave if decoder not created
-	
-	if (!iImgDecoder->IsImageHeaderProcessingComplete())
-		iImgDecoder->ContinueProcessingHeaderL();
-	
-	//iImgDecoder->AppendDataL(aDataChunk);
-	//iImgDecoder->ContinueConvert();
-	}
-
-void CTileBitmapManager::OnHTTPResponse(const RHTTPTransaction /*aTransaction*/)
-	{
-	DEBUG(_L("HTTP response success"));
-	
-	iState = /*TProcessingState::*/EDecoding;
-	
-	// Start convert PNG to CFbsBitmap
-	//CFbsBitmap* bitmap;
-//	TInt r = GetTileBitmap(iLoadingTile, bitmap);
-//	__ASSERT_DEBUG(r != KErrNotFound, User::Leave(KErrNotFound));
-	CTileBitmapManagerItem* item = Find(iLoadingTile);
-	__ASSERT_DEBUG(item != NULL, Panic(ES60MapsTileBitmapManagerItemNotFoundPanic));
-	item->CreateBitmapIfNotExistL();
-	__ASSERT_DEBUG(item->Bitmap() != NULL, Panic(ES60MapsTileBitmapIsNullPanic));
-	
-	//iImgDecoder->ContinueOpenL();
-	DEBUG(_L("Tile %S succesfully downloaded, starting decode"), &iLoadingTile.AsDes());
-	iImgDecoder->Convert(&this->iStatus, /**bitmap*/ *item->Bitmap(), 0);
-	//iImgDecoder->ContinueConvert(&this->iStatus);
-	SetActive();
-	}
-
-void CTileBitmapManager::OnHTTPError(TInt aError,
-		const RHTTPTransaction /*aTransaction*/)
-	{
-	//ERROR(_L("HTTP error: %d"), aError);
-	ERROR(_L("Failed to download tile %S, error: %d"), &iLoadingTile.AsDes(), aError);
-	iObserver->OnTileLoadingFailed(iLoadingTile, aError);
-	
-	iImgDecoder->Reset();
-	iState = /*TProcessingState::*/EIdle;
-	
-	
-	if (aError == KErrCancel)
-		{
-		// If access point not provided switch to offline mode
-		
-		// ToDo: This code may be thrown in other cases. Try to find better way
-		// to determine if IAP have been choosed or not.
-		
-		// FixMe: Access point choosing dialog appears several times in a row
-		// (in my case: 2 in emulator, 5-6 on the phone) and only after that
-		// we can catch cancel in this callback
-		// https://github.com/artem78/s60-maps/issues/4
-		iIsOfflineMode = ETrue;
-		INFO(_L("Switched to Offline Mode"));
-		iItemsLoadingQueue.Reset(); // Clear queue of loading tiles
-		}
-	else if (aError == KErrAbort) // Request aborted
-		{
-		INFO(_L("HTTP request cancelled"));
-		// No any further action
-		}
-	else
-		{	
-		// Start download next tile in queue
-		if (iItemsLoadingQueue.Count())
-			{
-			TTile tile = iItemsLoadingQueue[0]; 
-			iItemsLoadingQueue.Remove(0);
-			
-			StartDownloadTileL(tile);
-			}
-		}
-	}
-void CTileBitmapManager::OnHTTPHeadersRecieved(
-		const RHTTPTransaction /*aTransaction*/)
-	{
-	DEBUG(_L("HTTP headers recieved"));
-	
-	iImgDecoder->Reset();
-	_LIT8(KPNGMimeType, "image/png");
-	iImgDecoder->OpenL(KNullDesC8, KPNGMimeType);
-	}
-
-void CTileBitmapManager::SaveBitmapInBackgroundL(const TTile &aTile, /*const*/ CFbsBitmap *aBitmap)
-	{
-	iSaver->AppendL(aTile, aBitmap);
-	}
 
 void CTileBitmapManager::LoadBitmapL(const TTile &aTile, CFbsBitmap *aBitmap)
 	{	
@@ -1663,12 +1425,11 @@ void CTileBitmapManager::ChangeTileProvider(TTileProvider* aTileProvider,
 
 	INFO(_L("Changing of tile provider from %S to %S"), &iTileProvider->iTitle, &aTileProvider->iTitle);
 	
-	Cancel();	
-	iHTTPClient->CancelRequest();
-	iItemsLoadingQueue.Reset(); // Should already be cleared by Cancel() call at previous line
 	iItems.ResetAndDestroy();
 	iTileProvider = aTileProvider;
 	iFileMapper->SetBaseDir(aCacheDir);
+	
+	iWebTileProvider->ChangeTileProvider(aTileProvider, aCacheDir);
 	}
 
 void CTileBitmapManager::DeleteTileFile(const TTile &aTile)
@@ -1951,4 +1712,308 @@ TCoordinateEx::TCoordinateEx(const TCoordinate &aCoord) /*:
 	iAltitude  = aCoord.Altitude();
 	iCourse    = KNaN;
 	iHorAccuracy = KNaN;
+	}
+
+
+// CWebTileProvider
+
+CWebTileProvider::CWebTileProvider(MTileBitmapManagerObserver *aObserver,
+		RFs &aFs, TTileProvider* aTileProvider, CTileBitmapManager* aBmpMgr) :
+		CActive(EPriorityStandard),
+		iObserver(aObserver),
+		iState(/*TProcessingState::*/EIdle),
+		iFs(aFs),
+		iTileProvider(aTileProvider),
+		iBmpMgr(aBmpMgr)
+	{
+	// No implementation required
+	}
+
+CWebTileProvider::~CWebTileProvider()
+	{
+	delete iSaver;
+	// cancel()
+	delete iImgDecoder;
+	iItemsLoadingQueue.Close();
+	delete iHTTPClient;
+	}
+
+CWebTileProvider* CWebTileProvider::NewLC(MTileBitmapManagerObserver *aObserver,
+		RFs &aFs, TTileProvider* aTileProvider,
+		CTileBitmapManager* aBmpMgr)
+	{
+	CWebTileProvider* self = new (ELeave) CWebTileProvider(aObserver, aFs, aTileProvider, aBmpMgr);
+	CleanupStack::PushL(self);
+	self->ConstructL();
+	return self;
+	}
+
+CWebTileProvider* CWebTileProvider::NewL(MTileBitmapManagerObserver *aObserver,
+		RFs &aFs, TTileProvider* aTileProvider,
+		CTileBitmapManager* aBmpMgr)
+	{
+	CWebTileProvider* self = CWebTileProvider::NewLC(aObserver, aFs, aTileProvider, /*aCacheDir,*/ aBmpMgr);
+	CleanupStack::Pop(); // self;
+	return self;
+	}
+
+void CWebTileProvider::ConstructL()
+	{
+#ifdef __WINSCW__
+	// Add some delay for network services have been started on the emulator,
+	// otherwise CEcmtServer: 3 panic will be raised.
+	User::After(10 * KSecond);
+#endif
+	iHTTPClient = CHTTPClient::NewL(this);
+	
+	TBuf8<32> userAgent;
+	userAgent.Copy(_L8("S60Maps")); // ToDo: Move to constant
+	userAgent.Append(' ');
+	userAgent.Append('v');
+	userAgent.Append(KProgramVersion.Name());
+#ifdef _DEBUG
+	_LIT8(KDebugStr, "DEV");
+	userAgent.Append(' ');
+	userAgent.Append(KDebugStr);
+#endif
+	iHTTPClient->SetUserAgentL(userAgent);
+	_LIT8(KAllowedTypes, "image/png"); // At the moment only PNG supported
+	iHTTPClient->SetHeaderL(HTTP::EAccept, KAllowedTypes);
+	_LIT8(KKeepAlive, "Keep-Alive");
+	iHTTPClient->SetHeaderL(HTTP::EConnection, KKeepAlive); // Not mandatory for HTTP 1.1
+	
+	iItemsLoadingQueue = RArray<TTile>(20); // ToDo: Move 20 to constant
+	
+	iImgDecoder = CBufferedImageDecoder::NewL(iFs);
+	
+	iSaver = CTileBitmapSaver::NewL(iBmpMgr);
+	// ToDo: Start saver thread only when needed (at first downloaded tile)
+	
+	CActiveScheduler::Add(this);
+	}
+
+void CWebTileProvider::StartDownloadTileL(const TTile &aTile)
+	{
+	if (iIsOfflineMode)
+		return;
+	
+	if (iState != /*TProcessingState::*/EIdle)
+		return;
+	
+	iState = /*TProcessingState::*/EDownloading;
+	iLoadingTile = aTile;
+	
+	RBuf8 tileUrl;
+	const TInt KReserveLength = 30; // For variables substitution
+	tileUrl.CreateL(iTileProvider->iTileUrlTemplate.Length() + KReserveLength);
+	tileUrl.CleanupClosePushL();
+	iTileProvider->TileUrl(tileUrl, aTile);
+	iHTTPClient->GetL(tileUrl);
+	// SetActive()
+	DEBUG(_L8("Started download tile %S from url %S"), &aTile.AsDes8(), &tileUrl);
+	CleanupStack::PopAndDestroy(&tileUrl);
+	}
+
+////////
+void CWebTileProvider::AddToDownloadQueue(const TTile &aTile)
+	{
+	// ToDo: Check array is not full
+	iItemsLoadingQueue.Append(aTile);
+	DEBUG(_L("Tile %S appended to download queue"), &aTile.AsDes());
+	DEBUG(_L("Total %d tiles in download queue"), iItemsLoadingQueue.Count());
+	}
+////////
+
+void CWebTileProvider::DoCancel()
+	{
+	DEBUG(_L("Cancel"));
+//	iHTTPClient->CancelRequest();
+	iImgDecoder->Cancel();
+	}
+
+void CWebTileProvider::RunL()
+	{
+	DEBUG(_L("CTileBitmapManager::RunL"));
+	if (iStatus.Int() == KErrNone)
+		{
+		/*CFbsBitmap* bitmap;
+		TInt r = GetTileBitmap(iLoadingTile, bitmap);
+		__ASSERT_DEBUG(r == KErrNone, User::Leave(KErrNotFound));
+		CTileBitmapManagerItem* item = Find(iLoadingTile);
+		__ASSERT_DEBUG(item != NULL, User::Leave(KErrNotFound));*/
+		CTileBitmapManagerItem* item = iBmpMgr->Find(iLoadingTile);
+		__ASSERT_DEBUG(item != NULL, Panic(ES60MapsTileBitmapManagerItemNotFoundPanic));
+		__ASSERT_DEBUG(item->Bitmap() != NULL, Panic(ES60MapsTileBitmapIsNullPanic));
+		
+		item->SetReady();
+		
+		INFO(_L("Tile %S downloaded and decoded"), &iLoadingTile.AsDes());
+		iObserver->OnTileLoaded(iLoadingTile, item->Bitmap());
+		
+		SaveBitmapInBackgroundL(iLoadingTile, item->Bitmap());
+		}
+	else
+		{
+		ERROR(_L("Image decoding error: %d"), iStatus.Int());
+		iObserver->OnTileLoadingFailed(iLoadingTile, iStatus.Int());
+		}
+	
+	
+	iImgDecoder->Reset();
+	iState = /*TProcessingState::*/EIdle;
+	
+	// Start download next tile in queue
+	if (iItemsLoadingQueue.Count())
+		{
+		TTile tile = iItemsLoadingQueue[0]; 
+		iItemsLoadingQueue.Remove(0);
+		
+		StartDownloadTileL(tile);
+		}
+	}
+
+/*TInt CWebTileProvider::RunError(TInt aError)
+	{
+	return aError;
+	}*/
+
+void CWebTileProvider::OnHTTPResponseDataChunkRecieved(
+		const RHTTPTransaction aTransaction, const TDesC8 &aDataChunk,
+		TInt /*anOverallDataSize*/, TBool /*anIsLastChunk*/)
+	{
+	DEBUG(_L("HTTP chunk recieved"));
+	
+	// Checking that mime-type is PNG
+	// (If any error (for example: 404 Not Found) chunk may contains
+	// HTML/text data instead correct PNG image. In this case, 
+	// we need to skip any processing.)
+	RStringPool strP = aTransaction.Session().StringPool();
+	RHTTPHeaders respHeaders = aTransaction.Response().GetHeaderCollection();
+	RStringF fieldName = strP.StringF(HTTP::EContentType, RHTTPSession::GetTable());
+	THTTPHdrVal fieldVal;
+	TInt r = respHeaders.GetField(fieldName, 0, fieldVal);
+	__ASSERT_DEBUG(r == KErrNone, Panic(ES60MapsNoRequiredHeaderInResponse)); // Unlikely if response don`t contains Content-Type header
+	if (r != KErrNone)
+		return;
+	
+	_LIT8(KPNGMimeType, "image/png");
+	RStringF pngMimeType = strP.OpenFStringL(KPNGMimeType);
+	if (fieldVal.StrF() != pngMimeType)
+		{
+		pngMimeType.Close();
+		return; // Skip other types exept PNG
+		}
+	pngMimeType.Close();
+	
+	
+	// Append data to decoder`s buffer
+	iImgDecoder->AppendDataL(aDataChunk);
+	
+	if (!iImgDecoder->ValidDecoder())
+		iImgDecoder->ContinueOpenL();
+	
+	if (!iImgDecoder->ValidDecoder())
+		return; // Next function will leave if decoder not created
+	
+	if (!iImgDecoder->IsImageHeaderProcessingComplete())
+		iImgDecoder->ContinueProcessingHeaderL();
+	
+	//iImgDecoder->AppendDataL(aDataChunk);
+	//iImgDecoder->ContinueConvert();
+	}
+
+void CWebTileProvider::OnHTTPResponse(const RHTTPTransaction /*aTransaction*/)
+	{
+	DEBUG(_L("HTTP response success"));
+	
+	iState = /*TProcessingState::*/EDecoding;
+	
+	// Start convert PNG to CFbsBitmap
+	//CFbsBitmap* bitmap;
+//	TInt r = GetTileBitmap(iLoadingTile, bitmap);
+//	__ASSERT_DEBUG(r != KErrNotFound, User::Leave(KErrNotFound));
+	CTileBitmapManagerItem* item = iBmpMgr->Find(iLoadingTile);
+	__ASSERT_DEBUG(item != NULL, Panic(ES60MapsTileBitmapManagerItemNotFoundPanic));
+	item->CreateBitmapIfNotExistL();
+	__ASSERT_DEBUG(item->Bitmap() != NULL, Panic(ES60MapsTileBitmapIsNullPanic));
+	
+	//iImgDecoder->ContinueOpenL();
+	DEBUG(_L("Tile %S succesfully downloaded, starting decode"), &iLoadingTile.AsDes());
+	iImgDecoder->Convert(&this->iStatus, /**bitmap*/ *item->Bitmap(), 0);
+	//iImgDecoder->ContinueConvert(&this->iStatus);
+	SetActive();
+	}
+
+void CWebTileProvider::OnHTTPError(TInt aError,
+		const RHTTPTransaction /*aTransaction*/)
+	{
+	//ERROR(_L("HTTP error: %d"), aError);
+	ERROR(_L("Failed to download tile %S, error: %d"), &iLoadingTile.AsDes(), aError);
+	iObserver->OnTileLoadingFailed(iLoadingTile, aError);
+	
+	iImgDecoder->Reset();
+	iState = /*TProcessingState::*/EIdle;
+	
+	
+	if (aError == KErrCancel)
+		{
+		// If access point not provided switch to offline mode
+		
+		// ToDo: This code may be thrown in other cases. Try to find better way
+		// to determine if IAP have been choosed or not.
+		
+		// FixMe: Access point choosing dialog appears several times in a row
+		// (in my case: 2 in emulator, 5-6 on the phone) and only after that
+		// we can catch cancel in this callback
+		// https://github.com/artem78/s60-maps/issues/4
+		iIsOfflineMode = ETrue;
+		INFO(_L("Switched to Offline Mode"));
+		iItemsLoadingQueue.Reset(); // Clear queue of loading tiles
+		}
+	else if (aError == KErrAbort) // Request aborted
+		{
+		INFO(_L("HTTP request cancelled"));
+		// No any further action
+		}
+	else
+		{	
+		// Start download next tile in queue
+		if (iItemsLoadingQueue.Count())
+			{
+			TTile tile = iItemsLoadingQueue[0]; 
+			iItemsLoadingQueue.Remove(0);
+			
+			StartDownloadTileL(tile);
+			}
+		}
+	}
+
+void CWebTileProvider::OnHTTPHeadersRecieved(
+		const RHTTPTransaction /*aTransaction*/)
+	{
+	DEBUG(_L("HTTP headers recieved"));
+	
+	iImgDecoder->Reset();
+	_LIT8(KPNGMimeType, "image/png");
+	iImgDecoder->OpenL(KNullDesC8, KPNGMimeType);
+	}
+
+void CWebTileProvider::SaveBitmapInBackgroundL(const TTile &aTile, /*const*/ CFbsBitmap *aBitmap)
+	{
+	iSaver->AppendL(aTile, aBitmap);
+	}
+
+void CWebTileProvider::ChangeTileProvider(TTileProvider* aTileProvider,
+		const TDesC &aCacheDir)
+	{
+	// FixMe: On the program startup this method may be called twice with same tile provider 
+	if (iTileProvider->iId == aTileProvider->iId)
+		return; // Nothing changed
+
+	INFO(_L("Changing of tile provider from %S to %S"), &iTileProvider->iTitle, &aTileProvider->iTitle);
+	
+	Cancel();	
+	iHTTPClient->CancelRequest();
+	iItemsLoadingQueue.Reset(); // Should already be cleared by Cancel() call at previous line
+	iTileProvider = aTileProvider;
 	}
