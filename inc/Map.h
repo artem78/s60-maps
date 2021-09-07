@@ -471,9 +471,11 @@ private:
 	CTileBitmapSaver* iSaver;
 	CTileBitmapManager* iBmpMgr;
 	
-public:
 	void StartDownloadTileL(const TTile &aTile);
 	void AddToDownloadQueue(const TTile &aTile);
+
+public:
+	void /*StartLoadTileL*/ RequestTileL(const TTile &aTile);
 	
 private:
 	// Save tile bitmap to file
