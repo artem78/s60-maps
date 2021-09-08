@@ -62,7 +62,7 @@ void CS60MapsAppUi::ConstructL()
 
 	// OpenStreetMap standard tile layer
 	// https://www.openstreetmap.org/
-	iAvailableTileProviders[0] = new (ELeave) TTileProvider(
+	iAvailableWebTileProviders[0] = new (ELeave) TWebTileProviderSettings(
 			_L("osm"), _L("OpenStreetMap"),
 			_L8("http://tile.openstreetmap.org/{$z}/{$x}/{$y}.png"),
 			0, 19);
@@ -79,7 +79,7 @@ void CS60MapsAppUi::ConstructL()
 		{
 		openCycleMapUrl.AppendFormat(KApiKeyArgFmt, &KThunderForestApiKey);
 		}
-	iAvailableTileProviders[1] = new (ELeave) TTileProvider(
+	iAvailableWebTileProviders[1] = new (ELeave) TWebTileProviderSettings(
 			_L("opencycle"), _L("OpenCycleMap"),
 			openCycleMapUrl,
 			0, 22);
@@ -97,7 +97,7 @@ void CS60MapsAppUi::ConstructL()
 		{
 		transportMapUrl.AppendFormat(KApiKeyArgFmt, &KThunderForestApiKey);
 		}
-	iAvailableTileProviders[2] = new (ELeave) TTileProvider(
+	iAvailableWebTileProviders[2] = new (ELeave) TWebTileProviderSettings(
 			_L("transport"), _L("Transport Map"),
 			transportMapUrl,
 			0, 22);
@@ -106,7 +106,7 @@ void CS60MapsAppUi::ConstructL()
 	// Humanitarian Map
 	// https://wiki.openstreetmap.org/wiki/Humanitarian_map_style
 	// https://www.openstreetmap.org/?layers=H
-	iAvailableTileProviders[3] = new (ELeave) TTileProvider(
+	iAvailableWebTileProviders[3] = new (ELeave) TWebTileProviderSettings(
 			_L("humanitarian"), _L("Humanitarian"),
 			_L8("http://a.tile.openstreetmap.fr/hot/{$z}/{$x}/{$y}.png"),
 			0, 20);
@@ -115,12 +115,12 @@ void CS60MapsAppUi::ConstructL()
 	// https://wiki.openstreetmap.org/wiki/OpenTopoMap
 	// https://opentopomap.org/
 	// FixMe: Doesn`t work without SSL 
-	iAvailableTileProviders[4] = new (ELeave) TTileProvider(
+	iAvailableWebTileProviders[4] = new (ELeave) TWebTileProviderSettings(
 			_L("opentopomap"), _L("OpenTopoMap"),
 			_L8("http://tile.opentopomap.org/{$z}/{$x}/{$y}.png"),
 			0, 17);*/
 	
-	iActiveTileProvider = iAvailableTileProviders[0]; // Use first
+	iActiveTileProvider = iAvailableWebTileProviders[0]; // Use first
 	
 	
 	iFileMan = CAsyncFileMan::NewL(CCoeEnv::Static()->FsSession(), this);
@@ -229,8 +229,8 @@ CS60MapsAppUi::~CS60MapsAppUi()
 	
 	delete iFileMan;
 	
-	//delete iAvailableTileProviders;
-	iAvailableTileProviders.DeleteAll();
+	//delete iAvailableWebTileProviders;
+	iAvailableWebTileProviders.DeleteAll();
 	
 	delete iSettings;
 	
@@ -380,14 +380,14 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 	iMapView->MapControl()->Move(iSettings->GetLat(), iSettings->GetLon(), iSettings->GetZoom());
 	
 	// Tile provider
-	TTileProviderId tileProviderId(iSettings->GetTileProviderId());
+	TWebTileProviderId tileProviderId(iSettings->GetTileProviderId());
 	TBool isFound = EFalse;
-	for (TInt idx = 0; idx < iAvailableTileProviders.Count(); idx++)
+	for (TInt idx = 0; idx < iAvailableWebTileProviders.Count(); idx++)
 		{
-		if (tileProviderId == iAvailableTileProviders[idx]->iId)
+		if (tileProviderId == iAvailableWebTileProviders[idx]->iId)
 			{
-			iActiveTileProvider = iAvailableTileProviders[idx];
-			iMapView->MapControl()->SetTileProviderL(iAvailableTileProviders[idx]);
+			iActiveTileProvider = iAvailableWebTileProviders[idx];
+			iMapView->MapControl()->SetTileProviderSettingsL(iAvailableWebTileProviders[idx]);
 			isFound = ETrue;
 			break;
 			}
@@ -395,8 +395,8 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 	
 	if (!isFound)
 		{ // Set default
-		iActiveTileProvider = iAvailableTileProviders[0];
-		iMapView->MapControl()->SetTileProviderL(iAvailableTileProviders[0]);
+		iActiveTileProvider = iAvailableWebTileProviders[0];
+		iMapView->MapControl()->SetTileProviderSettingsL(iAvailableWebTileProviders[0]);
 		}
 	
 	// Language

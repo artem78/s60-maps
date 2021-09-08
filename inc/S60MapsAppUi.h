@@ -134,11 +134,11 @@ public:
 	
 	// Custom properties and methods
 public:
-	inline const TFixedArray<TTileProvider*, /*5*/ 4>& AvailableTileProviders()
-			{ return iAvailableTileProviders;  };
-	inline TTileProvider* /*Active*/TileProvider()
+	inline const TFixedArray<TWebTileProviderSettings*, /*5*/ 4>& AvailableTileProviders()
+			{ return iAvailableWebTileProviders;  };
+	inline TWebTileProviderSettings* /*Active*/TileProvider()
 			{ return iActiveTileProvider; };
-	void /*SetActiveTileProvider*/ SetTileProvider(TTileProvider* aTileProvider)
+	void /*SetActiveTileProvider*/ SetTileProvider(TWebTileProviderSettings* aTileProvider)
 			{ iActiveTileProvider = aTileProvider; };
 	
 	void ClearTilesCacheL();
@@ -158,9 +158,9 @@ private:
 	CRemConInterfaceSelector* iInterfaceSelector;
 	CRemConCoreApiTarget* iCoreTarget;
 	
-	TFixedArray<TTileProvider*, /*5*/ 4> iAvailableTileProviders;
+	TFixedArray<TWebTileProviderSettings*, /*5*/ 4> iAvailableWebTileProviders;
 	//TBuf<64> iTileProviderId
-	TTileProvider* iActiveTileProvider;
+	TWebTileProviderSettings* iActiveTileProvider;
 	
 	CAknWaitDialog* iCacheClearingWaitDialog;
 	//CAknProgressDialog* iCacheResetProgressDialog;

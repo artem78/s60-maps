@@ -77,7 +77,7 @@ public:
 	static CMapControl* NewL(const TRect& aRect,
 			const TCoordinate &aInitialPosition, TZoom aInitialZoom,
 			//TZoom aMinZoom = KMinZoomLevel, TZoom aMaxZoom = KMaxZoomLevel
-			TTileProvider* aTileProvider);
+			TWebTileProviderSettings* aTileProviderSettings);
 
 	/**
 	 * NewLC.
@@ -90,7 +90,7 @@ public:
 	static CMapControl* NewLC(const TRect& aRect,
 			const TCoordinate &aInitialPosition, TZoom aInitialZoom,
 			//TZoom aMinZoom = KMinZoomLevel, TZoom aMaxZoom = KMaxZoomLevel,
-			TTileProvider* aTileProvider);
+			TWebTileProviderSettings* aTileProviderSettings);
 
 	/**
 	 * ~CMapControl
@@ -139,7 +139,7 @@ private:
 	 */
 	void ConstructL(const TRect& aRect, const TCoordinate &aInitialPosition,
 			/*TZoom aMinZoom, TZoom aMaxZoom,*/
-			TTileProvider* aTileProvider);
+			TWebTileProviderSettings* aTileProviderSettings);
 
 	/**
 	 * CMapControl.
@@ -237,7 +237,7 @@ public:
 	void SetFollowUser(TBool anEnabled = ETrue);
 	inline TBool IsFollowingUser()
 		{ return iIsFollowUser; };
-	void SetTileProviderL(TTileProvider* aTileProvider);
+	void SetTileProviderSettingsL(TWebTileProviderSettings* aTileProviderSettings);
 	inline TBool IsSoftkeysShown()
 		{ return iIsSoftkeysShown; };
 	void HandleLanguageChangedL();

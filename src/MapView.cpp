@@ -247,9 +247,9 @@ void CMapView::HandleFindMeL()
 void CMapView::HandleTileProviderChangeL(TInt aTileProviderIdx)
 	{
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(AppUi());
-	TTileProvider* tileProvider = appUi->AvailableTileProviders()[aTileProviderIdx];
+	TWebTileProviderSettings* tileProvider = appUi->AvailableTileProviders()[aTileProviderIdx];
 	appUi->SetTileProvider(tileProvider);
-	iMapControl->SetTileProviderL(tileProvider);	
+	iMapControl->SetTileProviderSettingsL(tileProvider);	
 	}
 
 void CMapView::HandleTilesCacheStatsL()
