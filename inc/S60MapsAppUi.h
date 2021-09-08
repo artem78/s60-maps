@@ -135,9 +135,9 @@ private:
 	CRemConInterfaceSelector* iInterfaceSelector;
 	CRemConCoreApiTarget* iCoreTarget;
 	
-	TFixedArray<TTileProvider*, /*5*/ 4> iAvailableTileProviders;
+	TFixedArray<TWebTileProviderSettings*, /*5*/ 4> iAvailableWebTileProviders;
 	//TBuf<64> iTileProviderId
-	TTileProvider* iActiveTileProvider;
+	TWebTileProviderSettings* iActiveTileProvider;
 	
 	CAknWaitDialog* iCacheClearingWaitDialog;
 	//CAknProgressDialog* iCacheResetProgressDialog;

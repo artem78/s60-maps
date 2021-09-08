@@ -75,7 +75,7 @@ private:
 
 class CTileBitmapManager;
 //class MTileBitmapManagerObserver;
-class TTileProvider;
+class TWebTileProviderSettings;
 
 class MTileBitmapManagerObserver
 	{
@@ -90,12 +90,12 @@ class CTiledMapLayer : public CMapLayerBase, public MTileBitmapManagerObserver
 // Base methods
 public:
 	~CTiledMapLayer();
-	static CTiledMapLayer* NewL(CS60MapsAppView* aMapView, TTileProvider* aTileProvider);
-	static CTiledMapLayer* NewLC(CS60MapsAppView* aMapView, TTileProvider* aTileProvider);
+	static CTiledMapLayer* NewL(CS60MapsAppView* aMapView, TWebTileProviderSettings* aTileProviderSettings);
+	static CTiledMapLayer* NewLC(CS60MapsAppView* aMapView, TWebTileProviderSettings* aTileProviderSettings);
 
 private:
 	CTiledMapLayer(CS60MapsAppView* aMapView);
-	void ConstructL(TTileProvider* aTileProvider);
+	void ConstructL(TWebTileProviderSettings* aTileProviderSettings);
 	
 // From CMapLayerBase
 public:
@@ -108,12 +108,12 @@ public:
 // Custom properties and methods
 private:
 	CTileBitmapManager *iBitmapMgr;
-	TTileProvider *iTileProvider;
+	TWebTileProviderSettings *iTileProviderSettings;
 	void VisibleTiles(RArray<TTile> &aTiles); // Return list of visible tiles
 	void DrawTile(CWindowGc &aGc, const TTile &aTile, const CFbsBitmap *aBitmap);
 	
 public:
-	void SetTileProviderL(TTileProvider* aTileProvider);
+	void SetTileProviderSettingsL(TWebTileProviderSettings* aTileProviderSettings);
 	};
 
 
@@ -259,7 +259,7 @@ private:
 
 
 
-class TTileProvider;
+class TWebTileProviderSettings;
 
 class CTileBitmapManagerItem;
 
@@ -273,12 +273,12 @@ class CTileBitmapManager : public CBase
 public:
 	~CTileBitmapManager();
 	static CTileBitmapManager* NewL(MTileBitmapManagerObserver *aObserver,
-			RFs aFs, TTileProvider* aTileProvider, const TDesC &aCacheDir, TInt aLimit = 50);
+			RFs aFs, TWebTileProviderSettings* aTileProviderSettings, const TDesC &aCacheDir, TInt aLimit = 50);
 	static CTileBitmapManager* NewLC(MTileBitmapManagerObserver *aObserver,
-			RFs aFs, TTileProvider* aTileProvider, const TDesC &aCacheDir, TInt aLimit = 50);
+			RFs aFs, TWebTileProviderSettings* aTileProviderSettings, const TDesC &aCacheDir, TInt aLimit = 50);
 
 private:
-	CTileBitmapManager(RFs aFs, TTileProvider* aTileProvider, TInt aLimit);
+	CTileBitmapManager(RFs aFs, TWebTileProviderSettings* aTileProviderSettings, TInt aLimit);
 	void ConstructL(MTileBitmapManagerObserver *aObserver, const TDesC &aCacheDir);
 	
 // Custom properties and methods
@@ -287,7 +287,7 @@ private:
 	RPointerArray<CTileBitmapManagerItem> iItems;
 	/*TInt*/ void Append/*L*/(const TTile &aTile); 
 	
-	TTileProvider* iTileProvider;
+	TWebTileProviderSettings* iTileProviderSettings;
 	RFs iFs;
 	CFileTreeMapper* iFileMapper;
 	CWebTileProvider* iWebTileProvider;
@@ -305,7 +305,7 @@ public:
 	// @return Error codes: KErrNotFound, KErrNotReady or KErrNone
 	TInt GetTileBitmap(const TTile &aTile, CFbsBitmap* &aBitmap);
 	void AddToLoading(const TTile &aTile);
-	void ChangeTileProvider(TTileProvider* aTileProvider, const TDesC &aCacheDir);
+	void ChangeTileProviderSettings(TWebTileProviderSettings* aTileProvider, const TDesC &aCacheDir);
 	
 // Friends
 	friend class CTileBitmapSaver;
@@ -352,27 +352,27 @@ public:
 	};
 
 
-typedef TBuf<32> TTileProviderId;
-typedef TBuf<32> TTileProviderTitle;
-typedef TBuf8<512> TTileProviderUrl;
+typedef TBuf<32> TWebTileProviderId;
+typedef TBuf<32> TWebTileProviderTitle;
+typedef TBuf8<512> TWebTileProviderUrl;
 
-class TTileProvider
+class TWebTileProviderSettings
 	{
 public:
-	TTileProvider(const TDesC& anId, const TDesC& aTitle, const TDesC8& anUrlTemplate,
+	TWebTileProviderSettings(const TDesC& anId, const TDesC& aTitle, const TDesC8& anUrlTemplate,
 			TZoom aMinZoom, TZoom aMaxZoom);
 
 	// Short string identifier of tile provider. Used in cache subdir name.
 	// Must be unique and do not contains any special symbols (allowed: a-Z, 0-9, - and _). 
-	TTileProviderId iId;
+	TWebTileProviderId iId;
 	
 	// Readable name of tile provider. Will be display in settings.
-	TTileProviderTitle iTitle;
+	TWebTileProviderTitle iTitle;
 	
 	// Tile URL template with placeholders
 	// Note: prefer not to use HTTPS protocol because unfortunately 
 	// at the present time SSL works not on all Symbian based phones
-	TTileProviderUrl iTileUrlTemplate;
+	TWebTileProviderUrl iTileUrlTemplate;
 	
 	// Minimum and maximum zoom level
 	TZoom iMinZoomLevel; // /*Default is 0*/
@@ -422,15 +422,15 @@ class CWebTileProvider : public CActive, public MHTTPClientObserver
 public:
 	~CWebTileProvider();
 	static CWebTileProvider* NewL(MTileBitmapManagerObserver *aObserver,
-			RFs &aFs, TTileProvider* aTileProvider,
+			RFs &aFs, TWebTileProviderSettings* aSettings,
 			CTileBitmapManager* aBmpMgr);
 	static CWebTileProvider* NewLC(MTileBitmapManagerObserver *aObserver,
-			RFs &aFs, TTileProvider* aTileProvider,
+			RFs &aFs, TWebTileProviderSettings* aSettings,
 			CTileBitmapManager* aBmpMgr);
 
 private:
 	CWebTileProvider(MTileBitmapManagerObserver *aObserver, RFs &aFs,
-			TTileProvider* aTileProvider, CTileBitmapManager* aBmpMgr);
+			TWebTileProviderSettings* aSettings, CTileBitmapManager* aBmpMgr);
 	void ConstructL();
 	
 // From CActive
@@ -452,7 +452,7 @@ private:
 	MTileBitmapManagerObserver *iObserver;
 	RArray<TTile> iItemsLoadingQueue;
 	CHTTPClient* iHTTPClient;
-	TTileProvider* iTileProvider;
+	TWebTileProviderSettings* iSettings;
 	
 public:
 	enum TProcessingState
@@ -482,7 +482,7 @@ private:
 	void SaveBitmapInBackgroundL(const TTile &aTile, /*const*/ CFbsBitmap *aBitmap);
 	
 public:
-	void ChangeTileProvider(TTileProvider* aTileProvider, const TDesC &aCacheDir);
+	void ChangeSettings(TWebTileProviderSettings* aSettings, const TDesC &aCacheDir);
 	inline TProcessingState State()
 		{ return iState; };
 	
