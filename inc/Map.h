@@ -265,8 +265,11 @@ class CTileBitmapManagerItem;
 
 class CWebTileProvider;
 
-// Stores bitmaps for tiles. When count of stored bitmaps
-// reach maximum limit, oldest one will be deleted before insert new.
+/* 
+ * In-memory cache for storing tile bitmaps. Prevents to read data from file
+ * system or network twice. It has limited capacity - when amount of stored
+ * bitmaps reachs maximum, oldest items will be deleted before adding new ones.
+ */
 class CTileBitmapManager : public CBase
 	{
 // Constructors / destructors
