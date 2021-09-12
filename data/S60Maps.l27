@@ -1,0 +1,45 @@
+/*
+========================================================================
+ Name        : S60Maps.l27
+ Author      : Wunder Wungiel
+ Copyright   : 
+ Description : 
+========================================================================
+*/
+// localized strings for language: PL Polish (27)
+CHARACTER_SET UTF8
+
+#define qtn_find_me "Chodź za mną"
+//#define qtn_help "Pomoc"
+#define qtn_about "O"
+#define qtn_exit "Wyjdź"
+#define qtn_tile_providers_title "Mapy"
+#define qtn_service_title "Usługa"
+#define qtn_tiles_cache_stats "Statystyki pamięci podręcznej map"
+#define qtn_reset_tiles_cache "Wyczyść pamięć podręczną map"
+//#define qtn_confirm_reset_tiles_cache_dialog_title "Potwierdź czyszczenie pamięci podręcznej map"
+#define qtn_confirm_reset_tiles_cache_dialog_text "Ta czynność spowoduje usunięcie całej pamięci podręcznej map. Jesteś pewny? "
+#define qtn_about_dialog_title "O"
+#define qtn_about_dialog_text "Wersja S60Maps %S\nBuild: " __DATE__ " " __TIME__ "\nGit: %S %S\nAutor: %S\nStrona: %S\nPodziękowania dla: %S i innych"
+//#define qtn_confirm_exit_dialog_title "Potwierdź wyjście"
+#define qtn_confirm_exit_dialog_text "Jesteś pewny, aby wyjść?"
+#define qtn_done "Gotowe!"
+#define qtn_stats_line "%S: %d plików, %S\n"
+#define qtn_stats_total "Łącznie: %d plików, %S"
+
+// Added in version 1.4.0:
+
+#define qtn_positioning_disabled "Pozycjonowanie niedostępne!"
+#define qtn_wait "Proszę czekać..."
+#define qtn_meters_unit_short "m"
+#define qtn_kilometers_unit_short "km"
+
+// Added in version 1.5.0:
+
+#define qtn_landmarks "Punkty orientacyjne"
+#define qtn_display "Wyświetl"
+#define qtn_create "Stwórz"
+#define qtn_input_name "Wpisz nazwę"
+#define qtn_rename "Zmień nazwę"
+#define qtn_delete "Usuń"
+#define qtn_confirm_landmark_deletion "Usunąć \"%S\" punkt orientacyjny?"

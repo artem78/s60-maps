@@ -22,6 +22,7 @@ Simple map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wi
   - Galician
   - Portuguese
   - Russian
+  - Polish
   - Hebrew
   - Latin American Spanish
   - Ukrainian
