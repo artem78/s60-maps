@@ -252,26 +252,14 @@ void CTiledMapLayer::SetTileProviderSettingsL(TWebTileProviderSettings* aTilePro
 	
 	//iMapView->SetZoomBounds(iTileProviderSettings->MinZoomLevel(), iTileProviderSettings->MaxZoomLevel());
 	
-	TFileName cacheDir;
-	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
-	CS60MapsApplication* app = static_cast<CS60MapsApplication*>(appUi->Application());
-	app->CacheDir(cacheDir);
-	cacheDir.Append(iTileProviderSettings->iId);
-	cacheDir.Append(KPathDelimiter);
-	
 	RFs fs = iMapView->ControlEnv()->FsSession();
-	
-	// Create cache dir (if not exists)
-	TInt r = fs.MkDirAll(cacheDir);
-	if (r != KErrAlreadyExists)
-		User::LeaveIfError(r);
 	
 	if (iBitmapMgr == NULL)
 		// Create bitmap manager if not exist yet
-		iBitmapMgr = CTileBitmapManager::NewL(this, fs, iTileProviderSettings, cacheDir);
+		iBitmapMgr = CTileBitmapManager::NewL(this, fs, iTileProviderSettings);
 	else
 		// Set new tile provider and cache dir for bitmap manager
-		iBitmapMgr->ChangeTileProviderSettings(iTileProviderSettings, cacheDir);
+		iBitmapMgr->ChangeTileProviderSettings(iTileProviderSettings);
 	
 	//iMapView->DrawNow();
 	}
@@ -833,8 +821,8 @@ void CCrosshairLayer::Draw(CWindowGc &aGc)
 
 _LIT(KSaverThreadName, "TileSaverThread");
 
-CTileBitmapSaver::CTileBitmapSaver(CTileBitmapManager* aMgr) :
-		iMgr(aMgr),
+CTileBitmapSaver::CTileBitmapSaver(CWebTileProvider* aTileProvider) :
+		iTileProvider(aTileProvider),
 		iThreadId(0),
 		iItemsInQueue(0)
 	{
@@ -873,17 +861,17 @@ CTileBitmapSaver::~CTileBitmapSaver()
 	iQueue.Close();
 	}
 
-CTileBitmapSaver* CTileBitmapSaver::NewLC(CTileBitmapManager* aMgr)
+CTileBitmapSaver* CTileBitmapSaver::NewLC(CWebTileProvider* aTileProvider)
 	{
-	CTileBitmapSaver* self = new (ELeave) CTileBitmapSaver(aMgr);
+	CTileBitmapSaver* self = new (ELeave) CTileBitmapSaver(aTileProvider);
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	return self;
 	}
 
-CTileBitmapSaver* CTileBitmapSaver::NewL(CTileBitmapManager* aMgr)
+CTileBitmapSaver* CTileBitmapSaver::NewL(CWebTileProvider* aTileProvider)
 	{
-	CTileBitmapSaver* self = CTileBitmapSaver::NewLC(aMgr);
+	CTileBitmapSaver* self = CTileBitmapSaver::NewLC(aTileProvider);
 	CleanupStack::Pop(); // self;
 	return self;
 	}
@@ -991,7 +979,7 @@ TInt CTileBitmapSaver::ThreadFunction(TAny* anArg)
 void CTileBitmapSaver::SaveL(const TSaverQueryItem &anItem, RFs &aFs)
 	{
 	TFileName tileFileName;
-	iMgr->TileFileName(anItem.iTile, tileFileName);
+	iTileProvider->TileFileName(anItem.iTile, tileFileName);
 	BaflUtils::EnsurePathExistsL(aFs, tileFileName);
 	
 	RFile file;
@@ -1012,9 +1000,8 @@ void CTileBitmapSaver::SaveL(const TSaverQueryItem &anItem, RFs &aFs)
 
 // CTileBitmapManager
 
-CTileBitmapManager::CTileBitmapManager(RFs aFs, TWebTileProviderSettings* aTileProviderSettings, TInt aLimit) :
+CTileBitmapManager::CTileBitmapManager(TWebTileProviderSettings* aTileProviderSettings, TInt aLimit) :
 		iLimit(aLimit),
-		iFs(aFs),
 		iTileProviderSettings(aTileProviderSettings)
 	{
 	// No implementation required
@@ -1023,35 +1010,32 @@ CTileBitmapManager::CTileBitmapManager(RFs aFs, TWebTileProviderSettings* aTileP
 CTileBitmapManager::~CTileBitmapManager()
 	{
 	delete iWebTileProvider;
-	delete iFileMapper;
 	iItems.ResetAndDestroy();
 	iItems.Close();
 	}
 
 CTileBitmapManager* CTileBitmapManager::NewLC(MTileBitmapManagerObserver *aObserver,
-		RFs aFs, TWebTileProviderSettings* aTileProviderSettings, const TDesC &aCacheDir, TInt aLimit)
+		RFs aFs, TWebTileProviderSettings* aTileProviderSettings, TInt aLimit)
 	{
-	CTileBitmapManager* self = new (ELeave) CTileBitmapManager(aFs, aTileProviderSettings, aLimit);
+	CTileBitmapManager* self = new (ELeave) CTileBitmapManager(aTileProviderSettings, aLimit);
 	CleanupStack::PushL(self);
-	self->ConstructL(aObserver, aCacheDir);
+	self->ConstructL(aObserver, aFs);
 	return self;
 	}
 
 CTileBitmapManager* CTileBitmapManager::NewL(MTileBitmapManagerObserver *aObserver,
-		RFs aFs, TWebTileProviderSettings* aTileProviderSettings, const TDesC &aCacheDir, TInt aLimit)
+		RFs aFs, TWebTileProviderSettings* aTileProviderSettings, TInt aLimit)
 	{
-	CTileBitmapManager* self = CTileBitmapManager::NewLC(aObserver, aFs, aTileProviderSettings, aCacheDir, aLimit);
+	CTileBitmapManager* self = CTileBitmapManager::NewLC(aObserver, aFs, aTileProviderSettings, aLimit);
 	CleanupStack::Pop(); // self;
 	return self;
 	}
 
-void CTileBitmapManager::ConstructL(MTileBitmapManagerObserver *aObserver, const TDesC &aCacheDir)
+void CTileBitmapManager::ConstructL(MTileBitmapManagerObserver *aObserver, RFs aFs)
 	{
 	iItems = RPointerArray<CTileBitmapManagerItem>(iLimit);
 	
-	iFileMapper = CFileTreeMapper::NewL(aCacheDir, 2, 1, ETrue);
-	
-	iWebTileProvider = CWebTileProvider::NewL(aObserver, iFs, iTileProviderSettings, this);
+	iWebTileProvider = CWebTileProvider::NewL(aObserver, aFs, iTileProviderSettings, this);
 	}
 
 TInt CTileBitmapManager::GetTileBitmap(const TTile &aTile, CFbsBitmap* &aBitmap)
@@ -1094,10 +1078,10 @@ void CTileBitmapManager::AddToLoading(const TTile &aTile)
 	
 
 	// Try to find on disk first
-	if (IsTileFileExists(aTile))
+	if (iWebTileProvider->IsTileFileExists(aTile))
 		{
 		item->CreateBitmapIfNotExistL();
-		TRAPD(r, LoadBitmapL(aTile, item->Bitmap()));
+		TRAPD(r, iWebTileProvider->LoadBitmapL(aTile, item->Bitmap()));
 		if (r == KErrNone)
 			{
 			item->SetReady();
@@ -1136,44 +1120,8 @@ CTileBitmapManagerItem* CTileBitmapManager::Find(const TTile &aTile) const
 	}
 
 
-void CTileBitmapManager::LoadBitmapL(const TTile &aTile, CFbsBitmap *aBitmap)
-	{	
-	TFileName tileFileName;
-	TileFileName(aTile, tileFileName);
-	
-	RFile file;
-	User::LeaveIfError(file.Open(iFs, tileFileName, EFileRead));
-	CleanupClosePushL(file);
-	User::LeaveIfError(aBitmap->Load(file));	
-	CleanupStack::PopAndDestroy(&file);
-	INFO(_L("Bitmap for %S sucessfully loaded from file \"%S\""), &aTile.AsDes(), &tileFileName);
-	}
 
-TBool CTileBitmapManager::IsTileFileExists(const TTile &aTile) /*const*/
-	{
-	TFileName tileFileName;
-	TileFileName(aTile, tileFileName);
-	return BaflUtils::FileExists(iFs, tileFileName);
-	}
-
-void CTileBitmapManager::TileFileName(const TTile &aTile, TFileName &aFileName) const
-	{
-	_LIT(KUnderline, "_");
-	_LIT(KMBMExtension, ".mbm");
-	
-	/*TFileName*/ TBuf<32> originalFileName;
-	originalFileName.AppendNum(aTile.iZ);
-	originalFileName.Append(KUnderline);
-	originalFileName.AppendNum(aTile.iX);
-	originalFileName.Append(KUnderline);
-	originalFileName.AppendNum(aTile.iY);
-	originalFileName.Append(KMBMExtension);
-	
-	iFileMapper->GetFilePath(originalFileName, aFileName);
-	}
-
-void CTileBitmapManager::ChangeTileProviderSettings(TWebTileProviderSettings* aTileProviderSettings,
-		const TDesC &aCacheDir)
+void CTileBitmapManager::ChangeTileProviderSettings(TWebTileProviderSettings* aTileProviderSettings)
 	{
 	// FixMe: On the program startup this method may be called twice with same tile provider 
 	if (iTileProviderSettings->iId == aTileProviderSettings->iId)
@@ -1183,9 +1131,8 @@ void CTileBitmapManager::ChangeTileProviderSettings(TWebTileProviderSettings* aT
 	
 	iItems.ResetAndDestroy();
 	iTileProviderSettings = aTileProviderSettings;
-	iFileMapper->SetBaseDir(aCacheDir);
 	
-	iWebTileProvider->ChangeSettings(aTileProviderSettings, aCacheDir);
+	iWebTileProvider->SetSettingsL(aTileProviderSettings);
 	}
 
 // CTileBitmapManagerItem
@@ -1450,12 +1397,11 @@ TCoordinateEx::TCoordinateEx(const TCoordinate &aCoord) /*:
 // CWebTileProvider
 
 CWebTileProvider::CWebTileProvider(MTileBitmapManagerObserver *aObserver,
-		RFs &aFs, TWebTileProviderSettings* aSettings, CTileBitmapManager* aBmpMgr) :
+		RFs &aFs, CTileBitmapManager* aBmpMgr) :
 		CActive(EPriorityStandard),
 		iObserver(aObserver),
 		iState(/*TProcessingState::*/EIdle),
 		iFs(aFs),
-		iSettings(aSettings),
 		iBmpMgr(aBmpMgr)
 	{
 	// No implementation required
@@ -1464,6 +1410,7 @@ CWebTileProvider::CWebTileProvider(MTileBitmapManagerObserver *aObserver,
 CWebTileProvider::~CWebTileProvider()
 	{
 	delete iSaver;
+	delete iFileMapper;
 	// cancel()
 	delete iImgDecoder;
 	iItemsLoadingQueue.Close();
@@ -1474,9 +1421,9 @@ CWebTileProvider* CWebTileProvider::NewLC(MTileBitmapManagerObserver *aObserver,
 		RFs &aFs, TWebTileProviderSettings* aSettings,
 		CTileBitmapManager* aBmpMgr)
 	{
-	CWebTileProvider* self = new (ELeave) CWebTileProvider(aObserver, aFs, aSettings, aBmpMgr);
+	CWebTileProvider* self = new (ELeave) CWebTileProvider(aObserver, aFs, aBmpMgr);
 	CleanupStack::PushL(self);
-	self->ConstructL();
+	self->ConstructL(aSettings);
 	return self;
 	}
 
@@ -1489,7 +1436,7 @@ CWebTileProvider* CWebTileProvider::NewL(MTileBitmapManagerObserver *aObserver,
 	return self;
 	}
 
-void CWebTileProvider::ConstructL()
+void CWebTileProvider::ConstructL(TWebTileProviderSettings* aSettings)
 	{
 #ifdef __WINSCW__
 	// Add some delay for network services have been started on the emulator,
@@ -1518,7 +1465,11 @@ void CWebTileProvider::ConstructL()
 	
 	iImgDecoder = CBufferedImageDecoder::NewL(iFs);
 	
-	iSaver = CTileBitmapSaver::NewL(iBmpMgr);
+	iFileMapper = CFileTreeMapper::NewL(/*cacheDir*/ KNullDesC, 2, 1, ETrue); // Cache dir will be set later
+	
+	SetSettingsL(aSettings);
+	
+	iSaver = CTileBitmapSaver::NewL(this);
 	// ToDo: Start saver thread only when needed (at first downloaded tile)
 	
 	CActiveScheduler::Add(this);
@@ -1745,17 +1696,85 @@ void CWebTileProvider::SaveBitmapInBackgroundL(const TTile &aTile, /*const*/ CFb
 	iSaver->AppendL(aTile, aBitmap);
 	}
 
-void CWebTileProvider::ChangeSettings(TWebTileProviderSettings* aSettings,
-		const TDesC &aCacheDir)
+TBool CWebTileProvider::IsTileFileExists(const TTile &aTile) /*const*/
 	{
-	// FixMe: On the program startup this method may be called twice with same tile provider 
-	if (iSettings->iId == aSettings->iId)
-		return; // Nothing changed
+	TFileName tileFileName;
+	TileFileName(aTile, tileFileName);
+	return BaflUtils::FileExists(iFs, tileFileName);
+	}
 
-	INFO(_L("Changing of tile provider from %S to %S"), &iSettings->iTitle, &aSettings->iTitle);
+void CWebTileProvider::LoadBitmapL(const TTile &aTile, CFbsBitmap *aBitmap)
+	{	
+	TFileName tileFileName;
+	TileFileName(aTile, tileFileName);
 	
+	RFile file;
+	User::LeaveIfError(file.Open(iFs, tileFileName, EFileRead));
+	CleanupClosePushL(file);
+	User::LeaveIfError(aBitmap->Load(file));	
+	CleanupStack::PopAndDestroy(&file);
+	INFO(_L("Bitmap for %S sucessfully loaded from file \"%S\""), &aTile.AsDes(), &tileFileName);
+	}
+
+void CWebTileProvider::TileFileName(const TTile &aTile, TFileName &aFileName) const
+	{
+	_LIT(KUnderline, "_");
+	_LIT(KMBMExtension, ".mbm");
+	
+	/*TFileName*/ TBuf<32> originalFileName;
+	originalFileName.AppendNum(aTile.iZ);
+	originalFileName.Append(KUnderline);
+	originalFileName.AppendNum(aTile.iX);
+	originalFileName.Append(KUnderline);
+	originalFileName.AppendNum(aTile.iY);
+	originalFileName.Append(KMBMExtension);
+	
+	iFileMapper->GetFilePath(originalFileName, aFileName);
+	}
+
+void CWebTileProvider::StopAndReset()
+	{
 	Cancel();	
 	iHTTPClient->CancelRequest();
 	iItemsLoadingQueue.Reset(); // Should already be cleared by Cancel() call at previous line
+	}
+
+void CWebTileProvider::InitializeCacheDirL()
+	{
+	// Get path to cache directory
+	TFileName cacheDir;
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
+	CS60MapsApplication* app = static_cast<CS60MapsApplication*>(appUi->Application());
+	app->CacheDir(cacheDir);
+	cacheDir.Append(iSettings->iId);
+	cacheDir.Append(KPathDelimiter);
+	
+	// Create cache directory if not exists
+	BaflUtils::EnsurePathExistsL(iFs, cacheDir);
+	
+	iFileMapper->SetBaseDir(cacheDir);
+	}
+
+void CWebTileProvider::SetSettingsL(TWebTileProviderSettings* aSettings)
+	{
+	// FixMe: On the program startup this method may be called twice with same tile provider 
+	
+	if (!iSettings)
+		{ // First time call (from ConstructL)
+		INFO(_L("Tile provider set to %S"), &aSettings->iTitle);
+		}
+	else if (iSettings->iId == aSettings->iId)
+		{ // Exit if nothing changed
+		return;
+		}
+	else
+		{
+		INFO(_L("Tile provider changed from %S to %S"),
+				&iSettings->iTitle, &aSettings->iTitle);
+		}
+	
 	iSettings = aSettings;
+	
+	StopAndReset();
+	InitializeCacheDirL();
 	}
