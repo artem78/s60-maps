@@ -1225,9 +1225,8 @@ void CTileBitmapSaver::SaveL(const TSaverQueryItem &anItem, RFs &aFs)
 
 // CTileBitmapManager
 
-CTileBitmapManager::CTileBitmapManager(TWebTileProviderSettings* aTileProviderSettings, TInt aLimit) :
-		iLimit(aLimit),
-		iTileProviderSettings(aTileProviderSettings)
+CTileBitmapManager::CTileBitmapManager(TInt aLimit) :
+		iLimit(aLimit)
 	{
 	// No implementation required
 	}
@@ -1242,9 +1241,9 @@ CTileBitmapManager::~CTileBitmapManager()
 CTileBitmapManager* CTileBitmapManager::NewLC(MTileBitmapManagerObserver *aObserver,
 		RFs aFs, TWebTileProviderSettings* aTileProviderSettings, TInt aLimit)
 	{
-	CTileBitmapManager* self = new (ELeave) CTileBitmapManager(aTileProviderSettings, aLimit);
+	CTileBitmapManager* self = new (ELeave) CTileBitmapManager(aLimit);
 	CleanupStack::PushL(self);
-	self->ConstructL(aObserver, aFs);
+	self->ConstructL(aObserver, aFs, aTileProviderSettings);
 	return self;
 	}
 
@@ -1256,11 +1255,12 @@ CTileBitmapManager* CTileBitmapManager::NewL(MTileBitmapManagerObserver *aObserv
 	return self;
 	}
 
-void CTileBitmapManager::ConstructL(MTileBitmapManagerObserver *aObserver, RFs aFs)
+void CTileBitmapManager::ConstructL(MTileBitmapManagerObserver *aObserver, RFs aFs,
+		TWebTileProviderSettings* aTileProviderSettings)
 	{
 	iItems = RPointerArray<CTileBitmapManagerItem>(iLimit);
 	
-	iWebTileProvider = CWebTileProvider::NewL(aObserver, aFs, iTileProviderSettings, this);
+	iWebTileProvider = CWebTileProvider::NewL(aObserver, aFs, aTileProviderSettings, this);
 	}
 
 TInt CTileBitmapManager::GetTileBitmap(const TTile &aTile, CFbsBitmap* &aBitmap)
@@ -1362,13 +1362,10 @@ CTileBitmapManagerItem* CTileBitmapManager::Find(const TTile &aTile) const
 void CTileBitmapManager::ChangeTileProviderSettings(TWebTileProviderSettings* aTileProviderSettings)
 	{
 	// FixMe: On the program startup this method may be called twice with same tile provider 
-	if (iTileProviderSettings->iId == aTileProviderSettings->iId)
+	if (iWebTileProvider->iSettings->iId == aTileProviderSettings->iId)
 		return; // Nothing changed
-
-	INFO(_L("Changing of tile provider from %S to %S"), &iTileProviderSettings->iTitle, &aTileProviderSettings->iTitle);
 	
-	iItems.ResetAndDestroy();
-	iTileProviderSettings = aTileProviderSettings;
+	Reset();
 	
 	iWebTileProvider->SetSettingsL(aTileProviderSettings);
 	}
@@ -1385,6 +1382,12 @@ void CTileBitmapManager::Delete(const TTile &aTile)
 			}
 		}
 	}
+
+void CTileBitmapManager::Reset()
+	{
+	iItems.ResetAndDestroy();
+	}
+
 
 // CTileBitmapManagerItem
 

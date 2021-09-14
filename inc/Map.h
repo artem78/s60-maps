@@ -335,8 +335,9 @@ public:
 			RFs aFs, TWebTileProviderSettings* aTileProviderSettings, TInt aLimit = 50);
 
 private:
-	CTileBitmapManager(TWebTileProviderSettings* aTileProviderSettings, TInt aLimit);
-	void ConstructL(MTileBitmapManagerObserver *aObserver, RFs aFs);
+	CTileBitmapManager(TInt aLimit);
+	void ConstructL(MTileBitmapManagerObserver *aObserver, RFs aFs,
+			TWebTileProviderSettings* aTileProviderSettings);
 	
 // Custom properties and methods
 private:
@@ -344,7 +345,6 @@ private:
 	RPointerArray<CTileBitmapManagerItem> iItems;
 	/*TInt*/ void Append/*L*/(const TTile &aTile); 
 	
-	TWebTileProviderSettings* iTileProviderSettings;	// todo: move
 	CWebTileProvider* iWebTileProvider;					// todo: move later
 	
 	// @return Pointer to CTileBitmapManagerItem object or NULL if not found
@@ -356,6 +356,7 @@ public:
 	TInt GetTileBitmap(const TTile &aTile, CFbsBitmap* &aBitmap);
 	void AddToLoading(const TTile &aTile, TBool aForce = EFalse);
 	void ChangeTileProviderSettings(TWebTileProviderSettings* aTileProvider); // todo: delete later
+	void Reset();
 	
 // Friends
 	friend class CWebTileProvider; // ToDo: delete
