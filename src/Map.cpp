@@ -1417,6 +1417,7 @@ CWebTileProvider::~CWebTileProvider()
 	delete iImgDecoder;
 	iItemsLoadingQueue.Close();
 	delete iHTTPClient;
+	delete iBitmap;
 	}
 
 CWebTileProvider* CWebTileProvider::NewLC(MTileBitmapManagerObserver *aObserver,
@@ -1445,6 +1446,11 @@ void CWebTileProvider::ConstructL(TWebTileProviderSettings* aSettings)
 	// otherwise CEcmtServer: 3 panic will be raised.
 	User::After(10 * KSecond);
 #endif
+	
+	// Create bitmap
+	iBitmap = new (ELeave) CFbsBitmap();
+	
+	// Create and setup HTTP client
 	iHTTPClient = CHTTPClient::NewL(this);
 	
 	TBuf8<32> userAgent;
@@ -1524,6 +1530,7 @@ void CWebTileProvider::DoCancel()
 	DEBUG(_L("Cancel"));
 //	iHTTPClient->CancelRequest();
 	iImgDecoder->Cancel();
+	//ResetBitmapL();
 	}
 
 void CWebTileProvider::RunL()
@@ -1543,9 +1550,9 @@ void CWebTileProvider::RunL()
 		item->SetReady();
 		
 		INFO(_L("Tile %S downloaded and decoded"), &iLoadingTile.AsDes());
-		iObserver->OnTileLoaded(iLoadingTile, item->Bitmap());
+		iObserver->OnTileLoaded(iLoadingTile, iBitmap);
 		
-		SaveBitmapInBackgroundL(iLoadingTile, item->Bitmap());
+		SaveBitmapInBackgroundL(iLoadingTile, item->Bitmap() /*iBitmap*/);
 		}
 	else
 		{
@@ -1632,9 +1639,12 @@ void CWebTileProvider::OnHTTPResponse(const RHTTPTransaction aTransaction)
 	item->CreateBitmapIfNotExistL();
 	__ASSERT_DEBUG(item->Bitmap() != NULL, Panic(ES60MapsTileBitmapIsNullPanic));
 	
+	ResetBitmapL();
+	item->Bitmap()->Duplicate(iBitmap->Handle()); // todo: проверить результат
+	
 	//iImgDecoder->ContinueOpenL();
 	DEBUG(_L("Tile %S succesfully downloaded, starting decode"), &iLoadingTile.AsDes());
-	iImgDecoder->Convert(&this->iStatus, /**bitmap*/ *item->Bitmap(), 0);
+	iImgDecoder->Convert(&this->iStatus, /**bitmap*/ *iBitmap, 0);
 	//iImgDecoder->ContinueConvert(&this->iStatus);
 	SetActive();
 	}
@@ -1779,4 +1789,18 @@ void CWebTileProvider::SetSettingsL(TWebTileProviderSettings* aSettings)
 	
 	StopAndReset();
 	InitializeCacheDirL();
+	}
+
+void CWebTileProvider::ResetBitmapL()
+	{
+	// Clear exists bitmap
+	if (iBitmap->Handle() != 0)
+		{
+		iBitmap->Reset();
+		}
+	
+	// Create new bitmap
+	TSize size(KTileSize, KTileSize);
+	TDisplayMode mode = EColor16M;
+	User::LeaveIfError(iBitmap->Create(size, mode));
 	}
