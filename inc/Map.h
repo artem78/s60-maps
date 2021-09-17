@@ -519,6 +519,7 @@ private:
 	CTileBitmapSaver* iSaver;
 	CTileBitmapManager* iBmpMgr;
 	CFileTreeMapper* iFileMapper;
+	CFbsBitmap* iBitmap;
 	
 	void StartDownloadTileL(const TTile &aTile);
 	void AddToDownloadQueue(const TTile &aTile);
@@ -538,6 +539,7 @@ private:
 	void LoadBitmapL(const TTile &aTile, CFbsBitmap *aBitmap) /*const*/;
 	void TileFileName(const TTile &aTile, TFileName &aFileName) const;
 	void DeleteTileFile(const TTile &aTile);
+	void ResetBitmapL();
 	
 public:
 	void SetSettingsL(TWebTileProviderSettings* aSettings);
