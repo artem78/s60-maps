@@ -17,6 +17,10 @@
 #include "S60Maps.l16"
 #endif
 
+#ifdef LANGUAGE_27
+#include "S60Maps.l27"
+#endif
+
 #ifdef LANGUAGE_57
 #include "S60Maps.l57"
 #endif
