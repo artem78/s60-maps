@@ -10,7 +10,7 @@
 &EN
 
 ; standard SIS file header
-#{"S60Maps"},(0xED689B88),1,5,1
+#{"S60Maps"},(0xED689B88),1,5,2
 
 ;Localised Vendor name
 %{"artem78"}
