@@ -28,6 +28,7 @@
 #include <epos_cposlandmarkdatabase.h> // For CPosLandmarkDatabase
 #include <lbssatellite.h>
 #include <hwrmlight.h> // For CHWRMLight
+#include <badesca.h>
 
 // FORWARD DECLARATIONS
 class CMapView;
@@ -149,6 +150,7 @@ public:
 	void ChangeLanguageL(TLanguage aLang);
 	TBool IsLanguageExists(TLanguage aLang);
 	void AvailableLanguagesL(RArray<TLanguage> &aLangArr);
+	CDesCArraySeg* GetAllAtlasesL();
 
 private:
 	CSettings* iSettings;

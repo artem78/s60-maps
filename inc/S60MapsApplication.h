@@ -64,6 +64,7 @@ public:
 	void RelPathToAbsFromDataDir(const TDesC &aRelPath, TFileName &anAbsPath) const;
 	void CacheDir(TFileName &aCacheDir) const;
 	void IconFileL(TFileName &aFileName) const;
+	void AtlasesDir(TFileName &anAtlasesDir) const;
 	
 	};
 

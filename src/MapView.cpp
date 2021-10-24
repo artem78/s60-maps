@@ -205,6 +205,7 @@ void CMapView::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
 		{
 		// Fill list of available tiles services in menu
 		
+		// Web services		
 		for (TInt idx = 0; idx < appUi->AvailableTileProviders().Count(); idx++)
 			{
 			TInt commandId = ESetTileProviderBase + idx;
@@ -221,6 +222,26 @@ void CMapView::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
 					appUi->AvailableTileProviders()[idx] == appUi->TileProvider() ?
 							EEikMenuItemSymbolOn : EEikMenuItemSymbolIndeterminate);				
 			}
+			
+		// Atlases
+		CDesCArraySeg* atlases = appUi->GetAllAtlasesL();
+		CleanupStack::PushL(atlases);
+		for (TInt idx = 0; idx < atlases->Count(); idx++)
+			{
+			TInt commandId = EAtlasesBase + idx;
+			
+			CEikMenuPaneItem::SData menuItem;
+			menuItem.iCommandId = commandId;
+			menuItem.iCascadeId = 0;
+			menuItem.iFlags = EEikMenuItemCheckBox;
+			menuItem.iText.Copy((*atlases)[idx]);
+			//menuItem.iExtraText = ???
+			aMenuPane->AddMenuItemL(menuItem);
+			aMenuPane->SetItemButtonState(commandId,
+					(*atlases)[idx] == appUi->TileProvider()->iId ?
+							EEikMenuItemSymbolOn : EEikMenuItemSymbolIndeterminate);
+			}
+		CleanupStack::PopAndDestroy(atlases);
 		}
 	else if (aMenuID == R_SUBMENU_LANDMARKS)
 		{

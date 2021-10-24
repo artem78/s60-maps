@@ -51,10 +51,12 @@ CS60MapsDocument* CS60MapsDocument::NewLC(CEikApplication& aApp)
 //
 void CS60MapsDocument::ConstructL()
 	{
+	CS60MapsApplication* app = static_cast<CS60MapsApplication *>(Application());
+	
 #if LOGGING_ENABLED
 	_LIT(KLogFileName, "s60maps_log.txt");
 	TFileName logFilePath;
-	static_cast<CS60MapsApplication *>(Application())->RelPathToAbsFromDataDir(KLogFileName, logFilePath);
+	app->RelPathToAbsFromDataDir(KLogFileName, logFilePath);
 	TParse pathParser;
 	pathParser.Set(logFilePath, NULL, NULL);
 	BaflUtils::EnsurePathExistsL(CEikonEnv::Static()->FsSession(), pathParser.DriveAndPath());
@@ -86,6 +88,11 @@ void CS60MapsDocument::ConstructL()
 	
 	INFO(_L("Log started"));
 #endif
+	
+	// Create atlases directory
+	TFileName atlasesDir;
+	app->AtlasesDir(atlasesDir);
+	BaflUtils::EnsurePathExistsL(CEikonEnv::Static()->FsSession(), atlasesDir);
 	}
 
 // -----------------------------------------------------------------------------

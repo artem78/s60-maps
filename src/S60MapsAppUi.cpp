@@ -776,4 +776,32 @@ TInt CS60MapsAppUi::ResetInactivityTimer(TAny* /*aPtr*/)
 	return ETrue;
 	}
 
+CDesCArraySeg* CS60MapsAppUi::GetAllAtlasesL()
+	{
+	CDesCArraySeg* array = new (ELeave) CDesCArraySeg(10);
+	CleanupStack::PushL(array);
+	TFileName searchTemplate;
+	CS60MapsApplication* app = static_cast<CS60MapsApplication *>(Application());
+	app->AtlasesDir(searchTemplate);
+	_LIT(KZipFileMask, "*.zip");
+	searchTemplate.Append(KZipFileMask);
+	CDir* files = NULL;
+	User::LeaveIfError(iEikonEnv->FsSession().GetDir(searchTemplate, 
+			KEntryAttNormal, EAscending | ESortByName, files));
+	if (files)
+		{
+		CleanupStack::PushL(files);
+		for (TInt i = 0; i < files->Count(); i++)
+			{
+			if ((*files)[i].IsDir()) // Skip directories
+				continue;
+			
+			array->AppendL((*files)[i].iName);
+			}
+		CleanupStack::PopAndDestroy(files);
+		}
+	CleanupStack::Pop(array); // Not PopAndDestroy()!
+	return array;
+	}
+
 // End of File

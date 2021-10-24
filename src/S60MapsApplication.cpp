@@ -91,4 +91,10 @@ void CS60MapsApplication::IconFileL(TFileName &aFileName) const
 	aFileName.Format(KMbmFilePathFmt, FileUtils::InstallationDrive(), &privateDir);
 	}
 
+void CS60MapsApplication::AtlasesDir(TFileName &anAtlasesDir) const
+	{
+	_LIT(KAtlasesDirRel, "atlases\\");
+	RelPathToAbsFromDataDir(KAtlasesDirRel, anAtlasesDir);
+	}
+
 // End of File
