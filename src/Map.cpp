@@ -817,11 +817,45 @@ void CCrosshairLayer::Draw(CWindowGc &aGc)
 	}
 
 
+// CSaverQueryItem
+
+CSaverQueryItem* CSaverQueryItem::NewLC()
+	{
+	CSaverQueryItem* self = new (ELeave) CSaverQueryItem();
+	CleanupStack::PushL(self);
+	self->ConstructL();
+	return self;
+	}
+
+CSaverQueryItem* CSaverQueryItem::NewL()
+	{
+	CSaverQueryItem* self = CSaverQueryItem::NewLC();
+	CleanupStack::Pop(); // self;
+	return self;
+	}
+
+CSaverQueryItem::CSaverQueryItem()
+	{
+	// Empty
+	}
+
+void CSaverQueryItem::ConstructL()
+	{
+	iBitmap = new (ELeave) CFbsBitmap();
+	}
+
+CSaverQueryItem::~CSaverQueryItem()
+	{
+	delete iBitmap;
+	}
+
+
 // CTileBitmapSaver
 
 _LIT(KSaverThreadName, "TileSaverThread");
 
 CTileBitmapSaver::CTileBitmapSaver(CWebTileProvider* aTileProvider) :
+		CActive(EPriorityLow),
 		iTileProvider(aTileProvider),
 		iThreadId(0),
 		iItemsInQueue(0)
@@ -830,19 +864,21 @@ CTileBitmapSaver::CTileBitmapSaver(CWebTileProvider* aTileProvider) :
 
 CTileBitmapSaver::~CTileBitmapSaver()
 	{
+	Cancel();
+	
 	// Stop and destroy running thread
 	RThread thr;
 	if (thr.Open(iThreadId) == KErrNone)
 		{
 		// Clear queue
-		TSaverQueryItem item;
+		CSaverQueryItem* item = NULL;
 		while (iQueue.Receive(item) != KErrUnderflow)
-			{};
+			{
+			delete item;
+			};
 			
-		// Add stop-item to queue
-		TSaverQueryItem stopItem;
-		stopItem.iShouldStop = ETrue;
-		iQueue.Send(stopItem);
+		// Add NULL-item to queue for stop the thread
+		iQueue.Send(NULL);
 		
 		// Wait until thread will be closed
 		TRequestStatus status;
@@ -858,6 +894,7 @@ CTileBitmapSaver::~CTileBitmapSaver()
 	
 	
 	// Free other resources
+	iRemovingQueue.Close();
 	iQueue.Close();
 	}
 
@@ -880,6 +917,7 @@ void CTileBitmapSaver::ConstructL()
 	{
 	// Some initializations
 	User::LeaveIfError(iQueue.CreateLocal(50)); // ToDo: Move number to constant
+	User::LeaveIfError(iRemovingQueue.CreateLocal(10));
 	
 	// Prepare and start new thread	
 	RThread thr;
@@ -895,14 +933,17 @@ void CTileBitmapSaver::ConstructL()
 	DEBUG(_L("Saver thread started"));
 	iThreadId = thr.Id(); // Remember thread ID for future use
 	thr.Close();
+	
+	CActiveScheduler::Add(this);
+	iRemovingQueue.NotifyDataAvailable(iStatus);
+	SetActive();
 	}
 
 void CTileBitmapSaver::AppendL(const TTile &aTile, CFbsBitmap *aBitmap)
 	{
-	TSaverQueryItem item;
-	item.iBitmap = aBitmap;
-	item.iTile = aTile;
-	item.iShouldStop = EFalse;
+	CSaverQueryItem* item = CSaverQueryItem::NewL();
+	item->iBitmap->Duplicate(aBitmap->Handle());
+	item->iTile = aTile;
 	
 	TInt r = iQueue.Send(item);
 	if (r == KErrNone) // No errors
@@ -940,26 +981,28 @@ TInt CTileBitmapSaver::ThreadFunction(TAny* anArg)
 			
 			while (ETrue)
 				{
-				TSaverQueryItem item;
+				CSaverQueryItem* item = NULL;
 				saver->iQueue.ReceiveBlocking(item);
 				//iItemsInQueue--;
 				
-				if (item.iShouldStop)
+				if (!item)
 					{
 					res = KErrNone;
 					DEBUG(_L("Stop signal recieved. Going to exit."))
 					break; // Going to exit
 					}
 				
-				DEBUG(_L("Start saving %S"), &item.iTile.AsDes());
+				DEBUG(_L("Start saving %S"), &item->iTile.AsDes());
 				saver->iItemsInQueue--;
 				DEBUG(_L("Now %d items in saving queue"), saver->iItemsInQueue);
-				TRAPD(r, saver->SaveL(item, fs));
+				TRAPD(r, saver->SaveL(*item, fs));
 				if (r != KErrNone)
 					{
 					ERROR(_L("Saving of %S failed with code %d"),
-							&item.iTile.AsDes(), r);
+							&item->iTile.AsDes(), r);
 					}
+
+				TRAP_IGNORE(saver->RemoveItemInThreadL(item));
 				}
 			
 			fbsSess.Disconnect();
@@ -976,7 +1019,7 @@ TInt CTileBitmapSaver::ThreadFunction(TAny* anArg)
 	return /*KErrNone*/ res;
 	}
 
-void CTileBitmapSaver::SaveL(const TSaverQueryItem &anItem, RFs &aFs)
+void CTileBitmapSaver::SaveL(const CSaverQueryItem &anItem, RFs &aFs)
 	{
 	TFileName tileFileName;
 	iTileProvider->TileFileName(anItem.iTile, tileFileName);
@@ -997,6 +1040,47 @@ void CTileBitmapSaver::SaveL(const TSaverQueryItem &anItem, RFs &aFs)
 	
 	CleanupStack::PopAndDestroy(2, &file);
 	}
+
+void CTileBitmapSaver::RemoveItemInThreadL(CSaverQueryItem *anItem)
+	{
+	TInt r = iRemovingQueue.Send(anItem);
+	if (r != KErrNone)
+		{
+		ERROR(_L("Failed to add item in removing queue"));
+		User::Leave(r);
+		}
+	}
+
+void CTileBitmapSaver::RunL()
+	{
+	switch (iStatus.Int())
+		{
+		case KErrNone:
+			{
+			// Call destructor for all items in iRemovingQueue
+			CSaverQueryItem* item = NULL;
+			while (iRemovingQueue.Receive(item) != KErrUnderflow)
+				{
+				DEBUG(_L("Delete %S"), &item->iTile.AsDes());
+				delete item;
+				};
+			
+			// Start waiting for next item
+			iRemovingQueue.NotifyDataAvailable(iStatus);
+			SetActive();
+			}
+		break;
+		
+		default:
+		break;
+		}
+	}
+
+void CTileBitmapSaver::DoCancel()
+	{
+	iRemovingQueue.CancelDataAvailable();
+	}
+
 
 // CTileBitmapManager
 
