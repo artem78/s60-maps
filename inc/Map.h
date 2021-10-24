@@ -272,13 +272,22 @@ private:
 	};
 
 
-class TSaverQueryItem
+class CSaverQueryItem : public CBase
 	{
+	// Constructor / Destructor
+public:
+	static CSaverQueryItem* NewL();
+	static CSaverQueryItem* NewLC();
+	~CSaverQueryItem();
+
+private:
+	CSaverQueryItem();
+	void ConstructL();
+	
+	// New
 public:
 	TTile iTile;
-	CFbsBitmap *iBitmap;
-	
-	TBool iShouldStop; // If true, thread processing will be stopped on this item
+	CFbsBitmap *iBitmap; // Owned
 	};
 
 
@@ -287,7 +296,7 @@ class CWebTileProvider;
 // Class for save tile bitmaps in separate thread
 // for improve bad performance on some phones
 
-class CTileBitmapSaver: public CBase
+class CTileBitmapSaver: public CActive
 	{
 	// Constructors/destructors
 public:
@@ -299,18 +308,27 @@ private:
 	CTileBitmapSaver(CWebTileProvider* aTileProvider);
 	void ConstructL();
 	
+	// From CActive
+private:
+	void RunL();
+	void DoCancel();
+	
 	// Custom
 public:
 	void AppendL(const TTile &aTile, CFbsBitmap *aBitmap);
 	
 private:
 	CWebTileProvider* iTileProvider;
-	RMsgQueue<TSaverQueryItem> iQueue;
+	RMsgQueue<CSaverQueryItem*> iQueue;
+	RMsgQueue<CSaverQueryItem*> iRemovingQueue;
 	TInt iItemsInQueue;
 	TThreadId iThreadId;
 	
 	static TInt ThreadFunction(TAny* anArg);
-	void SaveL(const TSaverQueryItem &anItem, RFs &aFs);
+	void SaveL(const CSaverQueryItem &anItem, RFs &aFs);
+	
+	/* Used from saver thread to delete processed items */
+	void RemoveItemInThreadL(CSaverQueryItem* anItem);
 	};
 
 
