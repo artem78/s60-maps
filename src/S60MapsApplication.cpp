@@ -79,4 +79,10 @@ void CS60MapsApplication::CacheDir(TFileName &aCacheDir) const
 	RelPathToAbsFromDataDir(KCacheDirRel, aCacheDir);
 	}
 
+void CS60MapsApplication::AtlasesDir(TFileName &anAtlasesDir) const
+	{
+	_LIT(KAtlasesDirRel, "atlases\\");
+	RelPathToAbsFromDataDir(KAtlasesDirRel, anAtlasesDir);
+	}
+
 // End of File

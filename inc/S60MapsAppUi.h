@@ -25,6 +25,7 @@
 //#include <aknprogressdialog.h> // For CAknProgressDialog
 #include <aknwaitdialog.h> // For CAknWaitDialog 
 #include <epos_cposlandmarkdatabase.h> // For CPosLandmarkDatabase
+#include <badesca.h>
 
 // FORWARD DECLARATIONS
 class CS60MapsAppView;
@@ -151,6 +152,7 @@ private:
 	CPosLandmark* GetNearestLandmarkL(const TCoordinate &aCoord, TBool aPartial = ETrue,
 			TReal32 aMaxDistance = KNaN); // The client takes ownership of the returned landmark object. Returns NULL if nothing found.
 	CPosLandmark* GetNearestLandmarkAroundTheCenterL(TBool aPartial = ETrue); // The client takes ownership of the returned landmark object. Returns NULL if nothing found.
+	CDesCArraySeg* GetAllAtlasesL();
 	
 	// Command handlers
 	void HandleExitL();

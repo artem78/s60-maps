@@ -332,6 +332,7 @@ void CS60MapsAppUi::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
 		{
 		// Fill list of available tiles services in menu
 		
+		// Web services
 		for (TInt idx = 0; idx < iAvailableTileProviders.Count(); idx++)
 			{
 			TInt commandId = ESetTileProviderBase + idx;
@@ -348,6 +349,26 @@ void CS60MapsAppUi::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
 					iAvailableTileProviders[idx] == iActiveTileProvider?
 							EEikMenuItemSymbolOn : EEikMenuItemSymbolIndeterminate);				
 			}
+		
+		// Atlases
+		CDesCArraySeg* atlases = GetAllAtlasesL();
+		CleanupStack::PushL(atlases);
+		for (TInt idx = 0; idx < atlases->Count(); idx++)
+			{
+			TInt commandId = EAtlasesBase + idx;
+			
+			CEikMenuPaneItem::SData menuItem;
+			menuItem.iCommandId = commandId;
+			menuItem.iCascadeId = 0;
+			menuItem.iFlags = EEikMenuItemCheckBox;
+			menuItem.iText.Copy((*atlases)[idx]);
+			//menuItem.iExtraText = ???
+			aMenuPane->AddMenuItemL(menuItem);
+			aMenuPane->SetItemButtonState(commandId,
+					(*atlases)[idx] == iActiveTileProvider->iId ?
+							EEikMenuItemSymbolOn : EEikMenuItemSymbolIndeterminate);
+			}
+		CleanupStack::PopAndDestroy(atlases);
 		}
 	else if (aMenuID == R_SUBMENU_LANDMARKS)
 		{
@@ -918,6 +939,34 @@ CPosLandmark* CS60MapsAppUi::GetNearestLandmarkAroundTheCenterL(TBool aPartial)
 	MapMath::PixelsToMeters(center.Latitude(), iAppView->GetZoom(),
 			KMaxDistanceInPixels, maxDistance, unused);
 	return GetNearestLandmarkL(center, aPartial, maxDistance);
+	}
+
+CDesCArraySeg* CS60MapsAppUi::GetAllAtlasesL()
+	{
+	CDesCArraySeg* array = new (ELeave) CDesCArraySeg(10);
+	CleanupStack::PushL(array);
+	TFileName searchTemplate;
+	CS60MapsApplication* app = static_cast<CS60MapsApplication *>(Application());
+	app->AtlasesDir(searchTemplate);
+	_LIT(KZipFileMask, "*.zip");
+	searchTemplate.Append(KZipFileMask);
+	CDir* files = NULL;
+	User::LeaveIfError(iEikonEnv->FsSession().GetDir(searchTemplate, 
+			KEntryAttNormal, EAscending | ESortByName, files));
+	if (files)
+		{
+		CleanupStack::PushL(files);
+		for (TInt i = 0; i < files->Count(); i++)
+			{
+			if ((*files)[i].IsDir()) // Skip directories
+				continue;
+			
+			array->AppendL((*files)[i].iName);
+			}
+		CleanupStack::PopAndDestroy(files);
+		}
+	CleanupStack::Pop(array); // Not PopAndDestroy()!
+	return array;
 	}
 
 // End of File

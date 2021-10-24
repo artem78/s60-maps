@@ -63,6 +63,7 @@ public:
 	// Transform relative path to absolute from program root data directory
 	void RelPathToAbsFromDataDir(const TDesC &aRelPath, TFileName &anAbsPath) const;
 	void CacheDir(TFileName &aCacheDir) const;
+	void AtlasesDir(TFileName &anAtlasesDir) const;
 	};
 
 #endif // __S60MAPSAPPLICATION_H__
