@@ -107,7 +107,6 @@ public:
 // Custom properties and methods
 private:
 	CTileBitmapManager *iBitmapMgr;
-	TWebTileProviderSettings *iTileProviderSettings;
 	void VisibleTiles(RArray<TTile> &aTiles); // Return list of visible tiles
 	void DrawTile(CWindowGc &aGc, const TTile &aTile, const CFbsBitmap *aBitmap);
 	

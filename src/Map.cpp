@@ -168,7 +168,8 @@ CTiledMapLayer* CTiledMapLayer::NewLC(CMapControl* aMapView, TWebTileProviderSet
 
 void CTiledMapLayer::ConstructL(TWebTileProviderSettings* aTileProviderSettings)
 	{
-	SetTileProviderSettingsL(aTileProviderSettings);
+	RFs fs = iMapView->ControlEnv()->FsSession();
+	iBitmapMgr = CTileBitmapManager::NewL(this, fs, aTileProviderSettings);
 	}
 
 void CTiledMapLayer::Draw(CWindowGc &aGc)
@@ -255,18 +256,10 @@ void CTiledMapLayer::OnTileLoaded(const TTile &/*aTile*/, const CFbsBitmap */*aB
 
 void CTiledMapLayer::SetTileProviderSettingsL(TWebTileProviderSettings* aTileProviderSettings)
 	{
-	iTileProviderSettings = aTileProviderSettings;
-	
 	//iMapView->SetZoomBounds(iTileProviderSettings->MinZoomLevel(), iTileProviderSettings->MaxZoomLevel());
 	
-	RFs fs = iMapView->ControlEnv()->FsSession();
-	
-	if (iBitmapMgr == NULL)
-		// Create bitmap manager if not exist yet
-		iBitmapMgr = CTileBitmapManager::NewL(this, fs, iTileProviderSettings);
-	else
-		// Set new tile provider and cache dir for bitmap manager
-		iBitmapMgr->ChangeTileProviderSettings(iTileProviderSettings);
+	// Set new tile provider and cache dir for bitmap manager
+	iBitmapMgr->ChangeTileProviderSettings(aTileProviderSettings);
 	
 	//iMapView->DrawNow();
 	}
