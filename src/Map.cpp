@@ -1118,7 +1118,7 @@ void CTileBitmapManager::ConstructL(MTileBitmapManagerObserver *aObserver, RFs a
 	{
 	iItems = RPointerArray<CTileBitmapManagerItem>(iLimit);
 	
-	iWebTileProvider = CWebTileProvider::NewL(aObserver, aFs, aTileProviderSettings, this);
+	iWebTileProvider = CWebTileProvider::NewL(aObserver, aFs, aTileProviderSettings);
 	}
 
 TInt CTileBitmapManager::GetTileBitmap(const TTile &aTile, CFbsBitmap* &aBitmap)
@@ -1463,12 +1463,11 @@ TCoordinateEx::TCoordinateEx(const TCoordinate &aCoord) /*:
 // CWebTileProvider
 
 CWebTileProvider::CWebTileProvider(MTileBitmapManagerObserver *aObserver,
-		RFs &aFs, CTileBitmapManager* aBmpMgr) :
+		RFs &aFs) :
 		CActive(EPriorityStandard),
 		iObserver(aObserver),
 		iState(/*TProcessingState::*/EIdle),
-		iFs(aFs),
-		iBmpMgr(aBmpMgr)
+		iFs(aFs)
 	{
 	// No implementation required
 	}
@@ -1485,20 +1484,18 @@ CWebTileProvider::~CWebTileProvider()
 	}
 
 CWebTileProvider* CWebTileProvider::NewLC(MTileBitmapManagerObserver *aObserver,
-		RFs &aFs, TWebTileProviderSettings* aSettings,
-		CTileBitmapManager* aBmpMgr)
+		RFs &aFs, TWebTileProviderSettings* aSettings)
 	{
-	CWebTileProvider* self = new (ELeave) CWebTileProvider(aObserver, aFs, aBmpMgr);
+	CWebTileProvider* self = new (ELeave) CWebTileProvider(aObserver, aFs);
 	CleanupStack::PushL(self);
 	self->ConstructL(aSettings);
 	return self;
 	}
 
 CWebTileProvider* CWebTileProvider::NewL(MTileBitmapManagerObserver *aObserver,
-		RFs &aFs, TWebTileProviderSettings* aSettings,
-		CTileBitmapManager* aBmpMgr)
+		RFs &aFs, TWebTileProviderSettings* aSettings)
 	{
-	CWebTileProvider* self = CWebTileProvider::NewLC(aObserver, aFs, aSettings, /*aCacheDir,*/ aBmpMgr);
+	CWebTileProvider* self = CWebTileProvider::NewLC(aObserver, aFs, aSettings/*, aCacheDir*/);
 	CleanupStack::Pop(); // self;
 	return self;
 	}

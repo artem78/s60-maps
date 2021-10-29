@@ -433,15 +433,12 @@ class CWebTileProvider : public CActive, public MHTTPClientObserver
 public:
 	~CWebTileProvider();
 	static CWebTileProvider* NewL(MTileBitmapManagerObserver *aObserver,
-			RFs &aFs, TWebTileProviderSettings* aSettings,
-			CTileBitmapManager* aBmpMgr);
+			RFs &aFs, TWebTileProviderSettings* aSettings);
 	static CWebTileProvider* NewLC(MTileBitmapManagerObserver *aObserver,
-			RFs &aFs, TWebTileProviderSettings* aSettings,
-			CTileBitmapManager* aBmpMgr);
+			RFs &aFs, TWebTileProviderSettings* aSettings);
 
 private:
-	CWebTileProvider(MTileBitmapManagerObserver *aObserver, RFs &aFs,
-			CTileBitmapManager* aBmpMgr);
+	CWebTileProvider(MTileBitmapManagerObserver *aObserver, RFs &aFs);
 	void ConstructL(TWebTileProviderSettings* aSettings);
 	
 // From CActive
@@ -480,7 +477,6 @@ private:
 	TTile iLoadingTile;
 	TBool iIsOfflineMode;
 	CTileBitmapSaver* iSaver;
-	CTileBitmapManager* iBmpMgr;
 	CFileTreeMapper* iFileMapper;
 	CFbsBitmap* iBitmap;
 	
