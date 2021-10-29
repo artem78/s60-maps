@@ -322,6 +322,7 @@ public:
 	
 // Friends
 	friend class CWebTileProvider; // ToDo: delete
+	friend class CTiledMapLayer;
 	};
 
 
@@ -499,6 +500,7 @@ private:
 	
 	// Restore tile bitmap from file
 	void LoadBitmapL(const TTile &aTile, CFbsBitmap *aBitmap) /*const*/;
+	//void LoadBitmapAsync(const TTile &aTile/*, CFbsBitmap *aBitmap*/) /*const*/;
 	void TileFileName(const TTile &aTile, TFileName &aFileName) const;
 	void ResetBitmapL();
 	

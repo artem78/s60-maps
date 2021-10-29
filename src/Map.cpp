@@ -241,8 +241,14 @@ void CTiledMapLayer::DrawTile(CWindowGc &aGc, const TTile &aTile, const CFbsBitm
 	aGc.DrawBitmap(destRect, aBitmap, srcRect);
 	}
 
-void CTiledMapLayer::OnTileLoaded(const TTile &/*aTile*/, const CFbsBitmap */*aBitmap*/)
+void CTiledMapLayer::OnTileLoaded(const TTile &aTile, const CFbsBitmap *aBitmap)
 	{
+	CTileBitmapManagerItem* item = iBitmapMgr->Find(aTile);
+	__ASSERT_DEBUG(item != NULL, Panic(ES60MapsTileBitmapManagerItemNotFoundPanic));
+	__ASSERT_DEBUG(item->Bitmap() != NULL, Panic(ES60MapsTileBitmapIsNullPanic));
+	item->Bitmap()->Duplicate(aBitmap->Handle());
+	item->SetReady();
+	
 	//iMapView->DrawDeferred();
 	iMapView->DrawNow();
 	}
@@ -1154,29 +1160,10 @@ void CTileBitmapManager::AddToLoading(const TTile &aTile)
 	iItems.Append(item);
 	
 
-	// Try to find on disk first
-	if (iWebTileProvider->IsTileFileExists(aTile))
-		{
-		item->CreateBitmapIfNotExistL();
-		TRAPD(r, iWebTileProvider->LoadBitmapL(aTile, item->Bitmap()));
-		if (r == KErrNone)
-			{
-			item->SetReady();
-			}
-		else // If read error, try to download
-			{
-			ERROR(_L("Error while reading %S from file (code: %d)"),
-					&aTile.AsDes(), r);
-			
-			iWebTileProvider->RequestTileL(aTile);
-			}
-		}
-	else
-		{
-		DEBUG(_L("Tile %S not found in cache dir"), &aTile.AsDes());
-		// Start download now
-		iWebTileProvider->RequestTileL(aTile);
-		}
+	
+	item->CreateBitmapIfNotExistL();
+	
+	iWebTileProvider->RequestTileL(aTile);
 
 	DEBUG(_L("Now %d items in bitmap cache"), iItems.Count());
 	}
@@ -1592,6 +1579,40 @@ void CWebTileProvider::AddToDownloadQueue(const TTile &aTile)
 
 void CWebTileProvider::RequestTileL(const TTile &aTile)
 	{
+	// Try to find on disk first
+	if (0 /*IsTileFileExists(aTile)*/) // ToDo: Uncomment!!!
+		{
+		
+		//item->CreateBitmapIfNotExistL();
+		TRAPD(r, LoadBitmapL(aTile, iBitmap));
+		if (r == KErrNone)
+			{
+			//item->SetReady();
+			INFO(_L("Tile %S readed from file"), &aTile.AsDes());
+			iObserver->OnTileLoaded(aTile, iBitmap);
+			return;
+			}
+		else // If read error, try to download
+			{
+			ERROR(_L("Error while reading %S from file (code: %d)"),
+					&aTile.AsDes(), r);
+			
+			//iWebTileProvider->RequestTileL(aTile);
+			}
+		
+		//LoadBitmapAsync(aTile);
+		return;
+		}
+	else
+		{
+		DEBUG(_L("Tile %S not found in cache dir"), &aTile.AsDes());
+		//// Start download now
+		//iWebTileProvider->RequestTileL(aTile);
+		}
+	
+	
+	
+	
 	if (iState == EIdle)
 		{ // Start download now
 		StartDownloadTileL(aTile);
@@ -1620,16 +1641,16 @@ void CWebTileProvider::RunL()
 		__ASSERT_DEBUG(r == KErrNone, User::Leave(KErrNotFound));
 		CTileBitmapManagerItem* item = Find(iLoadingTile);
 		__ASSERT_DEBUG(item != NULL, User::Leave(KErrNotFound));*/
-		CTileBitmapManagerItem* item = iBmpMgr->Find(iLoadingTile);
+		/*CTileBitmapManagerItem* item = iBmpMgr->Find(iLoadingTile);
 		__ASSERT_DEBUG(item != NULL, Panic(ES60MapsTileBitmapManagerItemNotFoundPanic));
 		__ASSERT_DEBUG(item->Bitmap() != NULL, Panic(ES60MapsTileBitmapIsNullPanic));
 		
-		item->SetReady();
+		item->SetReady();*/
 		
 		INFO(_L("Tile %S downloaded and decoded"), &iLoadingTile.AsDes());
 		iObserver->OnTileLoaded(iLoadingTile, iBitmap);
 		
-		SaveBitmapInBackgroundL(iLoadingTile, item->Bitmap() /*iBitmap*/);
+		SaveBitmapInBackgroundL(iLoadingTile, /*item->Bitmap()*/ iBitmap);
 		}
 	else
 		{
@@ -1711,13 +1732,8 @@ void CWebTileProvider::OnHTTPResponse(const RHTTPTransaction aTransaction)
 	//CFbsBitmap* bitmap;
 //	TInt r = GetTileBitmap(iLoadingTile, bitmap);
 //	__ASSERT_DEBUG(r != KErrNotFound, User::Leave(KErrNotFound));
-	CTileBitmapManagerItem* item = iBmpMgr->Find(iLoadingTile);
-	__ASSERT_DEBUG(item != NULL, Panic(ES60MapsTileBitmapManagerItemNotFoundPanic));
-	item->CreateBitmapIfNotExistL();
-	__ASSERT_DEBUG(item->Bitmap() != NULL, Panic(ES60MapsTileBitmapIsNullPanic));
 	
 	ResetBitmapL();
-	item->Bitmap()->Duplicate(iBitmap->Handle()); // todo: проверить результат
 	
 	//iImgDecoder->ContinueOpenL();
 	DEBUG(_L("Tile %S succesfully downloaded, starting decode"), &iLoadingTile.AsDes());
@@ -1804,6 +1820,23 @@ void CWebTileProvider::LoadBitmapL(const TTile &aTile, CFbsBitmap *aBitmap)
 	CleanupStack::PopAndDestroy(&file);
 	INFO(_L("Bitmap for %S sucessfully loaded from file \"%S\""), &aTile.AsDes(), &tileFileName);
 	}
+
+//void CWebTileProvider::LoadBitmapAsync(const TTile &aTile/*, CFbsBitmap *aBitmap*/) /*const*/
+//	{
+//	TFileName tileFileName;
+//	TileFileName(aTile, tileFileName);
+//		
+//	RFile file;
+//	User::LeaveIfError(file.Open(iFs, tileFileName, EFileRead));
+//	CleanupClosePushL(file);
+//	
+//	iBitmap->
+//	
+//	
+//	//User::LeaveIfError(aBitmap->Load(file));	
+//	CleanupStack::PopAndDestroy(&file);
+//	INFO(_L("Bitmap for %S sucessfully loaded from file \"%S\""), &aTile.AsDes(), &tileFileName);
+//	}
 
 void CWebTileProvider::TileFileName(const TTile &aTile, TFileName &aFileName) const
 	{
