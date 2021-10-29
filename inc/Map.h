@@ -295,14 +295,12 @@ class CTileBitmapManager : public CBase
 // Constructors / destructors
 public:
 	~CTileBitmapManager();
-	static CTileBitmapManager* NewL(MTileBitmapManagerObserver *aObserver,
-			RFs aFs, TInt aLimit = 50);
-	static CTileBitmapManager* NewLC(MTileBitmapManagerObserver *aObserver,
-			RFs aFs, TInt aLimit = 50);
+	static CTileBitmapManager* NewL(TInt aLimit = 50);
+	static CTileBitmapManager* NewLC(TInt aLimit = 50);
 
 private:
 	CTileBitmapManager(TInt aLimit);
-	void ConstructL(MTileBitmapManagerObserver *aObserver, RFs aFs);
+	void ConstructL();
 	
 // Custom properties and methods
 private:
