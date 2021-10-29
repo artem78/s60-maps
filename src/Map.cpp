@@ -141,6 +141,7 @@ CTiledMapLayer::CTiledMapLayer(CS60MapsAppView* aMapView) :
 
 CTiledMapLayer::~CTiledMapLayer()
 	{
+	delete iTileProvider;
 	delete iBitmapMgr;
 	}
 
@@ -163,6 +164,7 @@ void CTiledMapLayer::ConstructL(TWebTileProviderSettings* aTileProviderSettings)
 	{
 	RFs fs = iMapView->ControlEnv()->FsSession();
 	iBitmapMgr = CTileBitmapManager::NewL(this, fs, aTileProviderSettings);
+	iTileProvider = CWebTileProvider::NewL(this, fs, aTileProviderSettings);
 	}
 
 void CTiledMapLayer::Draw(CWindowGc &aGc)
@@ -186,9 +188,7 @@ void CTiledMapLayer::Draw(CWindowGc &aGc)
 			case KErrNotFound:
 				{
 				iBitmapMgr->AddToLoading(tiles[idx]);
-				TInt err = iBitmapMgr->GetTileBitmap(tiles[idx], bitmap);
-				if (KErrNone == err)
-					DrawTile(aGc, tiles[idx], bitmap);
+				iTileProvider->RequestTileL(tiles[idx]);
 				break;
 				}
 				
@@ -258,9 +258,17 @@ void CTiledMapLayer::SetTileProviderSettingsL(TWebTileProviderSettings* aTilePro
 	//iMapView->SetZoomBounds(iTileProviderSettings->MinZoomLevel(), iTileProviderSettings->MaxZoomLevel());
 	
 	// Set new tile provider and cache dir for bitmap manager
-	iBitmapMgr->ChangeTileProviderSettings(aTileProviderSettings);
+	//iBitmapMgr->ChangeTileProviderSettings(aTileProviderSettings);
 	
 	//iMapView->DrawNow();
+	
+	
+	if (iTileProvider->iSettings->iId == aTileProviderSettings->iId)
+		return; // Nothing changed
+		
+	iBitmapMgr->Reset();
+		
+	iTileProvider->SetSettingsL(aTileProviderSettings);
 	}
 
 
@@ -1091,7 +1099,6 @@ CTileBitmapManager::CTileBitmapManager(TInt aLimit) :
 
 CTileBitmapManager::~CTileBitmapManager()
 	{
-	delete iWebTileProvider;
 	iItems.ResetAndDestroy();
 	iItems.Close();
 	}
@@ -1117,8 +1124,6 @@ void CTileBitmapManager::ConstructL(MTileBitmapManagerObserver *aObserver, RFs a
 		TWebTileProviderSettings* aTileProviderSettings)
 	{
 	iItems = RPointerArray<CTileBitmapManagerItem>(iLimit);
-	
-	iWebTileProvider = CWebTileProvider::NewL(aObserver, aFs, aTileProviderSettings);
 	}
 
 TInt CTileBitmapManager::GetTileBitmap(const TTile &aTile, CFbsBitmap* &aBitmap)
@@ -1163,7 +1168,7 @@ void CTileBitmapManager::AddToLoading(const TTile &aTile)
 	
 	item->CreateBitmapIfNotExistL();
 	
-	iWebTileProvider->RequestTileL(aTile);
+	//iWebTileProvider->RequestTileL(aTile);
 
 	DEBUG(_L("Now %d items in bitmap cache"), iItems.Count());
 	}
@@ -1183,18 +1188,7 @@ CTileBitmapManagerItem* CTileBitmapManager::Find(const TTile &aTile) const
 	return NULL;
 	}
 
-
-
-void CTileBitmapManager::ChangeTileProviderSettings(TWebTileProviderSettings* aTileProviderSettings)
-	{
-	// FixMe: On the program startup this method may be called twice with same tile provider 
-	if (iWebTileProvider->iSettings->iId == aTileProviderSettings->iId)
-		return; // Nothing changed
 	
-	Reset();
-	
-	iWebTileProvider->SetSettingsL(aTileProviderSettings);
-	}
 
 void CTileBitmapManager::Reset()
 	{

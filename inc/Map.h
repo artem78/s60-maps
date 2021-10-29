@@ -84,6 +84,8 @@ public:
 	virtual void OnTileLoadingFailed(const TTile &aTile, TInt aErrCode);
 	};
 
+class CWebTileProvider;
+
 // Class for drawing map tiles
 class CTiledMapLayer : public CMapLayerBase, public MTileBitmapManagerObserver
 	{
@@ -108,6 +110,7 @@ public:
 // Custom properties and methods
 private:
 	CTileBitmapManager *iBitmapMgr;
+	CWebTileProvider* iTileProvider;
 	void VisibleTiles(RArray<TTile> &aTiles); // Return list of visible tiles
 	void DrawTile(CWindowGc &aGc, const TTile &aTile, const CFbsBitmap *aBitmap);
 	
@@ -306,9 +309,7 @@ private:
 private:
 	TInt iLimit; // Max amount of stored in memory bitmaps
 	RPointerArray<CTileBitmapManagerItem> iItems;
-	/*TInt*/ void Append/*L*/(const TTile &aTile); 
-	
-	CWebTileProvider* iWebTileProvider;					// todo: move later
+	/*TInt*/ void Append/*L*/(const TTile &aTile);
 	
 	// @return Pointer to CTileBitmapManagerItem object or NULL if not found
 	CTileBitmapManagerItem* Find(const TTile &aTile) const;
@@ -317,7 +318,6 @@ public:
 	// @return Error codes: KErrNotFound, KErrNotReady or KErrNone
 	TInt GetTileBitmap(const TTile &aTile, CFbsBitmap* &aBitmap);
 	void AddToLoading(const TTile &aTile);
-	void ChangeTileProviderSettings(TWebTileProviderSettings* aTileProvider); // todo: delete later
 	void Reset();
 	
 // Friends
@@ -507,7 +507,7 @@ public:
 	
 // Friends
 	friend class CTileBitmapSaver;
-	friend class CTileBitmapManager; // ToDo: remove
+	friend class CTiledMapLayer;
 	};
 
 
