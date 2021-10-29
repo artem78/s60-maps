@@ -142,7 +142,7 @@ CTiledMapLayer::CTiledMapLayer(CS60MapsAppView* aMapView) :
 CTiledMapLayer::~CTiledMapLayer()
 	{
 	delete iTileProvider;
-	delete iBitmapMgr;
+	delete iBitmapCache;
 	}
 
 CTiledMapLayer* CTiledMapLayer::NewL(CS60MapsAppView* aMapView, TWebTileProviderSettings* aTileProviderSettings)
@@ -163,7 +163,7 @@ CTiledMapLayer* CTiledMapLayer::NewLC(CS60MapsAppView* aMapView, TWebTileProvide
 void CTiledMapLayer::ConstructL(TWebTileProviderSettings* aTileProviderSettings)
 	{
 	RFs fs = iMapView->ControlEnv()->FsSession();
-	iBitmapMgr = CTileBitmapManager::NewL();
+	iBitmapCache = CTileBitmapMemCache::NewL();
 	iTileProvider = CWebTileProvider::NewL(this, fs, aTileProviderSettings);
 	}
 
@@ -176,7 +176,7 @@ void CTiledMapLayer::Draw(CWindowGc &aGc)
 	for (TInt idx = 0; idx < tiles.Count(); idx++)
 		{
 		CFbsBitmap* bitmap;
-		TInt err = iBitmapMgr->GetTileBitmap(tiles[idx], bitmap);
+		TInt err = iBitmapCache->GetTileBitmap(tiles[idx], bitmap);
 		switch (err)
 			{
 			case KErrNone:
@@ -187,7 +187,7 @@ void CTiledMapLayer::Draw(CWindowGc &aGc)
 				
 			case KErrNotFound:
 				{
-				iBitmapMgr->AddToLoading(tiles[idx]);
+				iBitmapCache->ReserveItem(tiles[idx]);
 				iTileProvider->RequestTileL(tiles[idx]);
 				break;
 				}
@@ -243,7 +243,7 @@ void CTiledMapLayer::DrawTile(CWindowGc &aGc, const TTile &aTile, const CFbsBitm
 
 void CTiledMapLayer::OnTileLoaded(const TTile &aTile, const CFbsBitmap *aBitmap)
 	{
-	CTileBitmapManagerItem* item = iBitmapMgr->Find(aTile);
+	CTileBitmapMemCacheItem* item = iBitmapCache->Find(aTile);
 	__ASSERT_DEBUG(item != NULL, Panic(ES60MapsTileBitmapManagerItemNotFoundPanic));
 	__ASSERT_DEBUG(item->Bitmap() != NULL, Panic(ES60MapsTileBitmapIsNullPanic));
 	item->Bitmap()->Duplicate(aBitmap->Handle());
@@ -258,7 +258,7 @@ void CTiledMapLayer::SetTileProviderSettingsL(TWebTileProviderSettings* aTilePro
 	//iMapView->SetZoomBounds(iTileProviderSettings->MinZoomLevel(), iTileProviderSettings->MaxZoomLevel());
 	
 	// Set new tile provider and cache dir for bitmap manager
-	//iBitmapMgr->ChangeTileProviderSettings(aTileProviderSettings);
+	//iBitmapCache->ChangeTileProviderSettings(aTileProviderSettings);
 	
 	//iMapView->DrawNow();
 	
@@ -266,7 +266,7 @@ void CTiledMapLayer::SetTileProviderSettingsL(TWebTileProviderSettings* aTilePro
 	if (iTileProvider->iSettings->iId == aTileProviderSettings->iId)
 		return; // Nothing changed
 		
-	iBitmapMgr->Reset();
+	iBitmapCache->Reset();
 		
 	iTileProvider->SetSettingsL(aTileProviderSettings);
 	}
@@ -1089,43 +1089,43 @@ void CTileBitmapSaver::DoCancel()
 	}
 
 
-// CTileBitmapManager
+// CTileBitmapMemCache
 
-CTileBitmapManager::CTileBitmapManager(TInt aLimit) :
+CTileBitmapMemCache::CTileBitmapMemCache(TInt aLimit) :
 		iLimit(aLimit)
 	{
 	// No implementation required
 	}
 
-CTileBitmapManager::~CTileBitmapManager()
+CTileBitmapMemCache::~CTileBitmapMemCache()
 	{
 	iItems.ResetAndDestroy();
 	iItems.Close();
 	}
 
-CTileBitmapManager* CTileBitmapManager::NewLC(TInt aLimit)
+CTileBitmapMemCache* CTileBitmapMemCache::NewLC(TInt aLimit)
 	{
-	CTileBitmapManager* self = new (ELeave) CTileBitmapManager(aLimit);
+	CTileBitmapMemCache* self = new (ELeave) CTileBitmapMemCache(aLimit);
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	return self;
 	}
 
-CTileBitmapManager* CTileBitmapManager::NewL(TInt aLimit)
+CTileBitmapMemCache* CTileBitmapMemCache::NewL(TInt aLimit)
 	{
-	CTileBitmapManager* self = CTileBitmapManager::NewLC(aLimit);
+	CTileBitmapMemCache* self = CTileBitmapMemCache::NewLC(aLimit);
 	CleanupStack::Pop(); // self;
 	return self;
 	}
 
-void CTileBitmapManager::ConstructL()
+void CTileBitmapMemCache::ConstructL()
 	{
-	iItems = RPointerArray<CTileBitmapManagerItem>(iLimit);
+	iItems = RPointerArray<CTileBitmapMemCacheItem>(iLimit);
 	}
 
-TInt CTileBitmapManager::GetTileBitmap(const TTile &aTile, CFbsBitmap* &aBitmap)
+TInt CTileBitmapMemCache::GetTileBitmap(const TTile &aTile, CFbsBitmap* &aBitmap)
 	{
-	CTileBitmapManagerItem* item = Find(aTile);
+	CTileBitmapMemCacheItem* item = Find(aTile);
 	DEBUG(_L("tile=%S, item=%x"), &aTile.AsDes(), item);
 	
 	if (item == NULL)
@@ -1139,15 +1139,15 @@ TInt CTileBitmapManager::GetTileBitmap(const TTile &aTile, CFbsBitmap* &aBitmap)
 	return KErrNone;
 	}
 
-void CTileBitmapManager::AddToLoading(const TTile &aTile)
+void CTileBitmapMemCache::ReserveItem(const TTile &aTile)
 	{
-	CTileBitmapManagerItem* item = Find(aTile);
+	CTileBitmapMemCacheItem* item = Find(aTile);
 	
 	if (item == NULL)
 		Append(aTile);
 	}
 
-/*TInt*/ void CTileBitmapManager::Append/*L*/(const TTile &aTile)
+/*TInt*/ void CTileBitmapMemCache::Append/*L*/(const TTile &aTile)
 	{
 	if (iItems.Count() >= iLimit)
 		{
@@ -1158,7 +1158,7 @@ void CTileBitmapManager::AddToLoading(const TTile &aTile)
 		}
 	
 	// Add new one
-	CTileBitmapManagerItem* item = CTileBitmapManagerItem::NewL(aTile/*, iObserver*/);
+	CTileBitmapMemCacheItem* item = CTileBitmapMemCacheItem::NewL(aTile/*, iObserver*/);
 	iItems.Append(item);
 	
 
@@ -1170,7 +1170,7 @@ void CTileBitmapManager::AddToLoading(const TTile &aTile)
 	DEBUG(_L("Now %d items in bitmap cache"), iItems.Count());
 	}
 
-CTileBitmapManagerItem* CTileBitmapManager::Find(const TTile &aTile) const
+CTileBitmapMemCacheItem* CTileBitmapMemCache::Find(const TTile &aTile) const
 	{
 	if (!iItems.Count())
 		return NULL;
@@ -1187,14 +1187,14 @@ CTileBitmapManagerItem* CTileBitmapManager::Find(const TTile &aTile) const
 
 	
 
-void CTileBitmapManager::Reset()
+void CTileBitmapMemCache::Reset()
 	{
 	iItems.ResetAndDestroy();
 	}
 
-// CTileBitmapManagerItem
+// CTileBitmapMemCacheItem
 
-CTileBitmapManagerItem::~CTileBitmapManagerItem()
+CTileBitmapMemCacheItem::~CTileBitmapMemCacheItem()
 	{
 	// FixMe: Bitmap pointer maybe still used outside when deleting
 	delete iBitmap; // iBitmap already may be NULL
@@ -1205,34 +1205,34 @@ CTileBitmapManagerItem::~CTileBitmapManagerItem()
 	DEBUG(_L("Bitmap manager item of %S destroyed"), &iTile.AsDes());
 	}
 
-CTileBitmapManagerItem* CTileBitmapManagerItem::NewL(const TTile &aTile)
+CTileBitmapMemCacheItem* CTileBitmapMemCacheItem::NewL(const TTile &aTile)
 	{
-	CTileBitmapManagerItem* self = CTileBitmapManagerItem::NewLC(aTile);
+	CTileBitmapMemCacheItem* self = CTileBitmapMemCacheItem::NewLC(aTile);
 	CleanupStack::Pop(); // self;
 	return self;
 	}
 
-CTileBitmapManagerItem* CTileBitmapManagerItem::NewLC(const TTile &aTile)
+CTileBitmapMemCacheItem* CTileBitmapMemCacheItem::NewLC(const TTile &aTile)
 	{
-	CTileBitmapManagerItem* self = new (ELeave) CTileBitmapManagerItem(aTile);
+	CTileBitmapMemCacheItem* self = new (ELeave) CTileBitmapMemCacheItem(aTile);
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	DEBUG(_L("Bitmap manager item of %S created"), &self->iTile.AsDes());
 	return self;
 	}
 
-CTileBitmapManagerItem::CTileBitmapManagerItem(const TTile &aTile) :
+CTileBitmapMemCacheItem::CTileBitmapMemCacheItem(const TTile &aTile) :
 		iTile(aTile)
 	{
 	// No implementation required
 	}
 
-void CTileBitmapManagerItem::ConstructL()
+void CTileBitmapMemCacheItem::ConstructL()
 	{
 	// Second phase construction is not used at the moment
 	}
 
-void CTileBitmapManagerItem::CreateBitmapIfNotExistL()
+void CTileBitmapMemCacheItem::CreateBitmapIfNotExistL()
 	{
 	if (iBitmap == NULL)
 		iBitmap = new (ELeave) CFbsBitmap();
@@ -1627,9 +1627,9 @@ void CWebTileProvider::RunL()
 		/*CFbsBitmap* bitmap;
 		TInt r = GetTileBitmap(iLoadingTile, bitmap);
 		__ASSERT_DEBUG(r == KErrNone, User::Leave(KErrNotFound));
-		CTileBitmapManagerItem* item = Find(iLoadingTile);
+		CTileBitmapMemCacheItem* item = Find(iLoadingTile);
 		__ASSERT_DEBUG(item != NULL, User::Leave(KErrNotFound));*/
-		/*CTileBitmapManagerItem* item = iBmpMgr->Find(iLoadingTile);
+		/*CTileBitmapMemCacheItem* item = iBmpMgr->Find(iLoadingTile);
 		__ASSERT_DEBUG(item != NULL, Panic(ES60MapsTileBitmapManagerItemNotFoundPanic));
 		__ASSERT_DEBUG(item->Bitmap() != NULL, Panic(ES60MapsTileBitmapIsNullPanic));
 		
