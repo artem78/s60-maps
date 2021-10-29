@@ -163,7 +163,7 @@ CTiledMapLayer* CTiledMapLayer::NewLC(CS60MapsAppView* aMapView, TWebTileProvide
 void CTiledMapLayer::ConstructL(TWebTileProviderSettings* aTileProviderSettings)
 	{
 	RFs fs = iMapView->ControlEnv()->FsSession();
-	iBitmapMgr = CTileBitmapManager::NewL(this, fs, aTileProviderSettings);
+	iBitmapMgr = CTileBitmapManager::NewL(this, fs);
 	iTileProvider = CWebTileProvider::NewL(this, fs, aTileProviderSettings);
 	}
 
@@ -1104,24 +1104,23 @@ CTileBitmapManager::~CTileBitmapManager()
 	}
 
 CTileBitmapManager* CTileBitmapManager::NewLC(MTileBitmapManagerObserver *aObserver,
-		RFs aFs, TWebTileProviderSettings* aTileProviderSettings, TInt aLimit)
+		RFs aFs, TInt aLimit)
 	{
 	CTileBitmapManager* self = new (ELeave) CTileBitmapManager(aLimit);
 	CleanupStack::PushL(self);
-	self->ConstructL(aObserver, aFs, aTileProviderSettings);
+	self->ConstructL(aObserver, aFs);
 	return self;
 	}
 
 CTileBitmapManager* CTileBitmapManager::NewL(MTileBitmapManagerObserver *aObserver,
-		RFs aFs, TWebTileProviderSettings* aTileProviderSettings, TInt aLimit)
+		RFs aFs, TInt aLimit)
 	{
-	CTileBitmapManager* self = CTileBitmapManager::NewLC(aObserver, aFs, aTileProviderSettings, aLimit);
+	CTileBitmapManager* self = CTileBitmapManager::NewLC(aObserver, aFs, aLimit);
 	CleanupStack::Pop(); // self;
 	return self;
 	}
 
-void CTileBitmapManager::ConstructL(MTileBitmapManagerObserver *aObserver, RFs aFs,
-		TWebTileProviderSettings* aTileProviderSettings)
+void CTileBitmapManager::ConstructL(MTileBitmapManagerObserver *aObserver, RFs aFs)
 	{
 	iItems = RPointerArray<CTileBitmapManagerItem>(iLimit);
 	}

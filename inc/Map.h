@@ -296,14 +296,13 @@ class CTileBitmapManager : public CBase
 public:
 	~CTileBitmapManager();
 	static CTileBitmapManager* NewL(MTileBitmapManagerObserver *aObserver,
-			RFs aFs, TWebTileProviderSettings* aTileProviderSettings, TInt aLimit = 50);
+			RFs aFs, TInt aLimit = 50);
 	static CTileBitmapManager* NewLC(MTileBitmapManagerObserver *aObserver,
-			RFs aFs, TWebTileProviderSettings* aTileProviderSettings, TInt aLimit = 50);
+			RFs aFs, TInt aLimit = 50);
 
 private:
 	CTileBitmapManager(TInt aLimit);
-	void ConstructL(MTileBitmapManagerObserver *aObserver, RFs aFs,
-			TWebTileProviderSettings* aTileProviderSettings);
+	void ConstructL(MTileBitmapManagerObserver *aObserver, RFs aFs);
 	
 // Custom properties and methods
 private:
