@@ -72,7 +72,7 @@ private:
 	};
 #endif
 
-class CTileBitmapManager;
+class CTileBitmapMemCache;
 //class MTileBitmapManagerObserver;
 class TWebTileProviderSettings;
 
@@ -82,6 +82,8 @@ public:
 	virtual void OnTileLoaded(const TTile &aTile, const CFbsBitmap *aBitmap) = 0;
 	virtual void OnTileLoadingFailed(const TTile &aTile, TInt aErrCode);
 	};
+
+class CWebTileProvider;
 
 // Class for drawing map tiles
 class CTiledMapLayer : public CMapLayerBase, public MTileBitmapManagerObserver
@@ -106,7 +108,8 @@ public:
 	
 // Custom properties and methods
 private:
-	CTileBitmapManager *iBitmapMgr;
+	CTileBitmapMemCache* iBitmapCache;
+	CWebTileProvider* iTileProvider;
 	void VisibleTiles(RArray<TTile> &aTiles); // Return list of visible tiles
 	void DrawTile(CWindowGc &aGc, const TTile &aTile, const CFbsBitmap *aBitmap);
 	
@@ -334,68 +337,62 @@ private:
 
 class TWebTileProviderSettings;
 
-class CTileBitmapManagerItem;
+class CTileBitmapMemCacheItem;
 
 /* 
- * In-memory cache for storing tile bitmaps. Prevents to read data from file
+ * In-memory cache for storing tile bitmaps. Used to prevent read data from file
  * system or network twice. It has limited capacity - when amount of stored
  * bitmaps reachs maximum, oldest items will be deleted before adding new ones.
  */
-class CTileBitmapManager : public CBase
+class CTileBitmapMemCache : public CBase
 	{
 // Constructors / destructors
 public:
-	~CTileBitmapManager();
-	static CTileBitmapManager* NewL(MTileBitmapManagerObserver *aObserver,
-			RFs aFs, TWebTileProviderSettings* aTileProviderSettings, TInt aLimit = 50);
-	static CTileBitmapManager* NewLC(MTileBitmapManagerObserver *aObserver,
-			RFs aFs, TWebTileProviderSettings* aTileProviderSettings, TInt aLimit = 50);
+	~CTileBitmapMemCache();
+	static CTileBitmapMemCache* NewL(TInt aLimit = 50);
+	static CTileBitmapMemCache* NewLC(TInt aLimit = 50);
 
 private:
-	CTileBitmapManager(TInt aLimit);
-	void ConstructL(MTileBitmapManagerObserver *aObserver, RFs aFs,
-			TWebTileProviderSettings* aTileProviderSettings);
+	CTileBitmapMemCache(TInt aLimit);
+	void ConstructL();
 	
 // Custom properties and methods
 private:
 	TInt iLimit; // Max amount of stored in memory bitmaps
-	RPointerArray<CTileBitmapManagerItem> iItems;
-	/*TInt*/ void Append/*L*/(const TTile &aTile); 
+	RPointerArray<CTileBitmapMemCacheItem> iItems;
+	/*TInt*/ void Append/*L*/(const TTile &aTile);
 	
-	CWebTileProvider* iWebTileProvider;					// todo: move later
-	
-	// @return Pointer to CTileBitmapManagerItem object or NULL if not found
-	CTileBitmapManagerItem* Find(const TTile &aTile) const;
+	// @return Pointer to CTileBitmapMemCacheItem object or NULL if not found
+	CTileBitmapMemCacheItem* Find(const TTile &aTile) const;
 	void Delete(const TTile &aTile);
 	
 public:
 	// @return Error codes: KErrNotFound, KErrNotReady or KErrNone
 	TInt GetTileBitmap(const TTile &aTile, CFbsBitmap* &aBitmap);
-	void AddToLoading(const TTile &aTile, TBool aForce = EFalse);
-	void ChangeTileProviderSettings(TWebTileProviderSettings* aTileProvider); // todo: delete later
+	void ReserveItem(const TTile &aTile, TBool aForce = EFalse);
 	void Reset();
 	
 // Friends
-	friend class CWebTileProvider; // ToDo: delete
+	friend class CTiledMapLayer; // ToDo: delete
 	};
 
 
 /* Links Tile`s x,y,z with CFbsBitmap loaded to image server.
- * Used in CTileBitmapManager class.
+ * Used in CTileBitmapMemCache class.
  * 
  * Initially bitmap pointer is NULL. You need to call CreateBitmapIfNotExistL()
  * before start drawing bitmap. After drawing complete, you need to call SetReady().
  */
-class CTileBitmapManagerItem : public CBase
+class CTileBitmapMemCacheItem : public CBase
 	{
 // Base methods
 public:
-	~CTileBitmapManagerItem();
-	static CTileBitmapManagerItem* NewL(const TTile &aTile);
-	static CTileBitmapManagerItem* NewLC(const TTile &aTile);
+	~CTileBitmapMemCacheItem();
+	static CTileBitmapMemCacheItem* NewL(const TTile &aTile);
+	static CTileBitmapMemCacheItem* NewLC(const TTile &aTile);
 
 private:
-	CTileBitmapManagerItem(const TTile &aTile);
+	CTileBitmapMemCacheItem(const TTile &aTile);
 	void ConstructL();
 
 // Custom properties and methods
@@ -487,15 +484,12 @@ class CWebTileProvider : public CActive, public MHTTPClientObserver
 public:
 	~CWebTileProvider();
 	static CWebTileProvider* NewL(MTileBitmapManagerObserver *aObserver,
-			RFs &aFs, TWebTileProviderSettings* aSettings,
-			CTileBitmapManager* aBmpMgr);
+			RFs &aFs, TWebTileProviderSettings* aSettings);
 	static CWebTileProvider* NewLC(MTileBitmapManagerObserver *aObserver,
-			RFs &aFs, TWebTileProviderSettings* aSettings,
-			CTileBitmapManager* aBmpMgr);
+			RFs &aFs, TWebTileProviderSettings* aSettings);
 
 private:
-	CWebTileProvider(MTileBitmapManagerObserver *aObserver, RFs &aFs,
-			CTileBitmapManager* aBmpMgr);
+	CWebTileProvider(MTileBitmapManagerObserver *aObserver, RFs &aFs);
 	void ConstructL(TWebTileProviderSettings* aSettings);
 	
 // From CActive
@@ -534,7 +528,6 @@ private:
 	TTile iLoadingTile;
 	TBool iIsOfflineMode;
 	CTileBitmapSaver* iSaver;
-	CTileBitmapManager* iBmpMgr;
 	CFileTreeMapper* iFileMapper;
 	CFbsBitmap* iBitmap;
 	
@@ -554,6 +547,7 @@ private:
 	
 	// Restore tile bitmap from file
 	void LoadBitmapL(const TTile &aTile, CFbsBitmap *aBitmap) /*const*/;
+	//void LoadBitmapAsync(const TTile &aTile/*, CFbsBitmap *aBitmap*/) /*const*/;
 	void TileFileName(const TTile &aTile, TFileName &aFileName) const;
 	void DeleteTileFile(const TTile &aTile);
 	void ResetBitmapL();
@@ -565,7 +559,7 @@ public:
 	
 // Friends
 	friend class CTileBitmapSaver;
-	friend class CTileBitmapManager; // ToDo: remove
+	friend class CTiledMapLayer;
 	};
 
 
