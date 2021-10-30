@@ -318,8 +318,7 @@ public:
 	void Reset();
 	
 // Friends
-	friend class CWebTileProvider; // ToDo: delete
-	friend class CTiledMapLayer;
+	friend class CTiledMapLayer; // ToDo: delete
 	};
 
 
