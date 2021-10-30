@@ -84,7 +84,7 @@ public:
 	virtual void OnTileLoadingFailed(const TTile &aTile, TInt aErrCode);
 	};
 
-class CWebTileProvider;
+class CTileProviderBase;
 
 // Class for drawing map tiles
 class CTiledMapLayer : public CMapLayerBase, public MTileBitmapManagerObserver
@@ -110,7 +110,7 @@ public:
 // Custom properties and methods
 private:
 	CTileBitmapMemCache* iBitmapCache;
-	CWebTileProvider* iTileProvider;
+	CTileProviderBase* iTileProvider;
 	void VisibleTiles(RArray<TTile> &aTiles); // Return list of visible tiles
 	void DrawTile(CWindowGc &aGc, const TTile &aTile, const CFbsBitmap *aBitmap);
 	
@@ -419,11 +419,29 @@ public:
 	//operator TCoordinate() const;
 	};
 
+/*
+ * Base class for any tiles source
+ */
+class CTileProviderBase : public CActive
+	{
+// Constructors / destructors
+protected:
+	CTileProviderBase(MTileBitmapManagerObserver *aObserver);
+	
+// Custom properties and methods
+protected:
+	MTileBitmapManagerObserver *iObserver;
+	
+public:
+	// Asynchronous method to request tile image
+	virtual void RequestTileL(const TTile &aTile) = 0;
+	};
+
 
 /*
  * Loads tile from specified web-service (like openstreetmap, google maps, etc...).
  */
-class CWebTileProvider : public CActive, public MHTTPClientObserver
+class CWebTileProvider : public CTileProviderBase, /*public CActive,*/ public MHTTPClientObserver
 	{
 // Constructors / destructors
 public:
@@ -453,7 +471,6 @@ public:
 	
 // Custom properties and methods
 private:
-	MTileBitmapManagerObserver *iObserver;
 	RArray<TTile> iItemsLoadingQueue;
 	CHTTPClient* iHTTPClient;
 	TWebTileProviderSettings* iSettings;

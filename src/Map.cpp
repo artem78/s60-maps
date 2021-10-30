@@ -262,13 +262,13 @@ void CTiledMapLayer::SetTileProviderSettingsL(TWebTileProviderSettings* aTilePro
 	
 	//iMapView->DrawNow();
 	
-	
-	if (iTileProvider->iSettings->iId == aTileProviderSettings->iId)
+	CWebTileProvider* webTileProvider = static_cast<CWebTileProvider*>(iTileProvider);
+	if (/*iTileProvider*/webTileProvider->iSettings->iId == aTileProviderSettings->iId)
 		return; // Nothing changed
 		
 	iBitmapCache->Reset();
 		
-	iTileProvider->SetSettingsL(aTileProviderSettings);
+	/*iTileProvider*/webTileProvider->SetSettingsL(aTileProviderSettings);
 	}
 
 
@@ -1451,12 +1451,20 @@ TCoordinateEx::TCoordinateEx(const TCoordinate &aCoord) /*:
 	}
 
 
+// CTileProviderBase
+
+CTileProviderBase::CTileProviderBase(MTileBitmapManagerObserver *aObserver) :
+		CActive(EPriorityStandard),
+		iObserver(aObserver)
+	{
+	}
+
+
 // CWebTileProvider
 
 CWebTileProvider::CWebTileProvider(MTileBitmapManagerObserver *aObserver,
 		RFs &aFs) :
-		CActive(EPriorityStandard),
-		iObserver(aObserver),
+		CTileProviderBase(aObserver),
 		iState(/*TProcessingState::*/EIdle),
 		iFs(aFs)
 	{
