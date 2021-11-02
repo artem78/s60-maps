@@ -1576,7 +1576,7 @@ void CWebTileProvider::AddToDownloadQueue(const TTile &aTile)
 void CWebTileProvider::RequestTileL(const TTile &aTile)
 	{
 	// Try to find on disk first
-	if (0 /*IsTileFileExists(aTile)*/) // ToDo: Uncomment!!!
+	if (IsTileFileExists(aTile))
 		{
 		
 		//item->CreateBitmapIfNotExistL();
