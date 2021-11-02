@@ -64,7 +64,7 @@ private:
 	TReal64 iLat;
 	TReal64 iLon;
 	TZoom iZoom;
-	TTileProviderId iTileProviderId;
+	TWebTileProviderId iTileProviderId;
 	TBool iIsLandmarksVisible;
 	
 public:

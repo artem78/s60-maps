@@ -77,10 +77,10 @@ CCoeControlWithDelayedDraw::~CCoeControlWithDelayedDraw()
 CS60MapsAppView* CS60MapsAppView::NewL(const TRect& aRect,
 		const TCoordinate &aInitialPosition, TZoom aInitialZoom,
 		//TZoom aMinZoom, TZoom aMaxZoom,
-		TTileProvider* aTileProvider)
+		TWebTileProviderSettings* aTileProviderSettings)
 	{
 	CS60MapsAppView* self = CS60MapsAppView::NewLC(aRect, aInitialPosition, aInitialZoom,
-			/*aMinZoom, aMaxZoom,*/ aTileProvider);
+			/*aMinZoom, aMaxZoom,*/ aTileProviderSettings);
 	CleanupStack::Pop(self);
 	return self;
 	}
@@ -93,11 +93,11 @@ CS60MapsAppView* CS60MapsAppView::NewL(const TRect& aRect,
 CS60MapsAppView* CS60MapsAppView::NewLC(const TRect& aRect,
 		const TCoordinate &aInitialPosition, TZoom aInitialZoom,
 		//TZoom aMinZoom, TZoom aMaxZoom,
-		TTileProvider* aTileProvider)
+		TWebTileProviderSettings* aTileProviderSettings)
 	{
 	CS60MapsAppView* self = new (ELeave) CS60MapsAppView(aInitialZoom);
 	CleanupStack::PushL(self);
-	self->ConstructL(aRect, aInitialPosition, /*aMinZoom, aMaxZoom,*/ aTileProvider);
+	self->ConstructL(aRect, aInitialPosition, /*aMinZoom, aMaxZoom,*/ aTileProviderSettings);
 	return self;
 	}
 
@@ -108,17 +108,17 @@ CS60MapsAppView* CS60MapsAppView::NewLC(const TRect& aRect,
 //
 void CS60MapsAppView::ConstructL(const TRect& aRect, const TCoordinate &aInitialPosition,
 		//TZoom aMinZoom, TZoom aMaxZoom,
-		TTileProvider* aTileProvider)
+		TWebTileProviderSettings* aTileProviderSettings)
 	{
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CEikonEnv::Static()->AppUi());
 	
 	//SetZoomBounds(aMinZoom, aMaxZoom);
 	//SetZoomBounds(aTileProvider->MinZoomLevel(), aTileProvider->MaxZoomLevel());
-//	SetTileProviderL(aTileProvider);
+//	SetTileProviderSettingsL(aTileProviderSettings);
 	
 	// Create layers
 	iLayers = RPointerArray<CMapLayerBase>(10);
-	iLayers.Append(CTiledMapLayer::NewL(this, aTileProvider));
+	iLayers.Append(CTiledMapLayer::NewL(this, aTileProviderSettings));
 #ifdef DEBUG_SHOW_TILE_BORDER_AND_XYZ
 	iLayers.Append(new (ELeave) CTileBorderAndXYZLayer(this));
 #endif
@@ -130,7 +130,7 @@ void CS60MapsAppView::ConstructL(const TRect& aRect, const TCoordinate &aInitial
 #endif
 	iLayers.Append(new (ELeave) CCrosshairLayer(this));
 	
-	SetTileProviderL(aTileProvider);
+	SetTileProviderSettingsL(aTileProviderSettings);
 
 	// Periodic timer for repeating the movement at holding (touch interface)
 	iMovementRepeater = CPeriodic::NewL(0); // neutral priority
@@ -765,10 +765,10 @@ void CS60MapsAppView::ExecuteMovement()
 		}
 	}
 
-void CS60MapsAppView::SetTileProviderL(TTileProvider* aTileProvider)
+void CS60MapsAppView::SetTileProviderSettingsL(TWebTileProviderSettings* aTileProviderSettings)
 	{
-	static_cast<CTiledMapLayer*>(iLayers[0 /*tiled map*/])->SetTileProviderL(aTileProvider);
-	SetZoomBounds(aTileProvider->iMinZoomLevel, aTileProvider->iMaxZoomLevel);
+	static_cast<CTiledMapLayer*>(iLayers[0 /*tiled map*/])->SetTileProviderSettingsL(aTileProviderSettings);
+	SetZoomBounds(aTileProviderSettings->iMinZoomLevel, aTileProviderSettings->iMaxZoomLevel);
 	}
 
 // End of File

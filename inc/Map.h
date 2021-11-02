@@ -73,9 +73,9 @@ private:
 	};
 #endif
 
-class CTileBitmapManager;
+class CTileBitmapMemCache;
 //class MTileBitmapManagerObserver;
-class TTileProvider;
+class TWebTileProviderSettings;
 
 class MTileBitmapManagerObserver
 	{
@@ -84,18 +84,20 @@ public:
 	virtual void OnTileLoadingFailed(const TTile &aTile, TInt aErrCode);
 	};
 
+class CTileProviderBase;
+
 // Class for drawing map tiles
 class CTiledMapLayer : public CMapLayerBase, public MTileBitmapManagerObserver
 	{
 // Base methods
 public:
 	~CTiledMapLayer();
-	static CTiledMapLayer* NewL(CS60MapsAppView* aMapView, TTileProvider* aTileProvider);
-	static CTiledMapLayer* NewLC(CS60MapsAppView* aMapView, TTileProvider* aTileProvider);
+	static CTiledMapLayer* NewL(CS60MapsAppView* aMapView, TWebTileProviderSettings* aTileProviderSettings);
+	static CTiledMapLayer* NewLC(CS60MapsAppView* aMapView, TWebTileProviderSettings* aTileProviderSettings);
 
 private:
 	CTiledMapLayer(CS60MapsAppView* aMapView);
-	void ConstructL(TTileProvider* aTileProvider);
+	void ConstructL(TWebTileProviderSettings* aTileProviderSettings);
 	
 // From CMapLayerBase
 public:
@@ -107,13 +109,13 @@ public:
 	
 // Custom properties and methods
 private:
-	CTileBitmapManager *iBitmapMgr;
-	TTileProvider *iTileProvider;
+	CTileBitmapMemCache* iBitmapCache;
+	CTileProviderBase* iTileProvider;
 	void VisibleTiles(RArray<TTile> &aTiles); // Return list of visible tiles
 	void DrawTile(CWindowGc &aGc, const TTile &aTile, const CFbsBitmap *aBitmap);
 	
 public:
-	void SetTileProviderL(TTileProvider* aTileProvider);
+	void SetTileProviderSettingsL(TWebTileProviderSettings* aTileProviderSettings);
 	};
 
 
@@ -218,147 +220,124 @@ public:
 	};
 
 
-class TSaverQueryItem
+class CSaverQueryItem : public CBase
 	{
+	// Constructor / Destructor
+public:
+	static CSaverQueryItem* NewL();
+	static CSaverQueryItem* NewLC();
+	~CSaverQueryItem();
+
+private:
+	CSaverQueryItem();
+	void ConstructL();
+	
+	// New
 public:
 	TTile iTile;
-	CFbsBitmap *iBitmap;
-	
-	TBool iShouldStop; // If true, thread processing will be stopped on this item
+	CFbsBitmap *iBitmap; // Owned
 	};
 
+
+class CWebTileProvider;
 
 // Class for save tile bitmaps in separate thread
 // for improve bad performance on some phones
 
-class CTileBitmapSaver: public CBase
+class CTileBitmapSaver: public CActive
 	{
 	// Constructors/destructors
 public:
 	~CTileBitmapSaver();
-	static CTileBitmapSaver* NewL(CTileBitmapManager* aMgr);
-	static CTileBitmapSaver* NewLC(CTileBitmapManager* aMgr);
+	static CTileBitmapSaver* NewL(CWebTileProvider* aTileProvider);
+	static CTileBitmapSaver* NewLC(CWebTileProvider* aTileProvider);
 
 private:
-	CTileBitmapSaver(CTileBitmapManager* aMgr);
+	CTileBitmapSaver(CWebTileProvider* aTileProvider);
 	void ConstructL();
+	
+	// From CActive
+private:
+	void RunL();
+	void DoCancel();
 	
 	// Custom
 public:
 	void AppendL(const TTile &aTile, CFbsBitmap *aBitmap);
 	
 private:
-	CTileBitmapManager* iMgr;
-	RMsgQueue<TSaverQueryItem> iQueue;
+	CWebTileProvider* iTileProvider;
+	RMsgQueue<CSaverQueryItem*> iQueue;
+	RMsgQueue<CSaverQueryItem*> iRemovingQueue;
 	TInt iItemsInQueue;
 	TThreadId iThreadId;
 	
 	static TInt ThreadFunction(TAny* anArg);
-	void SaveL(const TSaverQueryItem &anItem, RFs &aFs);
+	void SaveL(const CSaverQueryItem &anItem, RFs &aFs);
+	
+	/* Used from saver thread to delete processed items */
+	void RemoveItemInThreadL(CSaverQueryItem* anItem);
 	};
 
 
 
-class TTileProvider;
+class TWebTileProviderSettings;
 
-class CTileBitmapManagerItem;
+class CTileBitmapMemCacheItem;
 
-// Stores and loads bitmaps for tiles. When count of stored bitmaps
-// reach maximum limit, oldest one will be deleted before insert new.
-class CTileBitmapManager : public CActive, public MHTTPClientObserver
+/* 
+ * In-memory cache for storing tile bitmaps. Used to prevent read data from file
+ * system or network twice. It has limited capacity - when amount of stored
+ * bitmaps reachs maximum, oldest items will be deleted before adding new ones.
+ */
+class CTileBitmapMemCache : public CBase
 	{
-// Base methods
+// Constructors / destructors
 public:
-	~CTileBitmapManager();
-	static CTileBitmapManager* NewL(MTileBitmapManagerObserver *aObserver,
-			RFs aFs, TTileProvider* aTileProvider, const TDesC &aCacheDir, TInt aLimit = 50);
-	static CTileBitmapManager* NewLC(MTileBitmapManagerObserver *aObserver,
-			RFs aFs, TTileProvider* aTileProvider, const TDesC &aCacheDir, TInt aLimit = 50);
+	~CTileBitmapMemCache();
+	static CTileBitmapMemCache* NewL(TInt aLimit = 50);
+	static CTileBitmapMemCache* NewLC(TInt aLimit = 50);
 
 private:
-	CTileBitmapManager(MTileBitmapManagerObserver *aObserver, RFs aFs,
-			TTileProvider* aTileProvider, TInt aLimit);
-	void ConstructL(const TDesC &aCacheDir);
-	
-// From CActive
-	void RunL();
-	void DoCancel();
-	//TInt RunError(TInt aError);
-
-// From MHTTPClientObserver
-public:
-	virtual void OnHTTPResponseDataChunkRecieved(const RHTTPTransaction aTransaction,
-			const TDesC8 &aDataChunk, TInt anOverallDataSize, TBool anIsLastChunk);
-	virtual void OnHTTPResponse(const RHTTPTransaction aTransaction);
-	virtual void OnHTTPError(TInt aError, const RHTTPTransaction aTransaction);
-	virtual void OnHTTPHeadersRecieved(const RHTTPTransaction aTransaction);
+	CTileBitmapMemCache(TInt aLimit);
+	void ConstructL();
 	
 // Custom properties and methods
 private:
-	MTileBitmapManagerObserver *iObserver;
-	TInt iLimit;
-	RPointerArray<CTileBitmapManagerItem> iItems;
-	/*TInt*/ void Append/*L*/(const TTile &aTile); 
+	TInt iLimit; // Max amount of stored in memory bitmaps
+	RPointerArray<CTileBitmapMemCacheItem> iItems;
+	/*TInt*/ void Append/*L*/(const TTile &aTile);
 	
-	RArray<TTile> /*iItemsForLoading*/ iItemsLoadingQueue;
-	CHTTPClient* iHTTPClient;
-	TTileProvider* iTileProvider;
-	//TFileName iCacheDir;
-	//TBool iIsLoading;
-	enum TProcessingState
-		{
-		EIdle,
-		EDownloading,
-		EDecoding
-		};
-	TProcessingState iState;
-	CBufferedImageDecoder* iImgDecoder;
-	RFs iFs;
-	TTile iLoadingTile;
-	TBool iIsOfflineMode;
-	CFileTreeMapper* iFileMapper;
-	CTileBitmapSaver* iSaver;
-	
-	// @return Pointer to CTileBitmapManagerItem object or NULL if not found
-	CTileBitmapManagerItem* Find(const TTile &aTile) const;
-	void StartDownloadTileL(const TTile &aTile);
-	
-	// Save tile bitmap to file
-	void SaveBitmapInBackgroundL(const TTile &aTile, /*const*/ CFbsBitmap *aBitmap);
-	
-	// Restore tile bitmap from file
-	void LoadBitmapL(const TTile &aTile, CFbsBitmap *aBitmap) /*const*/;
-	
-	void TileFileName(const TTile &aTile, TFileName &aFileName) const;
-	TBool IsTileFileExists(const TTile &aTile) /*const*/;
-	
+	// @return Pointer to CTileBitmapMemCacheItem object or NULL if not found
+	CTileBitmapMemCacheItem* Find(const TTile &aTile) const;
+
 public:
 	// @return Error codes: KErrNotFound, KErrNotReady or KErrNone
 	TInt GetTileBitmap(const TTile &aTile, CFbsBitmap* &aBitmap);
-	void AddToLoading(const TTile &aTile);
-	void ChangeTileProvider(TTileProvider* aTileProvider, const TDesC &aCacheDir);
+	void ReserveItem(const TTile &aTile);
+	void Reset();
 	
 // Friends
-	friend class CTileBitmapSaver;
+	friend class CTiledMapLayer; // ToDo: delete
 	};
 
 
 /* Links Tile`s x,y,z with CFbsBitmap loaded to image server.
- * Used in CTileBitmapManager class.
+ * Used in CTileBitmapMemCache class.
  * 
  * Initially bitmap pointer is NULL. You need to call CreateBitmapIfNotExistL()
  * before start drawing bitmap. After drawing complete, you need to call SetReady().
  */
-class CTileBitmapManagerItem : public CBase
+class CTileBitmapMemCacheItem : public CBase
 	{
 // Base methods
 public:
-	~CTileBitmapManagerItem();
-	static CTileBitmapManagerItem* NewL(const TTile &aTile);
-	static CTileBitmapManagerItem* NewLC(const TTile &aTile);
+	~CTileBitmapMemCacheItem();
+	static CTileBitmapMemCacheItem* NewL(const TTile &aTile);
+	static CTileBitmapMemCacheItem* NewLC(const TTile &aTile);
 
 private:
-	CTileBitmapManagerItem(const TTile &aTile);
+	CTileBitmapMemCacheItem(const TTile &aTile);
 	void ConstructL();
 
 // Custom properties and methods
@@ -380,27 +359,27 @@ public:
 	};
 
 
-typedef TBuf<32> TTileProviderId;
-typedef TBuf<32> TTileProviderTitle;
-typedef TBuf8<512> TTileProviderUrl;
+typedef TBuf<32> TWebTileProviderId;
+typedef TBuf<32> TWebTileProviderTitle;
+typedef TBuf8<512> TWebTileProviderUrl;
 
-class TTileProvider
+class TWebTileProviderSettings
 	{
 public:
-	TTileProvider(const TDesC& anId, const TDesC& aTitle, const TDesC8& anUrlTemplate,
+	TWebTileProviderSettings(const TDesC& anId, const TDesC& aTitle, const TDesC8& anUrlTemplate,
 			TZoom aMinZoom, TZoom aMaxZoom);
 
 	// Short string identifier of tile provider. Used in cache subdir name.
 	// Must be unique and do not contains any special symbols (allowed: a-Z, 0-9, - and _). 
-	TTileProviderId iId;
+	TWebTileProviderId iId;
 	
 	// Readable name of tile provider. Will be display in settings.
-	TTileProviderTitle iTitle;
+	TWebTileProviderTitle iTitle;
 	
 	// Tile URL template with placeholders
 	// Note: prefer not to use HTTPS protocol because unfortunately 
 	// at the present time SSL works not on all Symbian based phones
-	TTileProviderUrl iTileUrlTemplate;
+	TWebTileProviderUrl iTileUrlTemplate;
 	
 	// Minimum and maximum zoom level
 	TZoom iMinZoomLevel; // /*Default is 0*/
@@ -438,6 +417,110 @@ public:
 		{ iHorAccuracy = aHorAccuracy; }
 	
 	//operator TCoordinate() const;
+	};
+
+/*
+ * Base class for any tiles source
+ */
+class CTileProviderBase : public CActive
+	{
+// Constructors / destructors
+protected:
+	CTileProviderBase(MTileBitmapManagerObserver *aObserver);
+	
+// Custom properties and methods
+protected:
+	MTileBitmapManagerObserver *iObserver;
+	
+public:
+	// Asynchronous method to request tile image
+	virtual void RequestTileL(const TTile &aTile) = 0;
+	};
+
+
+/*
+ * Loads tile from specified web-service (like openstreetmap, google maps, etc...).
+ */
+class CWebTileProvider : public CTileProviderBase, /*public CActive,*/ public MHTTPClientObserver
+	{
+// Constructors / destructors
+public:
+	~CWebTileProvider();
+	static CWebTileProvider* NewL(MTileBitmapManagerObserver *aObserver,
+			RFs &aFs, TWebTileProviderSettings* aSettings);
+	static CWebTileProvider* NewLC(MTileBitmapManagerObserver *aObserver,
+			RFs &aFs, TWebTileProviderSettings* aSettings);
+
+private:
+	CWebTileProvider(MTileBitmapManagerObserver *aObserver, RFs &aFs);
+	void ConstructL(TWebTileProviderSettings* aSettings);
+	
+// From CActive
+private:
+	void RunL();
+	void DoCancel();
+	//TInt RunError(TInt aError);
+
+// From MHTTPClientObserver
+public:
+	virtual void OnHTTPResponseDataChunkRecieved(const RHTTPTransaction aTransaction,
+			const TDesC8 &aDataChunk, TInt anOverallDataSize, TBool anIsLastChunk);
+	virtual void OnHTTPResponse(const RHTTPTransaction aTransaction);
+	virtual void OnHTTPError(TInt aError, const RHTTPTransaction aTransaction);
+	virtual void OnHTTPHeadersRecieved(const RHTTPTransaction aTransaction);
+	
+// Custom properties and methods
+private:
+	RArray<TTile> iItemsLoadingQueue;
+	CHTTPClient* iHTTPClient;
+	TWebTileProviderSettings* iSettings;
+	
+public:
+	enum TProcessingState
+		{
+		EIdle,
+		EDownloading,
+		EDecoding
+		};
+	
+private:
+	TProcessingState iState;
+	CBufferedImageDecoder* iImgDecoder;
+	RFs iFs;
+	TTile iLoadingTile;
+	TBool iIsOfflineMode;
+	CTileBitmapSaver* iSaver;
+	CFileTreeMapper* iFileMapper;
+	CFbsBitmap* iBitmap;
+	
+	void StartDownloadTileL(const TTile &aTile);
+	void AddToDownloadQueue(const TTile &aTile);
+
+public:
+	void /*StartLoadTileL*/ RequestTileL(const TTile &aTile);
+	
+private:
+	// Save tile bitmap to file
+	void SaveBitmapInBackgroundL(const TTile &aTile, /*const*/ CFbsBitmap *aBitmap);
+	void /*Reset*/ StopAndReset();
+	void InitializeCacheDirL();
+
+	TBool IsTileFileExists(const TTile &aTile) /*const*/;
+	
+	// Restore tile bitmap from file
+	void LoadBitmapL(const TTile &aTile, CFbsBitmap *aBitmap) /*const*/;
+	//void LoadBitmapAsync(const TTile &aTile/*, CFbsBitmap *aBitmap*/) /*const*/;
+	void TileFileName(const TTile &aTile, TFileName &aFileName) const;
+	void ResetBitmapL();
+	
+public:
+	void SetSettingsL(TWebTileProviderSettings* aSettings);
+	inline TProcessingState State()
+		{ return iState; };
+	
+// Friends
+	friend class CTileBitmapSaver;
+	friend class CTiledMapLayer;
 	};
 
 
