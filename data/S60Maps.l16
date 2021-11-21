@@ -47,3 +47,7 @@ CHARACTER_SET UTF8
 // Added in develop
 
 #define qtn_goto "Перейти к..."
+#define qtn_landmark "Ориентир"
+#define qtn_coordinate "Координата"
+#define qtn_latitude "Широта"
+#define qtn_longitude "Долгота"

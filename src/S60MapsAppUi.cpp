@@ -274,6 +274,10 @@ void CS60MapsAppUi::HandleCommandL(TInt aCommand)
 			HandleGotoLandmarkL();
 			break;
 			
+		case EGotoCoordinate:
+			HandleGotoCoordinateL();
+			break;
+			
 		default:
 			Panic(ES60MapsUi);
 			break;
@@ -332,6 +336,13 @@ void CS60MapsAppUi::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
 		//);
 		aMenuPane->SetItemDimmed(EFindMe, !iPosRequestor || iAppView->IsFollowingUser());
 		}
+	else if (aMenuID == R_SUBMENU_GOTO)
+		{
+		CPosLmItemIterator* landmarkIterator = iLandmarksDb->LandmarkIteratorL();
+		if (!(landmarkIterator && landmarkIterator->NumOfItemsL() > 0))
+			aMenuPane->SetItemDimmed(EGotoLandmark, ETrue);
+		delete landmarkIterator;
+		}
 	else if (aMenuID == R_SUBMENU_TILE_PROVIDERS)
 		{
 		// Fill list of available tiles services in menu
@@ -363,10 +374,6 @@ void CS60MapsAppUi::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
 		delete nearestLandmark;
 		aMenuPane->SetItemDimmed(ERenameLandmark, !isDisplayEditOrDeleteLandmark);
 		aMenuPane->SetItemDimmed(EDeleteLandmark, !isDisplayEditOrDeleteLandmark);
-		CPosLmItemIterator* landmarkIterator = iLandmarksDb->LandmarkIteratorL();
-		if (!(landmarkIterator && landmarkIterator->NumOfItemsL() > 0))
-			aMenuPane->SetItemDimmed(EGotoLandmark, ETrue);
-		delete landmarkIterator;
 		}
 	/*else
 		{
@@ -902,6 +909,18 @@ void CS60MapsAppUi::HandleGotoLandmarkL()
 		}
 
 	CleanupStack::PopAndDestroy(3, lmNameArray);
+	}
+
+void CS60MapsAppUi::HandleGotoCoordinateL()
+	{
+	TCoordinate coord = iAppView->GetCenterCoordinate();
+	TPosition pos;
+	pos.SetCoordinate(coord.Latitude(), coord.Longitude());
+	CAknMultiLineDataQueryDialog* dlg=CAknMultiLineDataQueryDialog::NewL(pos);
+	if(dlg->ExecuteLD(R_LOCATION_QUERY_DIALOG) == EAknSoftkeyOk)
+		{
+		iAppView->Move(pos.Latitude(), pos.Longitude());
+		}
 	}
 
 void CS60MapsAppUi::SendAppToBackground()

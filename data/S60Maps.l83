@@ -48,3 +48,7 @@ CHARACTER_SET UTF8
 // Added in develop
 
 #define qtn_goto "Go to..."
+#define qtn_landmark "Landmark"
+#define qtn_coordinate "Coordinate"
+#define qtn_latitude "Latitude"
+#define qtn_longitude "Longitude"
