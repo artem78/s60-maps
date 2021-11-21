@@ -1,17 +1,14 @@
 /*
 ========================================================================
  Name        : S60Maps.l83
- Author      : 
- Copyright   : 
- Description : 
 ========================================================================
 */
-// localized strings for language:  Latin American Spanish (83)
+// localized strings for language: Latin American Spanish (83)
 CHARACTER_SET UTF8
 
 #define qtn_find_me "Buscar posición"
 //#define qtn_help "Ayuda"
-#define qtn_about "Versión"
+#define qtn_about "Acerca"
 #define qtn_exit "Salir"
 #define qtn_tile_providers_title "Proveedor de mapas"
 #define qtn_service_title "Herramientas"
@@ -19,8 +16,8 @@ CHARACTER_SET UTF8
 #define qtn_reset_tiles_cache "Eliminar mapas"
 //#define qtn_confirm_reset_tiles_cache_dialog_title "Acepta eliminar los mapas"
 #define qtn_confirm_reset_tiles_cache_dialog_text "Se eliminarán todos los mapas. ¿Está seguro?"
-#define qtn_about_dialog_title "Acerca de"
-#define qtn_about_dialog_text "Versión S60Maps %S\nBuild: " __DATE__ " " __TIME__ "\nGit: %S %S\nAutor: %S\nWeb: %S\nAgradecimientos: %S y otros"
+#define qtn_about_dialog_title "Acerca de S60Maps"
+#define qtn_about_dialog_text "S60Maps %S\nBuild: " __DATE__ " " __TIME__ "\nGit: %S %S\nAutor: %S\nWeb: %S\nAgradecimientos: %S y otros"
 //#define qtn_confirm_exit_dialog_title "Cerrar S60Maps"
 #define qtn_confirm_exit_dialog_text "¿Desea cerrar S60Maps?"
 #define qtn_done "¡Mapas eliminados!"
@@ -35,12 +32,11 @@ CHARACTER_SET UTF8
 #define qtn_kilometers_unit_short "km"
 
 // Added in version 1.5.0:
-// ToDo: Translate strings below
 
-#define qtn_landmarks "Landmarks"
-#define qtn_display "Display"
-#define qtn_create "Create"
-#define qtn_input_name "Input name"
-#define qtn_rename "Rename"
-#define qtn_delete "Delete"
-#define qtn_confirm_landmark_deletion "Delete \"%S\" landmark?"
+#define qtn_landmarks "Lugares de interés"
+#define qtn_display "Mostrar"
+#define qtn_create "Crear"
+#define qtn_input_name "Guardar como"
+#define qtn_rename "Renombrar"
+#define qtn_delete "Eliminar"
+#define qtn_confirm_landmark_deletion "¿Desea eliminar \"%S\"?"
