@@ -43,3 +43,11 @@ CHARACTER_SET UTF8
 #define qtn_rename "Перейменувати"
 #define qtn_delete "Видалити"
 #define qtn_confirm_landmark_deletion "Видалити орієнтир \"%S\"?"
+
+// Added in develop
+
+#define qtn_goto "Перейти до..."
+#define qtn_landmark "Орієнтир"
+#define qtn_coordinate "Координата"
+#define qtn_latitude "Широта"
+#define qtn_longitude "Довгота"

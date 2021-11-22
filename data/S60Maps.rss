@@ -12,6 +12,7 @@ NAME S60M	// 4 letter ID
 
 //  INCLUDES
 #include <eikon.rh>
+#include <eikctl.rsg>
 #include <avkon.rsg>
 #include <avkon.rh>
 #include <appinfo.rh>
@@ -89,6 +90,12 @@ RESOURCE MENU_PANE r_menu
 				txt = qtn_find_me;
 				//flags = EEikMenuItemCheckBox;
 				},
+		MENU_ITEM
+				{
+				//command = ...;
+				txt = qtn_goto;
+				cascade = r_submenu_goto;
+				},
 		// Probably I will add help in the future
 		/*MENU_ITEM
 				{
@@ -123,6 +130,24 @@ RESOURCE MENU_PANE r_menu
 				command = EAknSoftkeyExit;
 				txt = qtn_exit;
 				}
+		};
+	}
+
+// Go to submenu
+RESOURCE MENU_PANE r_submenu_goto
+	{
+	items =
+		{
+		MENU_ITEM
+			{
+			command = EGotoLandmark;
+			txt = qtn_landmark;
+			},
+		MENU_ITEM
+			{
+			command = EGotoCoordinate;
+			txt = qtn_coordinate;
+			}
 		};
 	}
 
@@ -320,6 +345,66 @@ RESOURCE DIALOG r_landmark_name_input_query
     };
   }
 
+// List query dialog for landmarks
+RESOURCE DIALOG r_landmarks_query_dialog
+	{
+	flags = EGeneralQueryFlags;
+	buttons = R_AVKON_SOFTKEYS_OK_CANCEL;
+	items =
+		{
+		AVKON_LIST_QUERY_DLG_LINE
+			{
+			control = AVKON_LIST_QUERY_CONTROL
+				{
+				listtype = EAknCtSinglePopupMenuListBox;
+				listbox = AVKON_LIST_QUERY_LIST
+					{
+					};
+				heading = qtn_landmarks;
+				};
+			}
+		};
+	}
+
+// Location query dialog
+RESOURCE DIALOG r_location_query_dialog
+	{
+	flags=EGeneralQueryFlags;
+	buttons=R_AVKON_SOFTKEYS_OK_CANCEL;
+	items=
+		{
+		DLG_LINE
+			{
+			type=EAknCtMultilineQuery;
+			id=EMultilineFirstLine;
+			control=AVKON_DATA_QUERY
+				{
+				layout=EMultiDataFirstLocationEd;
+				label=qtn_latitude;
+				control=LATITUDE_EDITOR
+					{
+					flags = ELocationEdFlagLatitude;
+					latlongresourceid = R_EIK_LATITUDE_AND_LONGITUDE;
+					};
+				};
+			},
+		DLG_LINE
+			{
+			type=EAknCtMultilineQuery;
+			id=EMultilineSecondLine;
+			control=AVKON_DATA_QUERY
+				{
+				layout=EMultiDataSecondLocationEd;
+				label=qtn_longitude;
+				control=LONGITUDE_EDITOR
+					{
+					flags = ELocationEdFlagLongitude;
+					latlongresourceid = R_EIK_LATITUDE_AND_LONGITUDE;
+					};
+				};
+			}
+		};
+	}
 
 
 // -----------------------------------------------------------------------------
