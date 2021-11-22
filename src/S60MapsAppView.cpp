@@ -143,6 +143,8 @@ void CS60MapsAppView::ConstructL(const TRect& aRect, const TCoordinate &aInitial
 
 	// Set initial displayed position
 	Move(aInitialPosition);
+
+	iCrosshairAutoHideTimer = CPeriodic::New(CActive::EPriorityStandard);
 	
 	// Activate the window, which makes it ready to be drawn
 	ActivateL();
@@ -168,6 +170,9 @@ CS60MapsAppView::CS60MapsAppView(TZoom aInitialZoom) :
 //
 CS60MapsAppView::~CS60MapsAppView()
 	{
+	iCrosshairAutoHideTimer->Cancel();
+	delete iCrosshairAutoHideTimer;
+	
 	// Destroy all layers
 	iLayers.ResetAndDestroy();
 
@@ -196,6 +201,9 @@ void CS60MapsAppView::Draw(const TRect& /*aRect*/) const
 	TInt i;
 	for (i = 0; i < iLayers.Count(); i++)
 		{
+		if (i == iLayers.Count() - 1 /*crosshair layer*/ && !IsCrosshairVisible()) // ToDo: Make better checking of layer == crosshair
+			continue; // Skip drawing crosshair if hidden
+		
 		//Window().BeginRedraw();
 		gc.Reset();
 		iLayers[i]->Draw(gc);
@@ -549,41 +557,63 @@ void CS60MapsAppView::SetZoom(TZoom aZoom)
 void CS60MapsAppView::ZoomIn()
 	{
 	if (iZoom < KMaxZoomLevel)
+		{
+		DisableDraw();
 		SetZoom(iZoom + 1);
+		ShowCrosshairForAShortTime();
+		EnableDraw();
+		}
 	}
 
 void CS60MapsAppView::ZoomOut()
 	{
 	if (iZoom > KMinZoomLevel)
+		{
+		DisableDraw();
 		SetZoom(iZoom - 1);
+		ShowCrosshairForAShortTime();
+		EnableDraw();
+		}
 	}
 
 void CS60MapsAppView::MoveUp(TUint aPixels)
 	{
 	TPoint point = iTopLeftPosition;
 	point.iY -= aPixels;
+	DisableDraw();
 	Move(point);
+	ShowCrosshairForAShortTime();
+	EnableDraw();
 	}
 
 void CS60MapsAppView::MoveDown(TUint aPixels)
 	{	
 	TPoint point = iTopLeftPosition;
 	point.iY += aPixels;
+	DisableDraw();
 	Move(point);
+	ShowCrosshairForAShortTime();
+	EnableDraw();
 	}
 
 void CS60MapsAppView::MoveLeft(TUint aPixels)
 	{
 	TPoint point = iTopLeftPosition;
 	point.iX -= aPixels;
+	DisableDraw();
 	Move(point);
+	ShowCrosshairForAShortTime();
+	EnableDraw();
 	}
 
 void CS60MapsAppView::MoveRight(TUint aPixels)
 	{
 	TPoint point = iTopLeftPosition;
 	point.iX += aPixels;
+	DisableDraw();
 	Move(point);
+	ShowCrosshairForAShortTime();
+	EnableDraw();
 	}
 
 TZoom CS60MapsAppView::GetZoom() const
@@ -769,6 +799,44 @@ void CS60MapsAppView::SetTileProviderL(TTileProvider* aTileProvider)
 	{
 	static_cast<CTiledMapLayer*>(iLayers[0 /*tiled map*/])->SetTileProviderL(aTileProvider);
 	SetZoomBounds(aTileProvider->iMinZoomLevel, aTileProvider->iMaxZoomLevel);
+	}
+
+void CS60MapsAppView::ShowCrosshair()
+	{
+	if (iIsCrosshairVisible)
+		return;
+	
+	iIsCrosshairVisible = ETrue;
+	DisableDraw();
+	DrawDelayed();
+	EnableDraw();
+	}
+
+void CS60MapsAppView::HideCrosshair()
+	{
+	if (!IsCrosshairVisible())
+		return;
+	
+	iIsCrosshairVisible = EFalse;
+	DisableDraw();
+	DrawDelayed();
+	EnableDraw();
+	}
+
+TInt CS60MapsAppView::CrosshairAutoHideCallback(TAny* anObj)
+	{
+	CS60MapsAppView* obj = static_cast<CS60MapsAppView*>(anObj);
+	obj->HideCrosshair();
+	return EFalse;
+	}
+
+void CS60MapsAppView::ShowCrosshairForAShortTime()
+	{
+		ShowCrosshair();
+		if (iCrosshairAutoHideTimer->IsActive())
+			iCrosshairAutoHideTimer->Cancel();
+		TCallBack callback(CrosshairAutoHideCallback, this);
+		iCrosshairAutoHideTimer->Start((TInt)(1.5 * KSecond), 0, callback);
 	}
 
 // End of File

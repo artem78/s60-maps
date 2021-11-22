@@ -181,6 +181,8 @@ private:
 	CPeriodic* iMovementRepeater;
 	
 	TBool iIsSoftkeysShown;
+	TBool iIsCrosshairVisible;
+	CPeriodic* /*iUserInactivityTimer*/ iCrosshairAutoHideTimer;
 	
 	void Move(const TPoint &aPoint, TBool savePos = ETrue); // Used by all another Move methods
 public:
@@ -209,6 +211,12 @@ private:
 	void UpdateUserPosition();
 	inline TBool IsUserPositionVisible() // Note: Location marker size ignored (i.e. like a point)
 			{ return iIsUserPositionRecieved && CheckCoordVisibility(iUserPosition); };
+	void ShowCrosshair();
+	void HideCrosshair();
+	inline TBool IsCrosshairVisible() const
+			{ return iIsCrosshairVisible; };
+	static TInt CrosshairAutoHideCallback(TAny* anObj);
+	void ShowCrosshairForAShortTime();
 	
 public:
 	/*inline*/ TZoom GetZoom() const;
