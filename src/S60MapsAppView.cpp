@@ -427,6 +427,12 @@ TKeyResponse CS60MapsAppView::OfferKeyEventL(const TKeyEvent &aKeyEvent,
 				iAvkonAppUi->ProcessCommandL(EDeleteLandmark);
 				return EKeyWasConsumed;
 				}
+				
+			case EStdKeyDevice3: // Central key
+				{
+				iAvkonAppUi->ProcessCommandL(ERenameLandmark);
+				return EKeyWasConsumed;
+				}
 			}
 		}
 	
