@@ -165,6 +165,7 @@ private:
 	void HandleToggleLandmarksVisibility();
 	void HandleCreateLandmarkL();
 	void HandleRenameLandmarkL();
+	void HandleCreateOrRenameLandmarkL();
 	void HandleDeleteLandmarkL();
 	void HandleGotoLandmarkL();
 	void HandleGotoCoordinateL();

@@ -25,6 +25,7 @@ enum TS60MapsIds
 	EToggleLandmarksVisibility,
 	ECreateLandmark,
 	ERenameLandmark,
+	ECreateOrRenameLandmark,
 	EDeleteLandmark,
 	EGotoLandmark,
 	EGotoCoordinate,

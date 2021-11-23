@@ -266,6 +266,10 @@ void CS60MapsAppUi::HandleCommandL(TInt aCommand)
 			HandleRenameLandmarkL();
 			break;
 			
+		case ECreateOrRenameLandmark:
+			HandleCreateOrRenameLandmarkL();
+			break;
+			
 		case EDeleteLandmark:
 			HandleDeleteLandmarkL();
 			break;
@@ -865,6 +869,20 @@ void CS60MapsAppUi::HandleRenameLandmarkL()
 		}
 	
 	CleanupStack::PopAndDestroy(3, landmark);
+	}
+
+void CS60MapsAppUi::HandleCreateOrRenameLandmarkL()
+	{
+	CPosLandmark* landmark = GetNearestLandmarkAroundTheCenterL(ETrue);
+	if (landmark /*&& iSettings->GetLandmarksVisibility()*/)
+		{
+		delete landmark;
+		HandleRenameLandmarkL();
+		}
+	else
+		{
+		HandleCreateLandmarkL();
+		}
 	}
 
 void CS60MapsAppUi::HandleDeleteLandmarkL()
