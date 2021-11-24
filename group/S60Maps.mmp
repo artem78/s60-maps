@@ -95,3 +95,5 @@ START BITMAP icons.mbm
 	SOURCEPATH ..\gfx
 	SOURCE c24,8 star.bmp star_mask.bmp
 END
+SOURCEPATH ..\src
+SOURCE Utils.cpp

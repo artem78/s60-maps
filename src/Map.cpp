@@ -22,6 +22,7 @@
 #include <epos_cposlandmarksearch.h>
 #include <epos_cposlmareacriteria.h>
 #include "icons.mbg"
+#include "Utils.h"
 
 CMapLayerBase::CMapLayerBase(/*const*/ CS60MapsAppView* aMapView) :
 		iMapView(aMapView)
@@ -524,27 +525,22 @@ void CScaleBarLayer::Draw(CWindowGc &aGc)
 	{
 	const TInt KBarLeftMargin    = 14;
 	const TInt KBarBottomMargin  = KBarLeftMargin;
-	const TInt KBarWidth         = 100;
 	const TInt KBarHeight        = 3;
 	const TInt KTextBottomMargin = 6;
+	
+	TInt barWidth;
+	TReal32 horDist;
+	GetOptimalLength(barWidth, horDist);
 	
 	// Draw scale line
 	TPoint barStartPoint(KBarLeftMargin, iMapView->Rect().iBr.iY - KBarBottomMargin);
 	TPoint barEndPoint(barStartPoint);
 	barStartPoint.iY -= KBarHeight;
-	barEndPoint.iX += KBarWidth;
+	barEndPoint.iX += barWidth;
 	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
 	aGc.SetBrushColor(KRgbBlack);
 	aGc.DrawRect(TRect(barStartPoint, barEndPoint));
 	aGc.Reset();
-	
-	// Getting distance value
-	TReal32 horDist;
-	{
-		TReal32 vertDist; // unused
-		MapMath::PixelsToMeters(iMapView->GetCenterCoordinate().Latitude(),
-				iMapView->GetZoom(), KBarWidth, horDist, vertDist);
-	}
 	
 	// Getting text
 	HBufC* unit;
@@ -598,6 +594,45 @@ void CScaleBarLayer::Draw(CWindowGc &aGc)
 	//aGc.DrawText(text, startPoint);
 	aGc.DrawText(text, textRect, baselineOffset, CGraphicsContext::ECenter);
 	aGc.DiscardFont();
+	}
+
+TInt CScaleBarLayer::GetOptimalLength(TInt &optimalLength, TReal32 &optimalDistance)
+	{
+	const TInt KMinLengthPx = 50;
+	const TInt KMaxLengthPx = 150;
+	
+	TReal32 minLengtsMetersReal, maxLengthMetersReal, unused;
+	MapMath::PixelsToMeters(iMapView->GetCenterCoordinate().Latitude(),
+				iMapView->GetZoom(), KMinLengthPx, minLengtsMetersReal, unused);
+	MapMath::PixelsToMeters(iMapView->GetCenterCoordinate().Latitude(),
+				iMapView->GetZoom(), KMaxLengthPx, maxLengthMetersReal, unused);
+	
+	DEBUG(_L("min=%.2fm   max=%.2fm"), minLengtsMetersReal, maxLengthMetersReal);
+	
+	TInt minLengthMeters = (TInt) (minLengtsMetersReal + 0.5);
+	TInt maxLengthMeters = (TInt) (maxLengthMetersReal + 0.5);
+	DEBUG(_L("rounded min=%dm   rounded max=%dm"), minLengthMeters, maxLengthMeters);
+	
+	TInt digits = MathUtils::Digits(maxLengthMeters);
+	DEBUG(_L("digits=%d"), digits);
+	
+	optimalLength = KMaxLengthPx;
+	while (--digits >= 0)
+		{
+		TInt roundedLength = MathUtils::IntFloor(maxLengthMeters, digits);
+		DEBUG(_L("rounded length=%dm"), roundedLength);
+		
+		if (roundedLength >= minLengthMeters && roundedLength <= maxLengthMeters)
+			{
+			TInt unusedInt;
+			MapMath::MetersToPixels(iMapView->GetCenterCoordinate().Latitude(),
+				iMapView->GetZoom(), roundedLength, optimalLength, unusedInt);
+			
+			optimalDistance = roundedLength;
+			
+			break;
+			}
+		}
 	}
 
 

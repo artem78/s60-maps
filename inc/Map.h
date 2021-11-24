@@ -173,6 +173,8 @@ private:
 	HBufC* iMetersUnit;
 	HBufC* iKilometersUnit;
 	/*const*/ CFont* iFont;
+	
+	TInt GetOptimalLength(TInt &optimalLength, TReal32 &optimalDistance);
 	};
 
 class CLandmarksLayer : public CMapLayerBase
