@@ -44,7 +44,7 @@ CHARACTER_SET UTF8
 #define qtn_delete "Видалити"
 #define qtn_confirm_landmark_deletion "Видалити орієнтир \"%S\"?"
 
-// Added in develop
+// Added in version 1.6:
 
 #define qtn_goto "Перейти до..."
 #define qtn_landmark "Орієнтир"

@@ -44,7 +44,7 @@ CHARACTER_SET UTF8
 #define qtn_delete "Apagar"
 #define qtn_confirm_landmark_deletion "Apagar \"%S\" marcador?"
 
-// Added in develop
+// Added in version 1.6:
 
 #define qtn_goto "Go to..."
 #define qtn_landmark "Landmark"
