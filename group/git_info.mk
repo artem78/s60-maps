@@ -10,8 +10,8 @@
 HEADERSDIR=..\inc
 TARGETFILENAME=$(HEADERSDIR)\GitInfo.h
 
-COMMIT := $(shell git rev-parse --short HEAD)
-BRANCH := $(shell git symbolic-ref --short HEAD)
+COMMIT := $(shell git rev-parse --short HEAD 2>nul || ECHO unknown)
+BRANCH := $(shell git symbolic-ref --short HEAD 2>nul || ECHO unknown)
 
 do_nothing :
 	@rem do_nothing
