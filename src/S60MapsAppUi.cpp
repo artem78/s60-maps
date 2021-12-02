@@ -915,9 +915,10 @@ void CS60MapsAppUi::HandleDeleteLandmarkL()
 
 void CS60MapsAppUi::HandleGotoLandmarkL()
 	{
-	CDesCArraySeg* lmNameArray = new (ELeave) CDesCArraySeg(4);
+	const TInt KGranularity = 50;
+	CDesCArraySeg* lmNameArray = new (ELeave) CDesCArraySeg(KGranularity);
 	CleanupStack::PushL(lmNameArray);
-	CArrayFixFlat<TPosLmItemId>* lmIdArray = new (ELeave) CArrayFixFlat<TPosLmItemId>(4);
+	CArrayFixFlat<TPosLmItemId>* lmIdArray = new (ELeave) CArrayFixFlat<TPosLmItemId>(KGranularity);
 	CleanupStack::PushL(lmIdArray);
 	CPosLmItemIterator* lmIterator = iLandmarksDb->LandmarkIteratorL();
 	CleanupStack::PushL(lmIterator);
@@ -926,7 +927,7 @@ void CS60MapsAppUi::HandleGotoLandmarkL()
 	lmId = lmIterator->NextL();
 	while (lmId != KPosLmNullItemId)
 		{
-		CPosLandmark* lm = iLandmarksDb->ReadLandmarkLC(lmId);
+		CPosLandmark* lm = iLandmarksDb->ReadPartialLandmarkLC(lmId);
 		TPtrC lmName;
 		lm->GetLandmarkName(lmName);
 		lmNameArray->AppendL(lmName);
