@@ -1421,7 +1421,7 @@ void CTileBitmapManager::LoadBitmapL(const TTile &aTile, CFbsBitmap *aBitmap)
 	TileFileName(aTile, tileFileName);
 	
 	RFile file;
-	User::LeaveIfError(file.Open(iFs, tileFileName, EFileRead));
+	User::LeaveIfError(file.Open(iFs, tileFileName, EFileRead | EFileShareReadersOnly));
 	CleanupClosePushL(file);
 	User::LeaveIfError(aBitmap->Load(file));	
 	CleanupStack::PopAndDestroy(&file);
