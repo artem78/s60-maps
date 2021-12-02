@@ -360,7 +360,7 @@ void CS60MapsAppUi::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
 			menuItem.iCascadeId = 0;
 			menuItem.iFlags = EEikMenuItemCheckBox;
 			menuItem.iText.Copy(iAvailableTileProviders[idx]->iTitle);
-			//menuItem.iExtraText = ???
+			menuItem.iExtraText.Zero();
 			aMenuPane->AddMenuItemL(menuItem);
 			aMenuPane->SetItemButtonState(commandId,
 					/*commandId == selectedTileProviderCommId*/
