@@ -46,8 +46,8 @@ CHARACTER_SET UTF8
 
 // Added in version 1.6:
 
-#define qtn_goto "Go to..."
-#define qtn_landmark "Landmark"
-#define qtn_coordinate "Coordinate"
-#define qtn_latitude "Latitude"
-#define qtn_longitude "Longitude"
+#define qtn_goto "Ir a..."
+#define qtn_landmark "Marcador"
+#define qtn_coordinate "Coordinadas"
+#define qtn_latitude "Latitud"
+#define qtn_longitude "Longitud"
