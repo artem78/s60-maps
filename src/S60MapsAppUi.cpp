@@ -928,11 +928,17 @@ void CS60MapsAppUi::HandleGotoLandmarkL()
 	while (lmId != KPosLmNullItemId)
 		{
 		CPosLandmark* lm = iLandmarksDb->ReadPartialLandmarkLC(lmId);
-		TPtrC lmName;
-		lm->GetLandmarkName(lmName);
-		lmNameArray->AppendL(lmName);
+		//if (lm->IsPositionFieldAvailable())
+		TLocality pos;
+		if (lm->GetPosition(pos) == KErrNone && !Math::IsNaN(pos.Latitude())
+				&& !Math::IsNaN(pos.Longitude()))
+			{ // Process landmarks only with position
+			TPtrC lmName;
+			lm->GetLandmarkName(lmName);
+			lmNameArray->AppendL(lmName);
+			lmIdArray->AppendL(lmId);
+			}
 		CleanupStack::PopAndDestroy(lm);
-		lmIdArray->AppendL(lmId);
 		lmId = lmIterator->NextL();
 		}
 
