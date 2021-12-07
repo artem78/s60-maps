@@ -953,7 +953,7 @@ void CS60MapsAppUi::HandleGotoLandmarkL()
 		CPosLandmark* lm = iLandmarksDb->ReadLandmarkLC(lmIdArray->At(chosenItem));
 		TLocality pos;
 		lm->GetPosition(pos);
-		iAppView->Move(pos);
+		iAppView->MoveAndZoomIn(pos);
 		CleanupStack::PopAndDestroy(lm);
 		}
 
@@ -968,7 +968,8 @@ void CS60MapsAppUi::HandleGotoCoordinateL()
 	CAknMultiLineDataQueryDialog* dlg=CAknMultiLineDataQueryDialog::NewL(pos);
 	if(dlg->ExecuteLD(R_LOCATION_QUERY_DIALOG) == EAknSoftkeyOk)
 		{
-		iAppView->Move(pos.Latitude(), pos.Longitude());
+		coord.SetCoordinate(pos.Latitude(), pos.Longitude());
+		iAppView->MoveAndZoomIn(coord);
 		}
 	}
 

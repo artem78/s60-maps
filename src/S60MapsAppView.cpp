@@ -531,6 +531,20 @@ void CS60MapsAppView::Move(TReal64 aLat, TReal64 aLon, TZoom aZoom)
 	EnableDraw();
 	}
 
+void CS60MapsAppView::MoveAndZoomIn(const TCoordinate &aPos)
+	{
+	DisableDraw();
+	
+	const TZoom minZoom = 16;
+	if (GetZoom() < minZoom)
+		{
+		SetZoom(minZoom);
+		}
+	Move(aPos);
+	
+	EnableDraw();
+	}
+
 void CS60MapsAppView::SetZoomBounds(TZoom aMinZoom, TZoom aMaxZoom)
 	{
 	// Checks
