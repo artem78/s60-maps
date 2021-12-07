@@ -9,18 +9,18 @@
 // localized strings for language: PL Polish (27)
 CHARACTER_SET UTF8
 
-#define qtn_find_me "Chodź za mną"
+#define qtn_find_me "Podążaj za mną"
 //#define qtn_help "Pomoc"
 #define qtn_about "O"
 #define qtn_exit "Wyjdź"
 #define qtn_tile_providers_title "Mapy"
 #define qtn_service_title "Usługa"
-#define qtn_tiles_cache_stats "Statystyki pamięci podręcznej map"
-#define qtn_reset_tiles_cache "Wyczyść pamięć podręczną map"
-//#define qtn_confirm_reset_tiles_cache_dialog_title "Potwierdź czyszczenie pamięci podręcznej map"
-#define qtn_confirm_reset_tiles_cache_dialog_text "Ta czynność spowoduje usunięcie całej pamięci podręcznej map. Jesteś pewny? "
+#define qtn_tiles_cache_stats "Statystyki pamięci podręcznej mapy"
+#define qtn_reset_tiles_cache "Wyczyść pamięć podręczną mapy"
+//#define qtn_confirm_reset_tiles_cache_dialog_title "Potwierdź wyczyszczenie pamięci podręcznej"
+#define qtn_confirm_reset_tiles_cache_dialog_text "Ta czynność usunie całą pamięć podręczną map. Czy jesteś pewny?"
 #define qtn_about_dialog_title "O"
-#define qtn_about_dialog_text "Wersja S60Maps %S\nBuild: " __DATE__ " " __TIME__ "\nGit: %S %S\nAutor: %S\nStrona: %S\nPodziękowania dla: %S i innych"
+#define qtn_about_dialog_text "S60Maps Wersja %S\nBuild: " __DATE__ " " __TIME__ "\nGit: %S %S\nAutor: %S\nWeb: %S\nPodziękowania dla: %S i innych"
 //#define qtn_confirm_exit_dialog_title "Potwierdź wyjście"
 #define qtn_confirm_exit_dialog_text "Jesteś pewny, aby wyjść?"
 #define qtn_done "Gotowe!"
@@ -36,18 +36,18 @@ CHARACTER_SET UTF8
 
 // Added in version 1.5.0:
 
-#define qtn_landmarks "Punkty orientacyjne"
+#define qtn_landmarks "Punkty na mapie"
 #define qtn_display "Wyświetl"
 #define qtn_create "Stwórz"
 #define qtn_input_name "Wpisz nazwę"
 #define qtn_rename "Zmień nazwę"
 #define qtn_delete "Usuń"
-#define qtn_confirm_landmark_deletion "Usunąć \"%S\" punkt orientacyjny?"
+#define qtn_confirm_landmark_deletion "Usunąć \"%S\" punkt na mapie?"
 
 // Added in version 1.6:
 
-#define qtn_goto "Go to..."
-#define qtn_landmark "Landmark"
-#define qtn_coordinate "Coordinate"
-#define qtn_latitude "Latitude"
-#define qtn_longitude "Longitude"
+#define qtn_goto "Idź do..."
+#define qtn_landmark "Punkt na mapie"
+#define qtn_coordinate "Koordynacja"
+#define qtn_latitude "Szerokość geograficzna"
+#define qtn_longitude "Długość geograficzna"
