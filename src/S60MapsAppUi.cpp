@@ -93,7 +93,7 @@ void CS60MapsAppUi::ConstructL()
 	// https://www.openstreetmap.org/?layers=H
 	iAvailableTileProviders[3] = new (ELeave) TTileProvider(
 			_L("humanitarian"), _L("Humanitarian"),
-			_L8("http://tile.openstreetmap.fr/hot/{$z}/{$x}/{$y}.png"),
+			_L8("http://a.tile.openstreetmap.fr/hot/{$z}/{$x}/{$y}.png"),
 			0, 20);
 	
 	/*// OpenTopoMap
