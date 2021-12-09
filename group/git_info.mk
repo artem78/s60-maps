@@ -12,6 +12,7 @@ TARGETFILENAME=$(HEADERSDIR)\GitInfo.h
 
 COMMIT := $(shell git rev-parse --short HEAD 2>nul || ECHO unknown)
 BRANCH := $(shell git symbolic-ref --short HEAD 2>nul || ECHO unknown)
+LONG_VERSION := $(shell git describe --long 2>nul || ECHO unknown)
 
 do_nothing :
 	@rem do_nothing
@@ -42,6 +43,7 @@ $(TARGETFILENAME) : CLEAN
 	echo.>> $(TARGETFILENAME)
 	echo _LIT(KGITCommit, "$(COMMIT)");>> $(TARGETFILENAME)
 	echo _LIT(KGITBranch, "$(BRANCH)");>> $(TARGETFILENAME)
+	echo _LIT(KGITLongVersion, "$(LONG_VERSION)");>> $(TARGETFILENAME)
 	echo.>> $(TARGETFILENAME)
 	echo #endif /* GITINFO_H_ */>> $(TARGETFILENAME)
 

@@ -20,7 +20,7 @@ CHARACTER_SET UTF8
 //#define qtn_confirm_reset_tiles_cache_dialog_title "Potwierdź wyczyszczenie pamięci podręcznej"
 #define qtn_confirm_reset_tiles_cache_dialog_text "Ta czynność usunie całą pamięć podręczną map. Czy jesteś pewny?"
 #define qtn_about_dialog_title "O"
-#define qtn_about_dialog_text "S60Maps Wersja %S\nBuild: " __DATE__ " " __TIME__ "\nGit: %S %S\nAutor: %S\nWeb: %S\nPodziękowania dla: %S i innych"
+#define qtn_about_dialog_text "S60Maps Wersja %S\nBuild: " __DATE__ " " __TIME__ "\nGit: %S\nAutor: %S\nWeb: %S\nPodziękowania dla: %S i innych"
 //#define qtn_confirm_exit_dialog_title "Potwierdź wyjście"
 #define qtn_confirm_exit_dialog_text "Jesteś pewny, aby wyjść?"
 #define qtn_done "Gotowe!"

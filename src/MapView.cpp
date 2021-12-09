@@ -383,8 +383,11 @@ void CMapView::HandleAboutL()
 	version.Append(' ');
 	version.Append(KDebug);
 #endif
+	TBuf<64> gitInfo;
+	_LIT(KFmt,"%S (%S)");
+	gitInfo.Format(KFmt, &KGITLongVersion, &KGITBranch);
 	iEikonEnv->Format128/*256*/(msg, R_ABOUT_DIALOG_TEXT, &version,
-			&KGITBranch, &KGITCommit, &KAuthor, &KWebSite, &KThanksTo);
+			&gitInfo, &KAuthor, &KWebSite, &KThanksTo);
 	dlg->SetMessageTextL(msg);
 	CleanupStack::PopAndDestroy(&msg);
 	dlg->RunLD();
