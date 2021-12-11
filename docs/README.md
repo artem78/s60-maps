@@ -86,6 +86,10 @@ All data stored in directory `E:\Data\S60Maps\` (**note:** E drive used regardle
 
 Settings store in `store.dat` file. If you have problems with application to run, try to delete this file and run again.
 
+## How to build
+
+Read [docs/COMPILING.md](/docs/COMPILING.md)
+
 ## Roadmap
 
 - [x] Add support for other map layers and WMS services (like OSM bicycle, OSM humanitarian, OpenTopoMap, etc...) 
