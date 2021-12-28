@@ -27,7 +27,8 @@ CSettings::CSettings() :
 		iLon(KDefaultLon),
 		iZoom(KDefaultZoom),
 		iTileProviderId(KDefaultTileProviderId),
-		iIsLandmarksVisible(EFalse)
+		iIsLandmarksVisible(EFalse),
+		iLanguage(ELangEnglish)
 	{
 	}
 
@@ -62,11 +63,14 @@ void CSettings::ExternalizeL(RWriteStream& aStream) const
 	aStream << TCardinality(iZoom);
 	aStream << iTileProviderId;
 	aStream << (TInt8) iIsLandmarksVisible;
+
+	// Added in develop branch
+	aStream << TCardinality(iLanguage);
 	}
 
 void CSettings::DoInternalizeL(RReadStream& aStream)
 	{
-	TCardinality zoom;
+	TCardinality zoom, language;
 	TInt8 isLandmarksVisible;
 	
 	aStream >> iLat;
@@ -76,6 +80,10 @@ void CSettings::DoInternalizeL(RReadStream& aStream)
 	aStream >> iTileProviderId;
 	aStream >> isLandmarksVisible;
 	iIsLandmarksVisible = (TBool) isLandmarksVisible;
+
+	// Added in develop branch
+	aStream >> language;
+	iLanguage = static_cast<TLanguage>((TInt) language);
 	}
 
 void CSettings::InternalizeL(RReadStream& aStream)

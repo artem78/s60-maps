@@ -53,4 +53,10 @@ enum TS60MapsViewUids
 	ESettingsViewId
 	};
 
+// Settings
+enum TS60MapsSettingItemIds
+	{
+	ESettingLanguage
+	};
+
 #endif // __S60MAPS_HRH__

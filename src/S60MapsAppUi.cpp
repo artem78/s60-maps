@@ -31,6 +31,7 @@
 #include <epos_cposlmnearestcriteria.h>
 #include <epos_cposlandmarksearch.h>
 #include <apgwgnam.h>
+#include <bautils.h>
 
 
 // ============================ MEMBER FUNCTIONS ===============================
@@ -158,7 +159,8 @@ void CS60MapsAppUi::ConstructL()
 // C++ default constructor can NOT contain any code, that might leave.
 // -----------------------------------------------------------------------------
 //
-CS60MapsAppUi::CS60MapsAppUi()
+CS60MapsAppUi::CS60MapsAppUi() :
+		iResourceOffset(1531863040) // ToDo: "magic number" - where is it from?
 	{
 	// No implementation required
 	}
@@ -192,6 +194,11 @@ CS60MapsAppUi::~CS60MapsAppUi()
 	iAvailableTileProviders.DeleteAll();
 	
 	delete iSettings;
+	
+	//if (iResourceOffset != -1)
+	//	{
+	//	CCoeEnv::Static()->DeleteResourceFile(iResourceOffset);
+	//	}
 	}
 
 //// -----------------------------------------------------------------------------
@@ -327,6 +334,7 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 	TRAP_IGNORE(aStream >> *iSettings);
 	iMapView->MapControl()->Move(iSettings->GetLat(), iSettings->GetLon(), iSettings->GetZoom());
 	
+	// Tile provider
 	TTileProviderId tileProviderId(iSettings->GetTileProviderId());
 	TBool isFound = EFalse;
 	for (TInt idx = 0; idx < iAvailableTileProviders.Count(); idx++)
@@ -345,6 +353,9 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 		iActiveTileProvider = iAvailableTileProviders[0];
 		iMapView->MapControl()->SetTileProviderL(iAvailableTileProviders[0]);
 		}
+	
+	// Language
+	ChangeLanguageL(iSettings->iLanguage);
 	}
 
 MFileManObserver::TControl CS60MapsAppUi::NotifyFileManStarted()
@@ -601,6 +612,36 @@ void CS60MapsAppUi::HandleExitL()
 	SendAppToBackground();
 
 	SaveAndExitL();
+	}
+
+void CS60MapsAppUi::ChangeLanguageL(TLanguage aLang)
+	{
+	__ASSERT_DEBUG(iResourceOffset == 1531863040, Panic(ES60MapsInvalidResourceOffset));
+	
+	INFO(_L("Set language to %d"), (TInt) aLang);
+	
+	// Close previous opened resource file first
+	CCoeEnv::Static()->DeleteResourceFile(iResourceOffset);
+	
+	TParse parser;
+	TFileName appFullName(RProcess().FileName());
+	parser.Set(appFullName, NULL, NULL);
+	
+	//_LIT(KResFilePathFmt, "%S\\resource\\apps\\%S.r%02d");
+	//TFileName resFileFullName;
+	//resFileFullName.Format(KResFilePathFmt, &parser.Drive(), &parser.Name(), (TInt) aLang); // FixMe: truncates 3-digits codes
+	
+	_LIT(KResFilePathFmt, "%S\\resource\\apps\\%S.rsc");
+	TFileName resFileFullName;
+	resFileFullName.Format(KResFilePathFmt, &parser.Drive(), &parser.Name());
+	BaflUtils::SetIdealLanguage(aLang);
+	TLanguage lang;
+	BaflUtils::NearestLanguageFile(CCoeEnv::Static()->FsSession(), resFileFullName, lang);
+	DEBUG(_L("Found language %d"), lang);
+	
+	DEBUG(_L("Trying to load file \"%S\""), &resFileFullName);
+	// ToDo: Check file exists
+	iResourceOffset = CCoeEnv::Static()->AddResourceFileL(resFileFullName);
 	}
 
 // End of File

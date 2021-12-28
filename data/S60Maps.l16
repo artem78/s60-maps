@@ -55,3 +55,4 @@ CHARACTER_SET UTF8
 // Added in develop branch
 
 #define qtn_settings "Настройки"
+#define qtn_language "Язык"

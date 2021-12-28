@@ -490,7 +490,69 @@ RESOURCE AVKON_SETTING_ITEM_LIST r_setting_item_list
 	
 	items = 
 		{
-		
+		AVKON_SETTING_ITEM
+			{
+			identifier = ESettingLanguage;
+			setting_page_resource = r_language_setting_page;
+			associated_resource = r_popup_setting_language_texts;
+			name = qtn_language;
+			}
+		};
+	}
+
+	
+
+// Language setting
+
+RESOURCE AVKON_SETTING_PAGE r_language_setting_page
+	{
+	//number = 0;  EAknSettingPageNoOrdinalDisplayed 
+	label = qtn_language;
+	type = EAknCtPopupSettingList;
+	editor_resource_id = r_language_popup_setting_list;
+	}
+
+RESOURCE POPUP_SETTING_LIST r_language_popup_setting_list
+	{
+	flags = 0;
+	}
+
+RESOURCE AVKON_POPUP_SETTING_TEXTS r_popup_setting_language_texts
+	{
+	//flags = 0;
+	setting_texts_resource   = r_language_texts1;
+	popped_up_texts_resource = r_language_texts2;
+	}
+
+RESOURCE ARRAY r_language_texts1
+	{
+	items =
+		{
+		AVKON_ENUMERATED_TEXT { value = 1; text = "English"; },
+		AVKON_ENUMERATED_TEXT { value = 4; text = "Spanish"; },
+		AVKON_ENUMERATED_TEXT { value = 13; text = "Portuguese"; },
+		AVKON_ENUMERATED_TEXT { value = 16; text = "Russian"; },
+		AVKON_ENUMERATED_TEXT { value = 27; text = "Polish"; },
+		AVKON_ENUMERATED_TEXT { value = 57; text = "Hebrew"; },
+		AVKON_ENUMERATED_TEXT { value = 83; text = "Latin American Spanish"; },
+		AVKON_ENUMERATED_TEXT { value = 93; text = "Ukrainian"; },
+		AVKON_ENUMERATED_TEXT { value = 103; text = "Galician"; }
+		};
+	}
+
+RESOURCE ARRAY r_language_texts2
+	{
+	items =
+		{
+		LBUF { txt = "English"; },
+		LBUF { txt = "Spanish"; },
+		LBUF { txt = "Portuguese"; },
+		LBUF { txt = "Russian"; },
+		LBUF { txt = "Polish"; },
+		LBUF { txt = "Hebrew"; },
+		LBUF { txt = "Latin American Spanish"; },
+		LBUF { txt = "Ukrainian"; },
+		LBUF { txt = "Galician"; }
 		};
 	}
 

@@ -68,6 +68,8 @@ private:
 	TZoom iZoom;
 	TTileProviderId iTileProviderId;
 	TBool iIsLandmarksVisible;
+public:
+	TLanguage iLanguage;
 	
 public:
 	CSettings();
