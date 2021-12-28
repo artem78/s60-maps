@@ -240,6 +240,7 @@ public:
 	void SetTileProviderL(TTileProvider* aTileProvider);
 	inline TBool IsSoftkeysShown()
 		{ return iIsSoftkeysShown; };
+	void HandleLanguageChangedL();
 
 	};
 	

@@ -866,4 +866,15 @@ void CMapControl::ShowCrosshairForAShortTime()
 		iCrosshairAutoHideTimer->Start((TInt)(1.5 * KSecond), 0, callback);
 	}
 
+void CMapControl::HandleLanguageChangedL()
+	{
+	//ToDo: Remake searching for scale bar layer in the array!!!
+#ifdef DEBUG_SHOW_TILE_BORDER_AND_XYZ
+	TInt layerIdx = 3;
+#else
+	TInt layerIdx = 2;
+#endif
+	static_cast<CScaleBarLayer*>(iLayers[layerIdx /*scale bar layer*/])->ReloadStringsFromResourceL();
+	}
+
 // End of File

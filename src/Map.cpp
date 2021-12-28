@@ -505,8 +505,7 @@ CScaleBarLayer* CScaleBarLayer::NewL(CMapControl* aMapView)
 void CScaleBarLayer::ConstructL()
 	{
 	// Read strings from resources
-	iMetersUnit = CCoeEnv::Static()->AllocReadResourceL(R_METERS_UNIT_SHORT);
-	iKilometersUnit = CCoeEnv::Static()->AllocReadResourceL(R_KILOMETERS_UNIT_SHORT);
+	ReloadStringsFromResourceL();
 	
 	// Load font for label text
 	//iFont = const_cast<CFont*>(CEikonEnv::Static()->AnnotationFont());
@@ -633,6 +632,21 @@ TInt CScaleBarLayer::GetOptimalLength(TInt &optimalLength, TReal32 &optimalDista
 			break;
 			}
 		}
+	}
+
+void CScaleBarLayer::ReloadStringsFromResourceL()
+	{
+	// Free previous loaded strings
+	delete iMetersUnit;
+	delete iKilometersUnit;
+	
+	iMetersUnit = NULL;
+	iKilometersUnit = NULL;
+	
+	iMetersUnit = CCoeEnv::Static()->AllocReadResourceL(R_METERS_UNIT_SHORT);
+	iKilometersUnit = CCoeEnv::Static()->AllocReadResourceL(R_KILOMETERS_UNIT_SHORT);
+	
+	DEBUG(_L("Loaded strings: %S, %S"), &iMetersUnit->Des(), &iKilometersUnit->Des());
 	}
 
 

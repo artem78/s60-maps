@@ -175,6 +175,10 @@ private:
 	/*const*/ CFont* iFont;
 	
 	TInt GetOptimalLength(TInt &optimalLength, TReal32 &optimalDistance);
+	
+public:
+	void ReloadStringsFromResourceL();
+	
 	};
 
 class CLandmarksLayer : public CMapLayerBase

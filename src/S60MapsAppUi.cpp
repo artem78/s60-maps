@@ -642,6 +642,9 @@ void CS60MapsAppUi::ChangeLanguageL(TLanguage aLang)
 	DEBUG(_L("Trying to load file \"%S\""), &resFileFullName);
 	// ToDo: Check file exists
 	iResourceOffset = CCoeEnv::Static()->AddResourceFileL(resFileFullName);
+	
+	// Update strings for scale bar layer
+	iMapView->MapControl()->HandleLanguageChangedL();
 	}
 
 // End of File
