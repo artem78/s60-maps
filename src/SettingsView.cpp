@@ -71,6 +71,7 @@ void CSettingsView::DoActivateL(const TVwsViewId& /*aPrevViewId*/,
 			TUid /*aCustomMessageId*/,
 			const TDesC8& /*aCustomMessage*/)
 	{
+	StatusPane()->MakeVisible(ETrue); // If hidden by previous view
 	if (!iListBox)
 		{
 		ConstructContainerL();
