@@ -93,7 +93,13 @@ void CMapView::DoDeactivate()
 		iMapControl = NULL;
 		}*/
 
-	StatusPane()->MakeVisible(ETrue); // Restore hidden status pane
+	const TUid KAknSgcClientStaticId = { 0x101f7674 }; // Defined in Symbian`s private sources
+	TBool isGoingToExit = !CCoeEnv::Static(KAknSgcClientStaticId);
+	DEBUG(_L("isGoingToExit=%d"), isGoingToExit);
+	if (!isGoingToExit) // Otherwise KERN-EXEC 3 will be thrown on next line
+		{
+		StatusPane()->MakeVisible(ETrue); // Restore hidden status pane
+		}
 	//Cba()->MakeVisible(ETrue);
 	iMapControl->MakeVisible(EFalse);
 	}
