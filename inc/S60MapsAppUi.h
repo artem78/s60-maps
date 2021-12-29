@@ -145,6 +145,7 @@ public:
 	CPosLandmark* GetNearestLandmarkL(const TCoordinate &aCoord, TBool aPartial = ETrue,
 			TReal32 aMaxDistance = KNaN); // The client takes ownership of the returned landmark object. Returns NULL if nothing found.
 	void ChangeLanguageL(TLanguage aLang);
+	TBool IsLanguageExists(TLanguage aLang);
 
 private:
 	CSettings* iSettings;

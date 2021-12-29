@@ -355,6 +355,10 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 		}
 	
 	// Language
+	if (!IsLanguageExists(iSettings->iLanguage))
+		{ // Wrong language fix
+		iSettings->iLanguage = ELangEnglish;
+		}
 	ChangeLanguageL(iSettings->iLanguage);
 	}
 
@@ -645,6 +649,29 @@ void CS60MapsAppUi::ChangeLanguageL(TLanguage aLang)
 	
 	// Update strings for scale bar layer
 	iMapView->MapControl()->HandleLanguageChangedL();
+	}
+
+TBool CS60MapsAppUi::IsLanguageExists(TLanguage aLang)
+	{
+	TLanguage oldIdealLang = BaflUtils::IdealLanguage();
+	
+	TParse parser;
+	TFileName appFullName(RProcess().FileName());
+	parser.Set(appFullName, NULL, NULL);
+	
+	_LIT(KResFilePathFmt, "%S\\resource\\apps\\%S.rsc");
+	TFileName resFileFullName;
+	resFileFullName.Format(KResFilePathFmt, &parser.Drive(), &parser.Name());
+	BaflUtils::SetIdealLanguage(aLang);
+	TLanguage foundLang;
+	BaflUtils::NearestLanguageFile(CCoeEnv::Static()->FsSession(), resFileFullName, foundLang);
+	TBool res = foundLang == aLang;
+	DEBUG(_L("Language %d found? - %d"), (TInt) aLang, res);
+	
+	// Restore previous ideal language value
+	BaflUtils::SetIdealLanguage(oldIdealLang);
+	
+	return res;
 	}
 
 // End of File

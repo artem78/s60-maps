@@ -70,6 +70,8 @@ void CSettings::ExternalizeL(RWriteStream& aStream) const
 
 void CSettings::DoInternalizeL(RReadStream& aStream)
 	{
+	// FixMe: Reads mess in new settings for old config file (make sure to validate them)
+	
 	TCardinality zoom, language;
 	TInt8 isLandmarksVisible;
 	
