@@ -138,11 +138,7 @@ void CS60MapsAppUi::ConstructL()
 		iPosRequestor->Start(); // Must be started after view created
 	else
 		{
-		HBufC* msg = iEikonEnv->AllocReadResourceLC(R_POSITIONING_DISABLED);
-		//CAknWarningNote* note = new (ELeave) CAknWarningNote;
-		CAknErrorNote* note = new (ELeave) CAknErrorNote;
-		note->ExecuteLD(*msg);
-		CleanupStack::PopAndDestroy(msg);
+		// Message to user will be shown later after language will be readed from settings
 		WARNING(_L("Failed to create position requestor (error: %d), continue without GPS"), err);
 		}
 	
@@ -360,6 +356,16 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 		iSettings->iLanguage = ELangEnglish;
 		}
 	ChangeLanguageL(iSettings->iLanguage);
+	
+	// After localization loaded show translated message if positioning unavailable
+	if (!iPosRequestor)
+		{
+		HBufC* msg = iEikonEnv->AllocReadResourceLC(R_POSITIONING_DISABLED);
+		//CAknWarningNote* note = new (ELeave) CAknWarningNote;
+		CAknErrorNote* note = new (ELeave) CAknErrorNote;
+		note->ExecuteLD(*msg);
+		CleanupStack::PopAndDestroy(msg);
+		}
 	}
 
 MFileManObserver::TControl CS60MapsAppUi::NotifyFileManStarted()
