@@ -134,7 +134,9 @@ void CS60MapsAppUi::ConstructL()
 	_LIT(KPosRequestorName, "S60 Maps"); // ToDo: Move to global const
 	TRAPD(err, iPosRequestor = CPositionRequestor::NewL(this, KPosRequestorName));
 	if (err == KErrNone)
+		{
 		iPosRequestor->Start(); // Must be started after view created
+		}
 	else
 		{
 		HBufC* msg = iEikonEnv->AllocReadResourceLC(R_POSITIONING_DISABLED);
