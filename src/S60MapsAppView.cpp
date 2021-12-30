@@ -123,9 +123,9 @@ void CS60MapsAppView::ConstructL(const TRect& aRect, const TCoordinate &aInitial
 #ifdef DEBUG_SHOW_TILE_BORDER_AND_XYZ
 	iLayers.Append(new (ELeave) CTileBorderAndXYZLayer(this));
 #endif
+	iLayers.Append(CLandmarksLayer::NewL(this, appUi->LandmarkDb()));
 	iLayers.Append(new (ELeave) CUserPositionLayer(this));
 	iLayers.Append(CScaleBarLayer::NewL(this));
-	iLayers.Append(CLandmarksLayer::NewL(this, appUi->LandmarkDb()));
 #ifdef DEBUG_SHOW_ADDITIONAL_INFO
 	iLayers.Append(CMapLayerDebugInfo::NewL(this));
 #endif
