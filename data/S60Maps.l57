@@ -58,3 +58,4 @@ CHARACTER_SET UTF8
 // Added in develop branch
 
 #define qtn_settings "Settings"
+#define qtn_language "Language"
