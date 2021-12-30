@@ -59,6 +59,8 @@ private:
 	
 	
 private:
+	void DoInternalizeL(RReadStream& aStream);
+	
 	// Parameters
 	
 	TReal64 iLat;
@@ -66,6 +68,8 @@ private:
 	TZoom iZoom;
 	TTileProviderId iTileProviderId;
 	TBool iIsLandmarksVisible;
+public:
+	TLanguage iLanguage;
 	
 public:
 	CSettings();

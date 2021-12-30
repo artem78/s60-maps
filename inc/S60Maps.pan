@@ -18,7 +18,8 @@ enum TS60MapsPanics
 	ES60MapsTileBitmapIsNullPanic,
 	ES60MapsNoRequiredHeaderInResponse,
 	ES60MapsPosRequestorIsNull,
-	ES60MapsInvalidPosition // e.g., lat/lon = NaN
+	ES60MapsInvalidPosition, // e.g., lat/lon = NaN
+	ES60MapsInvalidResourceOffset
 	};
 
 inline void Panic(TS60MapsPanics aReason)

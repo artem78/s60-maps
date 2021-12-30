@@ -51,8 +51,21 @@ RESOURCE TBUF r_default_document_name
 //
 RESOURCE EIK_APP_INFO
 	{
-	menubar = r_menubar;
 	cba = R_AVKON_SOFTKEYS_OPTIONS_EXIT;
+	}
+
+
+// Map view
+RESOURCE AVKON_VIEW r_map_view
+	{
+	menubar = r_menubar;
+	//cba = R_AVKON_SOFTKEYS_OPTIONS_EXIT;
+	}
+
+// Settings view
+RESOURCE AVKON_VIEW r_settings_view
+	{
+	cba = /*R_AVKON_SOFTKEYS_OPTIONS_BACK*/ R_AVKON_SOFTKEYS_BACK;
 	}
 
 
@@ -119,6 +132,11 @@ RESOURCE MENU_PANE r_menu
 				//command = ...;
 				txt = qtn_service_title;
 				cascade = r_submenu_service;
+				},
+		MENU_ITEM
+				{
+				command = ESettings;
+				txt = qtn_settings;
 				},
 		MENU_ITEM
 				{
@@ -263,7 +281,7 @@ RESOURCE DIALOG r_confirm_dialog
 			control = AVKON_CONFIRMATION_QUERY
 				{
 				layout = EConfirmationQueryLayout;
-		        };
+				};
 			}
 		};
 	}
@@ -437,6 +455,7 @@ RESOURCE TBUF r_input_name { buf=qtn_input_name; }
 //RESOURCE TBUF r_rename { buf=qtn_rename; }
 //RESOURCE TBUF r_delete { buf=qtn_delete; }
 RESOURCE TBUF r_confirm_landmark_deletion { buf=qtn_confirm_landmark_deletion; }
+//RESOURCE TBUF r_settings_title { buf=qtn_settings; }
 
 // ---------------------------------------------------------------------------- 
 //
@@ -454,6 +473,83 @@ RESOURCE LOCALISABLE_APP_INFO r_localisable_app_info
 
 		number_of_icons = 1;
 		icon_file = "\\resource\\apps\\S60Maps_0xED689B88.mif";
+		};
+	}
+
+/*
+ * Settings
+ * 
+ */
+
+RESOURCE AVKON_SETTING_ITEM_LIST r_setting_item_list
+	{
+	title = qtn_settings;
+	
+	items = 
+		{
+		AVKON_SETTING_ITEM
+			{
+			identifier = ESettingLanguage;
+			setting_page_resource = r_language_setting_page;
+			associated_resource = r_popup_setting_language_texts;
+			name = qtn_language;
+			}
+		};
+	}
+
+	
+
+// Language setting
+
+RESOURCE AVKON_SETTING_PAGE r_language_setting_page
+	{
+	//number = 0;  EAknSettingPageNoOrdinalDisplayed 
+	label = qtn_language;
+	type = EAknCtPopupSettingList;
+	editor_resource_id = r_language_popup_setting_list;
+	}
+
+RESOURCE POPUP_SETTING_LIST r_language_popup_setting_list
+	{
+	flags = 0;
+	}
+
+RESOURCE AVKON_POPUP_SETTING_TEXTS r_popup_setting_language_texts
+	{
+	//flags = 0;
+	setting_texts_resource   = r_language_texts1;
+	popped_up_texts_resource = r_language_texts2;
+	}
+
+RESOURCE ARRAY r_language_texts1
+	{
+	items =
+		{
+		AVKON_ENUMERATED_TEXT { value = 1; text = "English"; },
+		AVKON_ENUMERATED_TEXT { value = 4; text = "Spanish"; },
+		AVKON_ENUMERATED_TEXT { value = 13; text = "Portuguese"; },
+		AVKON_ENUMERATED_TEXT { value = 16; text = "Russian"; },
+		AVKON_ENUMERATED_TEXT { value = 27; text = "Polish"; },
+		AVKON_ENUMERATED_TEXT { value = 57; text = "Hebrew"; },
+		AVKON_ENUMERATED_TEXT { value = 83; text = "Latin American Spanish"; },
+		AVKON_ENUMERATED_TEXT { value = 93; text = "Ukrainian"; },
+		AVKON_ENUMERATED_TEXT { value = 103; text = "Galician"; }
+		};
+	}
+
+RESOURCE ARRAY r_language_texts2
+	{
+	items =
+		{
+		LBUF { txt = "English"; },
+		LBUF { txt = "Spanish"; },
+		LBUF { txt = "Portuguese"; },
+		LBUF { txt = "Russian"; },
+		LBUF { txt = "Polish"; },
+		LBUF { txt = "Hebrew"; },
+		LBUF { txt = "Latin American Spanish"; },
+		LBUF { txt = "Ukrainian"; },
+		LBUF { txt = "Galician"; }
 		};
 	}
 
