@@ -49,7 +49,7 @@ CHARACTER_SET UTF8
 #define qtn_latitude "Latitud"
 #define qtn_longitude "Longitud"
 
-// Added in develop branch
+// Added in version 1.7:
 
 #define qtn_settings "Settings"
 #define qtn_language "Language"

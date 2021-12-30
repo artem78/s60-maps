@@ -64,7 +64,7 @@ void CSettings::ExternalizeL(RWriteStream& aStream) const
 	aStream << iTileProviderId;
 	aStream << (TInt8) iIsLandmarksVisible;
 
-	// Added in develop branch
+	// Added in version 1.7
 	aStream << TCardinality(iLanguage);
 	}
 
@@ -83,7 +83,7 @@ void CSettings::DoInternalizeL(RReadStream& aStream)
 	aStream >> isLandmarksVisible;
 	iIsLandmarksVisible = (TBool) isLandmarksVisible;
 
-	// Added in develop branch
+	// Added in version 1.7
 	aStream >> language;
 	iLanguage = static_cast<TLanguage>((TInt) language);
 	}

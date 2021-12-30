@@ -52,7 +52,7 @@ CHARACTER_SET UTF8
 #define qtn_latitude "Широта"
 #define qtn_longitude "Довгота"
 
-// Added in develop branch
+// Added in version 1.7:
 
 #define qtn_settings "Settings"
 #define qtn_language "Language"
