@@ -20,7 +20,7 @@ UID		  0x100039CE 0xED689B88
 SOURCEPATH		..\src
 SOURCE			S60Maps.cpp
 SOURCE			S60MapsApplication.cpp
-SOURCE			S60MapsAppView.cpp
+SOURCE			MapControl.cpp
 SOURCE			S60MapsAppUi.cpp
 SOURCE			S60MapsDocument.cpp
 
@@ -97,3 +97,5 @@ START BITMAP icons.mbm
 END
 SOURCEPATH ..\src
 SOURCE Utils.cpp
+SOURCEPATH ..\src
+SOURCE MapView.cpp SettingsListBox.cpp SettingsView.cpp

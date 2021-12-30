@@ -1,15 +1,15 @@
 /*
  ============================================================================
- Name		: S60MapsAppView.cpp
+ Name		: MapControl.cpp
  Author	  : artem78
  Copyright   : 
- Description : Application view implementation
+ Description : Map control implementation
  ============================================================================
  */
 
 // INCLUDE FILES
 #include <coemain.h>
-#include "S60MapsAppView.h"
+#include "MapControl.h"
 #include <e32math.h>
 #include "Defs.h"
 #include <aknappui.h> 
@@ -68,46 +68,46 @@ CCoeControlWithDelayedDraw::~CCoeControlWithDelayedDraw()
 	}
 
 
-// CS60MapsAppView
+// CMapControl
 
 // -----------------------------------------------------------------------------
-// CS60MapsAppView::NewL()
+// CMapControl::NewL()
 // Two-phased constructor.
 // -----------------------------------------------------------------------------
 //
-CS60MapsAppView* CS60MapsAppView::NewL(const TRect& aRect,
+CMapControl* CMapControl::NewL(const TRect& aRect,
 		const TCoordinate &aInitialPosition, TZoom aInitialZoom,
 		//TZoom aMinZoom, TZoom aMaxZoom,
 		TTileProvider* aTileProvider)
 	{
-	CS60MapsAppView* self = CS60MapsAppView::NewLC(aRect, aInitialPosition, aInitialZoom,
+	CMapControl* self = CMapControl::NewLC(aRect, aInitialPosition, aInitialZoom,
 			/*aMinZoom, aMaxZoom,*/ aTileProvider);
 	CleanupStack::Pop(self);
 	return self;
 	}
 
 // -----------------------------------------------------------------------------
-// CS60MapsAppView::NewLC()
+// CMapControl::NewLC()
 // Two-phased constructor.
 // -----------------------------------------------------------------------------
 //
-CS60MapsAppView* CS60MapsAppView::NewLC(const TRect& aRect,
+CMapControl* CMapControl::NewLC(const TRect& aRect,
 		const TCoordinate &aInitialPosition, TZoom aInitialZoom,
 		//TZoom aMinZoom, TZoom aMaxZoom,
 		TTileProvider* aTileProvider)
 	{
-	CS60MapsAppView* self = new (ELeave) CS60MapsAppView(aInitialZoom);
+	CMapControl* self = new (ELeave) CMapControl(aInitialZoom);
 	CleanupStack::PushL(self);
 	self->ConstructL(aRect, aInitialPosition, /*aMinZoom, aMaxZoom,*/ aTileProvider);
 	return self;
 	}
 
 // -----------------------------------------------------------------------------
-// CS60MapsAppView::ConstructL()
+// CMapControl::ConstructL()
 // Symbian 2nd phase constructor can leave.
 // -----------------------------------------------------------------------------
 //
-void CS60MapsAppView::ConstructL(const TRect& aRect, const TCoordinate &aInitialPosition,
+void CMapControl::ConstructL(const TRect& aRect, const TCoordinate &aInitialPosition,
 		//TZoom aMinZoom, TZoom aMaxZoom,
 		TTileProvider* aTileProvider)
 	{
@@ -123,9 +123,9 @@ void CS60MapsAppView::ConstructL(const TRect& aRect, const TCoordinate &aInitial
 #ifdef DEBUG_SHOW_TILE_BORDER_AND_XYZ
 	iLayers.Append(new (ELeave) CTileBorderAndXYZLayer(this));
 #endif
+	iLayers.Append(CLandmarksLayer::NewL(this, appUi->LandmarkDb()));
 	iLayers.Append(new (ELeave) CUserPositionLayer(this));
 	iLayers.Append(CScaleBarLayer::NewL(this));
-	iLayers.Append(CLandmarksLayer::NewL(this, appUi->LandmarkDb()));
 #ifdef DEBUG_SHOW_ADDITIONAL_INFO
 	iLayers.Append(CMapLayerDebugInfo::NewL(this));
 #endif
@@ -152,11 +152,11 @@ void CS60MapsAppView::ConstructL(const TRect& aRect, const TCoordinate &aInitial
 	}
 
 // -----------------------------------------------------------------------------
-// CS60MapsAppView::CS60MapsAppView()
+// CMapControl::CMapControl()
 // C++ default constructor can NOT contain any code, that might leave.
 // -----------------------------------------------------------------------------
 //
-CS60MapsAppView::CS60MapsAppView(TZoom aInitialZoom) :
+CMapControl::CMapControl(TZoom aInitialZoom) :
 	iZoom(aInitialZoom),
 	iIsSoftkeysShown(EFalse)
 	// Position will be set later in ConstructL
@@ -165,11 +165,11 @@ CS60MapsAppView::CS60MapsAppView(TZoom aInitialZoom) :
 	}
 
 // -----------------------------------------------------------------------------
-// CS60MapsAppView::~CS60MapsAppView()
+// CMapControl::~CMapControl()
 // Destructor.
 // -----------------------------------------------------------------------------
 //
-CS60MapsAppView::~CS60MapsAppView()
+CMapControl::~CMapControl()
 	{
 	iCrosshairAutoHideTimer->Cancel();
 	delete iCrosshairAutoHideTimer;
@@ -183,11 +183,11 @@ CS60MapsAppView::~CS60MapsAppView()
 	}
 
 // -----------------------------------------------------------------------------
-// CS60MapsAppView::Draw()
+// CMapControl::Draw()
 // Draws the display.
 // -----------------------------------------------------------------------------
 //
-void CS60MapsAppView::Draw(const TRect& /*aRect*/) const
+void CMapControl::Draw(const TRect& /*aRect*/) const
 	{
 	// Get the standard graphics context
 	CWindowGc& gc = SystemGc();
@@ -213,23 +213,23 @@ void CS60MapsAppView::Draw(const TRect& /*aRect*/) const
 	}
 
 // -----------------------------------------------------------------------------
-// CS60MapsAppView::SizeChanged()
+// CMapControl::SizeChanged()
 // Called by framework when the view size is changed.
 // -----------------------------------------------------------------------------
 //
-void CS60MapsAppView::SizeChanged()
+void CMapControl::SizeChanged()
 	{
 	DrawNow();
 	}
 
 // -----------------------------------------------------------------------------
-// CS60MapsAppView::HandlePointerEventL()
+// CMapControl::HandlePointerEventL()
 // Called by framework to handle pointer touch events.
 // Note: although this method is compatible with earlier SDKs, 
 // it will not be called in SDKs without Touch support.
 // -----------------------------------------------------------------------------
 //
-void CS60MapsAppView::HandlePointerEventL(const TPointerEvent& aPointerEvent)
+void CMapControl::HandlePointerEventL(const TPointerEvent& aPointerEvent)
 	{
 	const TInt KSwipingThreshold = 100; // px
 	const TInt KTouchingThreshold = 15; // px
@@ -351,7 +351,7 @@ void CS60MapsAppView::HandlePointerEventL(const TPointerEvent& aPointerEvent)
 	CCoeControl::HandlePointerEventL(aPointerEvent);
 	}
 
-TKeyResponse CS60MapsAppView::OfferKeyEventL(const TKeyEvent &aKeyEvent,
+TKeyResponse CMapControl::OfferKeyEventL(const TKeyEvent &aKeyEvent,
 		TEventCode aType)
 	{
 	if (aType == EEventKey /*EEventKeyDown*/)
@@ -439,7 +439,7 @@ TKeyResponse CS60MapsAppView::OfferKeyEventL(const TKeyEvent &aKeyEvent,
 	return EKeyWasNotConsumed;
 	}
 
-void CS60MapsAppView::Move(const TPoint &aPoint, TBool aSavePos)
+void CMapControl::Move(const TPoint &aPoint, TBool aSavePos)
 	{
 	DisableDraw();
 	
@@ -484,7 +484,7 @@ void CS60MapsAppView::Move(const TPoint &aPoint, TBool aSavePos)
 	EnableDraw();
 	}
 
-void CS60MapsAppView::Move(const TCoordinate &aPos)
+void CMapControl::Move(const TCoordinate &aPos)
 	{
 	DisableDraw();
 	
@@ -502,7 +502,7 @@ void CS60MapsAppView::Move(const TCoordinate &aPos)
 	EnableDraw();
 	}
 
-void CS60MapsAppView::Move(const TCoordinate &aPos, TZoom aZoom)
+void CMapControl::Move(const TCoordinate &aPos, TZoom aZoom)
 	{
 	DisableDraw();
 	
@@ -512,7 +512,7 @@ void CS60MapsAppView::Move(const TCoordinate &aPos, TZoom aZoom)
 	EnableDraw();
 	}
 
-void CS60MapsAppView::Move(TReal64 aLat, TReal64 aLon)
+void CMapControl::Move(TReal64 aLat, TReal64 aLon)
 	{
 	DisableDraw();
 	
@@ -521,7 +521,7 @@ void CS60MapsAppView::Move(TReal64 aLat, TReal64 aLon)
 	EnableDraw();
 	}
 
-void CS60MapsAppView::Move(TReal64 aLat, TReal64 aLon, TZoom aZoom)
+void CMapControl::Move(TReal64 aLat, TReal64 aLon, TZoom aZoom)
 	{
 	DisableDraw();
 	
@@ -531,7 +531,7 @@ void CS60MapsAppView::Move(TReal64 aLat, TReal64 aLon, TZoom aZoom)
 	EnableDraw();
 	}
 
-void CS60MapsAppView::MoveAndZoomIn(const TCoordinate &aPos)
+void CMapControl::MoveAndZoomIn(const TCoordinate &aPos)
 	{
 	DisableDraw();
 	
@@ -545,7 +545,7 @@ void CS60MapsAppView::MoveAndZoomIn(const TCoordinate &aPos)
 	EnableDraw();
 	}
 
-void CS60MapsAppView::SetZoomBounds(TZoom aMinZoom, TZoom aMaxZoom)
+void CMapControl::SetZoomBounds(TZoom aMinZoom, TZoom aMaxZoom)
 	{
 	// Checks
 	if (aMinZoom <= aMaxZoom)
@@ -563,7 +563,7 @@ void CS60MapsAppView::SetZoomBounds(TZoom aMinZoom, TZoom aMaxZoom)
 		SetZoom(iMaxZoom);
 	}
 
-void CS60MapsAppView::SetZoom(TZoom aZoom)
+void CMapControl::SetZoom(TZoom aZoom)
 	{
 	DisableDraw();
 	
@@ -581,7 +581,7 @@ void CS60MapsAppView::SetZoom(TZoom aZoom)
 	EnableDraw();
 	}
 
-void CS60MapsAppView::ZoomIn()
+void CMapControl::ZoomIn()
 	{
 	if (iZoom < KMaxZoomLevel)
 		{
@@ -592,7 +592,7 @@ void CS60MapsAppView::ZoomIn()
 		}
 	}
 
-void CS60MapsAppView::ZoomOut()
+void CMapControl::ZoomOut()
 	{
 	if (iZoom > KMinZoomLevel)
 		{
@@ -603,7 +603,7 @@ void CS60MapsAppView::ZoomOut()
 		}
 	}
 
-void CS60MapsAppView::MoveUp(TUint aPixels)
+void CMapControl::MoveUp(TUint aPixels)
 	{
 	TPoint point = iTopLeftPosition;
 	point.iY -= aPixels;
@@ -613,8 +613,8 @@ void CS60MapsAppView::MoveUp(TUint aPixels)
 	EnableDraw();
 	}
 
-void CS60MapsAppView::MoveDown(TUint aPixels)
-	{	
+void CMapControl::MoveDown(TUint aPixels)
+	{
 	TPoint point = iTopLeftPosition;
 	point.iY += aPixels;
 	DisableDraw();
@@ -623,7 +623,7 @@ void CS60MapsAppView::MoveDown(TUint aPixels)
 	EnableDraw();
 	}
 
-void CS60MapsAppView::MoveLeft(TUint aPixels)
+void CMapControl::MoveLeft(TUint aPixels)
 	{
 	TPoint point = iTopLeftPosition;
 	point.iX -= aPixels;
@@ -633,7 +633,7 @@ void CS60MapsAppView::MoveLeft(TUint aPixels)
 	EnableDraw();
 	}
 
-void CS60MapsAppView::MoveRight(TUint aPixels)
+void CMapControl::MoveRight(TUint aPixels)
 	{
 	TPoint point = iTopLeftPosition;
 	point.iX += aPixels;
@@ -643,12 +643,12 @@ void CS60MapsAppView::MoveRight(TUint aPixels)
 	EnableDraw();
 	}
 
-TZoom CS60MapsAppView::GetZoom() const
+TZoom CMapControl::GetZoom() const
 	{
 	return iZoom;
 	}
 
-TCoordinate CS60MapsAppView::GetCenterCoordinate() const
+TCoordinate CMapControl::GetCenterCoordinate() const
 	{
 	TPoint point = iTopLeftPosition;
 	point.iX += Rect().Width() / 2;
@@ -656,49 +656,49 @@ TCoordinate CS60MapsAppView::GetCenterCoordinate() const
 	return MapMath::ProjectionPointToGeoCoords(point, iZoom);
 	}
 
-TBool CS60MapsAppView::CheckCoordVisibility(const TCoordinate &aCoord) const
+TBool CMapControl::CheckCoordVisibility(const TCoordinate &aCoord) const
 	{	
 	TPoint projectionPoint = MapMath::GeoCoordsToProjectionPoint(aCoord, iZoom);
 	TPoint screenPoint = ProjectionCoordsToScreenCoords(projectionPoint);
 	return CheckPointVisibility(screenPoint);
 	}
 
-TBool CS60MapsAppView::CheckPointVisibility(const TPoint &aPoint) const
+TBool CMapControl::CheckPointVisibility(const TPoint &aPoint) const
 	{
 	TRect screenRect = Rect();
 	screenRect.Resize(1, 1);
 	return screenRect.Contains(aPoint);
 	}
 
-TPoint CS60MapsAppView::GeoCoordsToScreenCoords(const TCoordinate &aCoord) const
+TPoint CMapControl::GeoCoordsToScreenCoords(const TCoordinate &aCoord) const
 	{
 	TPoint point = MapMath::GeoCoordsToProjectionPoint(aCoord, iZoom);
 	return ProjectionCoordsToScreenCoords(point);
 	}
 
-TCoordinate CS60MapsAppView::ScreenCoordsToGeoCoords(const TPoint &aPoint) const
+TCoordinate CMapControl::ScreenCoordsToGeoCoords(const TPoint &aPoint) const
 	{	
 	TPoint point = ScreenCoordsToProjectionCoords(aPoint);
 	return MapMath::ProjectionPointToGeoCoords(point, iZoom);
 	}
 
-TPoint CS60MapsAppView::ProjectionCoordsToScreenCoords(const TPoint &aPoint) const
+TPoint CMapControl::ProjectionCoordsToScreenCoords(const TPoint &aPoint) const
 	{
 	return aPoint - iTopLeftPosition;
 	}
 
-TPoint CS60MapsAppView::ScreenCoordsToProjectionCoords(const TPoint &aPoint) const
+TPoint CMapControl::ScreenCoordsToProjectionCoords(const TPoint &aPoint) const
 	{
 	return aPoint + iTopLeftPosition;
 	}
 
-void CS60MapsAppView::Bounds(TCoordinate &aTopLeftCoord, TCoordinate &aBottomRightCoord) const
+void CMapControl::Bounds(TCoordinate &aTopLeftCoord, TCoordinate &aBottomRightCoord) const
 	{
 	aTopLeftCoord = ScreenCoordsToGeoCoords(Rect().iTl);
 	aBottomRightCoord = ScreenCoordsToGeoCoords(Rect().iBr - TPoint(1, 1));
 	}
 
-void CS60MapsAppView::Bounds(TTile &aTopLeftTile, TTile &aBottomRightTile) const
+void CMapControl::Bounds(TTile &aTopLeftTile, TTile &aBottomRightTile) const
 	{
 	TPoint topLeftProjection = ScreenCoordsToProjectionCoords(Rect().iTl);
 	TPoint bottomRightProjection = ScreenCoordsToProjectionCoords(Rect().iBr - TPoint(1, 1));
@@ -706,7 +706,7 @@ void CS60MapsAppView::Bounds(TTile &aTopLeftTile, TTile &aBottomRightTile) const
 	aBottomRightTile = MapMath::ProjectionPointToTile(bottomRightProjection, GetZoom());
 	}
 
-void CS60MapsAppView::Bounds(TTileReal &aTopLeftTile, TTileReal &aBottomRightTile) const
+void CMapControl::Bounds(TTileReal &aTopLeftTile, TTileReal &aBottomRightTile) const
 	{
 	TCoordinate topLeftCoord, bottomRightCoord;
 	Bounds(topLeftCoord, bottomRightCoord);
@@ -714,7 +714,7 @@ void CS60MapsAppView::Bounds(TTileReal &aTopLeftTile, TTileReal &aBottomRightTil
 	aBottomRightTile = MapMath::GeoCoordsToTileReal(bottomRightCoord, GetZoom());
 	}
 
-void CS60MapsAppView::UpdateUserPosition()
+void CMapControl::UpdateUserPosition()
 	{
 	DisableDraw();
 	
@@ -735,13 +735,13 @@ void CS60MapsAppView::UpdateUserPosition()
 	EnableDraw();
 	}
 
-void CS60MapsAppView::SetUserPosition(const TCoordinateEx& aPos)
+void CMapControl::SetUserPosition(const TCoordinateEx& aPos)
 	{
 	iUserPosition = aPos;
 	ShowUserPosition();
 	}
 
-TInt CS60MapsAppView::UserPosition(TCoordinateEx& aPos)
+TInt CMapControl::UserPosition(TCoordinateEx& aPos)
 	{
 	if (!iIsUserPositionRecieved)
 		return KErrNotFound;
@@ -750,19 +750,19 @@ TInt CS60MapsAppView::UserPosition(TCoordinateEx& aPos)
 	return KErrNone;
 	}
 
-void CS60MapsAppView::ShowUserPosition()
+void CMapControl::ShowUserPosition()
 	{
 	iIsUserPositionRecieved = ETrue;
 	UpdateUserPosition();
 	}
 
-void CS60MapsAppView::HideUserPosition()
+void CMapControl::HideUserPosition()
 	{
 	iIsUserPositionRecieved = EFalse;
 	UpdateUserPosition();
 	}
 
-void CS60MapsAppView::SetFollowUser(TBool anEnabled)
+void CMapControl::SetFollowUser(TBool anEnabled)
 	{
 	iIsFollowUser = anEnabled;
 	
@@ -775,13 +775,13 @@ void CS60MapsAppView::SetFollowUser(TBool anEnabled)
 	UpdateUserPosition();
 	}
 
-TInt CS60MapsAppView::MovementRepeaterCallback(TAny* aObject)
+TInt CMapControl::MovementRepeaterCallback(TAny* aObject)
 	{
-	((CS60MapsAppView*)aObject)->ExecuteMovement();
+	((CMapControl*)aObject)->ExecuteMovement();
 	return 1;
 	}
 
-void CS60MapsAppView::ExecuteMovement()
+void CMapControl::ExecuteMovement()
 	{
 	switch(iMovement)
 		{
@@ -822,13 +822,13 @@ void CS60MapsAppView::ExecuteMovement()
 		}
 	}
 
-void CS60MapsAppView::SetTileProviderL(TTileProvider* aTileProvider)
+void CMapControl::SetTileProviderL(TTileProvider* aTileProvider)
 	{
 	static_cast<CTiledMapLayer*>(iLayers[0 /*tiled map*/])->SetTileProviderL(aTileProvider);
 	SetZoomBounds(aTileProvider->iMinZoomLevel, aTileProvider->iMaxZoomLevel);
 	}
 
-void CS60MapsAppView::ShowCrosshair()
+void CMapControl::ShowCrosshair()
 	{
 	if (iIsCrosshairVisible)
 		return;
@@ -839,7 +839,7 @@ void CS60MapsAppView::ShowCrosshair()
 	EnableDraw();
 	}
 
-void CS60MapsAppView::HideCrosshair()
+void CMapControl::HideCrosshair()
 	{
 	if (!IsCrosshairVisible())
 		return;
@@ -850,20 +850,31 @@ void CS60MapsAppView::HideCrosshair()
 	EnableDraw();
 	}
 
-TInt CS60MapsAppView::CrosshairAutoHideCallback(TAny* anObj)
+TInt CMapControl::CrosshairAutoHideCallback(TAny* anObj)
 	{
-	CS60MapsAppView* obj = static_cast<CS60MapsAppView*>(anObj);
+	CMapControl* obj = static_cast<CMapControl*>(anObj);
 	obj->HideCrosshair();
 	return EFalse;
 	}
 
-void CS60MapsAppView::ShowCrosshairForAShortTime()
+void CMapControl::ShowCrosshairForAShortTime()
 	{
 		ShowCrosshair();
 		if (iCrosshairAutoHideTimer->IsActive())
 			iCrosshairAutoHideTimer->Cancel();
 		TCallBack callback(CrosshairAutoHideCallback, this);
 		iCrosshairAutoHideTimer->Start((TInt)(1.5 * KSecond), 0, callback);
+	}
+
+void CMapControl::HandleLanguageChangedL()
+	{
+	//ToDo: Remake searching for scale bar layer in the array!!!
+#ifdef DEBUG_SHOW_TILE_BORDER_AND_XYZ
+	TInt layerIdx = 4;
+#else
+	TInt layerIdx = 3;
+#endif
+	static_cast<CScaleBarLayer*>(iLayers[layerIdx /*scale bar layer*/])->ReloadStringsFromResourceL();
 	}
 
 // End of File

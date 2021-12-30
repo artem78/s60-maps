@@ -9,6 +9,7 @@
  */
 
 #include "Settings.h"
+#include "Logger.h"
 
 
 // Constants
@@ -26,7 +27,8 @@ CSettings::CSettings() :
 		iLon(KDefaultLon),
 		iZoom(KDefaultZoom),
 		iTileProviderId(KDefaultTileProviderId),
-		iIsLandmarksVisible(EFalse)
+		iIsLandmarksVisible(EFalse),
+		iLanguage(ELangEnglish)
 	{
 	}
 
@@ -61,17 +63,36 @@ void CSettings::ExternalizeL(RWriteStream& aStream) const
 	aStream << TCardinality(iZoom);
 	aStream << iTileProviderId;
 	aStream << (TInt8) iIsLandmarksVisible;
+
+	// Added in develop branch
+	aStream << TCardinality(iLanguage);
+	}
+
+void CSettings::DoInternalizeL(RReadStream& aStream)
+	{
+	// FixMe: Reads mess in new settings for old config file (make sure to validate them)
+	
+	TCardinality zoom, language;
+	TInt8 isLandmarksVisible;
+	
+	aStream >> iLat;
+	aStream >> iLon;
+	aStream >> zoom;
+	iZoom = (TInt) zoom;
+	aStream >> iTileProviderId;
+	aStream >> isLandmarksVisible;
+	iIsLandmarksVisible = (TBool) isLandmarksVisible;
+
+	// Added in develop branch
+	aStream >> language;
+	iLanguage = static_cast<TLanguage>((TInt) language);
 	}
 
 void CSettings::InternalizeL(RReadStream& aStream)
 	{
-	TRAP_IGNORE(aStream >> iLat);
-	TRAP_IGNORE(aStream >> iLon);
-	TCardinality zoom;
-	TRAP_IGNORE(aStream >> zoom);
-	iZoom = (TInt) zoom;
-	TRAP_IGNORE(aStream >> iTileProviderId);
-	TInt8 isLandmarksVisible;
-	TRAP_IGNORE(aStream >> isLandmarksVisible);
-	iIsLandmarksVisible = (TBool) isLandmarksVisible;
+	TRAPD(r, DoInternalizeL(aStream)); // Ignore any errors
+	if (r != KErrNone)
+		{
+		WARNING(_L("Settings file broken or incomplete (code: %d)"), r);
+		}
 	}
