@@ -36,7 +36,7 @@ CHARACTER_SET UTF8
 #define qtn_landmarks "Lugares de interés"
 #define qtn_display "Mostrar"
 #define qtn_create "Crear"
-#define qtn_input_name "Guardar como"
+#define qtn_input_name "Guardar como:"
 #define qtn_rename "Renombrar"
 #define qtn_delete "Eliminar"
 #define qtn_confirm_landmark_deletion "¿Desea eliminar \"%S\"?"
