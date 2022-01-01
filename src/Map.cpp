@@ -1306,7 +1306,7 @@ void CTileBitmapManager::RunL()
 
 void CTileBitmapManager::OnHTTPResponseDataChunkRecieved(
 		const RHTTPTransaction aTransaction, const TDesC8 &aDataChunk,
-		TInt anOverallDataSize, TBool anIsLastChunk)
+		TInt /*anOverallDataSize*/, TBool /*anIsLastChunk*/)
 	{
 	DEBUG(_L("HTTP chunk recieved"));
 	
@@ -1349,7 +1349,7 @@ void CTileBitmapManager::OnHTTPResponseDataChunkRecieved(
 	//iImgDecoder->ContinueConvert();
 	}
 
-void CTileBitmapManager::OnHTTPResponse(const RHTTPTransaction aTransaction)
+void CTileBitmapManager::OnHTTPResponse(const RHTTPTransaction /*aTransaction*/)
 	{
 	DEBUG(_L("HTTP response success"));
 	
@@ -1372,7 +1372,7 @@ void CTileBitmapManager::OnHTTPResponse(const RHTTPTransaction aTransaction)
 	}
 
 void CTileBitmapManager::OnHTTPError(TInt aError,
-		const RHTTPTransaction aTransaction)
+		const RHTTPTransaction /*aTransaction*/)
 	{
 	//ERROR(_L("HTTP error: %d"), aError);
 	ERROR(_L("Failed to download tile %S, error: %d"), &iLoadingTile.AsDes(), aError);
@@ -1415,7 +1415,7 @@ void CTileBitmapManager::OnHTTPError(TInt aError,
 		}
 	}
 void CTileBitmapManager::OnHTTPHeadersRecieved(
-		const RHTTPTransaction aTransaction)
+		const RHTTPTransaction /*aTransaction*/)
 	{
 	DEBUG(_L("HTTP headers recieved"));
 	
