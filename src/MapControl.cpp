@@ -20,6 +20,23 @@
 // Constants
 const TInt KMovementRepeaterInterval = 200000;
 
+// Map layer ids
+enum TMapLayerId
+	{
+	// Main layers
+	ETiledMapLayerId,
+#ifdef DEBUG_SHOW_TILE_BORDER_AND_XYZ	
+	ETileBorderAndXYZLayerId,
+#endif	
+	ELandmarksLayerId,
+	EUserPositionLayerId,
+	EScaleBarLayerId,
+#ifdef DEBUG_SHOW_ADDITIONAL_INFO
+	EDebugInfoLayerId,
+#endif	
+	ECrosshairLayerId
+	};
+
 // ============================ MEMBER FUNCTIONS ===============================
 
 // CCoeControlWithDelayedDraw
@@ -202,7 +219,7 @@ void CMapControl::Draw(const TRect& /*aRect*/) const
 	TInt i;
 	for (i = 0; i < iLayers.Count(); i++)
 		{
-		if (i == iLayers.Count() - 1 /*crosshair layer*/ && !IsCrosshairVisible()) // ToDo: Make better checking of layer == crosshair
+		if (i == ECrosshairLayerId && !IsCrosshairVisible())
 			continue; // Skip drawing crosshair if hidden
 		
 		//Window().BeginRedraw();
@@ -824,7 +841,7 @@ void CMapControl::ExecuteMovement()
 
 void CMapControl::SetTileProviderL(TTileProvider* aTileProvider)
 	{
-	static_cast<CTiledMapLayer*>(iLayers[0 /*tiled map*/])->SetTileProviderL(aTileProvider);
+	static_cast<CTiledMapLayer*>(iLayers[ETiledMapLayerId])->SetTileProviderL(aTileProvider);
 	SetZoomBounds(aTileProvider->iMinZoomLevel, aTileProvider->iMaxZoomLevel);
 	}
 
@@ -868,13 +885,7 @@ void CMapControl::ShowCrosshairForAShortTime()
 
 void CMapControl::HandleLanguageChangedL()
 	{
-	//ToDo: Remake searching for scale bar layer in the array!!!
-#ifdef DEBUG_SHOW_TILE_BORDER_AND_XYZ
-	TInt layerIdx = 4;
-#else
-	TInt layerIdx = 3;
-#endif
-	static_cast<CScaleBarLayer*>(iLayers[layerIdx /*scale bar layer*/])->ReloadStringsFromResourceL();
+	static_cast<CScaleBarLayer*>(iLayers[EScaleBarLayerId])->ReloadStringsFromResourceL();
 	}
 
 // End of File
