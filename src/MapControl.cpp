@@ -118,18 +118,18 @@ void CMapControl::ConstructL(const TRect& aRect, const TCoordinate &aInitialPosi
 //	SetTileProviderL(aTileProvider);
 	
 	// Create layers
-	iLayers = RPointerArray<CMapLayerBase>(10);
-	iLayers.Append(CTiledMapLayer::NewL(this, aTileProvider));
+	iLayers = CMapLayerArray::NewL();
+	iLayers->Append(ETiledMapLayerId, CTiledMapLayer::NewL(this, aTileProvider));
 #ifdef DEBUG_SHOW_TILE_BORDER_AND_XYZ
-	iLayers.Append(new (ELeave) CTileBorderAndXYZLayer(this));
+	iLayers->Append(ETileBorderAndXYZLayerId, new (ELeave) CTileBorderAndXYZLayer(this));
 #endif
-	iLayers.Append(CLandmarksLayer::NewL(this, appUi->LandmarkDb()));
-	iLayers.Append(new (ELeave) CUserPositionLayer(this));
-	iLayers.Append(CScaleBarLayer::NewL(this));
+	iLayers->Append(ELandmarksLayerId, CLandmarksLayer::NewL(this, appUi->LandmarkDb()));
+	iLayers->Append(EUserPositionLayerId, new (ELeave) CUserPositionLayer(this));
+	iLayers->Append(EScaleBarLayerId, CScaleBarLayer::NewL(this));
 #ifdef DEBUG_SHOW_ADDITIONAL_INFO
-	iLayers.Append(CMapLayerDebugInfo::NewL(this));
+	iLayers->Append(EDebugInfoLayerId, CMapLayerDebugInfo::NewL(this));
 #endif
-	iLayers.Append(new (ELeave) CCrosshairLayer(this));
+	iLayers->Append(ECrosshairLayerId, new (ELeave) CCrosshairLayer(this));
 	
 	SetTileProviderL(aTileProvider);
 
@@ -175,7 +175,7 @@ CMapControl::~CMapControl()
 	delete iCrosshairAutoHideTimer;
 	
 	// Destroy all layers
-	iLayers.ResetAndDestroy();
+	delete iLayers;
 
 	iMovementRepeater->Cancel();
 	delete iMovementRepeater;
@@ -200,14 +200,16 @@ void CMapControl::Draw(const TRect& /*aRect*/) const
 	
 	// Draw layers
 	TInt i;
-	for (i = 0; i < iLayers.Count(); i++)
+	for (i = 0; i < iLayers->Count(); i++)
 		{
-		if (i == iLayers.Count() - 1 /*crosshair layer*/ && !IsCrosshairVisible()) // ToDo: Make better checking of layer == crosshair
+		CMapLayerBase* layer = iLayers->At(i);
+		
+		if (layer == iLayers->Find(ECrosshairLayerId) && !IsCrosshairVisible())
 			continue; // Skip drawing crosshair if hidden
 		
 		//Window().BeginRedraw();
 		gc.Reset();
-		iLayers[i]->Draw(gc);
+		layer->Draw(gc);
 		//Window().EndRedraw();
 		}
 	}
@@ -824,7 +826,7 @@ void CMapControl::ExecuteMovement()
 
 void CMapControl::SetTileProviderL(TTileProvider* aTileProvider)
 	{
-	static_cast<CTiledMapLayer*>(iLayers[0 /*tiled map*/])->SetTileProviderL(aTileProvider);
+	static_cast<CTiledMapLayer*>(iLayers->Find(ETiledMapLayerId))->SetTileProviderL(aTileProvider);
 	SetZoomBounds(aTileProvider->iMinZoomLevel, aTileProvider->iMaxZoomLevel);
 	}
 
@@ -868,13 +870,98 @@ void CMapControl::ShowCrosshairForAShortTime()
 
 void CMapControl::HandleLanguageChangedL()
 	{
-	//ToDo: Remake searching for scale bar layer in the array!!!
-#ifdef DEBUG_SHOW_TILE_BORDER_AND_XYZ
-	TInt layerIdx = 4;
-#else
-	TInt layerIdx = 3;
-#endif
-	static_cast<CScaleBarLayer*>(iLayers[layerIdx /*scale bar layer*/])->ReloadStringsFromResourceL();
+	static_cast<CScaleBarLayer*>(iLayers->Find(EScaleBarLayerId))->ReloadStringsFromResourceL();
+	}
+
+
+// CMapLayerArray
+
+CMapLayerArray* CMapLayerArray::NewLC()
+	{
+	CMapLayerArray* self = new (ELeave) CMapLayerArray();
+	CleanupStack::PushL(self);
+	self->ConstructL();
+	return self;
+	}
+
+CMapLayerArray* CMapLayerArray::NewL()
+	{
+	CMapLayerArray* self = CMapLayerArray::NewLC();
+	CleanupStack::Pop(); // self;
+	return self;
+	}
+
+CMapLayerArray::CMapLayerArray()
+	{
+	}
+
+void CMapLayerArray::ConstructL()
+	{
+	iItems = RArray<TMapLayerArrayItem>(10);
+	}
+
+CMapLayerArray::~CMapLayerArray()
+	{
+	for (TInt i = 0; i < Count(); i++)
+		{
+		delete iItems[i].iLayer;
+		}
+	iItems.Close();
+	}
+
+void CMapLayerArray::Append(TMapLayerId anId, CMapLayerBase* aLayer)
+	{
+	TMapLayerArrayItem item;
+	item.iId = anId;
+	item.iLayer = aLayer;
+	iItems.AppendL(item);
+	}
+
+void CMapLayerArray::Remove(TMapLayerId anId)
+	{
+	TInt idx = FindIdx(anId);
+	
+	if (idx != KErrNotFound)
+		{
+		iItems.Remove(idx);
+		}
+	}
+
+CMapLayerBase* CMapLayerArray::Find(TMapLayerId anId)
+	{
+	TInt idx = FindIdx(anId);
+	
+	if (idx != KErrNotFound)
+		{
+		return iItems[idx].iLayer;
+		}
+	else
+		{
+		return NULL;
+		}
+	}
+
+CMapLayerBase* CMapLayerArray::At(TInt anIdx)
+	{
+	iItems[anIdx].iLayer;
+	}
+
+TInt CMapLayerArray::Count()
+	{
+	iItems.Count();
+	}
+
+TInt CMapLayerArray::FindIdx(TMapLayerId anId)
+	{
+	for (TInt i = 0; i < Count(); i++)
+		{
+		if (iItems[i].iId == anId)
+			{
+			return i;
+			}
+		}
+	
+	return KErrNotFound;
 	}
 
 // End of File

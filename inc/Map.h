@@ -29,6 +29,21 @@ const TReal64 KMaxLatitudeMapBound = 85.051129;
 const TReal64 KMinLongitudeMapBound = -180;
 const TReal64 KMaxLongitudeMapBound = 180;
 
+// Map layer ids
+enum TMapLayerId
+	{
+	// Main layers
+	ETiledMapLayerId,
+	ELandmarksLayerId,
+	EUserPositionLayerId,
+	EScaleBarLayerId,
+	ECrosshairLayerId,
+	
+	// Debug layers
+	ETileBorderAndXYZLayerId = 100,
+	EDebugInfoLayerId
+	};
+
 
 // Forward declaration
 class CMapControl;

@@ -52,6 +52,8 @@ public:
 	};
 
 
+class CMapLayerArray;
+
 class CMapControl : public CCoeControlWithDelayedDraw
 	{
 public:
@@ -159,7 +161,7 @@ private:
 	TCoordinate iCenterPosition; // Similar to iTopLeftPosition, but used for
 				// more accurate moving to position when zoom changed
 				// ToDo: Any ideas how to make it without additional property? 
-	RPointerArray<CMapLayerBase> iLayers;
+	CMapLayerArray* iLayers;
 	
 	TCoordinateEx iUserPosition;
 	TBool iIsUserPositionRecieved; // Todo: Redundant flag - iUserPosition with lat=NaN and lon=NaN can indicates unknown position 
@@ -242,6 +244,41 @@ public:
 		{ return iIsSoftkeysShown; };
 	void HandleLanguageChangedL();
 
+	};
+
+
+class CMapLayerArray : public CBase
+	{
+	// Constructor / Destructor
+public:
+	static CMapLayerArray* NewL();
+	static CMapLayerArray* NewLC();
+	~CMapLayerArray();
+
+private:
+	CMapLayerArray();
+	void ConstructL();
+	
+	// New
+private:
+	class TMapLayerArrayItem
+		{
+		public:
+			TMapLayerId iId;
+			CMapLayerBase* iLayer;
+		};
+	
+	RArray<TMapLayerArrayItem> iItems;
+	
+	TInt FindIdx(TMapLayerId anId);
+	
+public:	
+	void Append(TMapLayerId anId, CMapLayerBase* aLayer);
+	void Remove(TMapLayerId anId);
+	CMapLayerBase* Find(TMapLayerId anId);
+	CMapLayerBase* At(TInt anIdx);
+	TInt Count();	
+	
 	};
 	
 #endif // __MAPCONTROL_h__
