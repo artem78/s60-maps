@@ -646,7 +646,7 @@ void CScaleBarLayer::ReloadStringsFromResourceL()
 	iMetersUnit = CCoeEnv::Static()->AllocReadResourceL(R_METERS_UNIT_SHORT);
 	iKilometersUnit = CCoeEnv::Static()->AllocReadResourceL(R_KILOMETERS_UNIT_SHORT);
 	
-	DEBUG(_L("Loaded strings: %S, %S"), &iMetersUnit->Des(), &iKilometersUnit->Des());
+	DEBUG(_L("Loaded strings: %S, %S"), &*iMetersUnit, &*iKilometersUnit);
 	}
 
 
