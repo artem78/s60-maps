@@ -144,7 +144,7 @@ TPoint MapMath::GeoCoordsToProjectionPoint(const TCoordinate &aCoord, TZoom aZoo
 	Math::Round(x, x, 0);
 	y = tileReal.iY * KTileSize;
 	Math::Round(y, y, 0);
-	return TPoint(x, y);
+	return TPoint(static_cast<TInt>(x), static_cast<TInt>(y));
 	}
 
 TCoordinate MapMath::ProjectionPointToGeoCoords(const TPoint &aPoint, TZoom aZoom)
