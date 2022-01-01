@@ -595,7 +595,7 @@ void CScaleBarLayer::Draw(CWindowGc &aGc)
 	aGc.DiscardFont();
 	}
 
-TInt CScaleBarLayer::GetOptimalLength(TInt &optimalLength, TReal32 &optimalDistance)
+void CScaleBarLayer::GetOptimalLength(TInt &optimalLength, TReal32 &optimalDistance)
 	{
 	const TInt KMinLengthPx = 50;
 	const TInt KMaxLengthPx = 150;

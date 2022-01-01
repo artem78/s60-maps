@@ -174,7 +174,7 @@ private:
 	HBufC* iKilometersUnit;
 	/*const*/ CFont* iFont;
 	
-	TInt GetOptimalLength(TInt &optimalLength, TReal32 &optimalDistance);
+	void GetOptimalLength(TInt &optimalLength, TReal32 &optimalDistance);
 	
 public:
 	void ReloadStringsFromResourceL();
