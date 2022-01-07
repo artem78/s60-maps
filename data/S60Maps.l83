@@ -36,7 +36,7 @@ CHARACTER_SET UTF8
 #define qtn_landmarks "Lugares de interés"
 #define qtn_display "Mostrar"
 #define qtn_create "Crear"
-#define qtn_input_name "Guardar como"
+#define qtn_input_name "Guardar como:"
 #define qtn_rename "Renombrar"
 #define qtn_delete "Eliminar"
 #define qtn_confirm_landmark_deletion "¿Desea eliminar \"%S\"?"
@@ -51,5 +51,5 @@ CHARACTER_SET UTF8
 
 // Added in version 1.7:
 
-#define qtn_settings "Settings"
-#define qtn_language "Language"
+#define qtn_settings "Configurac."
+#define qtn_language "Idioma"
