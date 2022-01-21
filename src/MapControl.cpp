@@ -16,6 +16,7 @@
 #include "S60Maps.pan"
 #include "S60MapsAppUi.h"
 #include "S60Maps.hrh"
+#include "MapView.h"
 
 // Constants
 const TInt KMovementRepeaterInterval = 200000;
@@ -441,13 +442,13 @@ TKeyResponse CMapControl::OfferKeyEventL(const TKeyEvent &aKeyEvent,
 				
 			case EStdKeyBackspace: // "C" key
 				{
-				iAvkonAppUi->ProcessCommandL(EDeleteLandmark);
+				static_cast<CS60MapsAppUi*>(iAvkonAppUi)->MapView()->ProcessCommandL(EDeleteLandmark);
 				return EKeyWasConsumed;
 				}
 				
 			case EStdKeyDevice3: // Central key
 				{
-				iAvkonAppUi->ProcessCommandL(ECreateOrRenameLandmark);
+				static_cast<CS60MapsAppUi*>(iAvkonAppUi)->MapView()->ProcessCommandL(ECreateOrRenameLandmark);
 				return EKeyWasConsumed;
 				}
 			}

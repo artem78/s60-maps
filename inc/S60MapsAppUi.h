@@ -187,6 +187,9 @@ public:
 	inline TBool IsPositioningAvailable()
 			{ return (TBool) iPosRequestor; }
 	
+	inline CMapView* MapView()
+			{ return iMapView; }
+	
 	};
 
 #endif // __S60MAPSAPPUI_h__
