@@ -7,4 +7,5 @@ sis/**/*.sisx
 Thumbs.db
 
 # Autocreated:
+group/ABLD.BAT
 inc/GitInfo.h
