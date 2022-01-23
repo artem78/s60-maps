@@ -21,4 +21,20 @@ public:
 
 	};
 
+
+class CLanguageListSettingItem : public CAknEnumeratedTextPopupSettingItem
+	{
+	// From CAknEnumeratedTextPopupSettingItem
+public:
+	CLanguageListSettingItem(TInt aResourceId, TInt& aValue);
+	void CompleteConstructionL();
+	
+	// New properties and methods
+private:
+	TInt& iValue;
+	
+	void LoadLanguageListL(); 
+	
+	};
+
 #endif /* __SETTINGSLISTBOX_H_ */

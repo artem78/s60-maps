@@ -525,15 +525,7 @@ RESOURCE ARRAY r_language_texts1
 	{
 	items =
 		{
-		AVKON_ENUMERATED_TEXT { value = 1; text = "English"; },
-		AVKON_ENUMERATED_TEXT { value = 4; text = "Spanish"; },
-		AVKON_ENUMERATED_TEXT { value = 13; text = "Portuguese"; },
-		AVKON_ENUMERATED_TEXT { value = 16; text = "Russian"; },
-		AVKON_ENUMERATED_TEXT { value = 27; text = "Polish"; },
-		AVKON_ENUMERATED_TEXT { value = 57; text = "Hebrew"; },
-		AVKON_ENUMERATED_TEXT { value = 83; text = "Latin American Spanish"; },
-		AVKON_ENUMERATED_TEXT { value = 93; text = "Ukrainian"; },
-		AVKON_ENUMERATED_TEXT { value = 103; text = "Galician"; }
+		// Will be filled at runtime
 		};
 	}
 
@@ -541,15 +533,7 @@ RESOURCE ARRAY r_language_texts2
 	{
 	items =
 		{
-		LBUF { txt = "English"; },
-		LBUF { txt = "Spanish"; },
-		LBUF { txt = "Portuguese"; },
-		LBUF { txt = "Russian"; },
-		LBUF { txt = "Polish"; },
-		LBUF { txt = "Hebrew"; },
-		LBUF { txt = "Latin American Spanish"; },
-		LBUF { txt = "Ukrainian"; },
-		LBUF { txt = "Galician"; }
+		// Will be filled at runtime
 		};
 	}
 

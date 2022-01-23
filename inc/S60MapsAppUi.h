@@ -146,6 +146,7 @@ public:
 			TReal32 aMaxDistance = KNaN); // The client takes ownership of the returned landmark object. Returns NULL if nothing found.
 	void ChangeLanguageL(TLanguage aLang);
 	TBool IsLanguageExists(TLanguage aLang);
+	void AvailableLanguagesL(RArray<TLanguage> &aLangArr);
 
 private:
 	CSettings* iSettings;
