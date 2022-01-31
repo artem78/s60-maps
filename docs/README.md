@@ -107,5 +107,6 @@ This is Open Source software licensed under [GNU GPL v3.0](/LICENSE.txt)
 
 ## See also
 
-- [OpenStreetMap](https://wiki.openstreetmap.org/wiki/About_OpenStreetMap)
+- [About OpenStreetMap](https://wiki.openstreetmap.org/wiki/About_OpenStreetMap)
+  - [Symbian software on OpenStreetMap Wiki](https://wiki.openstreetmap.org/wiki/Symbian)
 - [GPS Track recorder for Symbian OS](https://github.com/artem78/s60-gps-tracker#readme)
