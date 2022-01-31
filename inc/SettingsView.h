@@ -40,6 +40,9 @@ protected:
 	
 	// Custom properties and methods
 
+public:
+	void Reload();
+	
 private:
 	// Controls
 	CSettingsListBox* iListBox;

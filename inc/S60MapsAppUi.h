@@ -191,6 +191,9 @@ public:
 	inline CMapView* MapView()
 			{ return iMapView; }
 	
+	inline CSettingsView* SettingsView()
+			{ return iSettingsView; }
+	
 	};
 
 #endif // __S60MAPSAPPUI_h__

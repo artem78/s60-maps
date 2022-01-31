@@ -46,6 +46,9 @@ void CSettingsListBox::EditItemL(TInt aIndex, TBool aCalledFromMenu)
 		case ESettingLanguage:
 			{
 			appUi->ChangeLanguageL(appUi->Settings()->iLanguage);
+			
+			// Reload settings view for translate strings to the new language
+			appUi->SettingsView()->Reload();
 			}
 			break;
 		}

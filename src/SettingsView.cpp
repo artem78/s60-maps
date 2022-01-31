@@ -104,3 +104,9 @@ void CSettingsView::ConstructContainerL()
 		iListBox->ConstructFromResourceL(R_SETTING_ITEM_LIST);
 		}
 	}
+
+void CSettingsView::Reload()
+	{
+	AppUi()->ActivateLocalViewL(TUid::Uid(EMapViewId));
+	AppUi()->ActivateLocalViewL(TUid::Uid(ESettingsViewId));
+	}
