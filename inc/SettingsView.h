@@ -48,6 +48,7 @@ private:
 	CSettingsListBox* iListBox;
 	
 	void ConstructContainerL();
+	void UpdateTitleL();
 	
 	};
 
