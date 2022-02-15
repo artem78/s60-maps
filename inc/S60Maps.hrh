@@ -30,6 +30,7 @@ enum TS60MapsIds
 	EGotoLandmark,
 	EGotoCoordinate,
 	ESettings,
+	EReloadVisibleArea,
 	
 	ESetTileProviderBase = 0x6500, // Start id for tile providers
 	ESetOsmStandardTileProvider		= /*ESetTileProviderBase + 0*/ 0x6500 + 0,

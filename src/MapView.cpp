@@ -170,6 +170,10 @@ void CMapView::HandleCommandL(TInt aCommand)
 			HandleSettingsL();
 			break;
 			
+		case EReloadVisibleArea:
+			HandleReloadVisibleAreaL();
+			break;
+			
 		default:
 			// Let the AppUi handle unknown for view commands
 			AppUi()->HandleCommandL(aCommand);
@@ -599,4 +603,9 @@ void CMapView::HandleSettingsL()
 	//AppUi()->ActivateViewL(viewId);
 	//AppUi()->ActivateViewL(iSettingsView->ViewId());
 	AppUi()->ActivateLocalViewL(TUid::Uid(ESettingsViewId));
+	}
+
+void CMapView::HandleReloadVisibleAreaL()
+	{
+	iMapControl->ReloadVisibleAreaL();
 	}

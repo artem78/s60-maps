@@ -241,6 +241,7 @@ public:
 	inline TBool IsSoftkeysShown()
 		{ return iIsSoftkeysShown; };
 	void HandleLanguageChangedL();
+	void ReloadVisibleAreaL();
 
 	};
 	

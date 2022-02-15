@@ -277,6 +277,18 @@ void CTiledMapLayer::SetTileProviderL(TTileProvider* aTileProvider)
 	//iMapView->DrawNow();
 	}
 
+void CTiledMapLayer::ReloadVisibleAreaL()
+	{
+	RArray<TTile> tiles(10);
+	VisibleTiles(tiles);
+	for (TInt idx = 0; idx < tiles.Count(); idx++)
+		{
+		iBitmapMgr->AddToLoading(tiles[idx], ETrue);
+		}
+	
+	tiles.Close();
+	}
+
 
 // CUserPositionLayer
 
@@ -1155,12 +1167,25 @@ TInt CTileBitmapManager::GetTileBitmap(const TTile &aTile, CFbsBitmap* &aBitmap)
 	return KErrNone;
 	}
 
-void CTileBitmapManager::AddToLoading(const TTile &aTile)
+void CTileBitmapManager::AddToLoading(const TTile &aTile, TBool aForce)
 	{
 	CTileBitmapManagerItem* item = Find(aTile);
 	
-	if (item == NULL)
+	if (aForce)
+		{
+		DEBUG(_L("Try to reload %S"), &aTile.AsDes());
+		
+		// Remove tile from disk and bitmap cache
+		DeleteTileFile(aTile);
+		Delete(aTile);
+		
 		Append(aTile);
+		}
+	else
+		{
+		if (item == NULL)
+			Append(aTile);
+		}
 	}
 
 /*TInt*/ void CTileBitmapManager::Append/*L*/(const TTile &aTile)
@@ -1480,6 +1505,29 @@ void CTileBitmapManager::ChangeTileProvider(TTileProvider* aTileProvider,
 	iItems.ResetAndDestroy();
 	iTileProvider = aTileProvider;
 	iFileMapper->SetBaseDir(aCacheDir);
+	}
+
+void CTileBitmapManager::DeleteTileFile(const TTile &aTile)
+	{
+	TFileName tileFileName;
+	TileFileName(aTile, tileFileName);
+	/*TInt r =*/ iFs.Delete(tileFileName);
+	/*if (r != KErrNone)
+		{
+		
+		}*/
+	}
+
+void CTileBitmapManager::Delete(const TTile &aTile)
+	{
+	for (TInt idx = 0; idx < iItems.Count(); idx++)
+		{
+		if (iItems[idx]->Tile() == aTile)
+			{
+			delete iItems[idx];
+			return; // Hope no duplicates
+			}
+		}
 	}
 
 // CTileBitmapManagerItem
