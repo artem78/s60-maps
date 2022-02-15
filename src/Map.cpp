@@ -1525,6 +1525,7 @@ void CTileBitmapManager::Delete(const TTile &aTile)
 		if (iItems[idx]->Tile() == aTile)
 			{
 			delete iItems[idx];
+			iItems.Remove(idx);
 			return; // Hope no duplicates
 			}
 		}
