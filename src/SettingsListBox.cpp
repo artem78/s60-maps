@@ -89,71 +89,76 @@ void CLanguageListSettingItem::LoadLanguageListL()
 	for (TInt i = 0; i < langArr.Count(); i++)
 		{
 		TLanguage langCode = langArr[i];
-		HBufC* langName = NULL;
+		TInt resourceId = 0;
 		
 		switch (langCode)
 			{
 			case ELangEnglish:
 				{
-				langName = CCoeEnv::Static()->AllocReadResourceLC(R_LANG_ENGLISH_NAME);		
+				resourceId = R_LANG_ENGLISH_NAME;		
 				break;
 				}
 				
 			case ELangSpanish:
 				{
-				langName = CCoeEnv::Static()->AllocReadResourceLC(R_LANG_SPANISH_NAME);
+				resourceId = R_LANG_SPANISH_NAME;
 				break;
 				}
 				
 			case ELangGalician:
 				{
-				langName = CCoeEnv::Static()->AllocReadResourceLC(R_LANG_GALICIAN_NAME);
+				resourceId = R_LANG_GALICIAN_NAME;
 				break;
 				}
 				
 			case ELangPortuguese:
 				{
-				langName = CCoeEnv::Static()->AllocReadResourceLC(R_LANG_PORTUGUESE_NAME);
+				resourceId = R_LANG_PORTUGUESE_NAME;
 				break;
 				}
 				
 			case ELangRussian:
 				{
-				langName = CCoeEnv::Static()->AllocReadResourceLC(R_LANG_RUSSIAN_NAME);
+				resourceId = R_LANG_RUSSIAN_NAME;
 				break;
 				}
 				
 			case ELangPolish:
 				{
-				langName = CCoeEnv::Static()->AllocReadResourceLC(R_LANG_POLISH_NAME);
+				resourceId = R_LANG_POLISH_NAME;
 				break;
 				}
 				
 			case ELangHebrew:
 				{
-				langName = CCoeEnv::Static()->AllocReadResourceLC(R_LANG_HEBREW_NAME);
+				resourceId = R_LANG_HEBREW_NAME;
 				break;
 				}
 				
 			case ELangLatinAmericanSpanish:
 				{
-				langName = CCoeEnv::Static()->AllocReadResourceLC(R_LANG_LAT_AM_SPANISH_NAME);
+				resourceId = R_LANG_LAT_AM_SPANISH_NAME;
 				break;
 				}
 				
 			case ELangUkrainian:
 				{
-				langName = CCoeEnv::Static()->AllocReadResourceLC(R_LANG_UKRAINISN_NAME);
+				resourceId = R_LANG_UKRAINISN_NAME;
 				break;
 				}
-			
-			default:
-				{
-				_LIT(KUnknownFmt, "<unknown %d>");
-				TBuf<16> tmp;
-				tmp.Format(KUnknownFmt, (TInt) langCode);
-				langName = tmp.AllocLC();
-				}
+			}
+		
+		HBufC* langName = NULL;
+		if (resourceId > 0)
+			{
+			langName = CCoeEnv::Static()->AllocReadResourceLC(resourceId);
+			}
+		else
+			{
+			_LIT(KUnknownFmt, "<unknown %d>");
+			TBuf<16> tmp;
+			tmp.Format(KUnknownFmt, (TInt) langCode);
+			langName = tmp.AllocLC();
 			}
 
 		DEBUG(_L("Language %d => %S"), langCode, &*langName);
