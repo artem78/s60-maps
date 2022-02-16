@@ -10,6 +10,7 @@
 #include <S60Maps_0xED689B88.rsg>
 //#include "S60MapsAppUi.h"
 #include "aknviewappui.h"
+#include <akntitle.h>
 
 // CSettingsView
 
@@ -40,6 +41,8 @@ CSettingsView* CSettingsView::NewL()
 void CSettingsView::ConstructL()
 	{
 	CAknView::BaseConstructL(R_SETTINGS_VIEW);
+	
+	//titlePane->SetPicture(...);
 	
 	// Listbox will be initialized later on view activation
 	}
@@ -76,6 +79,8 @@ void CSettingsView::DoActivateL(const TVwsViewId& /*aPrevViewId*/,
 		{
 		ConstructContainerL();
 		
+		UpdateTitleL();
+		
 		AppUi()->AddToStackL(*this, iListBox);
 		iListBox->SetRect(ClientRect());
 		iListBox->ActivateL();
@@ -103,4 +108,20 @@ void CSettingsView::ConstructContainerL()
 		iListBox->SetMopParent(this);
 		iListBox->ConstructFromResourceL(R_SETTING_ITEM_LIST);
 		}
+	}
+
+void CSettingsView::Reload()
+	{
+	AppUi()->ActivateLocalViewL(TUid::Uid(EMapViewId));
+	
+	//UpdateTitleL();
+	AppUi()->ActivateLocalViewL(TUid::Uid(ESettingsViewId));
+	}
+
+void CSettingsView::UpdateTitleL()
+	{
+	HBufC* title = iEikonEnv->AllocReadResourceLC(R_SETTINGS_TITLE);
+	CAknTitlePane* titlePane = static_cast<CAknTitlePane*>(StatusPane()->ControlL(TUid::Uid(EEikStatusPaneUidTitle)));
+	CleanupStack::Pop(title);
+	titlePane->SetText(title);
 	}

@@ -32,6 +32,7 @@
 #include <epos_cposlandmarksearch.h>
 #include <apgwgnam.h>
 #include <bautils.h>
+#include "Utils.h"
 
 
 // ============================ MEMBER FUNCTIONS ===============================
@@ -316,6 +317,8 @@ void CS60MapsAppUi::RestoreL(const CStreamStore& aStore,
 
 void CS60MapsAppUi::ExternalizeL(RWriteStream& aStream) const
 	{
+	DEBUG(_L("Settings saving started"));
+	
 	// Update settings
 	TCoordinate coord = iMapView->MapControl()->GetCenterCoordinate();
 	iSettings->SetLat(coord.Latitude());
@@ -325,10 +328,14 @@ void CS60MapsAppUi::ExternalizeL(RWriteStream& aStream) const
 	
 	// And save
 	aStream << *iSettings;
+	
+	DEBUG(_L("Settings saving ended"));
 	}
 
 void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 	{
+	DEBUG(_L("Settings reading started"));
+	
 	TRAP_IGNORE(aStream >> *iSettings);
 	iMapView->MapControl()->Move(iSettings->GetLat(), iSettings->GetLon(), iSettings->GetZoom());
 	
@@ -355,7 +362,7 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 	// Language
 	if (!IsLanguageExists(iSettings->iLanguage))
 		{ // Wrong language fix
-		iSettings->iLanguage = ELangEnglish;
+		iSettings->iLanguage = PreferredLanguage();
 		}
 	ChangeLanguageL(iSettings->iLanguage);
 	
@@ -368,6 +375,8 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 		note->ExecuteLD(*msg);
 		CleanupStack::PopAndDestroy(msg);
 		}
+	
+	DEBUG(_L("Settings reading ended"));
 	}
 
 MFileManObserver::TControl CS60MapsAppUi::NotifyFileManStarted()
@@ -680,6 +689,43 @@ TBool CS60MapsAppUi::IsLanguageExists(TLanguage aLang)
 	BaflUtils::SetIdealLanguage(oldIdealLang);
 	
 	return res;
+	}
+
+void CS60MapsAppUi::AvailableLanguagesL(RArray<TLanguage> &aLangArr)
+	{
+	aLangArr.Reset();
+	
+	TParse parser;
+	TFileName appFullName(RProcess().FileName());
+	parser.Set(appFullName, NULL, NULL);
+	
+	_LIT(KResFilePathFmt, "%S\\resource\\apps\\%S.r*");
+	TFileName resFilePath;
+	resFilePath.Format(KResFilePathFmt, &parser.Drive(), &parser.Name());
+	
+	CDir* files = NULL;
+	User::LeaveIfError(CCoeEnv::Static()->FsSession().GetDir(resFilePath, KEntryAttNormal, ESortNone, files));
+	if (files)
+		{
+		CleanupStack::PushL(files);
+		for (TInt i = 0; i < files->Count(); i++)
+			{
+			parser.Set((*files)[i].iName, NULL, NULL);
+			TInt langCode;
+			if (MathUtils::ParseInt(parser.Ext(), langCode) == KErrNone)
+				{
+				aLangArr.Append(static_cast<TLanguage>(langCode));
+				DEBUG(_L("lang=%d"), (TInt) langCode);
+				}
+			}
+		CleanupStack::PopAndDestroy(files);
+		}
+	}
+
+TLanguage CS60MapsAppUi::PreferredLanguage()
+	{
+	// ToDo: Try to get preffered languange depends on system language
+	return ELangEnglish;
 	}
 
 // End of File

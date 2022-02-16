@@ -146,6 +146,7 @@ public:
 			TReal32 aMaxDistance = KNaN); // The client takes ownership of the returned landmark object. Returns NULL if nothing found.
 	void ChangeLanguageL(TLanguage aLang);
 	TBool IsLanguageExists(TLanguage aLang);
+	void AvailableLanguagesL(RArray<TLanguage> &aLangArr);
 
 private:
 	CSettings* iSettings;
@@ -167,6 +168,8 @@ private:
 	TInt iResourceOffset;
 	
 	//static TInt UpdateTilesClearingProgress(TAny* aSelfPtr);
+	
+	TLanguage PreferredLanguage();
 
 	
 	// Command handlers
@@ -189,6 +192,9 @@ public:
 	
 	inline CMapView* MapView()
 			{ return iMapView; }
+	
+	inline CSettingsView* SettingsView()
+			{ return iSettingsView; }
 	
 	};
 

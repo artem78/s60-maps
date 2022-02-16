@@ -28,7 +28,7 @@ private:
 	// From CAknView
 public:
 	TUid Id() const;
-	void HandleCommandL(TInt aCommand);  
+	void HandleCommandL(TInt aCommand);
 	
 protected:
 	void DoActivateL(const TVwsViewId& aPrevViewId,
@@ -40,11 +40,15 @@ protected:
 	
 	// Custom properties and methods
 
+public:
+	void Reload();
+	
 private:
 	// Controls
 	CSettingsListBox* iListBox;
 	
 	void ConstructContainerL();
+	void UpdateTitleL();
 	
 	};
 

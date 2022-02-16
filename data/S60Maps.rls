@@ -8,8 +8,7 @@
 				strings to be localised are defined. 
 ============================================================================
 */
-
-// ToDo: Can we delete this file?
+CHARACTER_SET UTF8
 
 //  LOCALISATION STRINGS
 
@@ -18,5 +17,15 @@
 // Caption string for app.
 //#define qtn_caption_string "S60Maps"
 
+// List of language names
+#define qtn_lang_english_name "English"
+#define qtn_lang_spanish_name "Español"
+#define qtn_lang_galician_name "Galego"
+#define qtn_lang_portuguese_name "Português"
+#define qtn_lang_russian_name "Русский"
+#define qtn_lang_polish_name "Polski"
+#define qtn_lang_hebrew_name "עברית"
+#define qtn_lang_lat_am_spanish_name /*"Latin American Spanish"*/ "American Spanish"
+#define qtn_lang_ukrainisn_name "Українська"
 
 // End of File
