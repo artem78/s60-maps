@@ -10,6 +10,7 @@
 #include "S60MapsAppUi.h"
 #include "MapView.h"
 #include <akninputlanguageinfo.h>
+#include <S60Maps_0xED689B88.rsg>
 
 // CSettingsListBox
 
@@ -73,6 +74,8 @@ void CLanguageListSettingItem::CompleteConstructionL()
 
 void CLanguageListSettingItem::LoadLanguageListL()
 	{
+	const TInt ELangGalician = 103; // Not defined in s60v3 SDK
+	
 	RArray<TLanguage> langArr = RArray<TLanguage>(10);
 	CleanupClosePushL(langArr);
 	
@@ -86,36 +89,77 @@ void CLanguageListSettingItem::LoadLanguageListL()
 	for (TInt i = 0; i < langArr.Count(); i++)
 		{
 		TLanguage langCode = langArr[i];
-		TAknLanguageName langName;
+		HBufC* langName = NULL;
 		
-		// Fix for Kern-Exec 3 panic when call langInfo->LanguageName() for some languages
-		_LIT(KLangGalicianName, /*"Galician"*/ "Galego");
-		_LIT(KLangLatAmSpanishName, /*"Latin American Spanish"*/ "American Spanish");
-		const TInt ELangGalician = 103; // Not defined in s60v3 SDK
 		switch (langCode)
 			{
+			case ELangEnglish:
+				{
+				langName = CCoeEnv::Static()->AllocReadResourceLC(R_LANG_ENGLISH_NAME);		
+				break;
+				}
+				
+			case ELangSpanish:
+				{
+				langName = CCoeEnv::Static()->AllocReadResourceLC(R_LANG_SPANISH_NAME);
+				break;
+				}
+				
 			case ELangGalician:
 				{
-				langName = KLangGalicianName;
+				langName = CCoeEnv::Static()->AllocReadResourceLC(R_LANG_GALICIAN_NAME);
+				break;
+				}
+				
+			case ELangPortuguese:
+				{
+				langName = CCoeEnv::Static()->AllocReadResourceLC(R_LANG_PORTUGUESE_NAME);
+				break;
+				}
+				
+			case ELangRussian:
+				{
+				langName = CCoeEnv::Static()->AllocReadResourceLC(R_LANG_RUSSIAN_NAME);
+				break;
+				}
+				
+			case ELangPolish:
+				{
+				langName = CCoeEnv::Static()->AllocReadResourceLC(R_LANG_POLISH_NAME);
+				break;
+				}
+				
+			case ELangHebrew:
+				{
+				langName = CCoeEnv::Static()->AllocReadResourceLC(R_LANG_HEBREW_NAME);
 				break;
 				}
 				
 			case ELangLatinAmericanSpanish:
 				{
-				langName = KLangLatAmSpanishName;
+				langName = CCoeEnv::Static()->AllocReadResourceLC(R_LANG_LAT_AM_SPANISH_NAME);
+				break;
+				}
+				
+			case ELangUkrainian:
+				{
+				langName = CCoeEnv::Static()->AllocReadResourceLC(R_LANG_UKRAINISN_NAME);
 				break;
 				}
 			
 			default:
-				{ // Get names for other languages
-				langName = langInfo->LanguageName(langCode);
-				break;
+				{
+				_LIT(KUnknownFmt, "<unknown %d>");
+				TBuf<16> tmp;
+				tmp.Format(KUnknownFmt, (TInt) langCode);
+				langName = tmp.AllocLC();
 				}
 			}
-		
-		HBufC* text = langName.AllocLC();
-		CAknEnumeratedText* enumText = new (ELeave) CAknEnumeratedText(langCode, text);
-		CleanupStack::Pop(text);
+
+		DEBUG(_L("Language %d => %S"), langCode, &*langName);
+
+		CAknEnumeratedText* enumText = new (ELeave) CAknEnumeratedText(langCode, langName);
+		CleanupStack::Pop(langName);
 		CleanupStack::PushL(enumText);
 		EnumeratedTextArray()->AppendL(enumText);
 		CleanupStack::Pop(enumText);

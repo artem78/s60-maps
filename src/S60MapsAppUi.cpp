@@ -707,7 +707,7 @@ void CS60MapsAppUi::AvailableLanguagesL(RArray<TLanguage> &aLangArr)
 			if (MathUtils::ParseInt(parser.Ext(), langCode) == KErrNone)
 				{
 				aLangArr.Append(static_cast<TLanguage>(langCode));
-				DEBUG(_L("lang=%d"));
+				DEBUG(_L("lang=%d"), (TInt) langCode);
 				}
 			}
 		CleanupStack::PopAndDestroy(files);

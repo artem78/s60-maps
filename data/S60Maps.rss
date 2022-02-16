@@ -17,7 +17,7 @@ NAME S60M	// 4 letter ID
 #include <avkon.rh>
 #include <appinfo.rh>
 #include "S60Maps.hrh"
-//#include "S60Maps.rls"
+#include "S60Maps.rls"
 #include "S60Maps.loc"
 
 //  RESOURCE DEFINITIONS
@@ -456,6 +456,18 @@ RESOURCE TBUF r_input_name { buf=qtn_input_name; }
 //RESOURCE TBUF r_delete { buf=qtn_delete; }
 RESOURCE TBUF r_confirm_landmark_deletion { buf=qtn_confirm_landmark_deletion; }
 RESOURCE TBUF r_settings_title { buf=qtn_settings; }
+
+// Language names
+RESOURCE TBUF r_lang_english_name	{ buf=qtn_lang_english_name; }
+RESOURCE TBUF r_lang_spanish_name	{ buf=qtn_lang_spanish_name; }
+RESOURCE TBUF r_lang_galician_name	{ buf=qtn_lang_galician_name; }
+RESOURCE TBUF r_lang_portuguese_name	{ buf=qtn_lang_portuguese_name; }
+RESOURCE TBUF r_lang_russian_name	{ buf=qtn_lang_russian_name; }
+RESOURCE TBUF r_lang_polish_name	{ buf=qtn_lang_polish_name; }
+RESOURCE TBUF r_lang_hebrew_name	{ buf=qtn_lang_hebrew_name; }
+RESOURCE TBUF r_lang_lat_am_spanish_name	{ buf=qtn_lang_lat_am_spanish_name; }
+RESOURCE TBUF r_lang_ukrainisn_name	{ buf=qtn_lang_ukrainisn_name; }
+
 
 // ---------------------------------------------------------------------------- 
 //
