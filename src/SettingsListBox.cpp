@@ -9,7 +9,6 @@
 #include "S60Maps.hrh"
 #include "S60MapsAppUi.h"
 #include "MapView.h"
-#include <akninputlanguageinfo.h>
 #include <S60Maps_0xED689B88.rsg>
 
 // CSettingsListBox
@@ -81,9 +80,6 @@ void CLanguageListSettingItem::LoadLanguageListL()
 	
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
 	appUi->AvailableLanguagesL(langArr);
-	
-	CAknInputLanguageInfo* langInfo = AknInputLanguageInfoFactory::CreateInputLanguageInfoL();
-	CleanupStack::PushL(langInfo);
 	
 	EnumeratedTextArray()->ResetAndDestroy();
 	for (TInt i = 0; i < langArr.Count(); i++)
@@ -171,5 +167,5 @@ void CLanguageListSettingItem::LoadLanguageListL()
 		}
 	
 	
-	CleanupStack::PopAndDestroy(2, &langArr);
+	CleanupStack::PopAndDestroy(&langArr);
 	}
