@@ -317,6 +317,8 @@ void CS60MapsAppUi::RestoreL(const CStreamStore& aStore,
 
 void CS60MapsAppUi::ExternalizeL(RWriteStream& aStream) const
 	{
+	DEBUG(_L("Settings saving started"));
+	
 	// Update settings
 	TCoordinate coord = iMapView->MapControl()->GetCenterCoordinate();
 	iSettings->SetLat(coord.Latitude());
@@ -326,10 +328,14 @@ void CS60MapsAppUi::ExternalizeL(RWriteStream& aStream) const
 	
 	// And save
 	aStream << *iSettings;
+	
+	DEBUG(_L("Settings saving ended"));
 	}
 
 void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 	{
+	DEBUG(_L("Settings reading started"));
+	
 	TRAP_IGNORE(aStream >> *iSettings);
 	iMapView->MapControl()->Move(iSettings->GetLat(), iSettings->GetLon(), iSettings->GetZoom());
 	
@@ -369,6 +375,8 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 		note->ExecuteLD(*msg);
 		CleanupStack::PopAndDestroy(msg);
 		}
+	
+	DEBUG(_L("Settings reading ended"));
 	}
 
 MFileManObserver::TControl CS60MapsAppUi::NotifyFileManStarted()
