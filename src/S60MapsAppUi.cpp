@@ -356,7 +356,7 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 	// Language
 	if (!IsLanguageExists(iSettings->iLanguage))
 		{ // Wrong language fix
-		iSettings->iLanguage = ELangEnglish;
+		iSettings->iLanguage = PreferredLanguage();
 		}
 	ChangeLanguageL(iSettings->iLanguage);
 	
@@ -712,6 +712,12 @@ void CS60MapsAppUi::AvailableLanguagesL(RArray<TLanguage> &aLangArr)
 			}
 		CleanupStack::PopAndDestroy(files);
 		}
+	}
+
+TLanguage CS60MapsAppUi::PreferredLanguage()
+	{
+	// ToDo: Try to get preffered languange depends on system language
+	return ELangEnglish;
 	}
 
 // End of File

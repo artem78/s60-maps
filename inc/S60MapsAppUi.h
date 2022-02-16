@@ -168,6 +168,8 @@ private:
 	TInt iResourceOffset;
 	
 	//static TInt UpdateTilesClearingProgress(TAny* aSelfPtr);
+	
+	TLanguage PreferredLanguage();
 
 	
 	// Command handlers
