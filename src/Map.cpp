@@ -23,6 +23,7 @@
 #include <epos_cposlmareacriteria.h>
 #include "icons.mbg"
 #include "Utils.h"
+#include <lbssatellite.h>
 
 CMapLayerBase::CMapLayerBase(/*const*/ CMapControl* aMapView) :
 		iMapView(aMapView)
@@ -875,6 +876,66 @@ void CCrosshairLayer::Draw(CWindowGc &aGc)
 	TPoint end2 = center;
 	end2.iY -= (KLineHalfLength + 1);
 	aGc.DrawLine(start2, end2);
+	}
+
+
+// CSignalIndicatorLayer
+
+CSignalIndicatorLayer* CSignalIndicatorLayer::NewLC(CMapControl* aMapView)
+	{
+	CSignalIndicatorLayer* self = new (ELeave) CSignalIndicatorLayer(aMapView);
+	CleanupStack::PushL(self);
+	self->ConstructL();
+	return self;
+	}
+
+CSignalIndicatorLayer* CSignalIndicatorLayer::NewL(CMapControl* aMapView)
+	{
+	CSignalIndicatorLayer* self = CSignalIndicatorLayer::NewLC(aMapView);
+	CleanupStack::Pop(); // self;
+	return self;
+	}
+
+CSignalIndicatorLayer::CSignalIndicatorLayer(CMapControl* aMapView) :
+		CMapLayerBase(aMapView)
+	{
+	}
+
+void CSignalIndicatorLayer::ConstructL()
+	{
+	_LIT(KFontName, /*"OpenSans"*/ "Series 60 Sans");
+	const TInt KFontHeightInTwips = /*9*/ 10 * 12; // Twip = 1/12 point
+	TFontSpec fontSpec(KFontName, KFontHeightInTwips);
+	fontSpec.iTypeface.SetIsSerif(EFalse);
+	fontSpec.iFontStyle.SetStrokeWeight(EStrokeWeightBold);
+	CGraphicsDevice* screenDevice = CCoeEnv::Static()->ScreenDevice();
+	TInt r = screenDevice->/*GetNearestFontToMaxHeightInTwips*/ GetNearestFontInTwips(iFont, fontSpec);
+	User::LeaveIfError(r);
+	}
+
+CSignalIndicatorLayer::~CSignalIndicatorLayer()
+	{
+	CCoeEnv::Static()->ScreenDevice()->ReleaseFont(iFont);
+	}
+
+void CSignalIndicatorLayer::Draw(CWindowGc &aGc)
+	{
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
+	const TPositionSatelliteInfo* satInfo = appUi->SatelliteInfo();
+	
+	if (!satInfo) return;
+	
+	_LIT(KFmt, "Sats: %d/%d");
+	TBuf<16> buff;
+	buff.Format(KFmt, satInfo->NumSatellitesUsed(), satInfo->NumSatellitesInView());
+	
+	TRect area = iMapView->Rect();
+	area.Shrink(14, 14);
+	TInt baselineOffset = iFont->AscentInPixels();
+	
+	aGc.UseFont(iFont);
+	aGc.DrawText(buff, area, baselineOffset, CGraphicsContext::ERight);
+	aGc.DiscardFont();
 	}
 
 

@@ -224,6 +224,29 @@ public:
 	};
 
 
+class CSignalIndicatorLayer : public CMapLayerBase
+	{	
+	// Constructor / Destructor
+public:
+	static CSignalIndicatorLayer* NewL(CMapControl* aMapView);
+	static CSignalIndicatorLayer* NewLC(CMapControl* aMapView);
+	~CSignalIndicatorLayer();
+
+private:
+	CSignalIndicatorLayer(CMapControl* aMapView);
+	void ConstructL();
+	
+	// From CMapLayerBase
+public:
+	void Draw(CWindowGc &aGc);
+	
+	// New
+private:
+	CFont* iFont;
+	
+	};
+
+
 class TSaverQueryItem
 	{
 public:

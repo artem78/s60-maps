@@ -35,7 +35,8 @@ enum TMapLayerId
 #ifdef DEBUG_SHOW_ADDITIONAL_INFO
 	EDebugInfoLayerId,
 #endif	
-	ECrosshairLayerId
+	ECrosshairLayerId,
+	ESignalIndicatorLayerId
 	};
 
 // ============================ MEMBER FUNCTIONS ===============================
@@ -148,6 +149,7 @@ void CMapControl::ConstructL(const TRect& aRect, const TCoordinate &aInitialPosi
 	iLayers.Append(CMapLayerDebugInfo::NewL(this));
 #endif
 	iLayers.Append(new (ELeave) CCrosshairLayer(this));
+	iLayers.Append(CSignalIndicatorLayer::NewL(this));
 	
 	SetTileProviderL(aTileProvider);
 

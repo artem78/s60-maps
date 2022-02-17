@@ -26,6 +26,7 @@
 //#include <aknprogressdialog.h> // For CAknProgressDialog
 #include <aknwaitdialog.h> // For CAknWaitDialog 
 #include <epos_cposlandmarkdatabase.h> // For CPosLandmarkDatabase
+#include <lbssatellite.h>
 
 // FORWARD DECLARATIONS
 class CMapView;
@@ -195,6 +196,12 @@ public:
 	
 	inline CSettingsView* SettingsView()
 			{ return iSettingsView; }
+	
+	inline const TPositionSatelliteInfo* SatelliteInfo()
+			{ return iPosRequestor->LastKnownPositionInfo()->PositionClassType() & EPositionSatelliteInfoClass ?
+					static_cast<const TPositionSatelliteInfo*>(iPosRequestor->LastKnownPositionInfo()) :
+					NULL;
+			}
 	
 	};
 
