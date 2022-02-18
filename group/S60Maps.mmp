@@ -98,4 +98,4 @@ END
 SOURCEPATH ..\src
 SOURCE Utils.cpp
 SOURCEPATH ..\src
-SOURCE MapView.cpp SettingsListBox.cpp SettingsView.cpp
+SOURCE MapView.cpp SettingsListBox.cpp SettingsView.cpp LBSSatelliteExtended.cpp

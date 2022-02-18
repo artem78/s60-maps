@@ -23,7 +23,7 @@
 #include <epos_cposlmareacriteria.h>
 #include "icons.mbg"
 #include "Utils.h"
-#include <lbssatellite.h>
+#include "LBSSatelliteExtended.h"
 
 CMapLayerBase::CMapLayerBase(/*const*/ CMapControl* aMapView) :
 		iMapView(aMapView)
@@ -921,13 +921,44 @@ CSignalIndicatorLayer::~CSignalIndicatorLayer()
 void CSignalIndicatorLayer::Draw(CWindowGc &aGc)
 	{
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
-	const TPositionSatelliteInfo* satInfo = appUi->SatelliteInfo();
+	const TPositionSatelliteInfoExtended* satInfo =
+			static_cast<const TPositionSatelliteInfoExtended*>(appUi->SatelliteInfo());
 	
 	if (!satInfo) return;
 	
-	_LIT(KFmt, "Sats: %d/%d");
-	TBuf<16> buff;
-	buff.Format(KFmt, satInfo->NumSatellitesUsed(), satInfo->NumSatellitesInView());
+	TReal gdop = satInfo->GeometricDoP();
+	const TInt KMaxBarsCount = 6;
+	TInt barsCount = 0;
+	// According to: https://en.wikipedia.org/wiki/Dilution_of_precision_(navigation)#Interpretation
+	if (gdop < 1)
+		{
+		barsCount = 6;
+		}
+	else if (gdop < 2)
+		{
+		barsCount = 5;
+		}
+	else if (gdop < 5)
+		{
+		barsCount = 4;
+		}
+	else if (gdop < 10)
+		{
+		barsCount = 3;
+		}
+	else if (gdop < 20)
+		{
+		barsCount = 2;
+		}
+	else if (gdop < 50)
+		{
+		barsCount = 1;
+		}
+	
+	_LIT(KFmt, "Sats: %d/%d, gdop: %.1f, bars: %d/%d");
+	TBuf<64> buff;
+	buff.Format(KFmt, satInfo->NumSatellitesUsed(), satInfo->NumSatellitesInView(), gdop, barsCount, KMaxBarsCount);
+	//DEBUG(buff);
 	
 	TRect area = iMapView->Rect();
 	area.Shrink(14, 14);
