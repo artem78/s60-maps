@@ -239,6 +239,7 @@ private:
 	// From CMapLayerBase
 public:
 	void Draw(CWindowGc &aGc);
+	void DrawBars(CWindowGc &aGc, TInt aBarsCount);
 	
 	// New
 private:

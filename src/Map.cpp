@@ -955,18 +955,37 @@ void CSignalIndicatorLayer::Draw(CWindowGc &aGc)
 		barsCount = 1;
 		}
 	
-	_LIT(KFmt, "Sats: %d/%d, gdop: %.1f, bars: %d/%d");
+	_LIT(KFmt, "Sats: %d/%d, gdop: %.1f");
 	TBuf<64> buff;
-	buff.Format(KFmt, satInfo->NumSatellitesUsed(), satInfo->NumSatellitesInView(), gdop, barsCount, KMaxBarsCount);
+	buff.Format(KFmt, satInfo->NumSatellitesUsed(), satInfo->NumSatellitesInView(), gdop);
 	//DEBUG(buff);
 	
 	TRect area = iMapView->Rect();
-	area.Shrink(14, 14);
+	area.Shrink(50, 14);
 	TInt baselineOffset = iFont->AscentInPixels();
 	
 	aGc.UseFont(iFont);
 	aGc.DrawText(buff, area, baselineOffset, CGraphicsContext::ERight);
 	aGc.DiscardFont();
+	
+	DrawBars(aGc, barsCount);
+	}
+
+void CSignalIndicatorLayer::DrawBars(CWindowGc &aGc, TInt aBarsCount)
+	{
+	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
+	aGc.SetBrushColor(KRgbGray);
+	aGc.SetPenStyle(CGraphicsContext::ESolidPen);
+	aGc.SetPenColor(KRgbBlack);
+	aGc.SetPenSize(TSize(1, 1));
+	
+	TRect barRect(TPoint(iMapView->Rect().iBr.iX - 40, iMapView->Rect().iTl.iY + 20), TSize(4, 4));
+	for (TInt i = 1; i <= aBarsCount; i++)
+		{
+		aGc.DrawRect(barRect);
+		barRect.SetHeight(barRect.Height() + 3);
+		barRect.Move(6, -3);
+		}
 	}
 
 
