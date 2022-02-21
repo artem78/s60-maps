@@ -930,7 +930,11 @@ void CSignalIndicatorLayer::Draw(CWindowGc &aGc)
 	const TInt KMaxBarsCount = 6;
 	TInt barsCount = 0;
 	// According to: https://en.wikipedia.org/wiki/Dilution_of_precision_(navigation)#Interpretation
-	if (gdop < 1)
+	if (!Math::IsFinite(gdop))
+		{
+		barsCount = 0;
+		}
+	else if (gdop < 1)
 		{
 		barsCount = 6;
 		}
@@ -973,6 +977,9 @@ void CSignalIndicatorLayer::Draw(CWindowGc &aGc)
 
 void CSignalIndicatorLayer::DrawBars(CWindowGc &aGc, TInt aBarsCount)
 	{
+	if (!aBarsCount)
+		return; // Nothing to do
+	
 	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
 	aGc.SetBrushColor(KRgbGray);
 	aGc.SetPenStyle(CGraphicsContext::ESolidPen);
