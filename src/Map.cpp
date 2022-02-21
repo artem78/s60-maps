@@ -987,8 +987,14 @@ void CSignalIndicatorLayer::DrawBars(CWindowGc &aGc, TInt aBarsCount)
 	aGc.SetPenSize(TSize(1, 1));
 	
 	TRect barRect(TPoint(iMapView->Rect().iBr.iX - 40, iMapView->Rect().iTl.iY + 20), TSize(4, 4));
-	for (TInt i = 1; i <= aBarsCount; i++)
+	for (TInt i = 1; i <= 6; i++)
 		{
+		if (i > aBarsCount)
+			{
+			aGc.SetBrushColor(KRgbWhite);
+			aGc.SetPenColor(KRgbGray);
+			}
+		
 		aGc.DrawRect(barRect);
 		barRect.SetHeight(barRect.Height() + 3);
 		barRect.Move(6, -3);
