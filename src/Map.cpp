@@ -903,6 +903,22 @@ CSignalIndicatorLayer::CSignalIndicatorLayer(CMapControl* aMapView) :
 
 void CSignalIndicatorLayer::ConstructL()
 	{
+	// Load icon
+	_LIT(KMbmFilePathFmt, "%c:%Sicons.mbm");
+	
+	TFileName privateDir;
+	User::LeaveIfError(CEikonEnv::Static()->FsSession().PrivatePath(privateDir));
+	TFileName mbmFilePath;
+	mbmFilePath.Format(KMbmFilePathFmt, FileUtils::InstallationDrive(), &privateDir);
+	
+	iSatelliteIconBitmap = new (ELeave) CFbsBitmap();
+	User::LeaveIfError(iSatelliteIconBitmap->Load(mbmFilePath, EMbmIconsSatellite));
+	
+	iSatelliteIconMaskBitmap = new (ELeave) CFbsBitmap();
+	User::LeaveIfError(iSatelliteIconMaskBitmap->Load(mbmFilePath, EMbmIconsSatellite_mask));
+	
+	
+	// Load font	
 	_LIT(KFontName, /*"OpenSans"*/ "Series 60 Sans");
 	const TInt KFontHeightInTwips = /*9*/ 10 * 12; // Twip = 1/12 point
 	TFontSpec fontSpec(KFontName, KFontHeightInTwips);
@@ -916,6 +932,8 @@ void CSignalIndicatorLayer::ConstructL()
 CSignalIndicatorLayer::~CSignalIndicatorLayer()
 	{
 	CCoeEnv::Static()->ScreenDevice()->ReleaseFont(iFont);
+	delete iSatelliteIconMaskBitmap;
+	delete iSatelliteIconBitmap;
 	}
 
 void CSignalIndicatorLayer::Draw(CWindowGc &aGc)
@@ -964,17 +982,22 @@ void CSignalIndicatorLayer::Draw(CWindowGc &aGc)
 	buff.Format(KFmt, satInfo->NumSatellitesUsed(), satInfo->NumSatellitesInView(), gdop);
 	//DEBUG(buff);
 	
-	TRect area = iMapView->Rect();
-	area.Shrink(14, 14);
-	area.iBr.iX -= 34 + 8;
-	area.iTl.iY += 19 - iFont->AscentInPixels();
+	TRect textArea = iMapView->Rect();
+	textArea.Shrink(14, 14);
+	textArea.iBr.iX -= 34 + 8;
+	textArea.iTl.iY += 19 - iFont->AscentInPixels();
 	TInt baselineOffset = iFont->AscentInPixels();
 	
 	aGc.UseFont(iFont);
-	aGc.DrawText(buff, area, baselineOffset, CGraphicsContext::ERight);
+	aGc.DrawText(buff, textArea, baselineOffset, CGraphicsContext::ERight);
 	aGc.DiscardFont();
 	
 	DrawBars(aGc, barsCount);
+	
+	TPoint satIconPoint(iMapView->Rect().iBr.iX - (14 + 34 + 8 * 2 + iFont->TextWidthInPixels(buff)
+			+ iSatelliteIconBitmap->SizeInPixels().iWidth),
+			iMapView->Rect().iTl.iY + 14 + 19 - iSatelliteIconBitmap->SizeInPixels().iHeight);
+	DrawSatelliteIcon(aGc, satIconPoint);
 	}
 
 void CSignalIndicatorLayer::DrawBars(CWindowGc &aGc, TInt aBarsCount)
@@ -1001,6 +1024,14 @@ void CSignalIndicatorLayer::DrawBars(CWindowGc &aGc, TInt aBarsCount)
 		barRect.SetHeight(barRect.Height() + 3);
 		barRect.Move(6, -3);
 		}
+	}
+
+void CSignalIndicatorLayer::DrawSatelliteIcon(CWindowGc &aGc, const TPoint &aPos)
+	{
+	TSize iconSize = iSatelliteIconBitmap->SizeInPixels();
+	TRect dstRect(aPos, iconSize);
+	TRect srcRect(TPoint(0, 0), iconSize);
+	aGc.DrawBitmapMasked(dstRect, iSatelliteIconBitmap, srcRect, iSatelliteIconMaskBitmap, 0);
 	}
 
 

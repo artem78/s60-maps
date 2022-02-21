@@ -240,10 +240,13 @@ private:
 public:
 	void Draw(CWindowGc &aGc);
 	void DrawBars(CWindowGc &aGc, TInt aBarsCount);
+	void DrawSatelliteIcon(CWindowGc &aGc, const TPoint &aPos);
 	
 	// New
 private:
 	CFont* iFont;
+	CFbsBitmap* iSatelliteIconBitmap;
+	CFbsBitmap* iSatelliteIconMaskBitmap;
 	
 	};
 
