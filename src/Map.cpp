@@ -965,7 +965,9 @@ void CSignalIndicatorLayer::Draw(CWindowGc &aGc)
 	//DEBUG(buff);
 	
 	TRect area = iMapView->Rect();
-	area.Shrink(50, 14);
+	area.Shrink(14, 14);
+	area.iBr.iX -= 34 + 8;
+	area.iTl.iY += 19 - iFont->AscentInPixels();
 	TInt baselineOffset = iFont->AscentInPixels();
 	
 	aGc.UseFont(iFont);
@@ -986,7 +988,7 @@ void CSignalIndicatorLayer::DrawBars(CWindowGc &aGc, TInt aBarsCount)
 	aGc.SetPenColor(KRgbBlack);
 	aGc.SetPenSize(TSize(1, 1));
 	
-	TRect barRect(TPoint(iMapView->Rect().iBr.iX - 40, iMapView->Rect().iTl.iY + 20), TSize(4, 4));
+	TRect barRect(TPoint(iMapView->Rect().iBr.iX - (14 + 34), iMapView->Rect().iTl.iY + 14 + 19 - 4), TSize(4, 4));
 	for (TInt i = 1; i <= 6; i++)
 		{
 		if (i > aBarsCount)
