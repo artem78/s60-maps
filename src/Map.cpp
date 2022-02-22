@@ -1002,6 +1002,9 @@ void CSignalIndicatorLayer::Draw(CWindowGc &aGc)
 
 void CSignalIndicatorLayer::DrawBars(CWindowGc &aGc, TSignalStrength aSignalStrength)
 	{
+	__ASSERT_DEBUG(aSignalStrength >= ESignalNone, Panic(ES60MapsInvaidSignalValuePanic));
+	__ASSERT_DEBUG(aSignalStrength <= ESignalHigh, Panic(ES60MapsInvaidSignalValuePanic));
+	
 	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
 	aGc.SetBrushColor(KRgbGray);
 	aGc.SetPenStyle(CGraphicsContext::ESolidPen);
