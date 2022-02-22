@@ -1002,9 +1002,6 @@ void CSignalIndicatorLayer::Draw(CWindowGc &aGc)
 
 void CSignalIndicatorLayer::DrawBars(CWindowGc &aGc, TSignalStrength aSignalStrength)
 	{
-	if (!aSignalStrength)
-		return; // Nothing to do
-	
 	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
 	aGc.SetBrushColor(KRgbGray);
 	aGc.SetPenStyle(CGraphicsContext::ESolidPen);
