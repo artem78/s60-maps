@@ -242,11 +242,22 @@ public:
 	
 	// New
 private:
+	enum TSignalStrength
+		{
+		ESignalNone,
+		ESignalVeryLow,
+		ESignalLow,
+		ESignalMedium,
+		ESignalGood,
+		ESignalVeryGood,
+		ESignalHigh
+		};
+	
 	CFont* iFont;
 	CFbsBitmap* iSatelliteIconBitmap;
 	CFbsBitmap* iSatelliteIconMaskBitmap;
 	
-	void DrawBars(CWindowGc &aGc, TInt aBarsCount);
+	void DrawBars(CWindowGc &aGc, TSignalStrength aBarsCount);
 	void DrawSatelliteIcon(CWindowGc &aGc, const TPoint &aPos);
 	
 	};

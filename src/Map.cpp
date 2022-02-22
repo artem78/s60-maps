@@ -946,35 +946,35 @@ void CSignalIndicatorLayer::Draw(CWindowGc &aGc)
 	
 	TReal gdop = satInfo->GeometricDoP();
 	const TInt KMaxBarsCount = 6;
-	TInt barsCount = 0;
+	TSignalStrength signalStrength = ESignalNone;
 	// According to: https://en.wikipedia.org/wiki/Dilution_of_precision_(navigation)#Interpretation
 	if (!Math::IsFinite(gdop))
 		{
-		barsCount = 0;
+		signalStrength = ESignalNone;
 		}
 	else if (gdop < 1)
 		{
-		barsCount = 6;
+		signalStrength = ESignalHigh;
 		}
 	else if (gdop < 2)
 		{
-		barsCount = 5;
+		signalStrength = ESignalVeryGood;
 		}
 	else if (gdop < 5)
 		{
-		barsCount = 4;
+		signalStrength = ESignalGood;
 		}
 	else if (gdop < 10)
 		{
-		barsCount = 3;
+		signalStrength = ESignalMedium;
 		}
 	else if (gdop < 20)
 		{
-		barsCount = 2;
+		signalStrength = ESignalLow;
 		}
 	else if (gdop < 50)
 		{
-		barsCount = 1;
+		signalStrength = ESignalVeryLow;
 		}
 	
 	_LIT(KFmt, "Sats: %d/%d, gdop: %.1f");
@@ -992,7 +992,7 @@ void CSignalIndicatorLayer::Draw(CWindowGc &aGc)
 	aGc.DrawText(buff, textArea, baselineOffset, CGraphicsContext::ERight);
 	aGc.DiscardFont();
 	
-	DrawBars(aGc, barsCount);
+	DrawBars(aGc, signalStrength);
 	
 	TPoint satIconPoint(iMapView->Rect().iBr.iX - (14 + 34 + 8 * 2 + iFont->TextWidthInPixels(buff)
 			+ iSatelliteIconBitmap->SizeInPixels().iWidth),
@@ -1000,9 +1000,9 @@ void CSignalIndicatorLayer::Draw(CWindowGc &aGc)
 	DrawSatelliteIcon(aGc, satIconPoint);
 	}
 
-void CSignalIndicatorLayer::DrawBars(CWindowGc &aGc, TInt aBarsCount)
+void CSignalIndicatorLayer::DrawBars(CWindowGc &aGc, TSignalStrength aSignalStrength)
 	{
-	if (!aBarsCount)
+	if (!aSignalStrength)
 		return; // Nothing to do
 	
 	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
@@ -1012,9 +1012,9 @@ void CSignalIndicatorLayer::DrawBars(CWindowGc &aGc, TInt aBarsCount)
 	aGc.SetPenSize(TSize(1, 1));
 	
 	TRect barRect(TPoint(iMapView->Rect().iBr.iX - (14 + 34), iMapView->Rect().iTl.iY + 14 + 19 - 4), TSize(4, 4));
-	for (TInt i = 1; i <= 6; i++)
+	for (TInt i = ESignalVeryLow; i <= ESignalHigh; i++)
 		{
-		if (i > aBarsCount)
+		if (i > aSignalStrength)
 			{
 			aGc.SetBrushColor(KRgbWhite);
 			aGc.SetPenColor(KRgbGray);
