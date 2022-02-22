@@ -1019,6 +1019,56 @@ void CSignalIndicatorLayer::DrawBars(CWindowGc &aGc, TSignalStrength aSignalStre
 			aGc.SetBrushColor(KRgbWhite);
 			aGc.SetPenColor(KRgbGray);
 			}
+		else
+			{
+			switch (aSignalStrength)
+				{
+				case ESignalVeryLow:
+					{
+					aGc.SetBrushColor(TRgb(192,0,0));
+					aGc.SetPenColor(TRgb(58,0,0));
+					break;
+					}
+					
+				case ESignalLow:
+					{
+					aGc.SetBrushColor(TRgb(253,1,0));
+					aGc.SetPenColor(TRgb(76,0,0));
+					break;
+					}
+					
+				case ESignalMedium:
+					{
+					aGc.SetBrushColor(TRgb(226,110,6));
+					aGc.SetPenColor(TRgb(68,33,2));
+					break;
+					}
+					
+				case ESignalGood:
+					{
+					aGc.SetBrushColor(TRgb(251,193,0));
+					aGc.SetPenColor(TRgb(75,58,0));
+					break;
+					}
+					
+				case ESignalVeryGood:
+					{
+					aGc.SetBrushColor(TRgb(144,209,75));
+					aGc.SetPenColor(TRgb(43,63,22));
+					break;
+					}
+					
+				case ESignalHigh:
+					{
+					aGc.SetBrushColor(TRgb(0,175,82));
+					aGc.SetPenColor(TRgb(0,52,25));
+					break;
+					}
+				
+				default:
+					break;
+				}
+			}
 		
 		aGc.DrawRect(barRect);
 		barRect.SetHeight(barRect.Height() + 3);
