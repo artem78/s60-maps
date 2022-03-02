@@ -977,9 +977,9 @@ void CSignalIndicatorLayer::Draw(CWindowGc &aGc)
 		signalStrength = ESignalVeryLow;
 		}
 	
-	_LIT(KFmt, "Sats: %d/%d, gdop: %.1f");
+	_LIT(KFmt, "%d/%d");
 	TBuf<64> buff;
-	buff.Format(KFmt, satInfo->NumSatellitesUsed(), satInfo->NumSatellitesInView(), gdop);
+	buff.Format(KFmt, satInfo->NumSatellitesUsed(), satInfo->NumSatellitesInView());
 	//DEBUG(buff);
 	
 	TRect textArea = iMapView->Rect();
