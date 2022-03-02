@@ -83,16 +83,27 @@ void CMapLayerDebugInfo::DrawInfoL(CWindowGc &aGc)
 	_LIT(KLatText, "Lat: %f");
 	_LIT(KLonText, "Lon: %f");
 	_LIT(KZoomText, "Zoom: %d");
+	_LIT(KGdopText, "GDOP: %.1f");
 	
 	iRedrawingsCount++;
 	TCoordinate center = iMapView->GetCenterCoordinate();
+	
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
+	const TPositionSatelliteInfoExtended* satInfo =
+			static_cast<const TPositionSatelliteInfoExtended*>(appUi->SatelliteInfo());
+	
+	TReal gdop = KNaN;
+	if (satInfo)
+		{
+		gdop = satInfo->GeometricDoP();
+		}
 	
 	// Prepare strings
 	/*TBuf<100> buff;
 		_LIT(KFmt, "Redrawings: %d\rLat: %f\rLon: %f\rZoom: %d");
 		buff.Format(KFmt, iRedrawingsCount, center.Latitude(), center.Longitude(), (TInt) iMapView->GetZoom());*/
 	
-	CDesCArrayFlat* strings = new (ELeave) CDesCArrayFlat(4);
+	CDesCArrayFlat* strings = new (ELeave) CDesCArrayFlat(5);
 	CleanupStack::PushL(strings);
 	
 	TBuf<32> buff;
@@ -103,6 +114,8 @@ void CMapLayerDebugInfo::DrawInfoL(CWindowGc &aGc)
 	buff.Format(KLonText, center.Longitude());
 	strings->AppendL(buff);
 	buff.Format(KZoomText, (TInt) iMapView->GetZoom());
+	strings->AppendL(buff);
+	buff.Format(KGdopText, gdop);
 	strings->AppendL(buff);
 	
 	// Draw
@@ -116,7 +129,7 @@ void CMapLayerDebugInfo::DrawInfoL(CWindowGc &aGc)
 	for (TInt i = 0; i < strings->Count(); i++)
 		{
 		baselineOffset += iFont->AscentInPixels() + 5;
-		aGc.DrawText((*strings)[i], area, baselineOffset, CGraphicsContext::ERight);
+		aGc.DrawText((*strings)[i], area, baselineOffset, CGraphicsContext::ELeft);
 		}
 	aGc.DiscardFont();
 	
