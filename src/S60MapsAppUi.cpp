@@ -472,7 +472,7 @@ void CS60MapsAppUi::OnPositionUpdated()
 
 void CS60MapsAppUi::OnPositionPartialUpdated()
 	{
-	
+	iMapView->MapControl()->DrawNow();
 	}
 
 void CS60MapsAppUi::OnPositionRestored()
