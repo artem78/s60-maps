@@ -1025,7 +1025,9 @@ void CSignalIndicatorLayer::DrawBars(CWindowGc &aGc, TSignalStrength aSignalStre
 	aGc.SetPenColor(KRgbBlack);
 	aGc.SetPenSize(TSize(KBarBorderWidth, KBarBorderWidth));
 	
-	TRect barRect(TPoint(iMapView->Rect().iBr.iX - (14 + KBarsTotalWidth), iMapView->Rect().iTl.iY + 14 + KBarsTotalHeight - KStartBarHeight), TSize(KBarWidth, KStartBarHeight));
+	TRect barRect(TPoint(iMapView->Rect().iBr.iX - (14 + KBarsTotalWidth),
+			iMapView->Rect().iTl.iY + 14 + KBarsTotalHeight - KStartBarHeight),
+			TSize(KBarWidth, KStartBarHeight));
 	for (TInt i = ESignalVeryLow; i <= ESignalHigh; i++)
 		{
 		if (i > aSignalStrength)
