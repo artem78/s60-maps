@@ -93,7 +93,7 @@ void CMapLayerDebugInfo::DrawInfoL(CWindowGc &aGc)
 			static_cast<const TPositionSatelliteInfoExtended*>(appUi->SatelliteInfo());
 	
 	TReal gdop = KNaN;
-	if (satInfo)
+	if (appUi->IsPositionRecieved() && satInfo)
 		{
 		gdop = satInfo->GeometricDoP();
 		}
@@ -957,7 +957,7 @@ void CSignalIndicatorLayer::Draw(CWindowGc &aGc)
 	
 	if (!satInfo) return;
 	
-	TReal gdop = satInfo->GeometricDoP();
+	TReal gdop = appUi->IsPositionRecieved() ? satInfo->GeometricDoP() : KNaN;
 	const TInt KMaxBarsCount = 6;
 	TSignalStrength signalStrength = ESignalNone;
 	// According to: https://en.wikipedia.org/wiki/Dilution_of_precision_(navigation)#Interpretation

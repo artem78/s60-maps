@@ -191,6 +191,9 @@ public:
 	inline TBool IsPositioningAvailable()
 			{ return (TBool) iPosRequestor; }
 	
+	inline TBool IsPositionRecieved()
+			{ return IsPositioningAvailable() && iPosRequestor->IsPositionRecieved(); }
+	
 	inline CMapView* MapView()
 			{ return iMapView; }
 	
