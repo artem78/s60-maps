@@ -44,3 +44,23 @@ TReal TPositionSatelliteInfoExtended::GeometricDoP() const
 		return nan;
 	return gdop;
 	}
+
+TInt TPositionSatelliteInfoExtended::NumOfVisibleSatellites(TInt aMinSignalStrength) const
+	{
+	TInt counter = 0;
+	
+	TSatelliteData satData;
+	
+	for (TInt i = 0; i < NumSatellitesInView(); i++)
+		{
+		if (GetSatelliteData(i, satData) == KErrNone)
+			{
+			if (satData.SignalStrength() >= aMinSignalStrength)
+				{
+				counter++;
+				}
+			}
+		}
+	
+	return counter;
+	}

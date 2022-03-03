@@ -35,6 +35,12 @@ public:
 	 * @return Geometric dilution of precision or NaN
 	 */
 	TReal GeometricDoP() const;
+	
+	/**
+	 * Returns amount of visible satellites with recieved signal strength not less than specified
+	 */
+	TInt NumOfVisibleSatellites(TInt aMinSignalStrength = 1) const;
+	
 	};
 
 #endif // LBSSATELLITEEXTENDED_H
