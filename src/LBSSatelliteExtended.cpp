@@ -10,6 +10,7 @@
 
 #include "LBSSatelliteExtended.h"
 #include <e32math.h>
+#include "Logger.h"
 
 TReal TPositionSatelliteInfoExtended::PositionDoP() const
 	{
@@ -55,12 +56,15 @@ TInt TPositionSatelliteInfoExtended::NumOfVisibleSatellites(TInt aMinSignalStren
 		{
 		if (GetSatelliteData(i, satData) == KErrNone)
 			{
+			DEBUG(_L("Sat #%d signal = %d"), satData.SatelliteId(), satData.SignalStrength());
 			if (satData.SignalStrength() >= aMinSignalStrength)
 				{
 				counter++;
 				}
 			}
 		}
+	
+	DEBUG(_L("Num = %d/%d"), counter, NumSatellitesInView());
 	
 	return counter;
 	}
