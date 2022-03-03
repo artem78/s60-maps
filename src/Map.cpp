@@ -958,7 +958,6 @@ void CSignalIndicatorLayer::Draw(CWindowGc &aGc)
 	if (!satInfo) return;
 	
 	TReal gdop = appUi->IsPositionRecieved() ? satInfo->GeometricDoP() : KNaN;
-	const TInt KMaxBarsCount = 6;
 	TSignalStrength signalStrength = ESignalNone;
 	// According to: https://en.wikipedia.org/wiki/Dilution_of_precision_(navigation)#Interpretation
 	if (!Math::IsFinite(gdop))
