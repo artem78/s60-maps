@@ -1017,13 +1017,25 @@ void CSignalIndicatorLayer::DrawBars(CWindowGc &aGc, TSignalStrength aSignalStre
 	__ASSERT_DEBUG(aSignalStrength >= ESignalNone, Panic(ES60MapsInvaidSignalValuePanic));
 	__ASSERT_DEBUG(aSignalStrength <= ESignalHigh, Panic(ES60MapsInvaidSignalValuePanic));
 	
+	
+	// Constants
+	const TInt KBarWidth		= 4;
+	const TInt KStartBarHeight	= 4;
+	const TInt KBarBorderWidth	= 1;
+	const TInt KSpacing			= 2;
+	const TInt KBarHeightIncremement	= 3;
+	const TInt KBarsCount	= ESignalHigh - ESignalVeryLow + 1;
+	const TInt KTotalWidth	= KBarsCount * KBarWidth + (KBarsCount - 1) * KSpacing;
+	const TInt KTotalHeight	= KStartBarHeight + (KBarsCount - 1) * KBarHeightIncremement;
+
+	
 	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
 	aGc.SetBrushColor(KRgbGray);
 	aGc.SetPenStyle(CGraphicsContext::ESolidPen);
 	aGc.SetPenColor(KRgbBlack);
-	aGc.SetPenSize(TSize(1, 1));
+	aGc.SetPenSize(TSize(KBarBorderWidth, KBarBorderWidth));
 	
-	TRect barRect(TPoint(iMapView->Rect().iBr.iX - (14 + 34), iMapView->Rect().iTl.iY + 14 + 19 - 4), TSize(4, 4));
+	TRect barRect(TPoint(iMapView->Rect().iBr.iX - (14 + KTotalWidth), iMapView->Rect().iTl.iY + 14 + KTotalHeight - KStartBarHeight), TSize(KBarWidth, KStartBarHeight));
 	for (TInt i = ESignalVeryLow; i <= ESignalHigh; i++)
 		{
 		if (i > aSignalStrength)
@@ -1083,8 +1095,8 @@ void CSignalIndicatorLayer::DrawBars(CWindowGc &aGc, TSignalStrength aSignalStre
 			}
 		
 		aGc.DrawRect(barRect);
-		barRect.SetHeight(barRect.Height() + 3);
-		barRect.Move(6, -3);
+		barRect.SetHeight(barRect.Height() + KBarHeightIncremement);
+		barRect.Move(KBarWidth + KSpacing, -KBarHeightIncremement);
 		}
 	}
 
