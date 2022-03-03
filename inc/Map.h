@@ -253,6 +253,18 @@ private:
 		ESignalHigh
 		};
 	
+	// Constants for bars settings ("K" prefix used instead of "E" for enums)
+	enum {
+		KBarWidth		= 4,
+		KStartBarHeight	= 4,
+		KBarBorderWidth	= 1,
+		KBarsSpacing	= 2,
+		KBarHeightIncremement	= 3,
+		KBarsCount		= ESignalHigh - ESignalVeryLow + 1,
+		KBarsTotalWidth		= KBarsCount * KBarWidth + (KBarsCount - 1) * KBarsSpacing,
+		KBarsTotalHeight	= KStartBarHeight + (KBarsCount - 1) * KBarHeightIncremement
+	};
+	
 	CFont* iFont;
 	CFbsBitmap* iSatelliteIconBitmap;
 	CFbsBitmap* iSatelliteIconMaskBitmap;

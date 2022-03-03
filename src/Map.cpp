@@ -994,10 +994,12 @@ void CSignalIndicatorLayer::Draw(CWindowGc &aGc)
 	buff.Format(KFmt, satInfo->NumSatellitesUsed(), satInfo->NumOfVisibleSatellites());
 	//DEBUG(buff);
 	
+	const TInt KSpacing = 8;
+	
 	TRect textArea = iMapView->Rect();
 	textArea.Shrink(14, 14);
-	textArea.iBr.iX -= 34 + 8;
-	textArea.iTl.iY += 19 - iFont->AscentInPixels();
+	textArea.iBr.iX -= KBarsTotalWidth + KSpacing;
+	textArea.iTl.iY += KBarsTotalHeight - iFont->AscentInPixels();
 	TInt baselineOffset = iFont->AscentInPixels();
 	
 	aGc.UseFont(iFont);
@@ -1006,9 +1008,9 @@ void CSignalIndicatorLayer::Draw(CWindowGc &aGc)
 	
 	DrawBars(aGc, signalStrength);
 	
-	TPoint satIconPoint(iMapView->Rect().iBr.iX - (14 + 34 + 8 * 2 + iFont->TextWidthInPixels(buff)
+	TPoint satIconPoint(iMapView->Rect().iBr.iX - (14 + KBarsTotalWidth + KSpacing * 2 + iFont->TextWidthInPixels(buff)
 			+ iSatelliteIconBitmap->SizeInPixels().iWidth),
-			iMapView->Rect().iTl.iY + 14 + 19 - iSatelliteIconBitmap->SizeInPixels().iHeight);
+			iMapView->Rect().iTl.iY + 14 + KBarsTotalHeight - iSatelliteIconBitmap->SizeInPixels().iHeight);
 	DrawSatelliteIcon(aGc, satIconPoint);
 	}
 
@@ -1017,25 +1019,13 @@ void CSignalIndicatorLayer::DrawBars(CWindowGc &aGc, TSignalStrength aSignalStre
 	__ASSERT_DEBUG(aSignalStrength >= ESignalNone, Panic(ES60MapsInvaidSignalValuePanic));
 	__ASSERT_DEBUG(aSignalStrength <= ESignalHigh, Panic(ES60MapsInvaidSignalValuePanic));
 	
-	
-	// Constants
-	const TInt KBarWidth		= 4;
-	const TInt KStartBarHeight	= 4;
-	const TInt KBarBorderWidth	= 1;
-	const TInt KSpacing			= 2;
-	const TInt KBarHeightIncremement	= 3;
-	const TInt KBarsCount	= ESignalHigh - ESignalVeryLow + 1;
-	const TInt KTotalWidth	= KBarsCount * KBarWidth + (KBarsCount - 1) * KSpacing;
-	const TInt KTotalHeight	= KStartBarHeight + (KBarsCount - 1) * KBarHeightIncremement;
-
-	
 	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
 	aGc.SetBrushColor(KRgbGray);
 	aGc.SetPenStyle(CGraphicsContext::ESolidPen);
 	aGc.SetPenColor(KRgbBlack);
 	aGc.SetPenSize(TSize(KBarBorderWidth, KBarBorderWidth));
 	
-	TRect barRect(TPoint(iMapView->Rect().iBr.iX - (14 + KTotalWidth), iMapView->Rect().iTl.iY + 14 + KTotalHeight - KStartBarHeight), TSize(KBarWidth, KStartBarHeight));
+	TRect barRect(TPoint(iMapView->Rect().iBr.iX - (14 + KBarsTotalWidth), iMapView->Rect().iTl.iY + 14 + KBarsTotalHeight - KStartBarHeight), TSize(KBarWidth, KStartBarHeight));
 	for (TInt i = ESignalVeryLow; i <= ESignalHigh; i++)
 		{
 		if (i > aSignalStrength)
@@ -1096,7 +1086,7 @@ void CSignalIndicatorLayer::DrawBars(CWindowGc &aGc, TSignalStrength aSignalStre
 		
 		aGc.DrawRect(barRect);
 		barRect.SetHeight(barRect.Height() + KBarHeightIncremement);
-		barRect.Move(KBarWidth + KSpacing, -KBarHeightIncremement);
+		barRect.Move(KBarWidth + KBarsSpacing, -KBarHeightIncremement);
 		}
 	}
 
