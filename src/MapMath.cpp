@@ -70,7 +70,7 @@ TTile MapMath::GeoCoordsToTile(const TCoordinate &aCoord, TZoom aZoom)
 	return tile;
 	}
 
-TTileReal MapMath::GeoCoordsToTileReal(const TCoordinate &aCoord, TZoom aZoom)
+MapMath::TTileReal MapMath::GeoCoordsToTileReal(const TCoordinate &aCoord, TZoom aZoom)
 	{
 	// https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#Lon..2Flat._to_tile_numbers_2
 	

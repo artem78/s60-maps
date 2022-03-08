@@ -726,14 +726,6 @@ void CMapControl::Bounds(TTile &aTopLeftTile, TTile &aBottomRightTile) const
 	aBottomRightTile = MapMath::ProjectionPointToTile(bottomRightProjection, GetZoom());
 	}
 
-void CMapControl::Bounds(TTileReal &aTopLeftTile, TTileReal &aBottomRightTile) const
-	{
-	TCoordinate topLeftCoord, bottomRightCoord;
-	Bounds(topLeftCoord, bottomRightCoord);
-	aTopLeftTile = MapMath::GeoCoordsToTileReal(topLeftCoord, GetZoom());
-	aBottomRightTile = MapMath::GeoCoordsToTileReal(bottomRightCoord, GetZoom());
-	}
-
 void CMapControl::UpdateUserPosition()
 	{
 	DisableDraw();

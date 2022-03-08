@@ -20,10 +20,22 @@ const TInt KTileSize = 256; // Standard tile height and width in pixels
 
 
 class TTile;
-class TTileReal;
 
 class MapMath
 	{
+private:
+	class TTileReal
+		{
+	public:
+		TReal iX;
+		TReal iY;
+		TZoom iZ;
+		};
+
+	
+	static TTileReal GeoCoordsToTileReal(const TCoordinate &aCoord, TZoom aZoom);
+	static TCoordinate TileToGeoCoords(const TTileReal &aTile, TZoom aZoom);
+	
 public:
 	static void PixelsToMeters(const TReal64 &aLatitude, TZoom aZoom, TUint aPixels /*= 1*/,
 			TReal32 &aHorizontalDistance, TReal32 &aVerticalDistance);
@@ -32,8 +44,6 @@ public:
 	static void MetersToPixels(const TReal64 &aLatitude, TZoom aZoom, TReal32 aDistance,
 			/*TUint*/ TInt &aHorizontalPixels, /*TUint*/ TInt &aVerticalPixels);
 	static TTile GeoCoordsToTile(const TCoordinate &aCoord, TZoom aZoom);
-	static TTileReal GeoCoordsToTileReal(const TCoordinate &aCoord, TZoom aZoom);
-	static TCoordinate TileToGeoCoords(const TTileReal &aTile, TZoom aZoom);
 	static TCoordinate TileToGeoCoords(const TTile &aTile, TZoom aZoom);
 	static TPoint GeoCoordsToProjectionPoint(const TCoordinate &aCoord, TZoom aZoom);
 	static TCoordinate ProjectionPointToGeoCoords(const TPoint &aPoint, TZoom aZoom);
@@ -55,14 +65,6 @@ public:
 	void AsDes(TDes8 &aDes) const;
 	const TBufC<32> AsDes() const;
 	const TBufC8<32> AsDes8() const;
-	};
-
-class TTileReal
-	{
-public:
-	TReal iX;
-	TReal iY;
-	TZoom iZ;
 	};
 
 #endif /* MAPMATH_H_ */
