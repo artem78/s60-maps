@@ -57,3 +57,7 @@ CHARACTER_SET UTF8
 // Added in develop
 
 #define qtn_reload_visible_area "Reload visible area"
+#define qtn_show "Show"
+#define qtn_hide "Hide"
+#define qtn_signal_indicator "GPS signal indicator"
+#define qtn_scale_bar "Scale bar"
