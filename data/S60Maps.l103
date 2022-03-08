@@ -22,7 +22,7 @@ CHARACTER_SET UTF8
 #define qtn_about_dialog_title "Sobre"
 #define qtn_about_dialog_text "S60Maps Versión %S\nCompilación: " __DATE__ " " __TIME__ "\nGit: %S\nAutor: %S\nWeb: %S\nGrazas a: %S e outros"
 //#define qtn_confirm_exit_dialog_title "Confirmar saída"
-#define qtn_confirm_exit_dialog_text "Tes certeza que desexas sair?"
+#define qtn_confirm_exit_dialog_text "Tes certeza de que desexas sair?"
 #define qtn_done "Feito!"
 #define qtn_stats_line "%S: %d arquivos, %S\n"
 #define qtn_stats_total "Total: %d arquivos, %S"
@@ -30,7 +30,7 @@ CHARACTER_SET UTF8
 // Added in version 1.4.0:
 
 #define qtn_positioning_disabled "Posicionamento non disponíbel!"
-#define qtn_wait "Por favor, aguarde..."
+#define qtn_wait "Aguarde, por favor..."
 #define qtn_meters_unit_short "m"
 #define qtn_kilometers_unit_short "km"
 
@@ -54,13 +54,13 @@ CHARACTER_SET UTF8
 
 // Added in version 1.7:
 
-#define qtn_settings "Settings"
-#define qtn_language "Language"
+#define qtn_settings "Configuración"
+#define qtn_language "Idioma"
 
 // Added in develop
 
-#define qtn_reload_visible_area "Reload visible area"
-#define qtn_show "Show"
-#define qtn_hide "Hide"
-#define qtn_signal_indicator "GPS signal indicator"
-#define qtn_scale_bar "Scale bar"
+#define qtn_reload_visible_area "Recargar área visíbel"
+#define qtn_show "Amosar"
+#define qtn_hide "Ocultar"
+#define qtn_signal_indicator "Indicador do sinal GPS"
+#define qtn_scale_bar "Barra de nível"

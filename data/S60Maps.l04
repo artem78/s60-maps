@@ -30,7 +30,7 @@ CHARACTER_SET UTF8
 // Added in version 1.4.0:
 
 #define qtn_positioning_disabled "¡Posicionamiento no disponible!"
-#define qtn_wait "Por favor, espera..."
+#define qtn_wait "Espera por favor..."
 #define qtn_meters_unit_short "m"
 #define qtn_kilometers_unit_short "km"
 
@@ -48,19 +48,19 @@ CHARACTER_SET UTF8
 
 #define qtn_goto "Ir a..."
 #define qtn_landmark "Marcador"
-#define qtn_coordinate "Coordinadas"
+#define qtn_coordinate "Coordenadas"
 #define qtn_latitude "Latitud"
 #define qtn_longitude "Longitud"
 
 // Added in version 1.7:
 
-#define qtn_settings "Settings"
-#define qtn_language "Language"
+#define qtn_settings "Configuración"
+#define qtn_language "Idioma"
 
 // Added in develop
 
-#define qtn_reload_visible_area "Reload visible area"
-#define qtn_show "Show"
-#define qtn_hide "Hide"
-#define qtn_signal_indicator "GPS signal indicator"
-#define qtn_scale_bar "Scale bar"
+#define qtn_reload_visible_area "Recargar área visible"
+#define qtn_show "Mostrar"
+#define qtn_hide "Ocultar"
+#define qtn_signal_indicator "Indicador de señal GPS"
+#define qtn_scale_bar "Barra de nivel"
