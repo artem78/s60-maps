@@ -50,6 +50,8 @@ void CS60MapsAppUi::ConstructL()
 	
 	iSettings = new (ELeave) CSettings();
 	
+	_LIT8(KApiKeyArgFmt, "?apikey=%S");
+	
 	// Set several predefined available tiles providers
 
 	// OpenStreetMap standard tile layer
@@ -62,12 +64,15 @@ void CS60MapsAppUi::ConstructL()
 	// OpenCycleMap
 	// https://wiki.openstreetmap.org/wiki/OpenCycleMap
 	// https://www.thunderforest.com/maps/opencyclemap/
-	_LIT8(KOpenCycleMapUrl, "http://tile.thunderforest.com/cycle/{$z}/{$x}/{$y}.png?apikey=");
+	_LIT8(KOpenCycleMapUrl, "http://tile.thunderforest.com/cycle/{$z}/{$x}/{$y}.png");
 	RBuf8 openCycleMapUrl;
-	openCycleMapUrl.CreateMaxL(KOpenCycleMapUrl().Length() + KThunderForestApiKey().Length());
+	openCycleMapUrl.CreateMaxL(KOpenCycleMapUrl().Length() + KApiKeyArgFmt().Length() + KThunderForestApiKey().Length());
 	openCycleMapUrl.CleanupClosePushL();
 	openCycleMapUrl.Copy(KOpenCycleMapUrl);
-	openCycleMapUrl.Append(KThunderForestApiKey);
+	if (KThunderForestApiKey().Length())
+		{
+		openCycleMapUrl.AppendFormat(KApiKeyArgFmt, &KThunderForestApiKey);
+		}
 	iAvailableTileProviders[1] = new (ELeave) TTileProvider(
 			_L("opencycle"), _L("OpenCycleMap"),
 			openCycleMapUrl,
@@ -77,12 +82,15 @@ void CS60MapsAppUi::ConstructL()
 	// Transport Map
 	// https://wiki.openstreetmap.org/wiki/Transport_Map
 	// https://www.thunderforest.com/maps/transport/
-	_LIT8(KTransportMapUrl, "http://tile.thunderforest.com/transport/{$z}/{$x}/{$y}.png?apikey=");
+	_LIT8(KTransportMapUrl, "http://tile.thunderforest.com/transport/{$z}/{$x}/{$y}.png");
 	RBuf8 transportMapUrl;
-	transportMapUrl.CreateMaxL(KTransportMapUrl().Length() + KThunderForestApiKey().Length());
+	transportMapUrl.CreateMaxL(KTransportMapUrl().Length() + KApiKeyArgFmt().Length() + KThunderForestApiKey().Length());
 	transportMapUrl.CleanupClosePushL();
 	transportMapUrl.Copy(KTransportMapUrl);
-	transportMapUrl.Append(KThunderForestApiKey);
+	if (KThunderForestApiKey().Length())
+		{
+		transportMapUrl.AppendFormat(KApiKeyArgFmt, &KThunderForestApiKey);
+		}
 	iAvailableTileProviders[2] = new (ELeave) TTileProvider(
 			_L("transport"), _L("Transport Map"),
 			transportMapUrl,

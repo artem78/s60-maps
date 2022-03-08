@@ -16,10 +16,11 @@ typedef /*TUInt8*/ TInt TZoom;
 const TReal KNaN = 0.0 / 0.0;
 
 // API Keys
+// You can get your own here: https://manage.thunderforest.com/
 #ifdef _DEBUG
-_LIT(KThunderForestApiKey, "c27959d0b4784cd58b671dc611660c5e"); // Development key
+_LIT8(KThunderForestApiKey, ""); // Development key
 #else
-_LIT(KThunderForestApiKey, "96a5d596e0cd4bdda652031db7b46049"); // Production key
+_LIT8(KThunderForestApiKey, ""); // Production key
 #endif
 
 #endif /* DEFS_H_ */
