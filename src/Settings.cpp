@@ -28,7 +28,8 @@ CSettings::CSettings() :
 		iZoom(KDefaultZoom),
 		iTileProviderId(KDefaultTileProviderId),
 		iIsLandmarksVisible(EFalse),
-		iLanguage(ELangEnglish)
+		iLanguage(ELangEnglish),
+		iIsSignalIndicatorVisible(ETrue)
 	{
 	}
 
@@ -66,6 +67,9 @@ void CSettings::ExternalizeL(RWriteStream& aStream) const
 
 	// Added in version 1.7
 	aStream << TCardinality(iLanguage);
+	
+	// Added in develop
+	aStream << (TInt8) iIsSignalIndicatorVisible; // No built-in bool to stream conversion
 	}
 
 void CSettings::DoInternalizeL(RReadStream& aStream)
@@ -73,7 +77,7 @@ void CSettings::DoInternalizeL(RReadStream& aStream)
 	// FixMe: Reads mess in new settings for old config file (make sure to validate them)
 	
 	TCardinality zoom, language;
-	TInt8 isLandmarksVisible;
+	TInt8 isLandmarksVisible, isSignalIndicatorVisible;
 	
 	aStream >> iLat;
 	aStream >> iLon;
@@ -86,6 +90,10 @@ void CSettings::DoInternalizeL(RReadStream& aStream)
 	// Added in version 1.7
 	aStream >> language;
 	iLanguage = static_cast<TLanguage>((TInt) language);
+	
+	// Added in develop
+	aStream >> isSignalIndicatorVisible;
+	iIsSignalIndicatorVisible = (TBool) isSignalIndicatorVisible;
 	}
 
 void CSettings::InternalizeL(RReadStream& aStream)

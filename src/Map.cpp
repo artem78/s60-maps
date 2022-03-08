@@ -952,6 +952,10 @@ CSignalIndicatorLayer::~CSignalIndicatorLayer()
 void CSignalIndicatorLayer::Draw(CWindowGc &aGc)
 	{
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
+	
+	if (!appUi->Settings()->iIsSignalIndicatorVisible) // Check display or not
+		return;
+	
 	const TPositionSatelliteInfoExtended* satInfo =
 			static_cast<const TPositionSatelliteInfoExtended*>(appUi->SatelliteInfo());
 	

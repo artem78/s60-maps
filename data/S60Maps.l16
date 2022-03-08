@@ -56,3 +56,9 @@ CHARACTER_SET UTF8
 
 #define qtn_settings "Настройки"
 #define qtn_language "Язык"
+
+// Added in develop
+
+#define qtn_show "Показывать"
+#define qtn_hide "Скрыть"
+#define qtn_signal_indicator "Уровень сигнала GPS"
