@@ -548,6 +548,11 @@ void CScaleBarLayer::ConstructL()
 
 void CScaleBarLayer::Draw(CWindowGc &aGc)
 	{
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
+	
+	if (!appUi->Settings()->iIsScaleBarVisible) // Check display or not
+		return;
+	
 	const TInt KBarLeftMargin    = 14;
 	const TInt KBarBottomMargin  = KBarLeftMargin;
 	const TInt KBarHeight        = 3;

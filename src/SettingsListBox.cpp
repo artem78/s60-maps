@@ -34,6 +34,13 @@ CAknSettingItem* CSettingsListBox::CreateSettingItemL(TInt aSettingId)
 								appUi->Settings()->iIsSignalIndicatorVisible);
 			}
 			break;
+			
+		case ESettingShowScaleBar:
+			{
+			settingItem = new (ELeave) CAknBinaryPopupSettingItem(aSettingId,
+								appUi->Settings()->iIsScaleBarVisible);
+			}
+			break;
 		}
 	
 	return settingItem;

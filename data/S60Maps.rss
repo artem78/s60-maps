@@ -510,15 +510,21 @@ RESOURCE AVKON_SETTING_ITEM_LIST r_setting_item_list
 			setting_page_resource = r_language_setting_page;
 			associated_resource = r_popup_setting_language_texts;
 			name = qtn_language;
-			}
-		,
+			},
 	    AVKON_SETTING_ITEM
 	    	{
 			identifier = ESettingShowSignalIndicator;
 			setting_page_resource = r_show_signal_indicator_setting_page;
 			associated_resource = r_popup_setting_show_signal_indicator_texts;
 			name = qtn_signal_indicator;
-	      }
+	    	},
+		AVKON_SETTING_ITEM
+			{
+			identifier = ESettingShowScaleBar;
+			setting_page_resource = r_show_scale_bar_setting_page;
+			associated_resource = r_popup_setting_show_scale_bar_texts;
+			name = qtn_scale_bar;
+			}
 		};
 	}
 
@@ -579,6 +585,31 @@ RESOURCE AVKON_POPUP_SETTING_TEXTS r_popup_setting_show_signal_indicator_texts
     }
 
 RESOURCE ARRAY r_show_signal_indicator_texts
+    {
+    items =
+        {
+        AVKON_ENUMERATED_TEXT { value=1; text = qtn_show; },
+        AVKON_ENUMERATED_TEXT { value=0; text = qtn_hide; }
+        };
+    }
+
+
+// Show scale bar setting
+
+RESOURCE AVKON_SETTING_PAGE r_show_scale_bar_setting_page
+    {   
+    number = 0;
+    label = qtn_scale_bar;
+    type = EAknCtPopupSettingList;
+    }
+
+RESOURCE AVKON_POPUP_SETTING_TEXTS r_popup_setting_show_scale_bar_texts
+    {
+    flags = 0;
+    setting_texts_resource = r_show_scale_bar_texts;
+    }
+
+RESOURCE ARRAY r_show_scale_bar_texts
     {
     items =
         {
