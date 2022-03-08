@@ -54,13 +54,13 @@ CHARACTER_SET UTF8
 
 // Added in version 1.7:
 
-#define qtn_settings "Settings"
-#define qtn_language "Language"
+#define qtn_settings "Налаштування"
+#define qtn_language "Мова"
 
 // Added in develop
 
-#define qtn_reload_visible_area "Reload visible area"
-#define qtn_show "Show"
-#define qtn_hide "Hide"
-#define qtn_signal_indicator "GPS signal indicator"
-#define qtn_scale_bar "Scale bar"
+#define qtn_reload_visible_area "Оновити видиму область"
+#define qtn_show "Показати"
+#define qtn_hide "Сховати"
+#define qtn_signal_indicator "Рівень GPS сигналу"
+#define qtn_scale_bar "Шкала масштабу"
