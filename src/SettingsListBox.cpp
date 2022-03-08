@@ -27,6 +27,13 @@ CAknSettingItem* CSettingsListBox::CreateSettingItemL(TInt aSettingId)
 					*ptr);
 			}
 			break;
+			
+		case ESettingShowSignalIndicator:
+			{
+			settingItem = new (ELeave) CAknBinaryPopupSettingItem(aSettingId,
+								appUi->Settings()->iIsSignalIndicatorVisible);
+			}
+			break;
 		}
 	
 	return settingItem;
@@ -51,6 +58,11 @@ void CSettingsListBox::EditItemL(TInt aIndex, TBool aCalledFromMenu)
 			appUi->SettingsView()->Reload();
 			}
 			break;
+			
+		/*case ESettingShowSignalIndicator:
+			{
+			}
+			break;*/
 		}
 	}
 

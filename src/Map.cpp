@@ -23,6 +23,7 @@
 #include <epos_cposlmareacriteria.h>
 #include "icons.mbg"
 #include "Utils.h"
+#include "LBSSatelliteExtended.h"
 
 CMapLayerBase::CMapLayerBase(/*const*/ CMapControl* aMapView) :
 		iMapView(aMapView)
@@ -82,16 +83,27 @@ void CMapLayerDebugInfo::DrawInfoL(CWindowGc &aGc)
 	_LIT(KLatText, "Lat: %f");
 	_LIT(KLonText, "Lon: %f");
 	_LIT(KZoomText, "Zoom: %d");
+	_LIT(KGdopText, "GDOP: %.1f");
 	
 	iRedrawingsCount++;
 	TCoordinate center = iMapView->GetCenterCoordinate();
+	
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
+	const TPositionSatelliteInfoExtended* satInfo =
+			static_cast<const TPositionSatelliteInfoExtended*>(appUi->SatelliteInfo());
+	
+	TReal gdop = KNaN;
+	if (appUi->IsPositionRecieved() && satInfo)
+		{
+		gdop = satInfo->GeometricDoP();
+		}
 	
 	// Prepare strings
 	/*TBuf<100> buff;
 		_LIT(KFmt, "Redrawings: %d\rLat: %f\rLon: %f\rZoom: %d");
 		buff.Format(KFmt, iRedrawingsCount, center.Latitude(), center.Longitude(), (TInt) iMapView->GetZoom());*/
 	
-	CDesCArrayFlat* strings = new (ELeave) CDesCArrayFlat(4);
+	CDesCArrayFlat* strings = new (ELeave) CDesCArrayFlat(5);
 	CleanupStack::PushL(strings);
 	
 	TBuf<32> buff;
@@ -102,6 +114,8 @@ void CMapLayerDebugInfo::DrawInfoL(CWindowGc &aGc)
 	buff.Format(KLonText, center.Longitude());
 	strings->AppendL(buff);
 	buff.Format(KZoomText, (TInt) iMapView->GetZoom());
+	strings->AppendL(buff);
+	buff.Format(KGdopText, gdop);
 	strings->AppendL(buff);
 	
 	// Draw
@@ -115,7 +129,7 @@ void CMapLayerDebugInfo::DrawInfoL(CWindowGc &aGc)
 	for (TInt i = 0; i < strings->Count(); i++)
 		{
 		baselineOffset += iFont->AscentInPixels() + 5;
-		aGc.DrawText((*strings)[i], area, baselineOffset, CGraphicsContext::ERight);
+		aGc.DrawText((*strings)[i], area, baselineOffset, CGraphicsContext::ELeft);
 		}
 	aGc.DiscardFont();
 	
@@ -887,6 +901,195 @@ void CCrosshairLayer::Draw(CWindowGc &aGc)
 	TPoint end2 = center;
 	end2.iY -= (KLineHalfLength + 1);
 	aGc.DrawLine(start2, end2);
+	}
+
+
+// CSignalIndicatorLayer
+
+CSignalIndicatorLayer* CSignalIndicatorLayer::NewLC(CMapControl* aMapView)
+	{
+	CSignalIndicatorLayer* self = new (ELeave) CSignalIndicatorLayer(aMapView);
+	CleanupStack::PushL(self);
+	self->ConstructL();
+	return self;
+	}
+
+CSignalIndicatorLayer* CSignalIndicatorLayer::NewL(CMapControl* aMapView)
+	{
+	CSignalIndicatorLayer* self = CSignalIndicatorLayer::NewLC(aMapView);
+	CleanupStack::Pop(); // self;
+	return self;
+	}
+
+CSignalIndicatorLayer::CSignalIndicatorLayer(CMapControl* aMapView) :
+		CMapLayerBase(aMapView)
+	{
+	}
+
+void CSignalIndicatorLayer::ConstructL()
+	{
+	// Load icon
+	_LIT(KMbmFilePathFmt, "%c:%Sicons.mbm");
+	
+	TFileName privateDir;
+	User::LeaveIfError(CEikonEnv::Static()->FsSession().PrivatePath(privateDir));
+	TFileName mbmFilePath;
+	mbmFilePath.Format(KMbmFilePathFmt, FileUtils::InstallationDrive(), &privateDir);
+	
+	iSatelliteIconBitmap = new (ELeave) CFbsBitmap();
+	User::LeaveIfError(iSatelliteIconBitmap->Load(mbmFilePath, EMbmIconsSatellite));
+	
+	iSatelliteIconMaskBitmap = new (ELeave) CFbsBitmap();
+	User::LeaveIfError(iSatelliteIconMaskBitmap->Load(mbmFilePath, EMbmIconsSatellite_mask));
+	
+	
+	// Load font	
+	_LIT(KFontName, /*"OpenSans"*/ "Series 60 Sans");
+	const TInt KFontHeightInTwips = /*9*/ 10 * 12; // Twip = 1/12 point
+	TFontSpec fontSpec(KFontName, KFontHeightInTwips);
+	fontSpec.iTypeface.SetIsSerif(EFalse);
+	fontSpec.iFontStyle.SetStrokeWeight(EStrokeWeightBold);
+	CGraphicsDevice* screenDevice = CCoeEnv::Static()->ScreenDevice();
+	TInt r = screenDevice->/*GetNearestFontToMaxHeightInTwips*/ GetNearestFontInTwips(iFont, fontSpec);
+	User::LeaveIfError(r);
+	}
+
+CSignalIndicatorLayer::~CSignalIndicatorLayer()
+	{
+	CCoeEnv::Static()->ScreenDevice()->ReleaseFont(iFont);
+	delete iSatelliteIconMaskBitmap;
+	delete iSatelliteIconBitmap;
+	}
+
+void CSignalIndicatorLayer::Draw(CWindowGc &aGc)
+	{
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
+	
+	if (!appUi->Settings()->iIsSignalIndicatorVisible) // Check display or not
+		return;
+	
+	const TPositionSatelliteInfoExtended* satInfo =
+			static_cast<const TPositionSatelliteInfoExtended*>(appUi->SatelliteInfo());
+	
+	if (!satInfo) return;
+	
+	TReal gdop = appUi->IsPositionRecieved() ? satInfo->GeometricDoP() : KNaN;
+	TSignalStrength signalStrength = ESignalNone;
+	// According to: https://en.wikipedia.org/wiki/Dilution_of_precision_(navigation)#Interpretation
+	if (!Math::IsFinite(gdop))
+		{
+		signalStrength = ESignalNone;
+		}
+	else if (gdop < 1)
+		{
+		signalStrength = ESignalHigh;
+		}
+	else if (gdop < 2)
+		{
+		signalStrength = ESignalVeryGood;
+		}
+	else if (gdop < 5)
+		{
+		signalStrength = ESignalGood;
+		}
+	else if (gdop < 10)
+		{
+		signalStrength = ESignalMedium;
+		}
+	else if (gdop < 20)
+		{
+		signalStrength = ESignalLow;
+		}
+	else if (gdop < 50)
+		{
+		signalStrength = ESignalVeryLow;
+		}
+	
+	_LIT(KFmt, "%d/%d");
+	TBuf<64> buff;
+	buff.Format(KFmt, satInfo->NumSatellitesUsed(), satInfo->NumOfVisibleSatellites());
+	//DEBUG(buff);
+	
+	const TInt KSpacing = 8;
+	
+	TRect textArea = iMapView->Rect();
+	textArea.Shrink(14, 14);
+	textArea.iBr.iX -= KBarsTotalWidth + KSpacing;
+	textArea.iTl.iY += KBarsTotalHeight - iFont->AscentInPixels();
+	TInt baselineOffset = iFont->AscentInPixels();
+	
+	aGc.UseFont(iFont);
+	aGc.DrawText(buff, textArea, baselineOffset, CGraphicsContext::ERight);
+	aGc.DiscardFont();
+	
+	DrawBars(aGc, signalStrength);
+	
+	TPoint satIconPoint(iMapView->Rect().iBr.iX - (14 + KBarsTotalWidth + KSpacing * 2 + iFont->TextWidthInPixels(buff)
+			+ iSatelliteIconBitmap->SizeInPixels().iWidth),
+			iMapView->Rect().iTl.iY + 14 + KBarsTotalHeight - iSatelliteIconBitmap->SizeInPixels().iHeight);
+	DrawSatelliteIcon(aGc, satIconPoint);
+	}
+
+void CSignalIndicatorLayer::DrawBars(CWindowGc &aGc, TSignalStrength aSignalStrength)
+	{
+	__ASSERT_DEBUG(aSignalStrength >= ESignalNone, Panic(ES60MapsInvaidSignalValuePanic));
+	__ASSERT_DEBUG(aSignalStrength <= ESignalHigh, Panic(ES60MapsInvaidSignalValuePanic));
+	
+	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
+	aGc.SetPenStyle(CGraphicsContext::ESolidPen);
+	aGc.SetPenSize(TSize(KBarBorderWidth, KBarBorderWidth));
+	
+	// Set color for active bars
+	switch (aSignalStrength)
+		{
+		case ESignalVeryLow:
+			{
+			aGc.SetBrushColor(TRgb(192,0,0));
+			aGc.SetPenColor(TRgb(58,0,0));
+			break;
+			}
+			
+		case ESignalLow:
+		case ESignalMedium:
+			{
+			aGc.SetBrushColor(TRgb(251,193,0));
+			aGc.SetPenColor(TRgb(75,58,0));
+			break;
+			}
+			
+		case ESignalGood:
+		case ESignalVeryGood:
+		case ESignalHigh:
+			{
+			aGc.SetBrushColor(TRgb(144,209,75));
+			aGc.SetPenColor(TRgb(43,63,22));
+			break;
+			}
+		}
+	
+	TRect barRect(TPoint(iMapView->Rect().iBr.iX - (14 + KBarsTotalWidth),
+			iMapView->Rect().iTl.iY + 14 + KBarsTotalHeight - KStartBarHeight),
+			TSize(KBarWidth, KStartBarHeight));
+	for (TInt i = ESignalVeryLow; i <= ESignalHigh; i++)
+		{
+		if (i == aSignalStrength + 1)
+			{ // Change color for inactive bars
+			aGc.SetBrushColor(KRgbWhite);
+			aGc.SetPenColor(KRgbGray);
+			}
+		
+		aGc.DrawRect(barRect);
+		barRect.SetHeight(barRect.Height() + KBarHeightIncremement);
+		barRect.Move(KBarWidth + KBarsSpacing, -KBarHeightIncremement);
+		}
+	}
+
+void CSignalIndicatorLayer::DrawSatelliteIcon(CWindowGc &aGc, const TPoint &aPos)
+	{
+	TSize iconSize = iSatelliteIconBitmap->SizeInPixels();
+	TRect dstRect(aPos, iconSize);
+	TRect srcRect(TPoint(0, 0), iconSize);
+	aGc.DrawBitmapMasked(dstRect, iSatelliteIconBitmap, srcRect, iSatelliteIconMaskBitmap, 0);
 	}
 
 

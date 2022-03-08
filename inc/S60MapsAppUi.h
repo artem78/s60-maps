@@ -26,6 +26,7 @@
 //#include <aknprogressdialog.h> // For CAknProgressDialog
 #include <aknwaitdialog.h> // For CAknWaitDialog 
 #include <epos_cposlandmarkdatabase.h> // For CPosLandmarkDatabase
+#include <lbssatellite.h>
 
 // FORWARD DECLARATIONS
 class CMapView;
@@ -190,11 +191,20 @@ public:
 	inline TBool IsPositioningAvailable()
 			{ return (TBool) iPosRequestor; }
 	
+	inline TBool IsPositionRecieved()
+			{ return IsPositioningAvailable() && iPosRequestor->IsPositionRecieved(); }
+	
 	inline CMapView* MapView()
 			{ return iMapView; }
 	
 	inline CSettingsView* SettingsView()
 			{ return iSettingsView; }
+	
+	inline const TPositionSatelliteInfo* SatelliteInfo()
+			{ return IsPositioningAvailable() && iPosRequestor->LastKnownPositionInfo()->PositionClassType() & EPositionSatelliteInfoClass ?
+					static_cast<const TPositionSatelliteInfo*>(iPosRequestor->LastKnownPositionInfo()) :
+					NULL;
+			}
 	
 	};
 

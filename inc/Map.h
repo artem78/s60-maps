@@ -225,6 +225,57 @@ public:
 	};
 
 
+class CSignalIndicatorLayer : public CMapLayerBase
+	{	
+	// Constructor / Destructor
+public:
+	static CSignalIndicatorLayer* NewL(CMapControl* aMapView);
+	static CSignalIndicatorLayer* NewLC(CMapControl* aMapView);
+	~CSignalIndicatorLayer();
+
+private:
+	CSignalIndicatorLayer(CMapControl* aMapView);
+	void ConstructL();
+	
+	// From CMapLayerBase
+public:
+	void Draw(CWindowGc &aGc);
+	
+	// New
+private:
+	enum TSignalStrength
+		{
+		ESignalNone,
+		ESignalVeryLow,
+		ESignalLow,
+		ESignalMedium,
+		ESignalGood,
+		ESignalVeryGood,
+		ESignalHigh
+		};
+	
+	// Constants for bars settings ("K" prefix used instead of "E" for enums)
+	enum {
+		KBarWidth		= 4,
+		KStartBarHeight	= 4,
+		KBarBorderWidth	= 1,
+		KBarsSpacing	= 2,
+		KBarHeightIncremement	= 3,
+		KBarsCount		= ESignalHigh - ESignalVeryLow + 1,
+		KBarsTotalWidth		= KBarsCount * KBarWidth + (KBarsCount - 1) * KBarsSpacing,
+		KBarsTotalHeight	= KStartBarHeight + (KBarsCount - 1) * KBarHeightIncremement
+	};
+	
+	CFont* iFont;
+	CFbsBitmap* iSatelliteIconBitmap;
+	CFbsBitmap* iSatelliteIconMaskBitmap;
+	
+	void DrawBars(CWindowGc &aGc, TSignalStrength aBarsCount);
+	void DrawSatelliteIcon(CWindowGc &aGc, const TPoint &aPos);
+	
+	};
+
+
 class TSaverQueryItem
 	{
 public:

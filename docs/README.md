@@ -98,7 +98,7 @@ Read [docs/COMPILING.md](/docs/COMPILING.md)
 - [ ] Update old cached tiles
 - [x] Display and edit landmarks
 - [ ] Search (using [Nominatim](https://nominatim.openstreetmap.org/))
-- [ ] Show satellites info (amount, signal strength, etc...)
+- [x] Show satellites info (amount, signal strength, etc...)
 - [ ] Offline maps (zipped set of PNGs)
 
 ## LICENSE

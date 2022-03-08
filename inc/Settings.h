@@ -70,6 +70,7 @@ private:
 	TBool iIsLandmarksVisible;
 public:
 	TLanguage iLanguage;
+	TBool iIsSignalIndicatorVisible;
 	
 public:
 	CSettings();
@@ -104,6 +105,11 @@ public:
 		{ return iIsLandmarksVisible; }
 	inline void SetLandmarksVisibility(TBool aVisible = ETrue)
 		{ iIsLandmarksVisible = aVisible; }
+	
+	/*inline TBool GetSignalIndicatorVisibility() const
+		{ return iIsSignalIndicatorVisible; }
+	inline void SetSignalIndicatorVisibility(TBool aVisible)
+		{ iIsSignalIndicatorVisible = aVisible; }*/
 	
 	};
 

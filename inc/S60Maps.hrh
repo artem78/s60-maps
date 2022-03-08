@@ -57,7 +57,8 @@ enum TS60MapsViewUids
 // Settings
 enum TS60MapsSettingItemIds
 	{
-	ESettingLanguage
+	ESettingLanguage,
+	ESettingShowSignalIndicator
 	};
 
 #endif // __S60MAPS_HRH__
