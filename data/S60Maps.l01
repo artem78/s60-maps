@@ -55,3 +55,7 @@
 
 #define qtn_settings "Settings"
 #define qtn_language "Language"
+
+// Added in develop
+
+#define qtn_reload_visible_area "Reload visible area"

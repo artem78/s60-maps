@@ -114,6 +114,7 @@ private:
 	
 public:
 	void SetTileProviderL(TTileProvider* aTileProvider);
+	void ReloadVisibleAreaL();
 	};
 
 
@@ -337,11 +338,13 @@ private:
 	
 	void TileFileName(const TTile &aTile, TFileName &aFileName) const;
 	TBool IsTileFileExists(const TTile &aTile) /*const*/;
+	void DeleteTileFile(const TTile &aTile);
+	void Delete(const TTile &aTile);
 	
 public:
 	// @return Error codes: KErrNotFound, KErrNotReady or KErrNone
 	TInt GetTileBitmap(const TTile &aTile, CFbsBitmap* &aBitmap);
-	void AddToLoading(const TTile &aTile);
+	void AddToLoading(const TTile &aTile, TBool aForce = EFalse);
 	void ChangeTileProvider(TTileProvider* aTileProvider, const TDesC &aCacheDir);
 	
 // Friends

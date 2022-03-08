@@ -56,3 +56,7 @@ CHARACTER_SET UTF8
 
 #define qtn_settings "Настройки"
 #define qtn_language "Язык"
+
+// Added in develop
+
+#define qtn_reload_visible_area "Обновить текущую область"

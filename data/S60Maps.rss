@@ -212,6 +212,11 @@ RESOURCE MENU_PANE r_submenu_service
 		{
 		MENU_ITEM
 			{
+			command = EReloadVisibleArea;
+			txt = qtn_reload_visible_area;
+			},
+		MENU_ITEM
+			{
 			command = ETilesCacheStats;
 			txt = qtn_tiles_cache_stats;
 			},

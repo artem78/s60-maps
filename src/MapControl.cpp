@@ -889,4 +889,9 @@ void CMapControl::HandleLanguageChangedL()
 	static_cast<CScaleBarLayer*>(iLayers[EScaleBarLayerId])->ReloadStringsFromResourceL();
 	}
 
+void CMapControl::ReloadVisibleAreaL()
+	{
+	static_cast<CTiledMapLayer*>(iLayers[ETiledMapLayerId])->ReloadVisibleAreaL();
+	}
+
 // End of File
