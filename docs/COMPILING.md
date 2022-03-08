@@ -106,23 +106,6 @@ After successful compilation you will find `S60Maps.sis` (unsigned) and `S60Maps
 Emulator have 14 days trial period, but you can reset it unlimited number of times. Use [this BAT-script](https://gist.github.com/artem78/53c6529794c1c98fb640d1c7560fbaa5#file-nokia_registration_reset-bat) or directly remove `HKCU\Software\Nokia\Product Registration` subtree in `regedit`.
 
 
-## Choose different application language
-
-S60Maps use phone's language (if such translation found). On emulator only English available. But you can do a trick to choose another one.
-
-For emulator:
-1. Build project
-2. In Explorer go to `C:\Symbian\9.2\S60_3rd_FP1\Epoc32\release\winscw\udeb\z\resource\apps` directory
-3. Delete all S60Maps.rXX files (where XX - [language code number](https://gist.github.com/artem78/d1a892ba0b2f4aee3787937f669f3d3e)) except one you want to use
-4. Run emulator directly from Start button `Programs > S60 Developer Tools > 3rd Edition FP1 SDK > 1.0 > Emulator` (**not** from `Run` button in IDE!)
-5. In emulator run S60Maps from `Menu > Installed`
-6. You will see all text in chosen language
-
-On phone actions the same, but R-files located in `[C or E]:\resource\apps` and you need to have full access to be able to delete them.
-
-In the future I will make language changeble from program settings.
-
-
 
 [1]: images/compiling/20211201_172149.png
 [2]: images/compiling/20211201_172734_2.png
