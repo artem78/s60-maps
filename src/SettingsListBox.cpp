@@ -30,8 +30,11 @@ CAknSettingItem* CSettingsListBox::CreateSettingItemL(TInt aSettingId)
 			
 		case ESettingShowSignalIndicator:
 			{
-			settingItem = new (ELeave) CAknBinaryPopupSettingItem(aSettingId,
+			if (appUi->IsPositioningAvailable())
+				{
+				settingItem = new (ELeave) CAknBinaryPopupSettingItem(aSettingId,
 								appUi->Settings()->iIsSignalIndicatorVisible);
+				}
 			}
 			break;
 			
