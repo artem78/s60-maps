@@ -1020,52 +1020,46 @@ void CSignalIndicatorLayer::DrawBars(CWindowGc &aGc, TSignalStrength aSignalStre
 	__ASSERT_DEBUG(aSignalStrength <= ESignalHigh, Panic(ES60MapsInvaidSignalValuePanic));
 	
 	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
-	aGc.SetBrushColor(KRgbGray);
 	aGc.SetPenStyle(CGraphicsContext::ESolidPen);
-	aGc.SetPenColor(KRgbBlack);
 	aGc.SetPenSize(TSize(KBarBorderWidth, KBarBorderWidth));
+	
+	// Set color for active bars
+	switch (aSignalStrength)
+		{
+		case ESignalVeryLow:
+			{
+			aGc.SetBrushColor(TRgb(192,0,0));
+			aGc.SetPenColor(TRgb(58,0,0));
+			break;
+			}
+			
+		case ESignalLow:
+		case ESignalMedium:
+			{
+			aGc.SetBrushColor(TRgb(251,193,0));
+			aGc.SetPenColor(TRgb(75,58,0));
+			break;
+			}
+			
+		case ESignalGood:
+		case ESignalVeryGood:
+		case ESignalHigh:
+			{
+			aGc.SetBrushColor(TRgb(144,209,75));
+			aGc.SetPenColor(TRgb(43,63,22));
+			break;
+			}
+		}
 	
 	TRect barRect(TPoint(iMapView->Rect().iBr.iX - (14 + KBarsTotalWidth),
 			iMapView->Rect().iTl.iY + 14 + KBarsTotalHeight - KStartBarHeight),
 			TSize(KBarWidth, KStartBarHeight));
 	for (TInt i = ESignalVeryLow; i <= ESignalHigh; i++)
 		{
-		if (i > aSignalStrength)
-			{
+		if (i == aSignalStrength + 1)
+			{ // Change color for inactive bars
 			aGc.SetBrushColor(KRgbWhite);
 			aGc.SetPenColor(KRgbGray);
-			}
-		else
-			{
-			switch (aSignalStrength)
-				{
-				case ESignalVeryLow:
-					{
-					aGc.SetBrushColor(TRgb(192,0,0));
-					aGc.SetPenColor(TRgb(58,0,0));
-					break;
-					}
-					
-				case ESignalLow:
-				case ESignalMedium:
-					{
-					aGc.SetBrushColor(TRgb(251,193,0));
-					aGc.SetPenColor(TRgb(75,58,0));
-					break;
-					}
-					
-				case ESignalGood:
-				case ESignalVeryGood:
-				case ESignalHigh:
-					{
-					aGc.SetBrushColor(TRgb(144,209,75));
-					aGc.SetPenColor(TRgb(43,63,22));
-					break;
-					}
-				
-				default:
-					break;
-				}
 			}
 		
 		aGc.DrawRect(barRect);
