@@ -136,6 +136,16 @@ void CMapControl::ConstructL(const TRect& aRect, const TCoordinate &aInitialPosi
 	//SetZoomBounds(aTileProvider->MinZoomLevel(), aTileProvider->MaxZoomLevel());
 //	SetTileProviderL(aTileProvider);
 	
+	// Prepare default font
+	_LIT(KFontName, /*"OpenSans"*/ "Series 60 Sans");
+	const TInt KFontHeightInTwips = /*9*/ 10 * 12; // Twip = 1/12 point
+	TFontSpec fontSpec(KFontName, KFontHeightInTwips);
+	fontSpec.iTypeface.SetIsSerif(EFalse);
+	fontSpec.iFontStyle.SetStrokeWeight(EStrokeWeightBold);
+	CGraphicsDevice* screenDevice = CCoeEnv::Static()->ScreenDevice();
+	TInt r = screenDevice->/*GetNearestFontToMaxHeightInTwips*/ GetNearestFontInTwips(iDefaultFont, fontSpec);
+	User::LeaveIfError(r);
+	
 	// Create layers
 	iLayers = RPointerArray<CMapLayerBase>(10);
 	iLayers.Append(CTiledMapLayer::NewL(this, aTileProvider));
@@ -200,6 +210,8 @@ CMapControl::~CMapControl()
 	iMovementRepeater->Cancel();
 	delete iMovementRepeater;
 	iMovementRepeater = NULL;
+	
+	CCoeEnv::Static()->ScreenDevice()->ReleaseFont(iDefaultFont);
 	}
 
 // -----------------------------------------------------------------------------

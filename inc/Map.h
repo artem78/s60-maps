@@ -67,7 +67,6 @@ public:
 	// Own
 private:
 	TInt iRedrawingsCount;
-	CFont* iFont;
 
 	void DrawInfoL(CWindowGc &aGc);
 	};
@@ -173,7 +172,6 @@ public:
 private:
 	HBufC* iMetersUnit;
 	HBufC* iKilometersUnit;
-	/*const*/ CFont* iFont;
 	
 	void GetOptimalLength(TInt &optimalLength, TReal32 &optimalDistance);
 	
@@ -203,7 +201,6 @@ private:
 	CPosLandmarkDatabase* iLandmarksDb; // Not owned
 	CFbsBitmap* iIconBitmap;
 	CFbsBitmap* iIconMaskBitmap;
-	CFont* iFont; // For drawing labels
 	
 	// Result may be NULL if nothing found
 	CArrayPtr<CPosLandmark>* GetVisibleLandmarksL(); // ToDo: Is moving to another class needed?
@@ -266,7 +263,6 @@ private:
 		KBarsTotalHeight	= KStartBarHeight + (KBarsCount - 1) * KBarHeightIncremement
 	};
 	
-	CFont* iFont;
 	CFbsBitmap* iSatelliteIconBitmap;
 	CFbsBitmap* iSatelliteIconMaskBitmap;
 	

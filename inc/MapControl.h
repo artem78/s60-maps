@@ -183,6 +183,7 @@ private:
 	TBool iIsSoftkeysShown;
 	TBool iIsCrosshairVisible;
 	CPeriodic* /*iUserInactivityTimer*/ iCrosshairAutoHideTimer;
+	CFont* iDefaultFont;
 	
 	void Move(const TPoint &aPoint, TBool savePos = ETrue); // Used by all another Move methods
 public:
@@ -241,6 +242,8 @@ public:
 		{ return iIsSoftkeysShown; };
 	void HandleLanguageChangedL();
 	void ReloadVisibleAreaL();
+	inline const CFont* DefaultFont() const
+		{ return iDefaultFont; };
 
 	};
 	
