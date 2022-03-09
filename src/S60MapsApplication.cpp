@@ -14,6 +14,9 @@
 #include "f32file.h"
 //#include "Logger.h"
 
+#include <coemain.h>
+#include "FileUtils.h"
+
 // ============================ MEMBER FUNCTIONS ===============================
 
 // -----------------------------------------------------------------------------
@@ -77,6 +80,15 @@ void CS60MapsApplication::CacheDir(TFileName &aCacheDir) const
 	
 	_LIT(KCacheDirRel, "cache\\_PAlbTN\\");
 	RelPathToAbsFromDataDir(KCacheDirRel, aCacheDir);
+	}
+
+void CS60MapsApplication::IconFileL(TFileName &aFileName) const
+	{
+	_LIT(KMbmFilePathFmt, "%c:%Sicons.mbm");
+	
+	TFileName privateDir;
+	User::LeaveIfError(CCoeEnv::Static()->FsSession().PrivatePath(privateDir));
+	aFileName.Format(KMbmFilePathFmt, FileUtils::InstallationDrive(), &privateDir);
 	}
 
 // End of File

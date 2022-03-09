@@ -691,13 +691,11 @@ CLandmarksLayer* CLandmarksLayer::NewL(CMapControl* aMapView, CPosLandmarkDataba
 
 void CLandmarksLayer::ConstructL()
 	{
-	_LIT(KMbmFilePathFmt, "%c:%Sicons.mbm");
-	
-	TFileName privateDir;
-	User::LeaveIfError(CEikonEnv::Static()->FsSession().PrivatePath(privateDir));
 	TFileName mbmFilePath;
-	mbmFilePath.Format(KMbmFilePathFmt, FileUtils::InstallationDrive(), &privateDir);
-	
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
+	CS60MapsApplication* app = static_cast<CS60MapsApplication*>(appUi->Application());
+	app->IconFileL(mbmFilePath);
+
 	iIconBitmap = new (ELeave) CFbsBitmap();
 	User::LeaveIfError(iIconBitmap->Load(mbmFilePath, EMbmIconsStar));
 	
@@ -902,12 +900,10 @@ CSignalIndicatorLayer::CSignalIndicatorLayer(CMapControl* aMapView) :
 void CSignalIndicatorLayer::ConstructL()
 	{
 	// Load icon
-	_LIT(KMbmFilePathFmt, "%c:%Sicons.mbm");
-	
-	TFileName privateDir;
-	User::LeaveIfError(CEikonEnv::Static()->FsSession().PrivatePath(privateDir));
 	TFileName mbmFilePath;
-	mbmFilePath.Format(KMbmFilePathFmt, FileUtils::InstallationDrive(), &privateDir);
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
+	CS60MapsApplication* app = static_cast<CS60MapsApplication*>(appUi->Application());
+	app->IconFileL(mbmFilePath);
 	
 	iSatelliteIconBitmap = new (ELeave) CFbsBitmap();
 	User::LeaveIfError(iSatelliteIconBitmap->Load(mbmFilePath, EMbmIconsSatellite));
