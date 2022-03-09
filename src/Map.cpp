@@ -1015,13 +1015,15 @@ void CSignalIndicatorLayer::Draw(CWindowGc &aGc)
 	buff.Format(KFmt, satInfo->NumSatellitesUsed(), satInfo->NumOfVisibleSatellites());
 	//DEBUG(buff);
 	
-	const TInt KSpacing = 8;
+	const TInt KSpacing = 6;
 	
 	TRect textArea = iMapView->Rect();
 	textArea.Shrink(14, 14);
 	textArea.iBr.iX -= KBarsTotalWidth + KSpacing;
-	textArea.iTl.iY += KBarsTotalHeight - iFont->AscentInPixels();
-	TInt baselineOffset = iFont->AscentInPixels();
+	textArea.iBr.iY = 14 + KBarsTotalHeight;
+	TReal tmp = (textArea.Height() + iFont->AscentInPixels()) / 2.0;
+	Math::Round(tmp, tmp, 0);
+	TInt baselineOffset = static_cast<TInt>(tmp);
 	
 	aGc.UseFont(iFont);
 	aGc.DrawText(buff, textArea, baselineOffset, CGraphicsContext::ERight);

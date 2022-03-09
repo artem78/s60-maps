@@ -257,7 +257,7 @@ private:
 	// Constants for bars settings ("K" prefix used instead of "E" for enums)
 	enum {
 		KBarWidth		= 4,
-		KStartBarHeight	= 4,
+		KStartBarHeight	= 5,
 		KBarBorderWidth	= 1,
 		KBarsSpacing	= 2,
 		KBarHeightIncremement	= 3,
