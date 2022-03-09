@@ -129,6 +129,15 @@ void CS60MapsAppUi::ConstructL()
 	//User::LeaveIfError(iLandmarkPartialParameters->SetRequestedPositionFields(...));	
 	
 	iLandmarksDb = CPosLandmarkDatabase::OpenL();
+	if (iLandmarksDb->IsInitializingNeeded())
+		{
+		DEBUG(_L("Landmarks DB initialization needed"));
+		
+		CPosLmOperation* op = iLandmarksDb->InitializeL();
+		ExecuteAndDeleteLD(op);
+		
+		INFO(_L("Landmarks DB initialized"));
+		}
 	iLandmarksDb->SetPartialReadParametersL(*iLandmarkPartialParameters);
 
 	
