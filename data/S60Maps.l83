@@ -10,14 +10,14 @@ CHARACTER_SET UTF8
 //#define qtn_help "Ayuda"
 #define qtn_about "Acerca"
 #define qtn_exit "Salir"
-#define qtn_tile_providers_title "Proveedor de mapas"
-#define qtn_service_title "Herramientas"
-#define qtn_tiles_cache_stats "Detalles de los mapas"
+#define qtn_tile_providers_title "Cambiar vista"
+#define qtn_service_title "Cargador de mapas"
+#define qtn_tiles_cache_stats "Detalles de mapas"
 #define qtn_reset_tiles_cache "Eliminar mapas"
 //#define qtn_confirm_reset_tiles_cache_dialog_title "Acepta eliminar los mapas"
-#define qtn_confirm_reset_tiles_cache_dialog_text "Se eliminarán todos los mapas. ¿Está seguro?"
+#define qtn_confirm_reset_tiles_cache_dialog_text "Se eliminarán los mapas. ¿Está seguro?"
 #define qtn_about_dialog_title "Acerca de S60Maps"
-#define qtn_about_dialog_text "S60Maps %S\nBuild: " __DATE__ " " __TIME__ "\nGit: %S\nAutor: %S\nWeb: %S\nAgradecimientos: %S y otros"
+#define qtn_about_dialog_text "S60Maps ver. %S\nComp.: " __DATE__ " " __TIME__ "\nGit: %S\nAutor: %S\nWeb: %S\nAgradecimientos: %S y otros"
 //#define qtn_confirm_exit_dialog_title "Cerrar S60Maps"
 #define qtn_confirm_exit_dialog_text "¿Desea cerrar S60Maps?"
 #define qtn_done "¡Mapas eliminados!"
@@ -43,7 +43,7 @@ CHARACTER_SET UTF8
 
 // Added in version 1.6:
 
-#define qtn_goto "Buscar..."
+#define qtn_goto "Buscar"
 #define qtn_landmark "Lugares de interés"
 #define qtn_coordinate "Coordenadas"
 #define qtn_latitude "Latitud"
@@ -56,8 +56,8 @@ CHARACTER_SET UTF8
 
 // Added in develop
 
-#define qtn_reload_visible_area "Reload visible area"
-#define qtn_show "Show"
-#define qtn_hide "Hide"
-#define qtn_signal_indicator "GPS signal indicator"
-#define qtn_scale_bar "Scale bar"
+#define qtn_reload_visible_area "Actualizar área"
+#define qtn_show "Mostrar"
+#define qtn_hide "Ocultar"
+#define qtn_signal_indicator "Señal GPS"
+#define qtn_scale_bar "Barra de herramientas"
