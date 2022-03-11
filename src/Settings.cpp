@@ -69,7 +69,7 @@ void CSettings::ExternalizeL(RWriteStream& aStream) const
 	// Added in version 1.7
 	aStream << TCardinality(iLanguage);
 	
-	// Added in develop
+	// Added in version 1.8
 	aStream << (TInt8) iIsSignalIndicatorVisible; // No built-in bool to stream conversion
 	aStream << (TInt8) iIsScaleBarVisible;
 	}
@@ -93,7 +93,7 @@ void CSettings::DoInternalizeL(RReadStream& aStream)
 	aStream >> language;
 	iLanguage = static_cast<TLanguage>((TInt) language);
 	
-	// Added in develop
+	// Added in version 1.8
 	aStream >> isSignalIndicatorVisible;
 	iIsSignalIndicatorVisible = (TBool) isSignalIndicatorVisible;
 	aStream >> isScaleBarVisible;

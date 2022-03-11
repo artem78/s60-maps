@@ -4,7 +4,7 @@
 #define DEFS_H_
 
 // Main definitions
-const TVersion KProgramVersion(1, 7, 2);
+const TVersion KProgramVersion(1, 8, 0);
 
 // Debugging
 /*#ifdef _DEBUG

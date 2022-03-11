@@ -54,7 +54,7 @@ CHARACTER_SET UTF8
 #define qtn_settings "Configurac."
 #define qtn_language "Idioma"
 
-// Added in develop
+// Added in version 1.8:
 
 #define qtn_reload_visible_area "Actualizar área"
 #define qtn_show "Mostrar"
