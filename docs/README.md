@@ -87,6 +87,8 @@ All data stored in directory `E:\Data\S60Maps\` (**note:** E drive used regardle
 
 Settings store in `store.dat` file. If you have problems with application to run, try to delete this file and run again.
 
+S60Maps uses phone's landmark database and all of them will be accessed within the application. New landmarks will be added to `S60Maps` category.
+
 ## How to build
 
 Read [docs/COMPILING.md](/docs/COMPILING.md)
@@ -95,7 +97,7 @@ Read [docs/COMPILING.md](/docs/COMPILING.md)
 
 - [x] Add support for other map layers and WMS services (like OSM bicycle, OSM humanitarian, OpenTopoMap, etc...) 
 - [ ] Add ability to define custom map layers providing tile\`s URLs
-- [ ] Update old cached tiles
+- [x] Update old cached tiles **(done: manually for viewed area)**
 - [x] Display and edit landmarks
 - [ ] Search (using [Nominatim](https://nominatim.openstreetmap.org/))
 - [x] Show satellites info (amount, signal strength, etc...)
