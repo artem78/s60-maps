@@ -16,6 +16,7 @@
 #include "GitInfo.h"
 #include <aknmessagequerydialog.h>
 #include <epos_cposlandmarksearch.h>
+#include <aknselectionlist.h>
 
 // CMapView
 
@@ -550,7 +551,10 @@ void CMapView::HandleGotoLandmarkL()
 			{ // Process landmarks only with position
 			TPtrC lmName;
 			lm->GetLandmarkName(lmName);
-			lmNameArray->AppendL(lmName);
+			TBuf<KPosLmMaxTextFieldLength + 1> buf;
+			buf.Append('\t');
+			buf.Append(lmName);
+			lmNameArray->AppendL(buf);
 			lmIdArray->AppendL(lmId);
 			}
 		CleanupStack::PopAndDestroy(lm);
@@ -558,12 +562,9 @@ void CMapView::HandleGotoLandmarkL()
 		}
 
 	TInt chosenItem;
-	CAknListQueryDialog* dlg = new(ELeave) CAknListQueryDialog(&chosenItem);
-	dlg->PrepareLC(R_LANDMARKS_QUERY_DIALOG);
-	dlg->SetItemTextArray(lmNameArray);
-	dlg->SetOwnershipType(ELbmDoesNotOwnItemArray);
-	TInt answer = dlg->RunLD();
-	if (EAknSoftkeyOk == answer)
+	CAknSelectionListDialog* dlg = CAknSelectionListDialog::NewL(chosenItem, lmNameArray, R_LANDMARKS_QUERY_DIALOG_MENUBAR);
+	TInt answer = dlg->ExecuteLD(R_LANDMARKS_QUERY_DIALOG);
+	if (EAknSoftkeyOk == answer) 
 		{
 		CPosLandmark* lm = appUi->LandmarkDb()->ReadLandmarkLC(lmIdArray->At(chosenItem));
 		TLocality pos;
