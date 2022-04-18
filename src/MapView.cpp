@@ -563,7 +563,11 @@ void CMapView::HandleGotoLandmarkL()
 
 	TInt chosenItem;
 	CAknSelectionListDialog* dlg = CAknSelectionListDialog::NewL(chosenItem, lmNameArray, R_LANDMARKS_QUERY_DIALOG_MENUBAR);
+	iMapControl->MakeVisible(EFalse);
+	AppUi()->StatusPane()->MakeVisible(ETrue);
 	TInt answer = dlg->ExecuteLD(R_LANDMARKS_QUERY_DIALOG);
+	iMapControl->MakeVisible(ETrue);
+	AppUi()->StatusPane()->MakeVisible(EFalse);
 	if (EAknSoftkeyOk == answer) 
 		{
 		CPosLandmark* lm = appUi->LandmarkDb()->ReadLandmarkLC(lmIdArray->At(chosenItem));
