@@ -169,10 +169,12 @@ private:
 	CPosLmPartialReadParameters* iLandmarkPartialParameters;
 	TInt iResourceOffset;
 	CHWRMLight* iLight;
+	CPeriodic* iResetInactivityTimer;
 	
 	//static TInt UpdateTilesClearingProgress(TAny* aSelfPtr);
 	
 	TLanguage PreferredLanguage();
+	static TInt ResetInactivityTimer(TAny* aPtr);
 
 	
 	// Command handlers
