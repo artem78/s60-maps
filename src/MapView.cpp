@@ -16,6 +16,8 @@
 #include "GitInfo.h"
 #include <aknmessagequerydialog.h>
 #include <epos_cposlandmarksearch.h>
+#include <aknselectionlist.h>
+#include <akntitle.h>
 
 // CMapView
 
@@ -550,7 +552,10 @@ void CMapView::HandleGotoLandmarkL()
 			{ // Process landmarks only with position
 			TPtrC lmName;
 			lm->GetLandmarkName(lmName);
-			lmNameArray->AppendL(lmName);
+			TBuf<KPosLmMaxTextFieldLength + 1> buf;
+			buf.Append('\t');
+			buf.Append(lmName);
+			lmNameArray->AppendL(buf);
 			lmIdArray->AppendL(lmId);
 			}
 		CleanupStack::PopAndDestroy(lm);
@@ -558,12 +563,28 @@ void CMapView::HandleGotoLandmarkL()
 		}
 
 	TInt chosenItem;
-	CAknListQueryDialog* dlg = new(ELeave) CAknListQueryDialog(&chosenItem);
-	dlg->PrepareLC(R_LANDMARKS_QUERY_DIALOG);
-	dlg->SetItemTextArray(lmNameArray);
-	dlg->SetOwnershipType(ELbmDoesNotOwnItemArray);
-	TInt answer = dlg->RunLD();
-	if (EAknSoftkeyOk == answer)
+	CAknSelectionListDialog* dlg = CAknSelectionListDialog::NewL(chosenItem, lmNameArray, R_LANDMARKS_QUERY_DIALOG_MENUBAR);
+	iMapControl->MakeVisible(EFalse);
+	AppUi()->StatusPane()->MakeVisible(ETrue);
+	
+	// Save original pane title
+	CEikStatusPane* statusPane = iAvkonAppUi->StatusPane();
+	CAknTitlePane* titlePane = (CAknTitlePane*) statusPane->ControlL(TUid::Uid(EEikStatusPaneUidTitle));
+	HBufC* originalTitle = titlePane->Text()->AllocL();
+	
+	// Set new pane title
+	HBufC* title = iEikonEnv->AllocReadResourceL(R_LANDMARKS);
+	titlePane->SetText(title);
+	
+	TInt answer = dlg->ExecuteLD(R_LANDMARKS_QUERY_DIALOG);
+	
+	iMapControl->MakeVisible(ETrue);
+	AppUi()->StatusPane()->MakeVisible(EFalse);
+	
+	// Restore original pane title
+	titlePane->SetText(originalTitle);
+	
+	if (EAknSoftkeyOk == answer) 
 		{
 		CPosLandmark* lm = appUi->LandmarkDb()->ReadLandmarkLC(lmIdArray->At(chosenItem));
 		TLocality pos;
