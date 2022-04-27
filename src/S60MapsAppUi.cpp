@@ -36,6 +36,11 @@
 #include "ApiKeys.h"
 
 
+// Constants
+
+const TInt KLightTarget = CHWRMLight::EPrimaryDisplay /*CHWRMLight::EPrimaryDisplayAndKeyboard*/;
+
+
 // ============================ MEMBER FUNCTIONS ===============================
 
 
@@ -170,6 +175,12 @@ void CS60MapsAppUi::ConstructL()
 	
 	/*// Make fullscreen
 	//SetFullScreenApp(ETrue);*/
+	
+	// Make infinite backlight
+	iLight = CHWRMLight::NewL();
+	iLight->ReserveLightL(KLightTarget);
+	iLight->LightOnL(KLightTarget);
+	//DEBUG(_L("light status=%d"), iLight->LightStatus(KLightTarget));
 	}
 // -----------------------------------------------------------------------------
 // CS60MapsAppUi::CS60MapsAppUi()
@@ -189,6 +200,9 @@ CS60MapsAppUi::CS60MapsAppUi() :
 //
 CS60MapsAppUi::~CS60MapsAppUi()
 	{
+	iLight->ReleaseLight(KLightTarget);
+	delete iLight;
+	
 	//delete iCoreTarget;
 	/* Panic KERN-EXEC 3 - Seems that there are no need to manually destroy core target,
 	 because interface selector brings ownership and will delete target by itself. */
