@@ -36,6 +36,11 @@
 #include "ApiKeys.h"
 
 
+// Constants
+
+const TInt KLightTarget = CHWRMLight::EPrimaryDisplay /*CHWRMLight::EPrimaryDisplayAndKeyboard*/;
+
+
 // ============================ MEMBER FUNCTIONS ===============================
 
 
@@ -170,6 +175,19 @@ void CS60MapsAppUi::ConstructL()
 	
 	/*// Make fullscreen
 	//SetFullScreenApp(ETrue);*/
+	
+	// Make infinite backlight
+	iLight = CHWRMLight::NewL();
+	iLight->ReserveLightL(KLightTarget);
+	iLight->LightOnL(KLightTarget);
+	//DEBUG(_L("light status=%d"), iLight->LightStatus(KLightTarget));
+	
+	// Prevent screensaver to be visible
+	const TInt KMinScreenSaverTimeout = 5000000; // 5 seconds is minimal value on my phone
+												// ToDo: Is there system constant for this value?
+	TCallBack callback(ResetInactivityTimer, NULL);
+	iResetInactivityTimer = CPeriodic::NewL(CActive::EPriorityStandard);
+	iResetInactivityTimer->Start(0, KMinScreenSaverTimeout - KSecond, callback);
 	}
 // -----------------------------------------------------------------------------
 // CS60MapsAppUi::CS60MapsAppUi()
@@ -189,6 +207,10 @@ CS60MapsAppUi::CS60MapsAppUi() :
 //
 CS60MapsAppUi::~CS60MapsAppUi()
 	{
+	delete iResetInactivityTimer;
+	iLight->ReleaseLight(KLightTarget);
+	delete iLight;
+	
 	//delete iCoreTarget;
 	/* Panic KERN-EXEC 3 - Seems that there are no need to manually destroy core target,
 	 because interface selector brings ownership and will delete target by itself. */
@@ -744,6 +766,14 @@ TLanguage CS60MapsAppUi::PreferredLanguage()
 	{
 	// ToDo: Try to get preffered languange depends on system language
 	return ELangEnglish;
+	}
+
+TInt CS60MapsAppUi::ResetInactivityTimer(TAny* /*aPtr*/)
+	{
+	//DEBUG(_L("reset inactivity timer"));
+	
+	User::ResetInactivityTime();
+	return ETrue;
 	}
 
 // End of File

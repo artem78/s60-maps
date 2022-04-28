@@ -27,6 +27,7 @@
 #include <aknwaitdialog.h> // For CAknWaitDialog 
 #include <epos_cposlandmarkdatabase.h> // For CPosLandmarkDatabase
 #include <lbssatellite.h>
+#include <hwrmlight.h> // For CHWRMLight
 
 // FORWARD DECLARATIONS
 class CMapView;
@@ -167,10 +168,13 @@ private:
 	CPosLandmarkDatabase* iLandmarksDb;
 	CPosLmPartialReadParameters* iLandmarkPartialParameters;
 	TInt iResourceOffset;
+	CHWRMLight* iLight;
+	CPeriodic* iResetInactivityTimer;
 	
 	//static TInt UpdateTilesClearingProgress(TAny* aSelfPtr);
 	
 	TLanguage PreferredLanguage();
+	static TInt ResetInactivityTimer(TAny* aPtr);
 
 	
 	// Command handlers

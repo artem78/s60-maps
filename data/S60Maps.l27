@@ -11,7 +11,7 @@ CHARACTER_SET UTF8
 
 #define qtn_find_me "Podążaj za mną"
 //#define qtn_help "Pomoc"
-#define qtn_about "O"
+#define qtn_about "Informacje"
 #define qtn_exit "Wyjdź"
 #define qtn_tile_providers_title "Mapy"
 #define qtn_service_title "Usługa"
@@ -54,13 +54,13 @@ CHARACTER_SET UTF8
 
 // Added in version 1.7:
 
-#define qtn_settings "Settings"
-#define qtn_language "Language"
+#define qtn_settings "Ustawienia"
+#define qtn_language "Język"
 
 // Added in version 1.8:
 
-#define qtn_reload_visible_area "Reload visible area"
-#define qtn_show "Show"
-#define qtn_hide "Hide"
-#define qtn_signal_indicator "GPS signal indicator"
-#define qtn_scale_bar "Scale bar"
+#define qtn_reload_visible_area "Przeładuj widoczny obszar"
+#define qtn_show "Pokaż"
+#define qtn_hide "Ukryj"
+#define qtn_signal_indicator "Wskaźnik sygnału GPS"
+#define qtn_scale_bar "Pasek skali"

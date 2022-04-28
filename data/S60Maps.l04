@@ -63,4 +63,4 @@ CHARACTER_SET UTF8
 #define qtn_show "Mostrar"
 #define qtn_hide "Ocultar"
 #define qtn_signal_indicator "Indicador de señal GPS"
-#define qtn_scale_bar "Barra de nivel"
+#define qtn_scale_bar "Barra de escala"

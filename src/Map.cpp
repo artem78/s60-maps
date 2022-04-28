@@ -58,18 +58,10 @@ CMapLayerDebugInfo* CMapLayerDebugInfo::NewL(CMapControl* aMapView)
 
 void CMapLayerDebugInfo::ConstructL()
 	{
-	// Set font
-	_LIT(KFontName, "Series 60 Sans");
-	const TInt KFontHeightInTwips = 11 * 12;
-	TFontSpec fontSpec(KFontName, KFontHeightInTwips);
-	fontSpec.iFontStyle.SetStrokeWeight(EStrokeWeightBold);
-	CGraphicsDevice* screenDevice = CCoeEnv::Static()->ScreenDevice();
-	User::LeaveIfError(screenDevice->GetNearestFontInTwips(iFont, fontSpec));
 	}
 
 CMapLayerDebugInfo::~CMapLayerDebugInfo()
 	{
-	CCoeEnv::Static()->ScreenDevice()->ReleaseFont(iFont);
 	}
 
 void CMapLayerDebugInfo::Draw(CWindowGc &aGc)
@@ -122,13 +114,13 @@ void CMapLayerDebugInfo::DrawInfoL(CWindowGc &aGc)
 	aGc.Reset();
 	aGc.SetPenColor(KRgbDarkBlue);
 	
-	aGc.UseFont(iFont);
+	aGc.UseFont(iMapView->DefaultFont());
 	TRect area = iMapView->Rect();
 	area.Shrink(4, 4);
 	TInt baselineOffset = 0;
 	for (TInt i = 0; i < strings->Count(); i++)
 		{
-		baselineOffset += iFont->AscentInPixels() + 5;
+		baselineOffset += iMapView->DefaultFont()->AscentInPixels() + 5;
 		aGc.DrawText((*strings)[i], area, baselineOffset, CGraphicsContext::ELeft);
 		}
 	aGc.DiscardFont();
@@ -507,8 +499,6 @@ CScaleBarLayer::CScaleBarLayer(CMapControl* aMapView):
 
 CScaleBarLayer::~CScaleBarLayer()
 	{
-	CCoeEnv::Static()->ScreenDevice()->ReleaseFont(iFont);
-	
 	delete iKilometersUnit;
 	delete iMetersUnit;
 	}
@@ -532,18 +522,6 @@ void CScaleBarLayer::ConstructL()
 	{
 	// Read strings from resources
 	ReloadStringsFromResourceL();
-	
-	// Load font for label text
-	//iFont = const_cast<CFont*>(CEikonEnv::Static()->AnnotationFont());
-	//iFont = CEikonEnv::Static()->AnnotationFont();
-	_LIT(KFontName, /*"OpenSans"*/ "Series 60 Sans");
-	const TInt KFontHeightInTwips = /*9*/ 10 * 12; // Twip = 1/12 point
-	TFontSpec fontSpec(KFontName, KFontHeightInTwips);
-	fontSpec.iTypeface.SetIsSerif(EFalse);
-	fontSpec.iFontStyle.SetStrokeWeight(EStrokeWeightBold);
-	CGraphicsDevice* screenDevice = CCoeEnv::Static()->ScreenDevice();
-	TInt r = screenDevice->/*GetNearestFontToMaxHeightInTwips*/ GetNearestFontInTwips(iFont, fontSpec);
-	User::LeaveIfError(r);
 	}
 
 void CScaleBarLayer::Draw(CWindowGc &aGc)
@@ -620,7 +598,7 @@ void CScaleBarLayer::Draw(CWindowGc &aGc)
 	textRect.iTl.iY -= 30;
 	textRect.Move(0, -KTextBottomMargin);
 	TInt baselineOffset = textRect.Height() /*- font->AscentInPixels()*/; 
-	aGc.UseFont(iFont);
+	aGc.UseFont(iMapView->DefaultFont());
 	//aGc.DrawText(text, startPoint);
 	aGc.DrawText(text, textRect, baselineOffset, CGraphicsContext::ECenter);
 	aGc.DiscardFont();
@@ -691,7 +669,6 @@ CLandmarksLayer::CLandmarksLayer(CMapControl* aMapView, CPosLandmarkDatabase* aL
 
 CLandmarksLayer::~CLandmarksLayer()
 	{
-	CCoeEnv::Static()->ScreenDevice()->ReleaseFont(iFont);
 	ReleaseLandmarkResources();
 	delete iIconMaskBitmap;
 	delete iIconBitmap;
@@ -714,27 +691,16 @@ CLandmarksLayer* CLandmarksLayer::NewL(CMapControl* aMapView, CPosLandmarkDataba
 
 void CLandmarksLayer::ConstructL()
 	{
-	_LIT(KMbmFilePathFmt, "%c:%Sicons.mbm");
-	
-	TFileName privateDir;
-	User::LeaveIfError(CEikonEnv::Static()->FsSession().PrivatePath(privateDir));
 	TFileName mbmFilePath;
-	mbmFilePath.Format(KMbmFilePathFmt, FileUtils::InstallationDrive(), &privateDir);
-	
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
+	CS60MapsApplication* app = static_cast<CS60MapsApplication*>(appUi->Application());
+	app->IconFileL(mbmFilePath);
+
 	iIconBitmap = new (ELeave) CFbsBitmap();
 	User::LeaveIfError(iIconBitmap->Load(mbmFilePath, EMbmIconsStar));
 	
 	iIconMaskBitmap = new (ELeave) CFbsBitmap();
 	User::LeaveIfError(iIconMaskBitmap->Load(mbmFilePath, EMbmIconsStar_mask));
-	
-	// Load font
-	_LIT(KFontName, /*"OpenSans"*/ "Series 60 Sans");
-	const TInt KFontHeightInTwips = 10 /*12*/ * 12; // Twip = 1/12 point
-	TFontSpec fontSpec(KFontName, KFontHeightInTwips);
-	fontSpec.iTypeface.SetIsSerif(EFalse);
-	fontSpec.iFontStyle.SetStrokeWeight(EStrokeWeightBold);
-	CGraphicsDevice* screenDevice = CCoeEnv::Static()->ScreenDevice();
-	User::LeaveIfError(screenDevice->/*GetNearestFontToMaxHeightInTwips*/ GetNearestFontInTwips(iFont, fontSpec));
 	}
 
 void CLandmarksLayer::Draw(CWindowGc &aGc)
@@ -819,7 +785,7 @@ void CLandmarksLayer::DrawLandmarks(CWindowGc &aGc,
 	//const TRgb KPenColor(59, 120, 162);
 	const TRgb KPenColor(21, 63, 92);
 	aGc.SetPenColor(KPenColor); // For drawing text
-	aGc.UseFont(iFont);
+	aGc.UseFont(iMapView->DefaultFont());
 	
 	for (TInt i = 0; i < aLandmarks->Count(); i++)
 		{	
@@ -873,7 +839,7 @@ void CLandmarksLayer::DrawLandmark(CWindowGc &aGc,
 		const TInt KLabelMargin = 5;
 		TPoint labelPoint(landmarkPoint);
 		labelPoint.iX += iconSize.iWidth / 2 + KLabelMargin;
-		labelPoint.iY += /*iFont->HeightInPixels()*/ iFont->AscentInPixels() / 2;
+		labelPoint.iY += /*iMapView->DefaultFont()->HeightInPixels()*/ iMapView->DefaultFont()->AscentInPixels() / 2;
 		aGc.DrawText(landmarkName, labelPoint);
 		}
 	}
@@ -934,34 +900,20 @@ CSignalIndicatorLayer::CSignalIndicatorLayer(CMapControl* aMapView) :
 void CSignalIndicatorLayer::ConstructL()
 	{
 	// Load icon
-	_LIT(KMbmFilePathFmt, "%c:%Sicons.mbm");
-	
-	TFileName privateDir;
-	User::LeaveIfError(CEikonEnv::Static()->FsSession().PrivatePath(privateDir));
 	TFileName mbmFilePath;
-	mbmFilePath.Format(KMbmFilePathFmt, FileUtils::InstallationDrive(), &privateDir);
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
+	CS60MapsApplication* app = static_cast<CS60MapsApplication*>(appUi->Application());
+	app->IconFileL(mbmFilePath);
 	
 	iSatelliteIconBitmap = new (ELeave) CFbsBitmap();
 	User::LeaveIfError(iSatelliteIconBitmap->Load(mbmFilePath, EMbmIconsSatellite));
 	
 	iSatelliteIconMaskBitmap = new (ELeave) CFbsBitmap();
 	User::LeaveIfError(iSatelliteIconMaskBitmap->Load(mbmFilePath, EMbmIconsSatellite_mask));
-	
-	
-	// Load font	
-	_LIT(KFontName, /*"OpenSans"*/ "Series 60 Sans");
-	const TInt KFontHeightInTwips = /*9*/ 10 * 12; // Twip = 1/12 point
-	TFontSpec fontSpec(KFontName, KFontHeightInTwips);
-	fontSpec.iTypeface.SetIsSerif(EFalse);
-	fontSpec.iFontStyle.SetStrokeWeight(EStrokeWeightBold);
-	CGraphicsDevice* screenDevice = CCoeEnv::Static()->ScreenDevice();
-	TInt r = screenDevice->/*GetNearestFontToMaxHeightInTwips*/ GetNearestFontInTwips(iFont, fontSpec);
-	User::LeaveIfError(r);
 	}
 
 CSignalIndicatorLayer::~CSignalIndicatorLayer()
 	{
-	CCoeEnv::Static()->ScreenDevice()->ReleaseFont(iFont);
 	delete iSatelliteIconMaskBitmap;
 	delete iSatelliteIconBitmap;
 	}
@@ -1017,21 +969,23 @@ void CSignalIndicatorLayer::Draw(CWindowGc &aGc)
 	
 	const TInt KSpacing = 6;
 	
+	const CFont* font = iMapView->DefaultFont();
+	
 	TRect textArea = iMapView->Rect();
 	textArea.Shrink(14, 14);
 	textArea.iBr.iX -= KBarsTotalWidth + KSpacing;
 	textArea.iBr.iY = 14 + KBarsTotalHeight;
-	TReal tmp = (textArea.Height() + iFont->AscentInPixels()) / 2.0;
+	TReal tmp = (textArea.Height() + font->AscentInPixels()) / 2.0;
 	Math::Round(tmp, tmp, 0);
 	TInt baselineOffset = static_cast<TInt>(tmp);
 	
-	aGc.UseFont(iFont);
+	aGc.UseFont(font);
 	aGc.DrawText(buff, textArea, baselineOffset, CGraphicsContext::ERight);
 	aGc.DiscardFont();
 	
 	DrawBars(aGc, signalStrength);
 	
-	TPoint satIconPoint(iMapView->Rect().iBr.iX - (14 + KBarsTotalWidth + KSpacing * 2 + iFont->TextWidthInPixels(buff)
+	TPoint satIconPoint(iMapView->Rect().iBr.iX - (14 + KBarsTotalWidth + KSpacing * 2 + font->TextWidthInPixels(buff)
 			+ iSatelliteIconBitmap->SizeInPixels().iWidth),
 			iMapView->Rect().iTl.iY + 14 + KBarsTotalHeight - iSatelliteIconBitmap->SizeInPixels().iHeight);
 	DrawSatelliteIcon(aGc, satIconPoint);
