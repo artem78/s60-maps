@@ -460,7 +460,8 @@ TKeyResponse CMapControl::OfferKeyEventL(const TKeyEvent &aKeyEvent,
 				return EKeyWasConsumed;
 				}
 				
-			case EStdKeyDevice3: // Central key
+			//case EStdKeyDevice3: // Central key
+			case '5': // https://github.com/artem78/s60-maps/issues/51
 				{
 				static_cast<CS60MapsAppUi*>(iAvkonAppUi)->MapView()->ProcessCommandL(ECreateOrRenameLandmark);
 				return EKeyWasConsumed;
