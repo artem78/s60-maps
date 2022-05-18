@@ -39,7 +39,7 @@ Map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wiki/Symb
 - Zoom in: <kbd>▲</kbd> volume key (or <kbd>1</kbd>)
 - Zoom out: <kbd>▼</kbd> volume key (or <kbd>3</kbd>)
 - Landmarks:
-  - Create / rename: <kbd>center key</kbd>
+  - Create or rename: <kbd>5</kbd>
   - Delete: <kbd>C</kbd> (clear key)
 
 ### Touchscreen
