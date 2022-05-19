@@ -51,8 +51,6 @@ void CS60MapsApplication::GetDefaultDocumentFileName(TFileName& aDocumentName) c
 
 void CS60MapsApplication::DataDir(TFileName &aDataDir) const
 	{
-	// ToDo: Make sure data directory already has been created
-	
 #ifdef __WINSCW__
 	// Emulator do not have E drive, use C instead
 	_LIT(KProgramDataDir, "c:\\data\\S60Maps\\");
@@ -76,8 +74,6 @@ void CS60MapsApplication::RelPathToAbsFromDataDir(const TDesC &aRelPath, TFileNa
 
 void CS60MapsApplication::CacheDir(TFileName &aCacheDir) const
 	{
-	// ToDo: Make sure this directory already has been created
-	
 	_LIT(KCacheDirRel, "cache\\_PAlbTN\\");
 	RelPathToAbsFromDataDir(KCacheDirRel, aCacheDir);
 	}
