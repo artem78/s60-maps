@@ -512,12 +512,14 @@ void CMapView::HandleDeleteLandmarkL()
 	CleanupStack::PushL(landmark);
 	
 	// Ask for confirmation
-	CAknQueryDialog* dlg = CAknQueryDialog::NewL();
-	dlg->PrepareLC(R_CONFIRM_DIALOG);
 	TPtrC landmarkName;
 	landmark->GetLandmarkName(landmarkName);
-	TBuf<128/*256*/> msg;
+	RBuf msg;
+	msg.CreateL(landmarkName.Length() + 100);
+	CleanupClosePushL(msg);
 	iEikonEnv->Format128(msg, R_CONFIRM_LANDMARK_DELETION, &landmarkName);
+	CAknQueryDialog* dlg = CAknQueryDialog::NewL();
+	dlg->PrepareLC(R_CONFIRM_DIALOG);
 	dlg->SetPromptL(msg);
 	if (dlg->RunLD() == EAknSoftkeyYes)
 		{
@@ -526,7 +528,7 @@ void CMapView::HandleDeleteLandmarkL()
 		MapControl()->DrawDeferred();
 		}
 	
-	CleanupStack::PopAndDestroy(landmark);
+	CleanupStack::PopAndDestroy(2, landmark);
 	}
 
 void CMapView::HandleGotoLandmarkL()
