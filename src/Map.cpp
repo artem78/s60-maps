@@ -1839,7 +1839,7 @@ void CWebTileProvider::RequestTileL(const TTile &aTile)
 		if (r == KErrNone)
 			{
 			//item->SetReady();
-			INFO(_L("Tile %S readed from file"), &aTile.AsDes());
+			INFO(_L("Tile %S loaded from file"), &aTile.AsDes());
 			iObserver->OnTileLoaded(aTile, iBitmap);
 			return;
 			}
