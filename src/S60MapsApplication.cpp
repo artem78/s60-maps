@@ -91,4 +91,19 @@ void CS60MapsApplication::IconFileL(TFileName &aFileName) const
 	aFileName.Format(KMbmFilePathFmt, FileUtils::InstallationDrive(), &privateDir);
 	}
 
+CAknIcon* CS60MapsApplication::LoadIconL(TInt aBitmapId, TInt aMaskId)
+	{
+	CAknIcon* icon = CAknIcon::NewL();
+	CleanupStack::PushL(icon);
+	TFileName mbmFilePath;
+	IconFileL(mbmFilePath);
+	CFbsBitmap* bitmap = NULL;
+	CFbsBitmap* mask = NULL;
+	AknIconUtils::CreateIconL(bitmap, mask, mbmFilePath, aBitmapId, aMaskId);
+	icon->SetBitmap(bitmap);
+	icon->SetMask(mask);
+	CleanupStack::Pop(icon); // not ...AndDestroy()
+	return icon;
+	}
+
 // End of File

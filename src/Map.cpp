@@ -670,8 +670,7 @@ CLandmarksLayer::CLandmarksLayer(CMapControl* aMapView, CPosLandmarkDatabase* aL
 CLandmarksLayer::~CLandmarksLayer()
 	{
 	ReleaseLandmarkResources();
-	delete iIconMaskBitmap;
-	delete iIconBitmap;
+	delete iIcon;
 	}
 
 CLandmarksLayer* CLandmarksLayer::NewLC(CMapControl* aMapView, CPosLandmarkDatabase* aLmDb)
@@ -691,16 +690,10 @@ CLandmarksLayer* CLandmarksLayer::NewL(CMapControl* aMapView, CPosLandmarkDataba
 
 void CLandmarksLayer::ConstructL()
 	{
-	TFileName mbmFilePath;
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
 	CS60MapsApplication* app = static_cast<CS60MapsApplication*>(appUi->Application());
-	app->IconFileL(mbmFilePath);
-
-	iIconBitmap = new (ELeave) CFbsBitmap();
-	User::LeaveIfError(iIconBitmap->Load(mbmFilePath, EMbmIconsStar));
 	
-	iIconMaskBitmap = new (ELeave) CFbsBitmap();
-	User::LeaveIfError(iIconMaskBitmap->Load(mbmFilePath, EMbmIconsStar_mask));
+	iIcon = app->LoadIconL(EMbmIconsStar, EMbmIconsStar_mask);
 	}
 
 void CLandmarksLayer::Draw(CWindowGc &aGc)
@@ -824,12 +817,12 @@ void CLandmarksLayer::DrawLandmark(CWindowGc &aGc,
 	TPoint landmarkPoint = iMapView->GeoCoordsToScreenCoords(landmarkPos);
 	
 	// Draw landmark icon
-	TSize iconSize = iIconBitmap->SizeInPixels();
+	TSize iconSize = iIcon->Bitmap()->SizeInPixels();
 	{
 		TRect dstRect(landmarkPoint, TSize(0, 0));
 		dstRect.Grow(iconSize.iWidth / 2, iconSize.iHeight / 2);
 		TRect srcRect(TPoint(0, 0), iconSize);
-		aGc.DrawBitmapMasked(dstRect, iIconBitmap, srcRect, iIconMaskBitmap, 0);
+		aGc.DrawBitmapMasked(dstRect, iIcon->Bitmap(), srcRect, iIcon->Mask(), 0);
 	}
 	
 	
@@ -900,22 +893,15 @@ CSignalIndicatorLayer::CSignalIndicatorLayer(CMapControl* aMapView) :
 void CSignalIndicatorLayer::ConstructL()
 	{
 	// Load icon
-	TFileName mbmFilePath;
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
 	CS60MapsApplication* app = static_cast<CS60MapsApplication*>(appUi->Application());
-	app->IconFileL(mbmFilePath);
 	
-	iSatelliteIconBitmap = new (ELeave) CFbsBitmap();
-	User::LeaveIfError(iSatelliteIconBitmap->Load(mbmFilePath, EMbmIconsSatellite));
-	
-	iSatelliteIconMaskBitmap = new (ELeave) CFbsBitmap();
-	User::LeaveIfError(iSatelliteIconMaskBitmap->Load(mbmFilePath, EMbmIconsSatellite_mask));
+	iSatelliteIcon = app->LoadIconL(EMbmIconsSatellite, EMbmIconsSatellite_mask);
 	}
 
 CSignalIndicatorLayer::~CSignalIndicatorLayer()
 	{
-	delete iSatelliteIconMaskBitmap;
-	delete iSatelliteIconBitmap;
+	delete iSatelliteIcon;
 	}
 
 void CSignalIndicatorLayer::Draw(CWindowGc &aGc)
@@ -986,8 +972,8 @@ void CSignalIndicatorLayer::Draw(CWindowGc &aGc)
 	DrawBars(aGc, signalStrength);
 	
 	TPoint satIconPoint(iMapView->Rect().iBr.iX - (14 + KBarsTotalWidth + KSpacing * 2 + font->TextWidthInPixels(buff)
-			+ iSatelliteIconBitmap->SizeInPixels().iWidth),
-			iMapView->Rect().iTl.iY + 14 + KBarsTotalHeight - iSatelliteIconBitmap->SizeInPixels().iHeight);
+			+ iSatelliteIcon->Bitmap()->SizeInPixels().iWidth),
+			iMapView->Rect().iTl.iY + 14 + KBarsTotalHeight - iSatelliteIcon->Bitmap()->SizeInPixels().iHeight);
 	DrawSatelliteIcon(aGc, satIconPoint);
 	}
 
@@ -1047,10 +1033,10 @@ void CSignalIndicatorLayer::DrawBars(CWindowGc &aGc, TSignalStrength aSignalStre
 
 void CSignalIndicatorLayer::DrawSatelliteIcon(CWindowGc &aGc, const TPoint &aPos)
 	{
-	TSize iconSize = iSatelliteIconBitmap->SizeInPixels();
+	TSize iconSize = iSatelliteIcon->Bitmap()->SizeInPixels();
 	TRect dstRect(aPos, iconSize);
 	TRect srcRect(TPoint(0, 0), iconSize);
-	aGc.DrawBitmapMasked(dstRect, iSatelliteIconBitmap, srcRect, iSatelliteIconMaskBitmap, 0);
+	aGc.DrawBitmapMasked(dstRect, iSatelliteIcon->Bitmap(), srcRect, iSatelliteIcon->Mask(), 0);
 	}
 
 

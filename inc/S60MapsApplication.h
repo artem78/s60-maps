@@ -13,6 +13,7 @@
 // INCLUDES
 #include <aknapp.h>
 #include "S60Maps.hrh"
+#include <akniconutils.h>
 
 // UID for the application;
 // this should correspond to the uid defined in the mmp file
@@ -64,6 +65,10 @@ public:
 	void RelPathToAbsFromDataDir(const TDesC &aRelPath, TFileName &anAbsPath) const;
 	void CacheDir(TFileName &aCacheDir) const;
 	void IconFileL(TFileName &aFileName) const;
+	
+	/* Loads icon with given ID and mask ID from MBM file. Client takes ownership
+	 * of returned object. */
+	CAknIcon* LoadIconL(TInt aBitmapId, TInt aMaskId);
 	
 	};
 

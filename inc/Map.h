@@ -21,6 +21,7 @@
 #include "FileUtils.h"
 #include <e32msgqueue.h>
 #include <epos_cposlandmarkdatabase.h>
+#include <akniconutils.h> // For CAknIcon
 
 
 // Constants
@@ -199,8 +200,7 @@ public:
 	// Own
 private:
 	CPosLandmarkDatabase* iLandmarksDb; // Not owned
-	CFbsBitmap* iIconBitmap;
-	CFbsBitmap* iIconMaskBitmap;
+	CAknIcon* iIcon;
 	
 	// Result may be NULL if nothing found
 	CArrayPtr<CPosLandmark>* GetVisibleLandmarksL(); // ToDo: Is moving to another class needed?
@@ -262,9 +262,8 @@ private:
 		KBarsTotalWidth		= KBarsCount * KBarWidth + (KBarsCount - 1) * KBarsSpacing,
 		KBarsTotalHeight	= KStartBarHeight + (KBarsCount - 1) * KBarHeightIncremement
 	};
-	
-	CFbsBitmap* iSatelliteIconBitmap;
-	CFbsBitmap* iSatelliteIconMaskBitmap;
+
+	CAknIcon* iSatelliteIcon;
 	
 	void DrawBars(CWindowGc &aGc, TSignalStrength aBarsCount);
 	void DrawSatelliteIcon(CWindowGc &aGc, const TPoint &aPos);
