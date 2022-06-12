@@ -906,6 +906,8 @@ CSignalIndicatorLayer::~CSignalIndicatorLayer()
 
 void CSignalIndicatorLayer::Draw(CWindowGc &aGc)
 	{
+	const TInt KSpacing = 6;
+	
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
 	
 	if (!appUi->Settings()->iIsSignalIndicatorVisible) // Check display or not
@@ -916,68 +918,78 @@ void CSignalIndicatorLayer::Draw(CWindowGc &aGc)
 	
 	if (!satInfo) return;
 	
-	TReal gdop = appUi->IsPositionRecieved() ? satInfo->GeometricDoP() : KNaN;
-	TSignalStrength signalStrength = ESignalNone;
-	// According to: https://en.wikipedia.org/wiki/Dilution_of_precision_(navigation)#Interpretation
-	if (!Math::IsFinite(gdop))
+	TPoint satIconPoint;
+	if (0)
 		{
-		signalStrength = ESignalNone;
+		TReal gdop = appUi->IsPositionRecieved() ? satInfo->GeometricDoP() : KNaN;
+		TSignalStrength signalStrength = ESignalNone;
+		// According to: https://en.wikipedia.org/wiki/Dilution_of_precision_(navigation)#Interpretation
+		if (!Math::IsFinite(gdop))
+			{
+			signalStrength = ESignalNone;
+			}
+		else if (gdop < 1)
+			{
+			signalStrength = ESignalHigh;
+			}
+		else if (gdop < 2)
+			{
+			signalStrength = ESignalVeryGood;
+			}
+		else if (gdop < 5)
+			{
+			signalStrength = ESignalGood;
+			}
+		else if (gdop < 10)
+			{
+			signalStrength = ESignalMedium;
+			}
+		else if (gdop < 20)
+			{
+			signalStrength = ESignalLow;
+			}
+		else if (gdop < 50)
+			{
+			signalStrength = ESignalVeryLow;
+			}
+		
+		_LIT(KFmt, "%d/%d");
+		TBuf<64> buff;
+		buff.Format(KFmt, satInfo->NumSatellitesUsed(), satInfo->NumOfVisibleSatellites());
+		//DEBUG(buff);
+		
+		const CFont* font = iMapView->DefaultFont();
+		
+		TRect textArea = iMapView->Rect();
+		textArea.Shrink(14, 14);
+		textArea.iBr.iX -= KBarsTotalWidth + KSpacing;
+		textArea.iBr.iY = 14 + KBarsTotalHeight;
+		TReal tmp = (textArea.Height() + font->AscentInPixels()) / 2.0;
+		Math::Round(tmp, tmp, 0);
+		TInt baselineOffset = static_cast<TInt>(tmp);
+		
+		aGc.UseFont(font);
+		aGc.DrawText(buff, textArea, baselineOffset, CGraphicsContext::ERight);
+		aGc.DiscardFont();
+		
+		DrawBarsV1(aGc, signalStrength);
+		
+		satIconPoint.iX = iMapView->Rect().iBr.iX - (14 + KBarsTotalWidth + KSpacing * 2 + font->TextWidthInPixels(buff)
+				+ iSatelliteIcon->Bitmap()->SizeInPixels().iWidth);
+		satIconPoint.iY = iMapView->Rect().iTl.iY + 14 + KBarsTotalHeight - iSatelliteIcon->Bitmap()->SizeInPixels().iHeight; 
 		}
-	else if (gdop < 1)
+	else
 		{
-		signalStrength = ESignalHigh;
-		}
-	else if (gdop < 2)
-		{
-		signalStrength = ESignalVeryGood;
-		}
-	else if (gdop < 5)
-		{
-		signalStrength = ESignalGood;
-		}
-	else if (gdop < 10)
-		{
-		signalStrength = ESignalMedium;
-		}
-	else if (gdop < 20)
-		{
-		signalStrength = ESignalLow;
-		}
-	else if (gdop < 50)
-		{
-		signalStrength = ESignalVeryLow;
+		TRect barsRect = DrawBarsV2(aGc, TPoint(iMapView->Rect().iBr.iX - 14, iMapView->Rect().iTl.iY + 14), *satInfo);
+		
+		satIconPoint.iX = barsRect.iTl.iX - KSpacing - iSatelliteIcon->Bitmap()->SizeInPixels().iWidth;
+		satIconPoint.iY = barsRect.iBr.iY - iSatelliteIcon->Bitmap()->SizeInPixels().iHeight;
 		}
 	
-	_LIT(KFmt, "%d/%d");
-	TBuf<64> buff;
-	buff.Format(KFmt, satInfo->NumSatellitesUsed(), satInfo->NumOfVisibleSatellites());
-	//DEBUG(buff);
-	
-	const TInt KSpacing = 6;
-	
-	const CFont* font = iMapView->DefaultFont();
-	
-	TRect textArea = iMapView->Rect();
-	textArea.Shrink(14, 14);
-	textArea.iBr.iX -= KBarsTotalWidth + KSpacing;
-	textArea.iBr.iY = 14 + KBarsTotalHeight;
-	TReal tmp = (textArea.Height() + font->AscentInPixels()) / 2.0;
-	Math::Round(tmp, tmp, 0);
-	TInt baselineOffset = static_cast<TInt>(tmp);
-	
-	aGc.UseFont(font);
-	aGc.DrawText(buff, textArea, baselineOffset, CGraphicsContext::ERight);
-	aGc.DiscardFont();
-	
-	DrawBars(aGc, signalStrength);
-	
-	TPoint satIconPoint(iMapView->Rect().iBr.iX - (14 + KBarsTotalWidth + KSpacing * 2 + font->TextWidthInPixels(buff)
-			+ iSatelliteIcon->Bitmap()->SizeInPixels().iWidth),
-			iMapView->Rect().iTl.iY + 14 + KBarsTotalHeight - iSatelliteIcon->Bitmap()->SizeInPixels().iHeight);
 	DrawSatelliteIcon(aGc, satIconPoint);
 	}
 
-void CSignalIndicatorLayer::DrawBars(CWindowGc &aGc, TSignalStrength aSignalStrength)
+void CSignalIndicatorLayer::DrawBarsV1(CWindowGc &aGc, TSignalStrength aSignalStrength)
 	{
 	__ASSERT_DEBUG(aSignalStrength >= ESignalNone, Panic(ES60MapsInvaidSignalValuePanic));
 	__ASSERT_DEBUG(aSignalStrength <= ESignalHigh, Panic(ES60MapsInvaidSignalValuePanic));
@@ -1031,12 +1043,59 @@ void CSignalIndicatorLayer::DrawBars(CWindowGc &aGc, TSignalStrength aSignalStre
 		}
 	}
 
+TRect CSignalIndicatorLayer::DrawBarsV2(CWindowGc &aGc, const TPoint &aTopRight, const TPositionSatelliteInfo &aSatInfo)
+	{
+	const TInt KBarWidth = 3;
+	const TInt KBarsSpacing = 3;
+	const TInt KBarMaxHeight = 15;
+
+	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);	
+	aGc.SetBrushColor(TRgb(0,0,0));
+	aGc.SetPenColor(TRgb(0,0,0));
+	
+	TRectEx barMaxRect(aTopRight.iX - KBarWidth, aTopRight.iY, aTopRight.iX, aTopRight.iY + KBarMaxHeight);
+	
+	for (TInt i = aSatInfo.NumSatellitesInView() - 1; i >= 0; i--)
+		{
+		TSatelliteData satData;
+		TReal32 signalStrength = 0;
+		if (aSatInfo.GetSatelliteData(i, satData) == KErrNone)
+			{
+			signalStrength = SignalStrengthToReal(satData.SignalStrength());
+			DEBUG(_L("sat=%d signal=%d signal real=%.2f"), i, satData.SignalStrength(), signalStrength);
+			}
+
+		aGc.SetPenStyle(CGraphicsContext::ESolidPen);
+		
+		aGc.DrawLine(barMaxRect.iTl, barMaxRect.TopRight());
+		aGc.DrawLine(barMaxRect.BottomLeft(), barMaxRect.iBr);
+		
+		if (signalStrength > 0)
+			{
+			aGc.SetPenStyle(CGraphicsContext::ENullPen);
+			
+			TRect barRect = barMaxRect;
+			barRect.iTl.iY += KBarMaxHeight * (1 - signalStrength);
+			aGc.DrawRect(barRect);
+			}
+		
+		barMaxRect.Move(-(KBarWidth + KBarsSpacing), 0);
+		}
+	
+	return TRect(barMaxRect.iTl, TPoint(aTopRight.iX, barMaxRect.iBr.iY));
+	}
+
 void CSignalIndicatorLayer::DrawSatelliteIcon(CWindowGc &aGc, const TPoint &aPos)
 	{
 	TSize iconSize = iSatelliteIcon->Bitmap()->SizeInPixels();
 	TRect dstRect(aPos, iconSize);
 	TRect srcRect(TPoint(0, 0), iconSize);
 	aGc.DrawBitmapMasked(dstRect, iSatelliteIcon->Bitmap(), srcRect, iSatelliteIcon->Mask(), 0);
+	}
+
+TReal32 CSignalIndicatorLayer::SignalStrengthToReal(TInt aSignalStrength)
+	{
+	return Min(Max(aSignalStrength / 50.0, 0.0), 1.0); // 0 => 0, 50 => 1
 	}
 
 
