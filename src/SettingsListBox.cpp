@@ -51,6 +51,10 @@ CAknSettingItem* CSettingsListBox::CreateSettingItemL(TInt aSettingId)
 			TBool* boolPtr = (TBool*)(&appUi->Settings()->iSignalIndicatorType);
 			settingItem = new (ELeave) CAknBinaryPopupSettingItem(aSettingId,
 							*boolPtr);
+			
+			TBool isVisible = appUi->IsPositioningAvailable()
+					&& appUi->Settings()->iIsSignalIndicatorVisible;
+			settingItem->SetHidden(!isVisible);
 			}
 			break;
 		}
@@ -78,10 +82,15 @@ void CSettingsListBox::EditItemL(TInt aIndex, TBool aCalledFromMenu)
 			}
 			break;
 			
-		/*case ESettingShowSignalIndicator:
+		case ESettingShowSignalIndicator:
 			{
+			TBool isVisible = appUi->IsPositioningAvailable()
+					&& appUi->Settings()->iIsSignalIndicatorVisible;
+			
+			(*SettingItemArray())[ESettingSignalIndicatorType]->SetHidden(!isVisible);
+			HandleChangeInItemArrayOrVisibilityL();
 			}
-			break;*/
+			break;
 		}
 	}
 
