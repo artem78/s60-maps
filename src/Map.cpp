@@ -1054,9 +1054,11 @@ TRect CSignalIndicatorLayer::DrawBarsV2(CWindowGc &aGc, const TPoint &aTopRight,
 	const TInt KBarWidth = 3;
 	const TInt KBarsSpacing = 3;
 	const TInt KBarMaxHeight = 15;
+	
+	const TRgb KUnusedSatColor = TRgb(0, 0, 0);
+	const TRgb KUsedSatColor = TRgb(144, 209, 75);
 
-	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);	
-	aGc.SetBrushColor(TRgb(0,0,0));
+	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
 	aGc.SetPenColor(TRgb(0,0,0));
 	
 	TRectEx barMaxRect(aTopRight.iX - KBarWidth, aTopRight.iY, aTopRight.iX, aTopRight.iY + KBarMaxHeight);
@@ -1079,6 +1081,7 @@ TRect CSignalIndicatorLayer::DrawBarsV2(CWindowGc &aGc, const TPoint &aTopRight,
 		if (signalStrength > 0)
 			{
 			aGc.SetPenStyle(CGraphicsContext::ENullPen);
+			aGc.SetBrushColor(satData.IsUsed() ? KUsedSatColor : KUnusedSatColor);
 			
 			TRect barRect = barMaxRect;
 			barRect.iTl.iY += KBarMaxHeight * (1 - signalStrength);
