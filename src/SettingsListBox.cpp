@@ -44,6 +44,15 @@ CAknSettingItem* CSettingsListBox::CreateSettingItemL(TInt aSettingId)
 								appUi->Settings()->iIsScaleBarVisible);
 			}
 			break;
+			
+		case ESettingSignalIndicatorType:
+			{
+			// Only two possible values in enum (0 and 1)
+			TBool* boolPtr = (TBool*)(&appUi->Settings()->iSignalIndicatorType);
+			settingItem = new (ELeave) CAknBinaryPopupSettingItem(aSettingId,
+							*boolPtr);
+			}
+			break;
 		}
 	
 	return settingItem;

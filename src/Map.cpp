@@ -919,71 +919,77 @@ void CSignalIndicatorLayer::Draw(CWindowGc &aGc)
 	if (!satInfo) return;
 	
 	TPoint satIconPoint;
-	if (0)
+	switch (appUi->Settings()->iSignalIndicatorType)
 		{
-		TReal gdop = appUi->IsPositionRecieved() ? satInfo->GeometricDoP() : KNaN;
-		TSignalStrength signalStrength = ESignalNone;
-		// According to: https://en.wikipedia.org/wiki/Dilution_of_precision_(navigation)#Interpretation
-		if (!Math::IsFinite(gdop))
+		case CSettings::ESignalIndicatorGeneralType:
 			{
-			signalStrength = ESignalNone;
+			TReal gdop = appUi->IsPositionRecieved() ? satInfo->GeometricDoP() : KNaN;
+			TSignalStrength signalStrength = ESignalNone;
+			// According to: https://en.wikipedia.org/wiki/Dilution_of_precision_(navigation)#Interpretation
+			if (!Math::IsFinite(gdop))
+				{
+				signalStrength = ESignalNone;
+				}
+			else if (gdop < 1)
+				{
+				signalStrength = ESignalHigh;
+				}
+			else if (gdop < 2)
+				{
+				signalStrength = ESignalVeryGood;
+				}
+			else if (gdop < 5)
+				{
+				signalStrength = ESignalGood;
+				}
+			else if (gdop < 10)
+				{
+				signalStrength = ESignalMedium;
+				}
+			else if (gdop < 20)
+				{
+				signalStrength = ESignalLow;
+				}
+			else if (gdop < 50)
+				{
+				signalStrength = ESignalVeryLow;
+				}
+			
+			_LIT(KFmt, "%d/%d");
+			TBuf<64> buff;
+			buff.Format(KFmt, satInfo->NumSatellitesUsed(), satInfo->NumOfVisibleSatellites());
+			//DEBUG(buff);
+			
+			const CFont* font = iMapView->DefaultFont();
+			
+			TRect textArea = iMapView->Rect();
+			textArea.Shrink(14, 14);
+			textArea.iBr.iX -= KBarsTotalWidth + KSpacing;
+			textArea.iBr.iY = 14 + KBarsTotalHeight;
+			TReal tmp = (textArea.Height() + font->AscentInPixels()) / 2.0;
+			Math::Round(tmp, tmp, 0);
+			TInt baselineOffset = static_cast<TInt>(tmp);
+			
+			aGc.UseFont(font);
+			aGc.DrawText(buff, textArea, baselineOffset, CGraphicsContext::ERight);
+			aGc.DiscardFont();
+			
+			DrawBarsV1(aGc, signalStrength);
+			
+			satIconPoint.iX = iMapView->Rect().iBr.iX - (14 + KBarsTotalWidth + KSpacing * 2 + font->TextWidthInPixels(buff)
+					+ iSatelliteIcon->Bitmap()->SizeInPixels().iWidth);
+			satIconPoint.iY = iMapView->Rect().iTl.iY + 14 + KBarsTotalHeight - iSatelliteIcon->Bitmap()->SizeInPixels().iHeight; 
 			}
-		else if (gdop < 1)
+			break;
+			
+		case CSettings::ESignalIndicatorPerSatelliteType:
 			{
-			signalStrength = ESignalHigh;
+			TRect barsRect = DrawBarsV2(aGc, TPoint(iMapView->Rect().iBr.iX - 14, iMapView->Rect().iTl.iY + 14), *satInfo);
+			
+			satIconPoint.iX = barsRect.iTl.iX - KSpacing - iSatelliteIcon->Bitmap()->SizeInPixels().iWidth;
+			satIconPoint.iY = barsRect.iBr.iY - iSatelliteIcon->Bitmap()->SizeInPixels().iHeight;
 			}
-		else if (gdop < 2)
-			{
-			signalStrength = ESignalVeryGood;
-			}
-		else if (gdop < 5)
-			{
-			signalStrength = ESignalGood;
-			}
-		else if (gdop < 10)
-			{
-			signalStrength = ESignalMedium;
-			}
-		else if (gdop < 20)
-			{
-			signalStrength = ESignalLow;
-			}
-		else if (gdop < 50)
-			{
-			signalStrength = ESignalVeryLow;
-			}
-		
-		_LIT(KFmt, "%d/%d");
-		TBuf<64> buff;
-		buff.Format(KFmt, satInfo->NumSatellitesUsed(), satInfo->NumOfVisibleSatellites());
-		//DEBUG(buff);
-		
-		const CFont* font = iMapView->DefaultFont();
-		
-		TRect textArea = iMapView->Rect();
-		textArea.Shrink(14, 14);
-		textArea.iBr.iX -= KBarsTotalWidth + KSpacing;
-		textArea.iBr.iY = 14 + KBarsTotalHeight;
-		TReal tmp = (textArea.Height() + font->AscentInPixels()) / 2.0;
-		Math::Round(tmp, tmp, 0);
-		TInt baselineOffset = static_cast<TInt>(tmp);
-		
-		aGc.UseFont(font);
-		aGc.DrawText(buff, textArea, baselineOffset, CGraphicsContext::ERight);
-		aGc.DiscardFont();
-		
-		DrawBarsV1(aGc, signalStrength);
-		
-		satIconPoint.iX = iMapView->Rect().iBr.iX - (14 + KBarsTotalWidth + KSpacing * 2 + font->TextWidthInPixels(buff)
-				+ iSatelliteIcon->Bitmap()->SizeInPixels().iWidth);
-		satIconPoint.iY = iMapView->Rect().iTl.iY + 14 + KBarsTotalHeight - iSatelliteIcon->Bitmap()->SizeInPixels().iHeight; 
-		}
-	else
-		{
-		TRect barsRect = DrawBarsV2(aGc, TPoint(iMapView->Rect().iBr.iX - 14, iMapView->Rect().iTl.iY + 14), *satInfo);
-		
-		satIconPoint.iX = barsRect.iTl.iX - KSpacing - iSatelliteIcon->Bitmap()->SizeInPixels().iWidth;
-		satIconPoint.iY = barsRect.iBr.iY - iSatelliteIcon->Bitmap()->SizeInPixels().iHeight;
+			break;
 		}
 	
 	DrawSatelliteIcon(aGc, satIconPoint);

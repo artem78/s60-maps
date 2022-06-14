@@ -64,3 +64,9 @@ CHARACTER_SET UTF8
 #define qtn_hide "Скрыть"
 #define qtn_signal_indicator "Уровень сигнала GPS"
 #define qtn_scale_bar "Линейка масштаба"
+
+// Added in version X.X:
+
+#define qtn_signal_indicator_type "Вид индикатора сигнала"
+#define qtn_signal_indicator_general_type "Общий"
+#define qtn_signal_indicator_per_satellite_type "По спутникам"

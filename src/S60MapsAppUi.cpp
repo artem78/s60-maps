@@ -416,6 +416,13 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 		CleanupStack::PopAndDestroy(msg);
 		}
 	
+	// Signal indicator type
+	if (iSettings->iSignalIndicatorType != CSettings::ESignalIndicatorGeneralType
+			and iSettings->iSignalIndicatorType != CSettings::ESignalIndicatorPerSatelliteType)
+		{
+		iSettings->iSignalIndicatorType = CSettings::ESignalIndicatorGeneralType;
+		}
+	
 	DEBUG(_L("Settings reading ended"));
 	}
 
