@@ -1111,7 +1111,8 @@ void CSignalIndicatorLayer::DrawSatelliteIcon(CWindowGc &aGc, const TPoint &aPos
 
 TReal32 CSignalIndicatorLayer::SignalStrengthToReal(TInt aSignalStrength)
 	{
-	return Min(Max(aSignalStrength / 50.0, 0.0), 1.0); // 0 => 0, 50 => 1
+	const TInt KMaxSignalStrength = 40; // Taken from here: https://github.com/SymbianSource/oss.FCL.sf.mw.locationsrv/blob/282094c09b81e1848755ad40e31052da0bcac81b/locationsystemui/locationsysui/locblidsatelliteinfo/src/satellitecontrol.cpp#L1193
+	return Min(Max(aSignalStrength / TReal32(KMaxSignalStrength), 0.0), 1.0); // KMaxSignalStrength => 1, 0 => 0
 	}
 
 
