@@ -1051,15 +1051,16 @@ void CSignalIndicatorLayer::DrawBarsV1(CWindowGc &aGc, TSignalStrength aSignalSt
 
 TRect CSignalIndicatorLayer::DrawBarsV2(CWindowGc &aGc, const TPoint &aTopRight, const TPositionSatelliteInfo &aSatInfo)
 	{
-	const TInt KBarWidth = 3;
-	const TInt KBarsSpacing = 3;
-	const TInt KBarMaxHeight = 15;
+	const TInt KBarMaxHeight = KBarsTotalHeight;
 	
-	const TRgb KUnusedSatColor = TRgb(0, 0, 0);
+	const TRgb KUnusedSatColor = /*TRgb(150, 150, 150)*/ KRgbWhite;
+	const TRgb KUnusedSatBorderColor = /*TRgb(20, 20, 20)*/ KRgbGray;
 	const TRgb KUsedSatColor = TRgb(144, 209, 75);
+	const TRgb KUsedSatBorderColor = TRgb(43, 63, 22);
 
 	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
-	aGc.SetPenColor(TRgb(0,0,0));
+	aGc.SetPenStyle(CGraphicsContext::ESolidPen);
+	aGc.SetPenSize(TSize(KBarBorderWidth, KBarBorderWidth));
 	
 	TRectEx barMaxRect(aTopRight.iX - KBarWidth, aTopRight.iY, aTopRight.iX, aTopRight.iY + KBarMaxHeight);
 	
@@ -1073,26 +1074,29 @@ TRect CSignalIndicatorLayer::DrawBarsV2(CWindowGc &aGc, const TPoint &aTopRight,
 			DEBUG(_L("sat=%d signal=%d signal real=%.2f"), i, satData.SignalStrength(), signalStrength);
 			}
 
-		aGc.SetPenStyle(CGraphicsContext::ESolidPen);
-		
+		aGc.SetPenColor(KUnusedSatBorderColor);
 		aGc.DrawLine(barMaxRect.iTl, barMaxRect.TopRight());
-		aGc.DrawLine(barMaxRect.BottomLeft(), barMaxRect.iBr);
 		
-		if (signalStrength > 0)
-			{
-			aGc.SetPenStyle(CGraphicsContext::ENullPen);
-			aGc.SetBrushColor(satData.IsUsed() ? KUsedSatColor : KUnusedSatColor);
-			
-			TRect barRect = barMaxRect;
-			barRect.iTl.iY += KBarMaxHeight * (1 - signalStrength);
-			aGc.DrawRect(barRect);
-			}
+		aGc.SetBrushColor(satData.IsUsed() ? KUsedSatColor : KUnusedSatColor);
+		aGc.SetPenColor(satData.IsUsed() ? KUsedSatBorderColor : KUnusedSatBorderColor);
+		
+		TRect barRect = barMaxRect;
+		TInt barHeight = Max(3, KBarMaxHeight * signalStrength);
+		barRect.iTl.iY += KBarMaxHeight - barHeight;
+		aGc.DrawRect(barRect);
 		
 		if (i != 0)
 			{
 			barMaxRect.Move(-(KBarWidth + KBarsSpacing), 0);
 			}
 		}
+	
+	/*TRectEx fullRect(barMaxRect.iTl.iX, barMaxRect.iTl.iY, aTopRight.iX, barMaxRect.iBr.iY);
+	aGc.SetPenStyle(CGraphicsContext::EDottedPen);
+	aGc.SetPenSize(TSize(1, 1));
+	aGc.SetPenColor(KRgbGray);
+	aGc.DrawLine(fullRect.iTl, fullRect.TopRight());
+	return fullRect;*/
 	
 	return TRect(barMaxRect.iTl, TPoint(aTopRight.iX, barMaxRect.iBr.iY));
 	}
