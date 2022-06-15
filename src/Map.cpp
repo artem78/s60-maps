@@ -1088,7 +1088,10 @@ TRect CSignalIndicatorLayer::DrawBarsV2(CWindowGc &aGc, const TPoint &aTopRight,
 			aGc.DrawRect(barRect);
 			}
 		
-		barMaxRect.Move(-(KBarWidth + KBarsSpacing), 0);
+		if (i != 0)
+			{
+			barMaxRect.Move(-(KBarWidth + KBarsSpacing), 0);
+			}
 		}
 	
 	return TRect(barMaxRect.iTl, TPoint(aTopRight.iX, barMaxRect.iBr.iY));
