@@ -4,6 +4,7 @@ This guide will describe you how to compile S60Maps project from sources on your
 
 In this tutorial I will use Windows 7 and SDK S60 v3.1 (Symbian 9.2). I recommend to use this version of SDK, but you may install another one which you can found [here](https://www.mediafire.com/folder/v862wwqds229r/SDKs).
 
+Also works with Windows XP. Not sure about modern Windows versions. Anyway you can use virtual machine (like VirtualBox) if you use another OS (e.g., Linux).
 
 # Installation
 
