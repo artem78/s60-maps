@@ -104,7 +104,7 @@ Read [docs/COMPILING.md](/docs/COMPILING.md)
 - [x] Show satellites info (amount, signal strength, etc...)
 - [ ] Offline maps (zipped set of PNGs)
 
-## LICENSE
+## License
 
 This is Open Source software licensed under [GNU GPL v3.0](/LICENSE.txt)
 
