@@ -1057,9 +1057,9 @@ TRect CSignalIndicatorLayer::DrawBarsV2(CWindowGc &aGc, const TPoint &aTopRight,
 	const TRgb KUnusedSatBorderColor = /*TRgb(20, 20, 20)*/ KRgbGray;
 	const TRgb KUsedSatColor = TRgb(144, 209, 75);
 	const TRgb KUsedSatBorderColor = TRgb(43, 63, 22);
+	TRgb backgroundColor = KUnusedSatBorderColor;
+	backgroundColor.SetAlpha(150);
 
-	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
-	aGc.SetPenStyle(CGraphicsContext::ESolidPen);
 	aGc.SetPenSize(TSize(KBarBorderWidth, KBarBorderWidth));
 	
 	TRectEx barMaxRect(aTopRight.iX - KBarWidth, aTopRight.iY, aTopRight.iX, aTopRight.iY + KBarMaxHeight);
@@ -1074,29 +1074,34 @@ TRect CSignalIndicatorLayer::DrawBarsV2(CWindowGc &aGc, const TPoint &aTopRight,
 			DEBUG(_L("sat=%d signal=%d signal real=%.2f"), i, satData.SignalStrength(), signalStrength);
 			}
 
-		aGc.SetPenColor(KUnusedSatBorderColor);
-		aGc.DrawLine(barMaxRect.iTl, barMaxRect.TopRight());
+		// Draw background
+		aGc.SetPenStyle(CGraphicsContext::ENullPen);
+		aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
+		aGc.SetBrushColor(backgroundColor);
+		aGc.DrawRect(barMaxRect);
 		
+		// Draw fill
+		aGc.SetPenStyle(CGraphicsContext::ENullPen);
+		aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
 		aGc.SetBrushColor(satData.IsUsed() ? KUsedSatColor : KUnusedSatColor);
-		aGc.SetPenColor(satData.IsUsed() ? KUsedSatBorderColor : KUnusedSatBorderColor);
-		
 		TRect barRect = barMaxRect;
-		TInt barHeight = Max(3, KBarMaxHeight * signalStrength);
+		//TInt barHeight = Max(3, KBarMaxHeight * signalStrength);
+		TInt barHeight = (TInt) (KBarMaxHeight * signalStrength + 0.5);
 		barRect.iTl.iY += KBarMaxHeight - barHeight;
 		aGc.DrawRect(barRect);
+		
+		// Draw border
+		aGc.SetPenStyle(CGraphicsContext::ESolidPen);
+		aGc.SetPenColor(satData.IsUsed() ? KUsedSatBorderColor : KUnusedSatBorderColor);
+		aGc.SetBrushStyle(CGraphicsContext::ENullBrush);
+		aGc.DrawRect(barMaxRect);
+		
 		
 		if (i != 0)
 			{
 			barMaxRect.Move(-(KBarWidth + KBarsSpacing), 0);
 			}
 		}
-	
-	/*TRectEx fullRect(barMaxRect.iTl.iX, barMaxRect.iTl.iY, aTopRight.iX, barMaxRect.iBr.iY);
-	aGc.SetPenStyle(CGraphicsContext::EDottedPen);
-	aGc.SetPenSize(TSize(1, 1));
-	aGc.SetPenColor(KRgbGray);
-	aGc.DrawLine(fullRect.iTl, fullRect.TopRight());
-	return fullRect;*/
 	
 	return TRect(barMaxRect.iTl, TPoint(aTopRight.iX, barMaxRect.iBr.iY));
 	}
