@@ -61,3 +61,9 @@ CHARACTER_SET UTF8
 #define qtn_hide "Ocultar"
 #define qtn_signal_indicator "Señal GPS"
 #define qtn_scale_bar "Barra de herramientas"
+
+// Added in version X.X:
+
+#define qtn_signal_indicator_type "Signal indicator type"
+#define qtn_signal_indicator_general_type "General"
+#define qtn_signal_indicator_per_satellite_type "Per satellite"

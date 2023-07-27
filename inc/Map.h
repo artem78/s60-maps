@@ -22,6 +22,7 @@
 #include <e32msgqueue.h>
 #include <epos_cposlandmarkdatabase.h>
 #include <akniconutils.h> // For CAknIcon
+#include <lbssatellite.h>
 
 
 // Constants
@@ -265,8 +266,12 @@ private:
 
 	CAknIcon* iSatelliteIcon;
 	
-	void DrawBars(CWindowGc &aGc, TSignalStrength aBarsCount);
+	void DrawBarsV1(CWindowGc &aGc, TSignalStrength aBarsCount);
+	TRect DrawBarsV2(CWindowGc &aGc, const TPoint &aTopRight, const TPositionSatelliteInfo &aSatInfo);
 	void DrawSatelliteIcon(CWindowGc &aGc, const TPoint &aPos);
+	
+	/* Converts signal strength value to real number in range [0,1], where 0 = no signal and 1 = maximum signal */
+	static TReal32 SignalStrengthToReal(TInt aSignalStrength);
 	
 	};
 

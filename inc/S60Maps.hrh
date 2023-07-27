@@ -59,6 +59,7 @@ enum TS60MapsSettingItemIds
 	{
 	ESettingLanguage,
 	ESettingShowSignalIndicator,
+	ESettingSignalIndicatorType,
 	ESettingShowScaleBar
 	};
 
