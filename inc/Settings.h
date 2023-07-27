@@ -56,6 +56,13 @@ private:
 //	 * EPOC default constructor for performing 2nd stage construction
 //	 */
 //	void ConstructL();
+
+public:
+	// Types
+	enum TSignalIndicatorType {
+		ESignalIndicatorGeneralType,
+		ESignalIndicatorPerSatelliteType
+	};
 	
 	
 private:
@@ -72,6 +79,7 @@ public:
 	TLanguage iLanguage;
 	TBool iIsSignalIndicatorVisible;
 	TBool iIsScaleBarVisible;
+	TSignalIndicatorType iSignalIndicatorType;
 	
 public:
 	CSettings();

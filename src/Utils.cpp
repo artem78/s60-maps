@@ -71,3 +71,12 @@ TInt MathUtils::ParseInt(const TDesC& aDes, TInt& aResNum)
 	
 	return KErrNotFound;	
 	}
+
+
+// TRectEx
+
+TRectEx::TRectEx(TInt aAx, TInt aAy, TInt aBx, TInt aBy)
+		: TRect(aAx, aAy, aBx, aBy)
+	{
+
+	}

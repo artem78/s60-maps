@@ -44,6 +44,19 @@ CAknSettingItem* CSettingsListBox::CreateSettingItemL(TInt aSettingId)
 								appUi->Settings()->iIsScaleBarVisible);
 			}
 			break;
+			
+		case ESettingSignalIndicatorType:
+			{
+			// Only two possible values in enum (0 and 1)
+			TBool* boolPtr = (TBool*)(&appUi->Settings()->iSignalIndicatorType);
+			settingItem = new (ELeave) CAknBinaryPopupSettingItem(aSettingId,
+							*boolPtr);
+			
+			TBool isVisible = appUi->IsPositioningAvailable()
+					&& appUi->Settings()->iIsSignalIndicatorVisible;
+			settingItem->SetHidden(!isVisible);
+			}
+			break;
 		}
 	
 	return settingItem;
@@ -69,10 +82,15 @@ void CSettingsListBox::EditItemL(TInt aIndex, TBool aCalledFromMenu)
 			}
 			break;
 			
-		/*case ESettingShowSignalIndicator:
+		case ESettingShowSignalIndicator:
 			{
+			TBool isVisible = appUi->IsPositioningAvailable()
+					&& appUi->Settings()->iIsSignalIndicatorVisible;
+			
+			(*SettingItemArray())[ESettingSignalIndicatorType]->SetHidden(!isVisible);
+			HandleChangeInItemArrayOrVisibilityL();
 			}
-			break;*/
+			break;
 		}
 	}
 

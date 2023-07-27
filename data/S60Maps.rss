@@ -20,6 +20,13 @@ NAME S60M	// 4 letter ID
 #include "S60Maps.rls"
 #include "S60Maps.loc"
 
+
+// Constants
+
+#define KPosLmMaxTextFieldLength 255 // from epos_landmarks.h
+
+
+
 //  RESOURCE DEFINITIONS
 // -----------------------------------------------------------------------------
 //
@@ -356,6 +363,7 @@ RESOURCE DIALOG r_landmark_name_input_query
           flags = EEikEdwinNoHorizScrolling | EEikEdwinResizable;
 //        width = AKNTAQUERY_EDWIN_WIDTH;
 //        maxlength = AKNTAQUERY_EDWIN_MAXLENGTH;
+          maxlength = KPosLmMaxTextFieldLength;
           // added to limit expanding in forms. 
           // If you want full screen use 6 here
 //        max_view_height_in_lines = AKNEXQUERY_EDWIN_LINES; 
@@ -531,6 +539,13 @@ RESOURCE AVKON_SETTING_ITEM_LIST r_setting_item_list
 			associated_resource = r_popup_setting_show_signal_indicator_texts;
 			name = qtn_signal_indicator;
 	    	},
+	    AVKON_SETTING_ITEM
+	    	{
+			identifier = ESettingSignalIndicatorType;
+			setting_page_resource = r_signal_indicator_type_setting_page;
+			associated_resource = r_popup_setting_signal_indicator_type_texts;
+			name = qtn_signal_indicator_type;
+	    	},
 		AVKON_SETTING_ITEM
 			{
 			identifier = ESettingShowScaleBar;
@@ -603,6 +618,31 @@ RESOURCE ARRAY r_show_signal_indicator_texts
         {
         AVKON_ENUMERATED_TEXT { value=1; text = qtn_show; },
         AVKON_ENUMERATED_TEXT { value=0; text = qtn_hide; }
+        };
+    }
+	
+
+// Signal indicator type setting
+
+RESOURCE AVKON_SETTING_PAGE r_signal_indicator_type_setting_page
+    {   
+    number = 0;
+    label = qtn_signal_indicator_type;
+    type = EAknCtPopupSettingList;
+    }
+
+RESOURCE AVKON_POPUP_SETTING_TEXTS r_popup_setting_signal_indicator_type_texts
+    {
+    flags = 0;
+    setting_texts_resource = r_signal_indicator_type_texts;
+    }
+
+RESOURCE ARRAY r_signal_indicator_type_texts
+    {
+    items =
+        {
+        AVKON_ENUMERATED_TEXT { value=0; text = qtn_signal_indicator_general_type; },
+        AVKON_ENUMERATED_TEXT { value=1; text = qtn_signal_indicator_per_satellite_type; }
         };
     }
 

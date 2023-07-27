@@ -51,8 +51,6 @@ void CS60MapsApplication::GetDefaultDocumentFileName(TFileName& aDocumentName) c
 
 void CS60MapsApplication::DataDir(TFileName &aDataDir) const
 	{
-	// ToDo: Make sure data directory already has been created
-	
 #ifdef __WINSCW__
 	// Emulator do not have E drive, use C instead
 	_LIT(KProgramDataDir, "c:\\data\\S60Maps\\");
@@ -76,8 +74,6 @@ void CS60MapsApplication::RelPathToAbsFromDataDir(const TDesC &aRelPath, TFileNa
 
 void CS60MapsApplication::CacheDir(TFileName &aCacheDir) const
 	{
-	// ToDo: Make sure this directory already has been created
-	
 	_LIT(KCacheDirRel, "cache\\_PAlbTN\\");
 	RelPathToAbsFromDataDir(KCacheDirRel, aCacheDir);
 	}
@@ -89,6 +85,21 @@ void CS60MapsApplication::IconFileL(TFileName &aFileName) const
 	TFileName privateDir;
 	User::LeaveIfError(CCoeEnv::Static()->FsSession().PrivatePath(privateDir));
 	aFileName.Format(KMbmFilePathFmt, FileUtils::InstallationDrive(), &privateDir);
+	}
+
+CAknIcon* CS60MapsApplication::LoadIconL(TInt aBitmapId, TInt aMaskId)
+	{
+	CAknIcon* icon = CAknIcon::NewL();
+	CleanupStack::PushL(icon);
+	TFileName mbmFilePath;
+	IconFileL(mbmFilePath);
+	CFbsBitmap* bitmap = NULL;
+	CFbsBitmap* mask = NULL;
+	AknIconUtils::CreateIconL(bitmap, mask, mbmFilePath, aBitmapId, aMaskId);
+	icon->SetBitmap(bitmap);
+	icon->SetMask(mask);
+	CleanupStack::Pop(icon); // not ...AndDestroy()
+	return icon;
 	}
 
 // End of File

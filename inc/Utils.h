@@ -32,4 +32,21 @@ public:
 	static TInt ParseInt(const TDesC& aDes, TInt& aResNum);
 	};
 
+
+class TRectEx : public TRect
+	{
+public:
+	TRectEx(TInt aAx, TInt aAy, TInt aBx, TInt aBy);
+	
+	inline TPoint TopRight()
+		{
+		return TPoint(iBr.iX, iTl.iY);
+		};
+	
+	inline TPoint BottomLeft()
+		{
+		return TPoint(iTl.iX, iBr.iY);
+		};
+	};
+
 #endif // UTILS_H

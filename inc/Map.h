@@ -21,6 +21,8 @@
 #include "FileUtils.h"
 #include <e32msgqueue.h>
 #include <epos_cposlandmarkdatabase.h>
+#include <akniconutils.h> // For CAknIcon
+#include <lbssatellite.h>
 
 
 // Constants
@@ -199,8 +201,7 @@ public:
 	// Own
 private:
 	CPosLandmarkDatabase* iLandmarksDb; // Not owned
-	CFbsBitmap* iIconBitmap;
-	CFbsBitmap* iIconMaskBitmap;
+	CAknIcon* iIcon;
 	
 	// Result may be NULL if nothing found
 	CArrayPtr<CPosLandmark>* GetVisibleLandmarksL(); // ToDo: Is moving to another class needed?
@@ -262,12 +263,15 @@ private:
 		KBarsTotalWidth		= KBarsCount * KBarWidth + (KBarsCount - 1) * KBarsSpacing,
 		KBarsTotalHeight	= KStartBarHeight + (KBarsCount - 1) * KBarHeightIncremement
 	};
+
+	CAknIcon* iSatelliteIcon;
 	
-	CFbsBitmap* iSatelliteIconBitmap;
-	CFbsBitmap* iSatelliteIconMaskBitmap;
-	
-	void DrawBars(CWindowGc &aGc, TSignalStrength aBarsCount);
+	void DrawBarsV1(CWindowGc &aGc, TSignalStrength aBarsCount);
+	TRect DrawBarsV2(CWindowGc &aGc, const TPoint &aTopRight, const TPositionSatelliteInfo &aSatInfo);
 	void DrawSatelliteIcon(CWindowGc &aGc, const TPoint &aPos);
+	
+	/* Converts signal strength value to real number in range [0,1], where 0 = no signal and 1 = maximum signal */
+	static TReal32 SignalStrengthToReal(TInt aSignalStrength);
 	
 	};
 
