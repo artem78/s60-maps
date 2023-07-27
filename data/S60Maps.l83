@@ -62,7 +62,7 @@ CHARACTER_SET UTF8
 #define qtn_signal_indicator "Señal GPS"
 #define qtn_scale_bar "Barra de herramientas"
 
-// Added in version X.X:
+// Added in version 1.10:
 
 #define qtn_signal_indicator_type "Signal indicator type"
 #define qtn_signal_indicator_general_type "General"

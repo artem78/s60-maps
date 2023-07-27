@@ -65,7 +65,7 @@ CHARACTER_SET UTF8
 #define qtn_signal_indicator "Рівень GPS сигналу"
 #define qtn_scale_bar "Шкала масштабу"
 
-// Added in version X.X:
+// Added in version 1.10:
 
 #define qtn_signal_indicator_type "Вид индикатора сигнала"
 #define qtn_signal_indicator_general_type "Общий"
