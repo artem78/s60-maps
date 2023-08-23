@@ -96,6 +96,9 @@ private:
 	CArrayFix<TCoeHelpContext>* HelpContextL() const;
 	
 	//void PrepareToExit();
+	
+	// From CAknViewAppUi
+	void HandleForegroundEventL(TBool aForeground);
 
 private:
 	// Views

@@ -780,6 +780,19 @@ TInt CS60MapsAppUi::ResetInactivityTimer(TAny* /*aPtr*/)
 	return ETrue;
 	}
 
+void CS60MapsAppUi::HandleForegroundEventL(TBool aForeground)
+	{
+	DEBUG(_L("HandleForegroundEventL aForeground=%d"), aForeground);
+	if (aForeground)
+		{
+		DisableScreenSaver();
+		}
+	else
+		{
+		EnableScreenSaver();
+		}
+	}
+
 void CS60MapsAppUi::EnableInfiniteBacklight()
 	{
 	iLight->ReserveLightL(KLightTarget);
