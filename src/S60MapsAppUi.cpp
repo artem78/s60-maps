@@ -178,16 +178,12 @@ void CS60MapsAppUi::ConstructL()
 	
 	// Make infinite backlight
 	iLight = CHWRMLight::NewL();
-	iLight->ReserveLightL(KLightTarget);
-	iLight->LightOnL(KLightTarget);
+	EnableInfiniteBacklight();
 	//DEBUG(_L("light status=%d"), iLight->LightStatus(KLightTarget));
 	
 	// Prevent screensaver to be visible
-	const TInt KMinScreenSaverTimeout = 5000000; // 5 seconds is minimal value on my phone
-												// ToDo: Is there system constant for this value?
-	TCallBack callback(ResetInactivityTimer, NULL);
 	iResetInactivityTimer = CPeriodic::NewL(CActive::EPriorityStandard);
-	iResetInactivityTimer->Start(0, KMinScreenSaverTimeout - KSecond, callback);
+	DisableScreenSaver();
 	}
 // -----------------------------------------------------------------------------
 // CS60MapsAppUi::CS60MapsAppUi()
@@ -207,8 +203,9 @@ CS60MapsAppUi::CS60MapsAppUi() :
 //
 CS60MapsAppUi::~CS60MapsAppUi()
 	{
+	EnableScreenSaver();
 	delete iResetInactivityTimer;
-	iLight->ReleaseLight(KLightTarget);
+	DisableInfiniteBacklight();
 	delete iLight;
 	
 	//delete iCoreTarget;
@@ -781,6 +778,43 @@ TInt CS60MapsAppUi::ResetInactivityTimer(TAny* /*aPtr*/)
 	
 	User::ResetInactivityTime();
 	return ETrue;
+	}
+
+void CS60MapsAppUi::EnableInfiniteBacklight()
+	{
+	iLight->ReserveLightL(KLightTarget);
+	iLight->LightOnL(KLightTarget);
+	
+	DEBUG(_L("Infinite backlight enabled"));
+	}
+
+void CS60MapsAppUi::DisableInfiniteBacklight()
+	{
+	iLight->ReleaseLight(KLightTarget);
+	
+	DEBUG(_L("Infinite backlight disabled"));
+	}
+
+void CS60MapsAppUi::EnableScreenSaver()
+	{
+	if (iResetInactivityTimer->IsActive())
+		{
+		iResetInactivityTimer->Cancel();
+		DEBUG(_L("Screensaver enabled"));
+		}
+	}
+
+void CS60MapsAppUi::DisableScreenSaver()
+	{
+	const TInt KMinScreenSaverTimeout = 5000000; // 5 seconds is minimal value on my phone
+												// ToDo: Is there system constant for this value?
+	TCallBack callback(ResetInactivityTimer, NULL);
+	if (iResetInactivityTimer->IsActive())
+		{
+		iResetInactivityTimer->Cancel();
+		}
+	iResetInactivityTimer->Start(0, KMinScreenSaverTimeout - KSecond, callback);
+	DEBUG(_L("Screensaver disabled"));
 	}
 
 // End of File

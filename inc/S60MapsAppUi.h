@@ -175,6 +175,10 @@ private:
 	
 	TLanguage PreferredLanguage();
 	static TInt ResetInactivityTimer(TAny* aPtr);
+	void EnableInfiniteBacklight();
+	void DisableInfiniteBacklight();
+	void EnableScreenSaver();
+	void DisableScreenSaver();
 
 	
 	// Command handlers
