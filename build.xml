@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<project name="S60Maps" default="source_zip">
+	<!-- Properties: -->
+	<property name="sources_dir" location="sources"/>
+	<property name="temp_dir" location="${sources_dir}/temp"/>
+	<property name="temp_repo_dir" location="${temp_dir}/s60-maps"/>
+
+
+	<!-- Targets: -->
+	<target name="clean">
+		<delete dir="${temp_dir}"/>
+	</target>
+	
+	<target name="source_zip" depends="clean">
+		<mkdir dir="${sources_dir}"/>
+		<exec executable="git" dir="${sources_dir}">
+			<arg value="clone"/>
+			<arg value="--recurse-submodules"/>
+			<arg value="git@github.com:artem78/s60-maps.git"/>
+			<arg value="${temp_repo_dir}"/>
+		</exec>
+		<!-- Get latest annotated tag (release) -->
+		<exec executable="git" outputproperty="tag_name" dir="${temp_repo_dir}">
+			<arg value="describe"/>
+			<arg value="--abbrev=0"/>
+		</exec>
+		<echo>Latest program version: ${tag_name}</echo>
+		<exec executable="git" dir="${temp_repo_dir}">
+			<arg value="checkout"/>
+			<arg value="${tag_name}"/>
+		</exec>
+		<delete dir="${temp_repo_dir}/.git" />
+		<zip destfile="${sources_dir}/s60-maps_complete_sources_${tag_name}.zip" basedir="${temp_dir}"/>
+		<delete dir="${temp_dir}" />
+	</target>
+</project>
