@@ -1,6 +1,6 @@
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/artem78/s60-maps?style=plastic)](https://github.com/artem78/s60-maps/releases/latest)&nbsp;&nbsp;&nbsp;[![GitHub license](https://img.shields.io/github/license/artem78/s60-maps?style=plastic)](https://github.com/artem78/s60-maps/blob/master/LICENSE.txt)&nbsp;&nbsp;&nbsp;![GitHub All Releases](https://img.shields.io/github/downloads/artem78/s60-maps/total?style=plastic)&nbsp;&nbsp;&nbsp;![GitHub last commit](https://img.shields.io/github/last-commit/artem78/s60-maps?style=plastic)
 
-![icon](images/qgn_menu_S60Maps.png)
+![icon](images/program_logo.png)
 # S60Maps
 
 Map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wiki/Symbian#Version_comparison) smartphones powered by [*Series S60 3rd/5th Edition*](https://en.wikipedia.org/wiki/S60_%28software_platform%29#Versions_and_supported_devices).
@@ -51,8 +51,7 @@ Map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wiki/Symb
 
 ## Screenshots
 
-![](images/launch_icon.png "Application launch icon") ![](images/about.png "About dialog") ![](images/menu.png "Main menu") ![](images/demo_video.gif "Demo") ![](images/layers.gif "Different map layers") ![](images/map_with_marker.png "Showing location") ![](images/landmarks.png "Landmarks view") ![](images/landmarks_list.png "Landmarks list")
-
+![](images/demo_video.gif "Demo") ![](images/layers.gif "Different map layers") ![](images/position_and_landmarks.png "Main view with landmarks") ![](images/menu.png "Main menu") ![](images/landmarks_list.png "List of landmarks with filter") ![](images/settings.png "Settings window")
 ## Supported devices
 
 This software was tested on:
