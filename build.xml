@@ -29,7 +29,7 @@
 			<arg value="checkout"/>
 			<arg value="${tag_name}"/>
 		</exec>
-		<zip destfile="${sources_dir}/s60-maps_complete_sources_${tag_name}.zip" basedir="${temp_dir}"
+		<zip destfile="${sources_dir}/S60Maps_full_sources_${tag_name}.zip" basedir="${temp_dir}"
 			excludes="**/.mailmap" level="9"/><!-- note: git dirs and files will be excluded by default -->
 		<delete dir="${temp_dir}" />
 	</target>
