@@ -33,4 +33,15 @@
 			excludes="**/.mailmap" level="9"/><!-- note: git dirs and files will be excluded by default -->
 		<delete dir="${temp_dir}" />
 	</target>
+	
+	<target name="rename_sis">
+		<property name="sis_dir" location="sis/" />
+		<exec executable="git" outputproperty="version">
+			<arg value="describe"/>
+			<arg value="--dirty"/>
+		</exec>
+		<echo>Current version: ${version}</echo>
+		<copy file="${sis_dir}/S60Maps.sis" tofile="${sis_dir}/S60Maps_${version}.sis" overwrite="true" />
+		<copy file="${sis_dir}/S60Maps.sisx" tofile="${sis_dir}/S60Maps_${version}.sisx" overwrite="true" />
+	</target>
 </project>
