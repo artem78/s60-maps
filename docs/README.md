@@ -112,6 +112,7 @@ This is Open Source software licensed under [GNU GPL v3.0](/LICENSE.txt)
 - PayPal: megabyte1024@yandex.com
 - ETH Ethereum / Tether USDT: 0xB14C877b2eAF7E3b4b49df25039122C0545edA74
 - Webmoney WMZ: Z598881055273
+- Sberbank card: 5469 4009 8490 5476
 
 ## See also
 
