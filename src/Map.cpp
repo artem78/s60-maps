@@ -670,6 +670,11 @@ CLandmarksLayer::CLandmarksLayer(CMapControl* aMapView, CPosLandmarkDatabase* aL
 CLandmarksLayer::~CLandmarksLayer()
 	{
 	ReleaseLandmarkResources();
+	if (iVisibleLandmarks)
+		{
+		iVisibleLandmarks->ResetAndDestroy();
+		}
+	delete iVisibleLandmarks;
 	delete iIcon;
 	}
 
@@ -694,6 +699,9 @@ void CLandmarksLayer::ConstructL()
 	CS60MapsApplication* app = static_cast<CS60MapsApplication*>(appUi->Application());
 	
 	iIcon = app->LoadIconL(EMbmIconsStar, EMbmIconsStar_mask);
+	
+	iLastTopLeftCoord = TCoordinate(0, 0);
+	iLastBottomRightCoord = TCoordinate(0, 0);
 	}
 
 void CLandmarksLayer::Draw(CWindowGc &aGc)
@@ -710,11 +718,17 @@ void CLandmarksLayer::Draw(CWindowGc &aGc)
 		}
 	}
 
-CArrayPtr<CPosLandmark>* CLandmarksLayer::GetVisibleLandmarksL()
+void CLandmarksLayer::ReloadLandmarksListL()
 	{
 	const TInt KMaxVisibleLandmarksLimit = 100;
 	
-	CArrayPtr<CPosLandmark>* landmarks = NULL;
+	
+	if (iVisibleLandmarks)
+		{
+		iVisibleLandmarks->ResetAndDestroy();
+		}
+	delete iVisibleLandmarks;
+	iVisibleLandmarks = NULL;
 	
 	DEBUG(_L("Start landmarks queing"));
 	
@@ -745,7 +759,7 @@ CArrayPtr<CPosLandmark>* CLandmarksLayer::GetVisibleLandmarksL()
 		CPosLmOperation* landmarkOp2 = iLandmarksDb->PreparePartialLandmarksL(landmarkIds);
 		CleanupStack::PushL(landmarkOp2);
 		landmarkOp2->ExecuteL();
-		landmarks = iLandmarksDb->TakePreparedPartialLandmarksL(landmarkOp2);
+		iVisibleLandmarks = iLandmarksDb->TakePreparedPartialLandmarksL(landmarkOp2);
 	
 		CleanupStack::PopAndDestroy(3, landmarkIter);
 		}
@@ -753,26 +767,44 @@ CArrayPtr<CPosLandmark>* CLandmarksLayer::GetVisibleLandmarksL()
 	CleanupStack::PopAndDestroy(2, landmarkSearch);
 	
 	DEBUG(_L("End landmarks queing (found %d items)"), landmarksCount);
-	
-	return landmarks;
 	}
 
 void CLandmarksLayer::DrawL(CWindowGc &aGc)
 	{
-	CArrayPtr<CPosLandmark>* landmarks = GetVisibleLandmarksL();
+	TCoordinate topLeftCoord, bottomRightCoord;
 	
-	if (landmarks && landmarks->Count())
-		{
-		DrawLandmarks(aGc, landmarks);
+	iMapView->Bounds(topLeftCoord, bottomRightCoord);
+	if (
+			(topLeftCoord.Latitude() != iLastTopLeftCoord.Latitude()) ||
+			(topLeftCoord.Longitude() != iLastTopLeftCoord.Longitude()) ||
+			(bottomRightCoord.Latitude() != iLastBottomRightCoord.Latitude()) ||
+			(bottomRightCoord.Longitude() != iLastBottomRightCoord.Longitude())
+		)
 		
-		landmarks->ResetAndDestroy();
+		{ // Update cached landmarks list only if view bounds changed
+		iLastTopLeftCoord.SetCoordinate(topLeftCoord.Latitude(), topLeftCoord.Longitude());
+		iLastBottomRightCoord.SetCoordinate(bottomRightCoord.Latitude(), bottomRightCoord.Longitude());
+		
+		ReloadLandmarksListL();
+		
+		DEBUG(_L("Landmarks list updated"));
 		}
-	delete landmarks;
+	else
+		{
+		DEBUG(_L("Skip landmarks list update"));
+		}
+	
+	DrawLandmarks(aGc);
 	}
 
-void CLandmarksLayer::DrawLandmarks(CWindowGc &aGc,
-		const CArrayPtr<CPosLandmark>* aLandmarks)
+void CLandmarksLayer::DrawLandmarks(CWindowGc &aGc)
 	{
+	if ((not iVisibleLandmarks) || (not iVisibleLandmarks->Count()))
+		{
+		DEBUG(_L("No landmarks to draw"));
+		return;
+		}
+	
 	DEBUG(_L("Landmarks redrawing started"));
 	
 	//const TRgb KPenColor(59, 120, 162);
@@ -780,9 +812,9 @@ void CLandmarksLayer::DrawLandmarks(CWindowGc &aGc,
 	aGc.SetPenColor(KPenColor); // For drawing text
 	aGc.UseFont(iMapView->DefaultFont());
 	
-	for (TInt i = 0; i < aLandmarks->Count(); i++)
+	for (TInt i = 0; i < iVisibleLandmarks->Count(); i++)
 		{	
-		CPosLandmark* landmark = /*aLandmarks[i]*/ aLandmarks->At(i);
+		CPosLandmark* landmark = /*iVisibleLandmarks[i]*/ iVisibleLandmarks->At(i);
 		
 		if (!landmark) continue;
 		
