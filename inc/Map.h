@@ -203,10 +203,12 @@ private:
 	CPosLandmarkDatabase* iLandmarksDb; // Not owned
 	CAknIcon* iIcon;
 	
-	// Result may be NULL if nothing found
-	CArrayPtr<CPosLandmark>* GetVisibleLandmarksL(); // ToDo: Is moving to another class needed?
+	TCoordinate iLastTopLeftCoord, iLastBottomRightCoord;
+	CArrayPtr<CPosLandmark>* iVisibleLandmarks; // May be NULL if no landmarks
+	
+	void ReloadLandmarksListL(); // ToDo: Is moving to another class needed?
 	void DrawL(CWindowGc &aGc);
-	void DrawLandmarks(CWindowGc &aGc, const CArrayPtr<CPosLandmark>* aLandmarks);
+	void DrawLandmarks(CWindowGc &aGc);
 	void DrawLandmark(CWindowGc &aGc, const CPosLandmark* aLandmark);
 	};
 
