@@ -244,6 +244,7 @@ public:
 	void ReloadVisibleAreaL();
 	inline const CFont* DefaultFont() const
 		{ return iDefaultFont; };
+	void NotifyLandmarksUpdated();
 
 	};
 	
