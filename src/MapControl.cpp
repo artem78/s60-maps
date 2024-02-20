@@ -901,4 +901,9 @@ void CMapControl::ReloadVisibleAreaL()
 	static_cast<CTiledMapLayer*>(iLayers[ETiledMapLayerId])->ReloadVisibleAreaL();
 	}
 
+void CMapControl::NotifyLandmarksUpdated()
+	{
+	static_cast<CLandmarksLayer*>(iLayers[ELandmarksLayerId])->NotifyLandmarksUpdated();
+	}
+
 // End of File

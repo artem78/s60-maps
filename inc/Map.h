@@ -205,11 +205,15 @@ private:
 	
 	TCoordinate iLastTopLeftCoord, iLastBottomRightCoord;
 	CArrayPtr<CPosLandmark>* iVisibleLandmarks; // May be NULL if no landmarks
+	TBool iReloadNeeded; // Used for indication if landmarks may be changed outside (for ex. created/deleted/renamed)
 	
 	void ReloadLandmarksListL(); // ToDo: Is moving to another class needed?
 	void DrawL(CWindowGc &aGc);
 	void DrawLandmarks(CWindowGc &aGc);
 	void DrawLandmark(CWindowGc &aGc, const CPosLandmark* aLandmark);
+	
+public:
+	inline void NotifyLandmarksUpdated() { iReloadNeeded = ETrue; };
 	};
 
 

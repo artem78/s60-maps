@@ -663,7 +663,8 @@ void CScaleBarLayer::ReloadStringsFromResourceL()
 
 CLandmarksLayer::CLandmarksLayer(CMapControl* aMapView, CPosLandmarkDatabase* aLmDb):
 		CMapLayerBase(aMapView),
-		iLandmarksDb(aLmDb)
+		iLandmarksDb(aLmDb),
+		iReloadNeeded(EFalse)
 	{
 	}
 
@@ -766,6 +767,8 @@ void CLandmarksLayer::ReloadLandmarksListL()
 		
 	CleanupStack::PopAndDestroy(2, landmarkSearch);
 	
+	iReloadNeeded = EFalse;
+	
 	DEBUG(_L("End landmarks queing (found %d items)"), landmarksCount);
 	}
 
@@ -775,13 +778,14 @@ void CLandmarksLayer::DrawL(CWindowGc &aGc)
 	
 	iMapView->Bounds(topLeftCoord, bottomRightCoord);
 	if (
+			iReloadNeeded ||
 			(topLeftCoord.Latitude() != iLastTopLeftCoord.Latitude()) ||
 			(topLeftCoord.Longitude() != iLastTopLeftCoord.Longitude()) ||
 			(bottomRightCoord.Latitude() != iLastBottomRightCoord.Latitude()) ||
 			(bottomRightCoord.Longitude() != iLastBottomRightCoord.Longitude())
 		)
 		
-		{ // Update cached landmarks list only if view bounds changed
+		{ // Update cached landmarks list only if view bounds changed or force update triggered
 		iLastTopLeftCoord.SetCoordinate(topLeftCoord.Latitude(), topLeftCoord.Longitude());
 		iLastBottomRightCoord.SetCoordinate(bottomRightCoord.Latitude(), bottomRightCoord.Longitude());
 		
