@@ -11,6 +11,7 @@
 // INCLUDES
 #include <e32std.h>
 #include <e32base.h>
+#include <lbsposition.h>
 
 // CLASS DECLARATION
 
@@ -47,6 +48,19 @@ public:
 		{
 		return TPoint(iTl.iX, iBr.iY);
 		};
+	};
+
+
+// Similar as TRect but for couple of TCoordinate objects
+class TCoordRect
+	{
+public:
+	TCoordinate iTlCoord, iBrCoord;
+	
+	void SetCoords(const TCoordinate &aTlCoord, const TCoordinate &aBrCoord);
+	
+    friend bool operator == (const TCoordRect &aCoordRect1, const TCoordRect &aCoordRect2);
+    friend bool operator != (const TCoordRect &aCoordRect1, const TCoordRect &aCoordRect2);
 	};
 
 #endif // UTILS_H

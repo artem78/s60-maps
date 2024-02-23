@@ -80,3 +80,25 @@ TRectEx::TRectEx(TInt aAx, TInt aAy, TInt aBx, TInt aBy)
 	{
 
 	}
+
+// TCoordRect
+
+void TCoordRect::SetCoords(const TCoordinate &aTlCoord, const TCoordinate &aBrCoord)
+	{
+	iTlCoord = aTlCoord;
+	iBrCoord = aBrCoord;
+	}
+
+bool operator == (const TCoordRect &aCoordRect1, const TCoordRect &aCoordRect2)
+	{
+	return (aCoordRect1.iTlCoord.Longitude() == aCoordRect2.iTlCoord.Longitude())
+			&& (aCoordRect1.iTlCoord.Latitude() == aCoordRect2.iTlCoord.Latitude())
+			&& (aCoordRect1.iBrCoord.Longitude() == aCoordRect2.iBrCoord.Longitude())
+			&& (aCoordRect1.iBrCoord.Latitude() == aCoordRect2.iBrCoord.Latitude());
+	}
+
+bool operator != (const TCoordRect &aCoordRect1, const TCoordRect &aCoordRect2)
+	{
+	return !(aCoordRect1 == aCoordRect2);
+	}
+

@@ -731,6 +731,11 @@ void CMapControl::Bounds(TCoordinate &aTopLeftCoord, TCoordinate &aBottomRightCo
 	aBottomRightCoord = ScreenCoordsToGeoCoords(Rect().iBr - TPoint(1, 1));
 	}
 
+void CMapControl::Bounds(TCoordRect &aCoordRect) const
+	{
+	Bounds(aCoordRect.iTlCoord, aCoordRect.iBrCoord);
+	}
+
 void CMapControl::Bounds(TTile &aTopLeftTile, TTile &aBottomRightTile) const
 	{
 	TPoint topLeftProjection = ScreenCoordsToProjectionCoords(Rect().iTl);
