@@ -22,7 +22,6 @@
 #include <epos_cposlandmarksearch.h>
 #include <epos_cposlmareacriteria.h>
 #include "icons.mbg"
-#include "Utils.h"
 #include "LBSSatelliteExtended.h"
 
 CMapLayerBase::CMapLayerBase(/*const*/ CMapControl* aMapView) :
@@ -701,8 +700,7 @@ void CLandmarksLayer::ConstructL()
 	
 	iIcon = app->LoadIconL(EMbmIconsStar, EMbmIconsStar_mask);
 	
-	iLastTopLeftCoord = TCoordinate(0, 0);
-	iLastBottomRightCoord = TCoordinate(0, 0);
+	iLastCoordRect.SetCoords(TCoordinate(0, 0), TCoordinate(0, 0));
 	}
 
 void CLandmarksLayer::Draw(CWindowGc &aGc)
@@ -774,20 +772,16 @@ void CLandmarksLayer::ReloadLandmarksListL()
 
 void CLandmarksLayer::DrawL(CWindowGc &aGc)
 	{
-	TCoordinate topLeftCoord, bottomRightCoord;
+	TCoordRect coordRect;
 	
-	iMapView->Bounds(topLeftCoord, bottomRightCoord);
+	iMapView->Bounds(coordRect);
 	if (
 			iReloadNeeded ||
-			(topLeftCoord.Latitude() != iLastTopLeftCoord.Latitude()) ||
-			(topLeftCoord.Longitude() != iLastTopLeftCoord.Longitude()) ||
-			(bottomRightCoord.Latitude() != iLastBottomRightCoord.Latitude()) ||
-			(bottomRightCoord.Longitude() != iLastBottomRightCoord.Longitude())
+			(coordRect != iLastCoordRect)
 		)
 		
 		{ // Update cached landmarks list only if view bounds changed or force update triggered
-		iLastTopLeftCoord.SetCoordinate(topLeftCoord.Latitude(), topLeftCoord.Longitude());
-		iLastBottomRightCoord.SetCoordinate(bottomRightCoord.Latitude(), bottomRightCoord.Longitude());
+		iLastCoordRect = coordRect;
 		
 		ReloadLandmarksListL();
 		

@@ -197,3 +197,26 @@ TBool StrUtils::EndsWith(const TDesC8& aStr, const TDesC8& aSubstr, TBool aIgnor
 	//...
 	}
 */
+
+
+// TCoordRect
+
+void TCoordRect::SetCoords(const TCoordinate &aTlCoord, const TCoordinate &aBrCoord)
+	{
+	iTlCoord = aTlCoord;
+	iBrCoord = aBrCoord;
+	}
+
+bool operator == (const TCoordRect &aCoordRect1, const TCoordRect &aCoordRect2)
+	{
+	return (aCoordRect1.iTlCoord.Longitude() == aCoordRect2.iTlCoord.Longitude())
+			&& (aCoordRect1.iTlCoord.Latitude() == aCoordRect2.iTlCoord.Latitude())
+			&& (aCoordRect1.iBrCoord.Longitude() == aCoordRect2.iBrCoord.Longitude())
+			&& (aCoordRect1.iBrCoord.Latitude() == aCoordRect2.iBrCoord.Latitude());
+	}
+
+bool operator != (const TCoordRect &aCoordRect1, const TCoordRect &aCoordRect2)
+	{
+	return !(aCoordRect1 == aCoordRect2);
+	}
+
