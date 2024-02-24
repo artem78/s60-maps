@@ -59,6 +59,9 @@ public:
 	
 	void SetCoords(const TCoordinate &aTlCoord, const TCoordinate &aBrCoord);
 	
+	// Returns ETrue if given rect completely located inside this rect
+	TBool Contains(const TCoordRect &aCoordRect) const;
+	
     friend bool operator == (const TCoordRect &aCoordRect1, const TCoordRect &aCoordRect2);
     friend bool operator != (const TCoordRect &aCoordRect1, const TCoordRect &aCoordRect2);
 	};

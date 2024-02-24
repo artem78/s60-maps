@@ -89,6 +89,14 @@ void TCoordRect::SetCoords(const TCoordinate &aTlCoord, const TCoordinate &aBrCo
 	iBrCoord = aBrCoord;
 	}
 
+TBool TCoordRect::Contains(const TCoordRect &aCoordRect) const
+	{
+	return (aCoordRect.iTlCoord.Latitude() <= iTlCoord.Latitude())
+			&& (aCoordRect.iTlCoord.Longitude() >= iTlCoord.Longitude())
+			&& (aCoordRect.iBrCoord.Latitude() >= iBrCoord.Latitude())
+			&& (aCoordRect.iBrCoord.Longitude() <= iBrCoord.Longitude());
+	}
+
 bool operator == (const TCoordRect &aCoordRect1, const TCoordRect &aCoordRect2)
 	{
 	return (aCoordRect1.iTlCoord.Longitude() == aCoordRect2.iTlCoord.Longitude())
