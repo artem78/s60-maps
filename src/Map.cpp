@@ -853,7 +853,8 @@ void CLandmarksLayer::DrawLandmark(CWindowGc &aGc,
 		TRect dstRect(landmarkPoint, TSize(0, 0));
 		dstRect.Grow(iconSize.iWidth / 2, iconSize.iHeight / 2);
 		TRect srcRect(TPoint(0, 0), iconSize);
-		aGc.DrawBitmapMasked(dstRect, iIcon->Bitmap(), srcRect, iIcon->Mask(), 0);
+		//aGc.DrawBitmapMasked(dstRect, iIcon->Bitmap(), srcRect, iIcon->Mask(), 0);
+		aGc.BitBltMasked(dstRect.iTl, iIcon->Bitmap(), srcRect, iIcon->Mask(), EFalse);
 	}
 	
 	
