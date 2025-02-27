@@ -1507,7 +1507,7 @@ void CTileBitmapManager::StartDownloadTileL(const TTile &aTile)
 	if (tileUrl.Left(8) == KHttpsUrlStart)
 	{
 		DEBUG(_L("https-proxy used"));
-		_LIT8(KProxyUrl, "http://nnp.nnchan.ru:80/mahoproxy.php?u=");
+		_LIT8(KProxyUrl, "http://nnp.nnchan.ru:80/mahoproxy.php?u="); // todo: make configurable from the settings
 		HBufC8* encodedTileUrl = EscapeUtils::EscapeEncodeL(tileUrl, EscapeUtils::EEscapeUrlEncoded);
 		CleanupStack::PushL(encodedTileUrl);
 
