@@ -108,17 +108,16 @@ void CS60MapsAppUi::ConstructL()
 	// https://www.openstreetmap.org/?layers=H
 	iAvailableTileProviders[3] = new (ELeave) TTileProvider(
 			_L("humanitarian"), _L("Humanitarian"),
-			_L8("http://a.tile.openstreetmap.fr/hot/{$z}/{$x}/{$y}.png"),
+			_L8("https://a.tile.openstreetmap.fr/hot/{$z}/{$x}/{$y}.png"),
 			0, 20);
 	
-	/*// OpenTopoMap
+	// OpenTopoMap
 	// https://wiki.openstreetmap.org/wiki/OpenTopoMap
 	// https://opentopomap.org/
-	// FixMe: Doesn`t work without SSL 
 	iAvailableTileProviders[4] = new (ELeave) TTileProvider(
 			_L("opentopomap"), _L("OpenTopoMap"),
-			_L8("http://tile.opentopomap.org/{$z}/{$x}/{$y}.png"),
-			0, 17);*/
+			_L8("https://tile.opentopomap.org/{$z}/{$x}/{$y}.png"),
+			0, /*17*/ 15);
 	
 	iActiveTileProvider = iAvailableTileProviders[0]; // Use first
 	
