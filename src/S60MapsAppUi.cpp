@@ -117,7 +117,7 @@ void CS60MapsAppUi::ConstructL()
 	iAvailableTileProviders[4] = new (ELeave) TTileProvider(
 			_L("opentopomap"), _L("OpenTopoMap"),
 			_L8("https://tile.opentopomap.org/{$z}/{$x}/{$y}.png"),
-			0, 17);
+			0, /*17*/ 15);
 	
 	iActiveTileProvider = iAvailableTileProviders[0]; // Use first
 	
