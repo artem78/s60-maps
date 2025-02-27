@@ -2,16 +2,19 @@
 <project name="S60Maps" default="source_zip">
 	<!-- Properties: -->
 	<property name="sources_dir" location="sources"/>
-	<property name="temp_dir" location="${sources_dir}/temp"/>
+	<!--<echo>${java.io.tmpdir}</echo>-->
+	<tempfile property="temp_dir" destDir="${java.io.tmpdir}" prefix="s60maps_build"/>
+	<!--<echo>Temp dir = ${temp_dir}</echo>-->
 	<property name="temp_repo_dir" location="${temp_dir}/s60-maps"/>
 
 
 	<!-- Targets: -->
 	<target name="clean">
-		<delete dir="${temp_dir}"/>
+		<!--<delete dir="${temp_dir}"/>-->
 	</target>
 	
 	<target name="source_zip" depends="clean" description="Makes complete archive with sources including submodules">
+		<mkdir dir="${temp_dir}"/>
 		<mkdir dir="${sources_dir}"/>
 		<exec executable="git" dir="${sources_dir}">
 			<arg value="clone"/>
