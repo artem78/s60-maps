@@ -24,6 +24,7 @@
 #include "icons.mbg"
 #include "Utils.h"
 #include "LBSSatelliteExtended.h"
+#include "EscapeUtils.h"
 
 CMapLayerBase::CMapLayerBase(/*const*/ CMapControl* aMapView) :
 		iMapView(aMapView)
@@ -1501,9 +1502,33 @@ void CTileBitmapManager::StartDownloadTileL(const TTile &aTile)
 	tileUrl.CreateL(iTileProvider->iTileUrlTemplate.Length() + KReserveLength);
 	tileUrl.CleanupClosePushL();
 	iTileProvider->TileUrl(tileUrl, aTile);
-	iHTTPClient->GetL(tileUrl);
-	// SetActive()
-	DEBUG(_L8("Started download tile %S from url %S"), &aTile.AsDes8(), &tileUrl);
+	
+	_LIT8(KHttpsUrlStart, "https://");
+	if (tileUrl.Left(8) == KHttpsUrlStart)
+	{
+		DEBUG(_L("https-proxy used"));
+		_LIT8(KProxyUrl, "http://nnp.nnchan.ru:80/mahoproxy.php?u=");
+		HBufC8* encodedTileUrl = EscapeUtils::EscapeEncodeL(tileUrl, EscapeUtils::EEscapeUrlEncoded);
+		CleanupStack::PushL(encodedTileUrl);
+
+		RBuf8 proxifiedTileUrl;
+		proxifiedTileUrl.CreateL(KProxyUrl().Length() + encodedTileUrl->Length());
+		proxifiedTileUrl.CleanupClosePushL();
+		proxifiedTileUrl.Copy(KProxyUrl);
+		proxifiedTileUrl.Append(*encodedTileUrl);
+
+		iHTTPClient->GetL(proxifiedTileUrl);
+		// SetActive()
+		DEBUG(_L8("Started download tile %S from url %S"), &aTile.AsDes8(), &proxifiedTileUrl);
+		
+		CleanupStack::PopAndDestroy(2, encodedTileUrl);
+	}
+	else
+	{
+		iHTTPClient->GetL(tileUrl);
+		// SetActive()
+		DEBUG(_L8("Started download tile %S from url %S"), &aTile.AsDes8(), &tileUrl);
+	}
 	CleanupStack::PopAndDestroy(&tileUrl);
 	}
 
