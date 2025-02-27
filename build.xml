@@ -11,7 +11,7 @@
 		<delete dir="${temp_dir}"/>
 	</target>
 	
-	<target name="source_zip" depends="clean">
+	<target name="source_zip" depends="clean" description="Makes complete archive with sources including submodules">
 		<mkdir dir="${sources_dir}"/>
 		<exec executable="git" dir="${sources_dir}">
 			<arg value="clone"/>
@@ -34,7 +34,7 @@
 		<delete dir="${temp_dir}" />
 	</target>
 	
-	<target name="rename_sis">
+	<target name="rename_sis" description="Copy exists *.sis(x) files (should be manually build first in IDE) with adding current version to filename">
 		<property name="sis_dir" location="sis/" />
 		<exec executable="git" outputproperty="version">
 			<arg value="describe"/>
