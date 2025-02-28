@@ -16,19 +16,19 @@
 	<target name="source_zip" depends="clean" description="Makes complete archive with sources including submodules">
 		<mkdir dir="${temp_dir}"/>
 		<mkdir dir="${sources_dir}"/>
-		<exec executable="git" dir="${sources_dir}">
+		<exec executable="git" dir="${sources_dir}" failonerror="true">
 			<arg value="clone"/>
 			<arg value="--recurse-submodules"/>
 			<arg value="git@github.com:artem78/s60-maps.git"/>
 			<arg value="${temp_repo_dir}"/>
 		</exec>
 		<!-- Get latest annotated tag (release) -->
-		<exec executable="git" outputproperty="tag_name" dir="${temp_repo_dir}">
+		<exec executable="git" outputproperty="tag_name" dir="${temp_repo_dir}" failonerror="true">
 			<arg value="describe"/>
 			<arg value="--abbrev=0"/>
 		</exec>
 		<echo>Latest program version: ${tag_name}</echo>
-		<exec executable="git" dir="${temp_repo_dir}">
+		<exec executable="git" dir="${temp_repo_dir}" failonerror="true">
 			<arg value="checkout"/>
 			<arg value="${tag_name}"/>
 		</exec>
@@ -39,7 +39,7 @@
 	
 	<target name="rename_sis" description="Copy exists *.sis(x) files (should be manually build first in IDE) with adding current version to filename">
 		<property name="sis_dir" location="sis/" />
-		<exec executable="git" outputproperty="version">
+		<exec executable="git" outputproperty="version" failonerror="true">
 			<arg value="describe"/>
 			<arg value="--dirty"/>
 		</exec>
