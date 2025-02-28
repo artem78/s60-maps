@@ -9,12 +9,13 @@ Map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wiki/Symb
 
 ## Features
 
-- Map with five [OpenStreetMap](https://www.openstreetmap.org/) layers available:
-  - [OSM Standard layer](https://wiki.openstreetmap.org/wiki/Standard_tile_layer)
+- Several map layers available:
+  - [OpenStreetMap Standard layer](https://wiki.openstreetmap.org/wiki/Standard_tile_layer)
   - [Cycle Map layer](https://wiki.openstreetmap.org/wiki/OpenCycleMap)
   - [Transport Map layer](https://wiki.openstreetmap.org/wiki/Transport_Map)
   - [Humanitarian Map layer](https://wiki.openstreetmap.org/wiki/Humanitarian_map_style)
   - [OpenTopoMap](https://wiki.openstreetmap.org/wiki/OpenTopoMap)
+  - [Esri World Imagery (Clarity) Beta](https://wiki.openstreetmap.org/wiki/Esri)
 - Show phone location on the map using GPS
 - Can work without GPS (no positioning)
 - Map tiles caching (you can see previously viewed area without network connection)
