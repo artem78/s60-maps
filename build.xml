@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="S60Maps" default="source_zip">
+<project name="S60Maps" default="make_sis">
 	<!-- Properties: -->
 	<property name="sources_dir" location="sources"/>
 	<!--<echo>${java.io.tmpdir}</echo>-->
@@ -9,8 +9,54 @@
 
 
 	<!-- Targets: -->
-	<target name="clean">
+	<target name="init">
+		<exec executable="devices" failonerror="true">
+			<arg value="-setdefault" />
+			<arg value="@S60_3rd_FP1:com.nokia.s60" />
+		</exec>
+	</target>
+	
+	<target name="clean" depends="init">
 		<!--<delete dir="${temp_dir}"/>-->
+		<delete file="sis/S60Maps.sis" />
+		<delete file="sis/S60Maps.sisx" />
+		<!--<delete dir="sis" includes="*.sis, *.sisx" />-->
+		
+		<exec executable="${basedir}/group/abld.bat" dir="group" failonerror="true" failifexecutionfails="false">
+			<arg value="reallyclean" />
+		</exec>
+		<exec executable="bldmake" dir="group" failonerror="true">
+			<arg value="clean" />
+		</exec>
+	</target>
+	
+	<target name="compile" depends="clean">
+		<exec executable="bldmake" dir="group" failonerror="true">
+			<arg value="bldfiles" />
+		</exec>
+		<exec executable="${basedir}/group/abld.bat" dir="group" failonerror="true">
+			<arg value="build" />
+			<arg value="gcce" />
+			<arg value="urel" />
+		</exec>
+	</target>
+	
+	<target name="make_sis" depends="compile" description="Create sis(x) package file">
+		<property name="sis_dir" location="sis/" />
+		<exec executable="git" outputproperty="version" failonerror="true">
+			<arg value="describe"/>
+			<arg value="--dirty"/>
+		</exec>
+		<echo>Current version: ${version}</echo>
+	
+		<exec executable="makesis" dir="sis" failonerror="true">
+			<arg value="-v" /> <!-- verbose -->
+			<arg value="C:\Symbian\9.2\S60_3rd_FP1\epoc32\build\Symbian\Carbide\workspace\s60-maps\group\_resolvedS60Maps.pkg" />
+			<arg value="${sis_dir}/S60Maps.sis" />
+		</exec>
+		
+		<move file="${sis_dir}/S60Maps.sis" tofile="${sis_dir}/S60Maps_${version}.sis" overwrite="true" />
+		<!--<move file="${sis_dir}/S60Maps.sisx" tofile="${sis_dir}/S60Maps_${version}.sisx" overwrite="true" />-->
 	</target>
 	
 	<target name="source_zip" depends="clean" description="Makes complete archive with sources including submodules">
@@ -37,14 +83,14 @@
 		<delete dir="${temp_dir}" />
 	</target>
 	
-	<target name="rename_sis" description="Copy exists *.sis(x) files (should be manually build first in IDE) with adding current version to filename">
+	<!--<target name="rename_sis" depends="make_sis" description="Copy exists *.sis(x) files (should be manually build first in IDE) with adding current version to filename">
 		<property name="sis_dir" location="sis/" />
 		<exec executable="git" outputproperty="version" failonerror="true">
 			<arg value="describe"/>
-			<arg value="--dirty"/>
+			<arg value="- - dirty"/>
 		</exec>
 		<echo>Current version: ${version}</echo>
 		<copy file="${sis_dir}/S60Maps.sis" tofile="${sis_dir}/S60Maps_${version}.sis" overwrite="true" />
 		<copy file="${sis_dir}/S60Maps.sisx" tofile="${sis_dir}/S60Maps_${version}.sisx" overwrite="true" />
-	</target>
+	</target>-->
 </project>
