@@ -137,7 +137,7 @@ public:
 	
 	// Custom properties and methods
 public:
-	inline const TFixedArray<TTileProvider*, 5>& AvailableTileProviders()
+	inline const TFixedArray<TTileProvider*, 6>& AvailableTileProviders()
 			{ return iAvailableTileProviders;  };
 	inline TTileProvider* /*Active*/TileProvider()
 			{ return iActiveTileProvider; };
@@ -161,7 +161,7 @@ private:
 	CRemConInterfaceSelector* iInterfaceSelector;
 	CRemConCoreApiTarget* iCoreTarget;
 	
-	TFixedArray<TTileProvider*, 5> iAvailableTileProviders;
+	TFixedArray<TTileProvider*, 6> iAvailableTileProviders;
 	//TBuf<64> iTileProviderId
 	TTileProvider* iActiveTileProvider;
 	
