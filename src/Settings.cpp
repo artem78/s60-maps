@@ -75,7 +75,7 @@ void CSettings::ExternalizeL(RWriteStream& aStream) const
 	aStream << (TInt8) iIsSignalIndicatorVisible; // No built-in bool to stream conversion
 	aStream << (TInt8) iIsScaleBarVisible;
 	
-	// Added in version X.X
+	// Added in version 1.10
 	aStream << static_cast<TInt8>(iSignalIndicatorType);
 	
 	// Added in version X.X
@@ -108,7 +108,7 @@ void CSettings::DoInternalizeL(RReadStream& aStream)
 	aStream >> isScaleBarVisible;
 	iIsScaleBarVisible = (TBool) isScaleBarVisible;
 	
-	// Added in version X.X
+	// Added in version 1.10
 	aStream >> signalIndicatorType;
 	iSignalIndicatorType = static_cast<TSignalIndicatorType>(signalIndicatorType);
 	
