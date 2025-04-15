@@ -70,3 +70,9 @@ CHARACTER_SET UTF8
 #define qtn_signal_indicator_type "Вид индикатора сигнала"
 #define qtn_signal_indicator_general_type "Общий"
 #define qtn_signal_indicator_per_satellite_type "По спутникам"
+
+// Added in version X.X
+
+#define qtn_use_https_proxy "Https-прокси"
+#define qtn_enabled "Вкл."
+#define qtn_disabled "Откл."

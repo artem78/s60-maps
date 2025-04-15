@@ -57,6 +57,13 @@ CAknSettingItem* CSettingsListBox::CreateSettingItemL(TInt aSettingId)
 			settingItem->SetHidden(!isVisible);
 			}
 			break;
+			
+		case ESettingUseHttpsProxy:
+			{
+			settingItem = new (ELeave) CAknBinaryPopupSettingItem(aSettingId,
+											appUi->Settings()->iUseHttpsProxy);
+			}
+			break;
 		}
 	
 	return settingItem;

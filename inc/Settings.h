@@ -80,6 +80,7 @@ public:
 	TBool iIsSignalIndicatorVisible;
 	TBool iIsScaleBarVisible;
 	TSignalIndicatorType iSignalIndicatorType;
+	TBool iUseHttpsProxy;
 	
 public:
 	CSettings();

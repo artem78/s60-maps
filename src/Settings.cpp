@@ -31,7 +31,8 @@ CSettings::CSettings() :
 		iLanguage(ELangEnglish),
 		iIsSignalIndicatorVisible(ETrue),
 		iIsScaleBarVisible(ETrue),
-		iSignalIndicatorType(ESignalIndicatorGeneralType)
+		iSignalIndicatorType(ESignalIndicatorGeneralType),
+		iUseHttpsProxy(ETrue)
 	{
 	}
 
@@ -76,6 +77,9 @@ void CSettings::ExternalizeL(RWriteStream& aStream) const
 	
 	// Added in version X.X
 	aStream << static_cast<TInt8>(iSignalIndicatorType);
+	
+	// Added in version X.X
+	aStream << static_cast<TInt8>(iUseHttpsProxy);
 	}
 
 void CSettings::DoInternalizeL(RReadStream& aStream)
@@ -84,7 +88,7 @@ void CSettings::DoInternalizeL(RReadStream& aStream)
 	
 	TCardinality zoom, language;
 	TInt8 isLandmarksVisible, isSignalIndicatorVisible, isScaleBarVisible,
-		signalIndicatorType;
+		signalIndicatorType, useHttpsProxy;
 	
 	aStream >> iLat;
 	aStream >> iLon;
@@ -107,6 +111,10 @@ void CSettings::DoInternalizeL(RReadStream& aStream)
 	// Added in version X.X
 	aStream >> signalIndicatorType;
 	iSignalIndicatorType = static_cast<TSignalIndicatorType>(signalIndicatorType);
+	
+	// Added in version X.X
+	aStream >> useHttpsProxy;
+	iUseHttpsProxy = static_cast<TBool>(useHttpsProxy);
 	}
 
 void CSettings::InternalizeL(RReadStream& aStream)

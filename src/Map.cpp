@@ -1488,6 +1488,8 @@ CTileBitmapManagerItem* CTileBitmapManager::Find(const TTile &aTile) const
 
 void CTileBitmapManager::StartDownloadTileL(const TTile &aTile)
 	{
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
+	
 	if (iIsOfflineMode)
 		return;
 	
@@ -1504,7 +1506,7 @@ void CTileBitmapManager::StartDownloadTileL(const TTile &aTile)
 	iTileProvider->TileUrl(tileUrl, aTile);
 	
 	_LIT8(KHttpsUrlStart, "https://");
-	if (tileUrl.Left(8) == KHttpsUrlStart)
+	if (appUi->Settings()->iUseHttpsProxy && tileUrl.Left(8) == KHttpsUrlStart)
 	{
 		DEBUG(_L("https-proxy used"));
 		_LIT8(KProxyUrl, "http://nnp.nnchan.ru:80/mahoproxy.php?u="); // todo: make configurable from the settings
