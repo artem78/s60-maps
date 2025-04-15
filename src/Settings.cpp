@@ -87,34 +87,33 @@ void CSettings::DoInternalizeL(RReadStream& aStream)
 	// FixMe: Reads mess in new settings for old config file (make sure to validate them)
 	
 	TCardinality zoom, language;
-	TInt8 isLandmarksVisible, isSignalIndicatorVisible, isScaleBarVisible,
-		signalIndicatorType, useHttpsProxy;
+	TInt8 int8Val;
 	
 	aStream >> iLat;
 	aStream >> iLon;
 	aStream >> zoom;
 	iZoom = (TInt) zoom;
 	aStream >> iTileProviderId;
-	aStream >> isLandmarksVisible;
-	iIsLandmarksVisible = (TBool) isLandmarksVisible;
+	aStream >> int8Val;
+	iIsLandmarksVisible = (TBool) int8Val;
 
 	// Added in version 1.7
 	aStream >> language;
 	iLanguage = static_cast<TLanguage>((TInt) language);
 	
 	// Added in version 1.8
-	aStream >> isSignalIndicatorVisible;
-	iIsSignalIndicatorVisible = (TBool) isSignalIndicatorVisible;
-	aStream >> isScaleBarVisible;
-	iIsScaleBarVisible = (TBool) isScaleBarVisible;
+	aStream >> int8Val;
+	iIsSignalIndicatorVisible = (TBool) int8Val;
+	aStream >> int8Val;
+	iIsScaleBarVisible = (TBool) int8Val;
 	
 	// Added in version 1.10
-	aStream >> signalIndicatorType;
-	iSignalIndicatorType = static_cast<TSignalIndicatorType>(signalIndicatorType);
+	aStream >> int8Val;
+	iSignalIndicatorType = static_cast<TSignalIndicatorType>(int8Val);
 	
 	// Added in version X.X
-	aStream >> useHttpsProxy;
-	iUseHttpsProxy = static_cast<TBool>(useHttpsProxy);
+	aStream >> int8Val;
+	iUseHttpsProxy = static_cast<TBool>(int8Val);
 	}
 
 void CSettings::InternalizeL(RReadStream& aStream)
