@@ -70,6 +70,9 @@ CAknSettingItem* CSettingsListBox::CreateSettingItemL(TInt aSettingId)
 			settingItem = new (ELeave) CAknTextSettingItem(aSettingId,
 											appUi->Settings()->iHttpsProxyUrl);
 			//settingItem->SetEmptyItemTextL(_L("----"));
+			
+			TBool isVisible = appUi->Settings()->iUseHttpsProxy;
+			settingItem->SetHidden(!isVisible);
 			}
 			break;
 		}
@@ -103,6 +106,15 @@ void CSettingsListBox::EditItemL(TInt aIndex, TBool aCalledFromMenu)
 					&& appUi->Settings()->iIsSignalIndicatorVisible;
 			
 			(*SettingItemArray())[ESettingSignalIndicatorType]->SetHidden(!isVisible);
+			HandleChangeInItemArrayOrVisibilityL();
+			}
+			break;
+	
+		case ESettingUseHttpsProxy:
+			{
+			TBool isVisible = appUi->Settings()->iUseHttpsProxy;
+	
+			(*SettingItemArray())[ESettingHttpsProxyUrl]->SetHidden(!isVisible);
 			HandleChangeInItemArrayOrVisibilityL();
 			}
 			break;
