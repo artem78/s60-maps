@@ -559,6 +559,12 @@ RESOURCE AVKON_SETTING_ITEM_LIST r_setting_item_list
 			setting_page_resource = r_use_https_proxy_setting_page;
 			associated_resource = r_popup_setting_use_https_proxy_texts;
 			name = qtn_use_https_proxy;
+			},
+		AVKON_SETTING_ITEM
+			{
+			identifier = ESettingHttpsProxyUrl;
+			setting_page_resource = r_https_proxy_url_setting_page;
+			name = qtn_https_proxy_url;
 			}
 		};
 	}
@@ -702,5 +708,22 @@ RESOURCE ARRAY r_use_https_proxy_texts
         AVKON_ENUMERATED_TEXT { value=0; text = qtn_disabled; }
         };
     }
+
+
+// Show https proxy url setting
+RESOURCE EDWIN r_https_proxy_url_text_editor
+	{
+	width = 5;
+	lines = 1;
+	maxlength = 256;
+	}
+
+RESOURCE AVKON_SETTING_PAGE r_https_proxy_url_setting_page
+	{
+	type = EEikCtEdwin;
+	label = qtn_https_proxy_url;
+	editor_resource_id = r_https_proxy_url_text_editor;
+	} 
+
 
 // End of File

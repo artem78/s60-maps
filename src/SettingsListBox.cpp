@@ -64,6 +64,14 @@ CAknSettingItem* CSettingsListBox::CreateSettingItemL(TInt aSettingId)
 											appUi->Settings()->iUseHttpsProxy);
 			}
 			break;
+			
+		case ESettingHttpsProxyUrl:
+			{
+			settingItem = new (ELeave) CAknTextSettingItem(aSettingId,
+											appUi->Settings()->iHttpsProxyUrl);
+			//settingItem->SetEmptyItemTextL(_L("----"));
+			}
+			break;
 		}
 	
 	return settingItem;

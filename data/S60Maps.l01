@@ -75,3 +75,4 @@
 #define qtn_use_https_proxy "Https proxy"
 #define qtn_enabled "Enabled"
 #define qtn_disabled "Disabled"
+#define qtn_https_proxy_url "Https proxy url"

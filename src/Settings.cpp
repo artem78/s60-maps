@@ -34,6 +34,8 @@ CSettings::CSettings() :
 		iSignalIndicatorType(ESignalIndicatorGeneralType),
 		iUseHttpsProxy(ETrue)
 	{
+	_LIT/*8*/(KDefaultHttpsProxyUrl, "http://nnp.nnchan.ru:80/mahoproxy.php?u="); // todo: change to own proxy
+	iHttpsProxyUrl = KDefaultHttpsProxyUrl;
 	}
 
 //CSettings::~CSettings()
@@ -80,6 +82,7 @@ void CSettings::ExternalizeL(RWriteStream& aStream) const
 	
 	// Added in version X.X
 	aStream << static_cast<TInt8>(iUseHttpsProxy);
+	aStream << iHttpsProxyUrl;
 	}
 
 void CSettings::DoInternalizeL(RReadStream& aStream)
@@ -114,6 +117,7 @@ void CSettings::DoInternalizeL(RReadStream& aStream)
 	// Added in version X.X
 	aStream >> int8Val;
 	iUseHttpsProxy = static_cast<TBool>(int8Val);
+	aStream >> iHttpsProxyUrl;
 	}
 
 void CSettings::InternalizeL(RReadStream& aStream)

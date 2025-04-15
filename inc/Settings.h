@@ -81,6 +81,7 @@ public:
 	TBool iIsScaleBarVisible;
 	TSignalIndicatorType iSignalIndicatorType;
 	TBool iUseHttpsProxy;
+	TBuf/*8*/<0x100> iHttpsProxyUrl;
 	
 public:
 	CSettings();

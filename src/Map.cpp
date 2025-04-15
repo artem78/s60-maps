@@ -1509,14 +1509,13 @@ void CTileBitmapManager::StartDownloadTileL(const TTile &aTile)
 	if (appUi->Settings()->iUseHttpsProxy && tileUrl.Left(8) == KHttpsUrlStart)
 	{
 		DEBUG(_L("https-proxy used"));
-		_LIT8(KProxyUrl, "http://nnp.nnchan.ru:80/mahoproxy.php?u="); // todo: make configurable from the settings
 		HBufC8* encodedTileUrl = EscapeUtils::EscapeEncodeL(tileUrl, EscapeUtils::EEscapeUrlEncoded);
 		CleanupStack::PushL(encodedTileUrl);
 
 		RBuf8 proxifiedTileUrl;
-		proxifiedTileUrl.CreateL(KProxyUrl().Length() + encodedTileUrl->Length());
+		proxifiedTileUrl.CreateL(appUi->Settings()->iHttpsProxyUrl.Length() + encodedTileUrl->Length());
 		proxifiedTileUrl.CleanupClosePushL();
-		proxifiedTileUrl.Copy(KProxyUrl);
+		proxifiedTileUrl.Copy(appUi->Settings()->iHttpsProxyUrl);
 		proxifiedTileUrl.Append(*encodedTileUrl);
 
 		iHTTPClient->GetL(proxifiedTileUrl);
