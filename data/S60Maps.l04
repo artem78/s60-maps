@@ -71,3 +71,9 @@ CHARACTER_SET UTF8
 #define qtn_signal_indicator_general_type "General"
 #define qtn_signal_indicator_per_satellite_type "Per satellite"
 
+// Added in version X.X
+
+#define qtn_use_https_proxy "HTTPS proxy"
+#define qtn_enabled "Enabled"
+#define qtn_disabled "Disabled"
+#define qtn_https_proxy_url "HTTPS proxy url"

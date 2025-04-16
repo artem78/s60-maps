@@ -73,7 +73,7 @@ CHARACTER_SET UTF8
 
 // Added in version X.X
 
-#define qtn_use_https_proxy "Https-прокси"
+#define qtn_use_https_proxy "HTTPS прокси"
 #define qtn_enabled "Вкл."
 #define qtn_disabled "Откл."
-#define qtn_https_proxy_url "Url https-прокси"
+#define qtn_https_proxy_url "Адрес HTTPS прокси"
