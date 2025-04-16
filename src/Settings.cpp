@@ -34,7 +34,7 @@ CSettings::CSettings() :
 		iSignalIndicatorType(ESignalIndicatorGeneralType),
 		iUseHttpsProxy(ETrue)
 	{
-	_LIT/*8*/(KDefaultHttpsProxyUrl, "http://nnp.nnchan.ru:80/mahoproxy.php?u="); // todo: change to own proxy
+	_LIT/*8*/(KDefaultHttpsProxyUrl, "http://s60maps.work.gd:8088/proxy?url=");
 	iHttpsProxyUrl = KDefaultHttpsProxyUrl;
 	}
 
