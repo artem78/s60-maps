@@ -19,6 +19,7 @@ const TReal64 KDefaultLat = 50.0;
 const TReal64 KDefaultLon = 9.0;
 const TZoom KDefaultZoom = 3;
 _LIT(KDefaultTileProviderId, "osm");
+_LIT/*8*/(KDefaultHttpsProxyUrl, "http://s60maps.work.gd:8088/proxy?url=");
 
 
 CSettings::CSettings() :
@@ -32,10 +33,9 @@ CSettings::CSettings() :
 		iIsSignalIndicatorVisible(ETrue),
 		iIsScaleBarVisible(ETrue),
 		iSignalIndicatorType(ESignalIndicatorGeneralType),
-		iUseHttpsProxy(ETrue)
+		iUseHttpsProxy(ETrue),
+		iHttpsProxyUrl(KDefaultHttpsProxyUrl)
 	{
-	_LIT/*8*/(KDefaultHttpsProxyUrl, "http://s60maps.work.gd:8088/proxy?url=");
-	iHttpsProxyUrl = KDefaultHttpsProxyUrl;
 	}
 
 //CSettings::~CSettings()
@@ -118,6 +118,7 @@ void CSettings::DoInternalizeL(RReadStream& aStream)
 	aStream >> int8Val;
 	iUseHttpsProxy = static_cast<TBool>(int8Val);
 	aStream >> iHttpsProxyUrl;
+	ValidateHttpsProxyUrl();
 	}
 
 void CSettings::InternalizeL(RReadStream& aStream)
@@ -126,5 +127,16 @@ void CSettings::InternalizeL(RReadStream& aStream)
 	if (r != KErrNone)
 		{
 		WARNING(_L("Settings file broken or incomplete (code: %d)"), r);
+		}
+	}
+
+void CSettings::ValidateHttpsProxyUrl()
+	{
+	// just check that string starts with "http"
+	// (for better check TUriC16::Validate() may be used instead)
+	_LIT(KUrlStart, "http");
+	if (iHttpsProxyUrl.Find(KUrlStart) != 0)
+		{
+		iHttpsProxyUrl = KDefaultHttpsProxyUrl;
 		}
 	}

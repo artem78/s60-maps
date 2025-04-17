@@ -122,6 +122,9 @@ public:
 	inline void SetSignalIndicatorVisibility(TBool aVisible)
 		{ iIsSignalIndicatorVisible = aVisible; }*/
 	
+	// Check if https proxy url is valid string otherwise reset to default value
+	void ValidateHttpsProxyUrl();
+	
 	};
 
 #endif // SETTINGS_H
