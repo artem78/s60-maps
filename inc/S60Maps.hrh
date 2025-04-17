@@ -62,7 +62,8 @@ enum TS60MapsSettingItemIds
 	ESettingSignalIndicatorType,
 	ESettingShowScaleBar,
 	ESettingUseHttpsProxy,
-	ESettingHttpsProxyUrl
+	ESettingHttpsProxyUrl,
+	ESettingUseDiskCache
 	};
 
 #endif // __S60MAPS_HRH__

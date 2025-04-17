@@ -565,6 +565,13 @@ RESOURCE AVKON_SETTING_ITEM_LIST r_setting_item_list
 			identifier = ESettingHttpsProxyUrl;
 			setting_page_resource = r_https_proxy_url_setting_page;
 			name = qtn_https_proxy_url;
+			},
+		AVKON_SETTING_ITEM
+			{
+			identifier = ESettingUseDiskCache;
+			setting_page_resource = r_use_disk_cache_setting_page;
+			associated_resource = r_popup_setting_use_disk_cache_texts;
+			name = qtn_use_disk_cache;
 			}
 		};
 	}
@@ -723,7 +730,32 @@ RESOURCE AVKON_SETTING_PAGE r_https_proxy_url_setting_page
 	type = EEikCtEdwin;
 	label = qtn_https_proxy_url;
 	editor_resource_id = r_https_proxy_url_text_editor;
-	} 
+	}
+
+
+// Show use disk cache setting
+
+RESOURCE AVKON_SETTING_PAGE r_use_disk_cache_setting_page
+    {   
+    number = 0;
+    label = qtn_use_disk_cache;
+    type = EAknCtPopupSettingList;
+    }
+
+RESOURCE AVKON_POPUP_SETTING_TEXTS r_popup_setting_use_disk_cache_texts
+    {
+    flags = 0;
+    setting_texts_resource = r_use_disk_cache_texts;
+    }
+
+RESOURCE ARRAY r_use_disk_cache_texts
+    {
+    items =
+        {
+        AVKON_ENUMERATED_TEXT { value=1; text = qtn_enabled; },
+        AVKON_ENUMERATED_TEXT { value=0; text = qtn_disabled; }
+        };
+    }
 
 
 // End of File

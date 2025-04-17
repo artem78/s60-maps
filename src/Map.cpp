@@ -1422,6 +1422,8 @@ void CTileBitmapManager::AddToLoading(const TTile &aTile, TBool aForce)
 
 /*TInt*/ void CTileBitmapManager::Append/*L*/(const TTile &aTile)
 	{
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
+	
 	if (iItems.Count() >= iLimit)
 		{
 		// Delete oldest item
@@ -1437,7 +1439,7 @@ void CTileBitmapManager::AddToLoading(const TTile &aTile, TBool aForce)
 	if (iState == EIdle)
 		{
 		// Try to find on disk first
-		if (IsTileFileExists(aTile))
+		if (appUi->Settings()->iUseDiskCache && IsTileFileExists(aTile))
 			{
 			item->CreateBitmapIfNotExistL();
 			TRAPD(r, LoadBitmapL(aTile, item->Bitmap()));
@@ -1542,6 +1544,8 @@ void CTileBitmapManager::DoCancel()
 
 void CTileBitmapManager::RunL()
 	{
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
+	
 	DEBUG(_L("CTileBitmapManager::RunL"));
 	if (iStatus.Int() == KErrNone)
 		{
@@ -1559,7 +1563,10 @@ void CTileBitmapManager::RunL()
 		INFO(_L("Tile %S downloaded and decoded"), &iLoadingTile.AsDes());
 		iObserver->OnTileLoaded(iLoadingTile, item->Bitmap());
 		
-		SaveBitmapInBackgroundL(iLoadingTile, item->Bitmap());
+		if (appUi->Settings()->iUseDiskCache)
+			{
+			SaveBitmapInBackgroundL(iLoadingTile, item->Bitmap());
+			}
 		}
 	else
 		{

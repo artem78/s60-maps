@@ -75,6 +75,13 @@ CAknSettingItem* CSettingsListBox::CreateSettingItemL(TInt aSettingId)
 			settingItem->SetHidden(!isVisible);
 			}
 			break;
+			
+		case ESettingUseDiskCache:
+			{
+			settingItem = new (ELeave) CAknBinaryPopupSettingItem(aSettingId,
+										appUi->Settings()->iUseDiskCache);
+			}
+			break;
 		}
 	
 	return settingItem;

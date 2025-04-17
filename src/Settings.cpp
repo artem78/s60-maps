@@ -34,7 +34,8 @@ CSettings::CSettings() :
 		iIsScaleBarVisible(ETrue),
 		iSignalIndicatorType(ESignalIndicatorGeneralType),
 		iUseHttpsProxy(ETrue),
-		iHttpsProxyUrl(KDefaultHttpsProxyUrl)
+		iHttpsProxyUrl(KDefaultHttpsProxyUrl),
+		iUseDiskCache(ETrue)
 	{
 	}
 
@@ -83,6 +84,7 @@ void CSettings::ExternalizeL(RWriteStream& aStream) const
 	// Added in version X.X
 	aStream << static_cast<TInt8>(iUseHttpsProxy);
 	aStream << iHttpsProxyUrl;
+	aStream << static_cast<TInt8>(iUseDiskCache);
 	}
 
 void CSettings::DoInternalizeL(RReadStream& aStream)
@@ -119,6 +121,8 @@ void CSettings::DoInternalizeL(RReadStream& aStream)
 	iUseHttpsProxy = static_cast<TBool>(int8Val);
 	aStream >> iHttpsProxyUrl;
 	ValidateHttpsProxyUrl();
+	aStream >> int8Val;
+	iUseDiskCache = static_cast<TBool>(int8Val);
 	}
 
 void CSettings::InternalizeL(RReadStream& aStream)

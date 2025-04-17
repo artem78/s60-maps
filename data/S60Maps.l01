@@ -76,3 +76,4 @@
 #define qtn_enabled "Enabled"
 #define qtn_disabled "Disabled"
 #define qtn_https_proxy_url "HTTPS proxy url"
+#define qtn_use_disk_cache "Cache tiles on disk"
