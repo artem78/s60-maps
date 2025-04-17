@@ -119,6 +119,13 @@ void CS60MapsAppUi::ConstructL()
 			_L8("https://tile.opentopomap.org/{$z}/{$x}/{$y}.png"),
 			0, /*17*/ 15);
 	
+	// Esri World Imagery (Clarity) Beta
+	// https://wiki.openstreetmap.org/wiki/Esri
+	iAvailableTileProviders[5] = new (ELeave) TTileProvider(
+			_L("esri"), _L(/*"Esri World Imagery (Clarity) Beta"*/ "Esri (Clarity) Beta"),
+			_L8("http://clarity.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/MapServer/tile/{$z}/{$y}/{$x}"),
+			0, 22);
+	
 	iActiveTileProvider = iAvailableTileProviders[0]; // Use first
 	
 	

@@ -9,12 +9,13 @@ Map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wiki/Symb
 
 ## Features
 
-- Map with five [OpenStreetMap](https://www.openstreetmap.org/) layers available:
-  - [OSM Standard layer](https://wiki.openstreetmap.org/wiki/Standard_tile_layer)
+- Several map layers available:
+  - [OpenStreetMap Standard layer](https://wiki.openstreetmap.org/wiki/Standard_tile_layer)
   - [Cycle Map layer](https://wiki.openstreetmap.org/wiki/OpenCycleMap)
   - [Transport Map layer](https://wiki.openstreetmap.org/wiki/Transport_Map)
   - [Humanitarian Map layer](https://wiki.openstreetmap.org/wiki/Humanitarian_map_style)
   - [OpenTopoMap](https://wiki.openstreetmap.org/wiki/OpenTopoMap)
+  - [Esri World Imagery (Clarity) Beta](https://wiki.openstreetmap.org/wiki/Esri)
 - Show phone location on the map using GPS
 - Can work without GPS (no positioning)
 - Map tiles caching (you can see previously viewed area without network connection)
@@ -89,6 +90,20 @@ All data stored in directory `E:\Data\S60Maps\` (**note:** E drive used regardle
 Settings store in `store.dat` file. If you have problems with application to run, try to delete this file and run again.
 
 S60Maps uses phone's landmark database and all of them will be accessed within the application. New landmarks will be added to `S60Maps` category.
+
+## SSL/TLS/HTTPS
+
+Some map providers (Humanitarian and OpenTopoMap) require SSL/TLS for download tiles. This is a problem for legacy Symbian devices, but there are 2 solutions.
+
+### Enable TLS support on system level
+
+Not so long ago (2024 year) one person make TLS 1.2/1.3 support for Symbian 9.1 and later. Got to https://nnproject.cc/tls/ for more info and installation instructions.
+
+After patch installed you need to **disable** "HTTPS proxy" option in s60maps settings.
+
+### Use https proxy
+
+This solution is easier and used by default. All http**s** requests pass via http proxy server. Make sure option "HTTPS proxy" is **enabled** in s60maps settings.
 
 ## How to build
 

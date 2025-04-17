@@ -80,6 +80,9 @@ public:
 	TBool iIsSignalIndicatorVisible;
 	TBool iIsScaleBarVisible;
 	TSignalIndicatorType iSignalIndicatorType;
+	TBool iUseHttpsProxy;
+	TBuf/*8*/<0x100> iHttpsProxyUrl;
+	TBool iUseDiskCache;
 	
 public:
 	CSettings();
@@ -119,6 +122,9 @@ public:
 		{ return iIsSignalIndicatorVisible; }
 	inline void SetSignalIndicatorVisibility(TBool aVisible)
 		{ iIsSignalIndicatorVisible = aVisible; }*/
+	
+	// Check if https proxy url is valid string otherwise reset to default value
+	void ValidateHttpsProxyUrl();
 	
 	};
 

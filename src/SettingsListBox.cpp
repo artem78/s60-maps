@@ -57,6 +57,31 @@ CAknSettingItem* CSettingsListBox::CreateSettingItemL(TInt aSettingId)
 			settingItem->SetHidden(!isVisible);
 			}
 			break;
+			
+		case ESettingUseHttpsProxy:
+			{
+			settingItem = new (ELeave) CAknBinaryPopupSettingItem(aSettingId,
+											appUi->Settings()->iUseHttpsProxy);
+			}
+			break;
+			
+		case ESettingHttpsProxyUrl:
+			{
+			settingItem = new (ELeave) CAknTextSettingItem(aSettingId,
+											appUi->Settings()->iHttpsProxyUrl);
+			//settingItem->SetEmptyItemTextL(_L("----"));
+			
+			TBool isVisible = appUi->Settings()->iUseHttpsProxy;
+			settingItem->SetHidden(!isVisible);
+			}
+			break;
+			
+		case ESettingUseDiskCache:
+			{
+			settingItem = new (ELeave) CAknBinaryPopupSettingItem(aSettingId,
+										appUi->Settings()->iUseDiskCache);
+			}
+			break;
 		}
 	
 	return settingItem;
@@ -88,6 +113,24 @@ void CSettingsListBox::EditItemL(TInt aIndex, TBool aCalledFromMenu)
 					&& appUi->Settings()->iIsSignalIndicatorVisible;
 			
 			(*SettingItemArray())[ESettingSignalIndicatorType]->SetHidden(!isVisible);
+			HandleChangeInItemArrayOrVisibilityL();
+			}
+			break;
+	
+		case ESettingUseHttpsProxy:
+			{
+			TBool isVisible = appUi->Settings()->iUseHttpsProxy;
+	
+			(*SettingItemArray())[ESettingHttpsProxyUrl]->SetHidden(!isVisible);
+			HandleChangeInItemArrayOrVisibilityL();
+			}
+			break;
+			
+		case ESettingHttpsProxyUrl:
+			// reset to default value if input incorrect
+			{
+			appUi->Settings()->ValidateHttpsProxyUrl();
+			(*SettingItemArray())[aIndex]->LoadL();
 			HandleChangeInItemArrayOrVisibilityL();
 			}
 			break;

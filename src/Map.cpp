@@ -1366,7 +1366,7 @@ void CTileBitmapManager::ConstructL(const TDesC &aCacheDir)
 	userAgent.Append(KDebugStr);
 #endif
 	iHTTPClient->SetUserAgentL(userAgent);
-	_LIT8(KAllowedTypes, "image/png"); // At the moment only PNG supported
+	_LIT8(KAllowedTypes, "image/png, image/jpeg"); // PNG and JPG supported
 	iHTTPClient->SetHeaderL(HTTP::EAccept, KAllowedTypes);
 	_LIT8(KKeepAlive, "Keep-Alive");
 	iHTTPClient->SetHeaderL(HTTP::EConnection, KKeepAlive); // Not mandatory for HTTP 1.1
@@ -1422,6 +1422,8 @@ void CTileBitmapManager::AddToLoading(const TTile &aTile, TBool aForce)
 
 /*TInt*/ void CTileBitmapManager::Append/*L*/(const TTile &aTile)
 	{
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
+	
 	if (iItems.Count() >= iLimit)
 		{
 		// Delete oldest item
@@ -1437,7 +1439,7 @@ void CTileBitmapManager::AddToLoading(const TTile &aTile, TBool aForce)
 	if (iState == EIdle)
 		{
 		// Try to find on disk first
-		if (IsTileFileExists(aTile))
+		if (appUi->Settings()->iUseDiskCache && IsTileFileExists(aTile))
 			{
 			item->CreateBitmapIfNotExistL();
 			TRAPD(r, LoadBitmapL(aTile, item->Bitmap()));
@@ -1488,6 +1490,8 @@ CTileBitmapManagerItem* CTileBitmapManager::Find(const TTile &aTile) const
 
 void CTileBitmapManager::StartDownloadTileL(const TTile &aTile)
 	{
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
+	
 	if (iIsOfflineMode)
 		return;
 	
@@ -1504,17 +1508,16 @@ void CTileBitmapManager::StartDownloadTileL(const TTile &aTile)
 	iTileProvider->TileUrl(tileUrl, aTile);
 	
 	_LIT8(KHttpsUrlStart, "https://");
-	if (tileUrl.Left(8) == KHttpsUrlStart)
+	if (appUi->Settings()->iUseHttpsProxy && tileUrl.Left(8) == KHttpsUrlStart)
 	{
 		DEBUG(_L("https-proxy used"));
-		_LIT8(KProxyUrl, "http://nnp.nnchan.ru:80/mahoproxy.php?u=");
 		HBufC8* encodedTileUrl = EscapeUtils::EscapeEncodeL(tileUrl, EscapeUtils::EEscapeUrlEncoded);
 		CleanupStack::PushL(encodedTileUrl);
 
 		RBuf8 proxifiedTileUrl;
-		proxifiedTileUrl.CreateL(KProxyUrl().Length() + encodedTileUrl->Length());
+		proxifiedTileUrl.CreateL(appUi->Settings()->iHttpsProxyUrl.Length() + encodedTileUrl->Length());
 		proxifiedTileUrl.CleanupClosePushL();
-		proxifiedTileUrl.Copy(KProxyUrl);
+		proxifiedTileUrl.Copy(appUi->Settings()->iHttpsProxyUrl);
 		proxifiedTileUrl.Append(*encodedTileUrl);
 
 		iHTTPClient->GetL(proxifiedTileUrl);
@@ -1541,6 +1544,8 @@ void CTileBitmapManager::DoCancel()
 
 void CTileBitmapManager::RunL()
 	{
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
+	
 	DEBUG(_L("CTileBitmapManager::RunL"));
 	if (iStatus.Int() == KErrNone)
 		{
@@ -1558,7 +1563,10 @@ void CTileBitmapManager::RunL()
 		INFO(_L("Tile %S downloaded and decoded"), &iLoadingTile.AsDes());
 		iObserver->OnTileLoaded(iLoadingTile, item->Bitmap());
 		
-		SaveBitmapInBackgroundL(iLoadingTile, item->Bitmap());
+		if (appUi->Settings()->iUseDiskCache)
+			{
+			SaveBitmapInBackgroundL(iLoadingTile, item->Bitmap());
+			}
 		}
 	else
 		{
@@ -1591,9 +1599,9 @@ void CTileBitmapManager::OnHTTPResponseDataChunkRecieved(
 	{
 	DEBUG(_L("HTTP chunk recieved"));
 	
-	// Checking that mime-type is PNG
+	// Checking that mime-type is PNG or JPG
 	// (If any error (for example: 404 Not Found) chunk may contains
-	// HTML/text data instead correct PNG image. In this case, 
+	// HTML/text data instead correct image. In this case, 
 	// we need to skip any processing.)
 	RStringPool strP = aTransaction.Session().StringPool();
 	RHTTPHeaders respHeaders = aTransaction.Response().GetHeaderCollection();
@@ -1606,12 +1614,16 @@ void CTileBitmapManager::OnHTTPResponseDataChunkRecieved(
 	
 	_LIT8(KPNGMimeType, "image/png");
 	RStringF pngMimeType = strP.OpenFStringL(KPNGMimeType);
-	if (fieldVal.StrF() != pngMimeType)
+	_LIT8(KJPEGMimeType, "image/jpeg");
+	RStringF jpegMimeType = strP.OpenFStringL(KJPEGMimeType);
+	if (fieldVal.StrF() != pngMimeType and fieldVal.StrF() != jpegMimeType)
 		{
 		pngMimeType.Close();
-		return; // Skip other types exept PNG
+		jpegMimeType.Close();
+		return; // Skip other types exept PNG or JPG
 		}
 	pngMimeType.Close();
+	jpegMimeType.Close();
 	
 	
 	// Append data to decoder`s buffer
@@ -1636,7 +1648,7 @@ void CTileBitmapManager::OnHTTPResponse(const RHTTPTransaction /*aTransaction*/)
 	
 	iState = /*TProcessingState::*/EDecoding;
 	
-	// Start convert PNG to CFbsBitmap
+	// Start convert PNG/JPG to CFbsBitmap
 	//CFbsBitmap* bitmap;
 //	TInt r = GetTileBitmap(iLoadingTile, bitmap);
 //	__ASSERT_DEBUG(r != KErrNotFound, User::Leave(KErrNotFound));
@@ -1696,13 +1708,25 @@ void CTileBitmapManager::OnHTTPError(TInt aError,
 		}
 	}
 void CTileBitmapManager::OnHTTPHeadersRecieved(
-		const RHTTPTransaction /*aTransaction*/)
+		const RHTTPTransaction aTransaction)
 	{
 	DEBUG(_L("HTTP headers recieved"));
 	
+	RStringPool strP = aTransaction.Session().StringPool();
+	RHTTPHeaders respHeaders = aTransaction.Response().GetHeaderCollection();
+	RStringF fieldName = strP.StringF(HTTP::EContentType, RHTTPSession::GetTable());
+	THTTPHdrVal fieldVal;
+	TInt r = respHeaders.GetField(fieldName, 0, fieldVal);
+	__ASSERT_DEBUG(r == KErrNone, Panic(ES60MapsNoRequiredHeaderInResponse)); // Unlikely if response don`t contains Content-Type header
+	if (r != KErrNone)
+		return;
+	/*TBuf<32> tmp;
+	tmp.Copy(fieldVal.StrF().DesC());
+	DEBUG(_L("mime=%S"), &tmp);*/
+	
+	
 	iImgDecoder->Reset();
-	_LIT8(KPNGMimeType, "image/png");
-	iImgDecoder->OpenL(KNullDesC8, KPNGMimeType);
+	iImgDecoder->OpenL(KNullDesC8, fieldVal.StrF().DesC());
 	}
 
 void CTileBitmapManager::SaveBitmapInBackgroundL(const TTile &aTile, /*const*/ CFbsBitmap *aBitmap)
