@@ -90,6 +90,20 @@ Settings store in `store.dat` file. If you have problems with application to run
 
 S60Maps uses phone's landmark database and all of them will be accessed within the application. New landmarks will be added to `S60Maps` category.
 
+## SSL/TLS/HTTPS
+
+Some map providers (Humanitarian and OpenTopoMap) require SSL/TLS for download tiles. This is a problem for legacy Symbian devices, but there are 2 solutions.
+
+### Enable TLS support on system level
+
+Not so long ago (2024 year) one person make TLS 1.2/1.3 support for Symbian 9.1 and later. Got to https://nnproject.cc/tls/ for more info and installation instructions.
+
+After patch installed you need to **disable** "HTTPS proxy" option in s60maps settings.
+
+### Use https proxy
+
+This solution is easier and used by default. All http**s** requests pass via http proxy server. Make sure option "HTTPS proxy" is **enabled** in s60maps settings.
+
 ## How to build
 
 Read [docs/COMPILING.md](/docs/COMPILING.md)
