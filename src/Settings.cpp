@@ -81,7 +81,7 @@ void CSettings::ExternalizeL(RWriteStream& aStream) const
 	// Added in version 1.10
 	aStream << static_cast<TInt8>(iSignalIndicatorType);
 	
-	// Added in version X.X
+	// Added in version 1.12
 	aStream << static_cast<TInt8>(iUseHttpsProxy);
 	aStream << iHttpsProxyUrl;
 	aStream << static_cast<TInt8>(iUseDiskCache);
@@ -116,7 +116,7 @@ void CSettings::DoInternalizeL(RReadStream& aStream)
 	aStream >> int8Val;
 	iSignalIndicatorType = static_cast<TSignalIndicatorType>(int8Val);
 	
-	// Added in version X.X
+	// Added in version 1.12
 	aStream >> int8Val;
 	iUseHttpsProxy = static_cast<TBool>(int8Val);
 	aStream >> iHttpsProxyUrl;

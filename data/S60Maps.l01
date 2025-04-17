@@ -70,7 +70,7 @@
 #define qtn_signal_indicator_general_type "General"
 #define qtn_signal_indicator_per_satellite_type "Per satellite"
 
-// Added in version X.X
+// Added in version 1.12
 
 #define qtn_use_https_proxy "HTTPS proxy"
 #define qtn_enabled "Enabled"
