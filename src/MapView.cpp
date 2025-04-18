@@ -177,6 +177,10 @@ void CMapView::HandleCommandL(TInt aCommand)
 			HandleReloadVisibleAreaL();
 			break;
 			
+		case ESearch:
+			HandleSearchL();
+			break;
+			
 		default:
 			// Let the AppUi handle unknown for view commands
 			AppUi()->HandleCommandL(aCommand);
@@ -638,3 +642,8 @@ void CMapView::HandleReloadVisibleAreaL()
 	{
 	iMapControl->ReloadVisibleAreaL();
 	}
+
+void CMapView::HandleSearchL()
+	{
+	//...
+}

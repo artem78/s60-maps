@@ -136,6 +136,11 @@ RESOURCE MENU_PANE r_menu
 				},
 		MENU_ITEM
 				{
+				command = ESearch;
+				txt = qtn_search;
+				},
+		MENU_ITEM
+				{
 				//command = ...;
 				txt = qtn_service_title;
 				cascade = r_submenu_service;

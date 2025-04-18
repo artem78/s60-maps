@@ -77,6 +77,7 @@ private:
 	void HandleGotoCoordinateL();
 	void HandleSettingsL();
 	void HandleReloadVisibleAreaL();
+	void HandleSearchL();
 	};
 
 #endif /* __MAPVIEW_H_ */
