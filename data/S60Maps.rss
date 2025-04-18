@@ -21,10 +21,6 @@ NAME S60M	// 4 letter ID
 #include "S60Maps.loc"
 
 
-// Constants
-
-#define KPosLmMaxTextFieldLength 255 // from epos_landmarks.h
-
 
 
 //  RESOURCE DEFINITIONS
@@ -363,7 +359,7 @@ RESOURCE DIALOG r_landmark_name_input_query
           flags = EEikEdwinNoHorizScrolling | EEikEdwinResizable;
 //        width = AKNTAQUERY_EDWIN_WIDTH;
 //        maxlength = AKNTAQUERY_EDWIN_MAXLENGTH;
-          maxlength = KPosLmMaxTextFieldLength;
+//          maxlength = KPosLmMaxTextFieldLength;
           // added to limit expanding in forms. 
           // If you want full screen use 6 here
 //        max_view_height_in_lines = AKNEXQUERY_EDWIN_LINES; 

@@ -421,9 +421,9 @@ void CMapView::HandleCreateLandmarkL()
 	TLocality pos = TLocality(MapControl()->GetCenterCoordinate(), KNaN, KNaN);
 	newLandmark->SetPositionL(pos);
 	// Ask landmark name
-	HBufC* dlgTitle = iEikonEnv->AllocReadResourceLC(R_INPUT_NAME);
 	CAknTextQueryDialog* dlg = new (ELeave) CAknTextQueryDialog(landmarkName);
-	if (dlg->ExecuteLD(R_LANDMARK_NAME_INPUT_QUERY, *dlgTitle) == EAknSoftkeyOk)
+	dlg->SetMaxLength(KPosLmMaxTextFieldLength);
+	if (dlg->ExecuteLD(R_LANDMARK_NAME_INPUT_QUERY) == EAknSoftkeyOk)
 		{
 		// Set landmark name
 		newLandmark->SetLandmarkNameL(landmarkName);
@@ -449,7 +449,7 @@ void CMapView::HandleCreateLandmarkL()
 		CleanupStack::PopAndDestroy(catMgr);
 		}
 
-	CleanupStack::PopAndDestroy(3, &landmarkName);
+	CleanupStack::PopAndDestroy(2, &landmarkName);
 	}
 
 void CMapView::HandleRenameLandmarkL()
@@ -473,9 +473,9 @@ void CMapView::HandleRenameLandmarkL()
 	landmarkName.Copy(oldLandmarkName);
 	
 	// Ask landmark new name
-	HBufC* dlgTitle = iEikonEnv->AllocReadResourceLC(R_INPUT_NAME);
 	CAknTextQueryDialog* dlg = new (ELeave) CAknTextQueryDialog(landmarkName);
-	if (dlg->ExecuteLD(R_LANDMARK_NAME_INPUT_QUERY, *dlgTitle) == EAknSoftkeyOk)
+	dlg->SetMaxLength(KPosLmMaxTextFieldLength);
+	if (dlg->ExecuteLD(R_LANDMARK_NAME_INPUT_QUERY) == EAknSoftkeyOk)
 		{
 		// Update landmark in DB	
 		landmark->SetLandmarkNameL(landmarkName);
@@ -483,7 +483,7 @@ void CMapView::HandleRenameLandmarkL()
 		MapControl()->DrawDeferred();
 		}
 	
-	CleanupStack::PopAndDestroy(3, landmark);
+	CleanupStack::PopAndDestroy(2, landmark);
 	}
 
 void CMapView::HandleCreateOrRenameLandmarkL()
