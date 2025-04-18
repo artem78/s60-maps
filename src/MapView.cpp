@@ -18,6 +18,7 @@
 #include <epos_cposlandmarksearch.h>
 #include <aknselectionlist.h>
 #include <akntitle.h>
+#include <aknquerydialog.h>
 
 // CMapView
 
@@ -645,5 +646,13 @@ void CMapView::HandleReloadVisibleAreaL()
 
 void CMapView::HandleSearchL()
 	{
-	//...
-}
+	const TInt KSearchInputFieldMaxLength = 128;
+	
+	TBuf<KSearchInputFieldMaxLength> queryText;	
+	CAknTextQueryDialog* dlg = new (ELeave) CAknTextQueryDialog(queryText);
+	dlg->SetMaxLength(KSearchInputFieldMaxLength);
+	if (dlg->ExecuteLD(R_SEARCH_INPUT_QUERY_DLG) == EAknSoftkeySearch)
+		{
+		DEBUG(_L("Search query: %S"), &queryText);
+		}
+	}
