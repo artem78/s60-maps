@@ -105,6 +105,8 @@ After patch installed you need to **disable** "HTTPS proxy" option in s60maps se
 
 This solution is easier and used by default. All http**s** requests pass via http proxy server. Make sure option "HTTPS proxy" is **enabled** in s60maps settings.
 
+If for some reason proxy doesn't work try to change domain in "HTTPS proxy url" setting from "http://**s60maps.publicvm.com**:8088/proxy?url=" to "http://**37.77.105.179**:8088/proxy?url=". Or try to use another proxy url: `http://nnp.nnchan.ru:80/mahoproxy.php?u=`.
+
 ## How to build
 
 Read [docs/COMPILING.md](/docs/COMPILING.md)
