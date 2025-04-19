@@ -19,6 +19,7 @@
 #include <aknselectionlist.h>
 #include <akntitle.h>
 #include <aknquerydialog.h>
+#include "Search.h"
 
 // CMapView
 
@@ -646,13 +647,7 @@ void CMapView::HandleReloadVisibleAreaL()
 
 void CMapView::HandleSearchL()
 	{
-	const TInt KSearchInputFieldMaxLength = 128;
-	
-	TBuf<KSearchInputFieldMaxLength> queryText;	
-	CAknTextQueryDialog* dlg = new (ELeave) CAknTextQueryDialog(queryText);
-	dlg->SetMaxLength(KSearchInputFieldMaxLength);
-	if (dlg->ExecuteLD(R_SEARCH_INPUT_QUERY_DLG) == EAknSoftkeySearch)
-		{
-		DEBUG(_L("Search query: %S"), &queryText);
-		}
+	CSearch* search = CSearch::NewLC();
+	search->RunDialogL();
+	CleanupStack::PopAndDestroy(search);
 	}
