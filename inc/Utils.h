@@ -49,4 +49,15 @@ public:
 		};
 	};
 
+class StrUtils
+	{
+public:
+	static TBool ContainsL(const TDesC16& aStr, const TDesC16& aSubstr, TBool aIgnoreCase = EFalse);
+	static TBool ContainsL(const TDesC8& aStr, const TDesC8& aSubstr, TBool aIgnoreCase = EFalse);
+	static TBool StartsWithL(const TDesC16& aStr, const TDesC16& aSubstr, TBool aIgnoreCase = EFalse);
+	static TBool StartsWithL(const TDesC8& aStr, const TDesC8& aSubstr, TBool aIgnoreCase = EFalse);
+	//static TBool EndsWithL(const TDesC16& aStr, const TDesC16& aSubstr, TBool aIgnoreCase = EFalse);
+	//static TBool EndsWithL(const TDesC8& aStr, const TDesC8& aSubstr, TBool aIgnoreCase = EFalse);
+	};
+
 #endif // UTILS_H

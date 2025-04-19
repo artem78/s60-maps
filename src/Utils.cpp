@@ -80,3 +80,122 @@ TRectEx::TRectEx(TInt aAx, TInt aAy, TInt aBx, TInt aBy)
 	{
 
 	}
+
+
+// StrUtils
+// todo: reduce code duplications
+
+TBool StrUtils::ContainsL(const TDesC& aStr, const TDesC& aSubstr, TBool aIgnoreCase)
+	{
+	if (!aIgnoreCase)
+		{
+		return aStr.Find(aSubstr) != KErrNotFound;
+		}
+	else
+		{
+		RBuf strLower, substrLower;
+		
+		strLower.CreateL(aStr);
+		CleanupClosePushL(strLower);
+		
+		substrLower.CreateL(aSubstr);
+		CleanupClosePushL(substrLower);
+		
+		strLower.LowerCase();
+		substrLower.LowerCase();
+		TBool res = strLower.Find(substrLower) != KErrNotFound;
+		
+		CleanupStack::PopAndDestroy(2, &strLower);
+		
+		return res;
+		}
+	}
+
+TBool StrUtils::ContainsL(const TDesC8& aStr, const TDesC8& aSubstr, TBool aIgnoreCase)
+	{
+	if (!aIgnoreCase)
+		{
+		return aStr.Find(aSubstr) != KErrNotFound;
+		}
+	else
+		{
+		RBuf8 strLower, substrLower;
+		
+		strLower.CreateL(aStr);
+		CleanupClosePushL(strLower);
+		
+		substrLower.CreateL(aSubstr);
+		CleanupClosePushL(substrLower);
+		
+		strLower.LowerCase();
+		substrLower.LowerCase();
+		TBool res = strLower.Find(substrLower) != KErrNotFound;
+		
+		CleanupStack::PopAndDestroy(2, &strLower);
+		
+		return res;
+		}
+	}
+
+TBool StrUtils::StartsWithL(const TDesC& aStr, const TDesC& aSubstr, TBool aIgnoreCase)
+	{
+	if (!aIgnoreCase)
+		{
+		return aStr.Find(aSubstr) == 0;
+		}
+	else
+		{
+		RBuf strLower, substrLower;
+		
+		strLower.CreateL(aStr);
+		CleanupClosePushL(strLower);
+		
+		substrLower.CreateL(aSubstr);
+		CleanupClosePushL(substrLower);
+		
+		strLower.LowerCase();
+		substrLower.LowerCase();
+		TBool res = strLower.Find(substrLower) == 0;
+		
+		CleanupStack::PopAndDestroy(2, &strLower);
+		
+		return res;
+		}
+	}
+
+TBool StrUtils::StartsWithL(const TDesC8& aStr, const TDesC8& aSubstr, TBool aIgnoreCase)
+	{
+	if (!aIgnoreCase)
+		{
+		return aStr.Find(aSubstr) == 0;
+		}
+	else
+		{
+		RBuf8 strLower, substrLower;
+		
+		strLower.CreateL(aStr);
+		CleanupClosePushL(strLower);
+		
+		substrLower.CreateL(aSubstr);
+		CleanupClosePushL(substrLower);
+		
+		strLower.LowerCase();
+		substrLower.LowerCase();
+		TBool res = strLower.Find(substrLower) == 0;
+		
+		CleanupStack::PopAndDestroy(2, &strLower);
+		
+		return res;
+		}
+	}
+
+/*TBool StrUtils::EndsWithL(const TDesC16& aStr, const TDesC16& aSubstr, TBool aIgnoreCase)
+	{
+	//...
+	}
+	
+TBool StrUtils::EndsWithL(const TDesC8& aStr, const TDesC8& aSubstr, TBool aIgnoreCase)
+	{
+	//...
+	}
+*/

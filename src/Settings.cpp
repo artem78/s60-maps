@@ -10,6 +10,7 @@
 
 #include "Settings.h"
 #include "Logger.h"
+#include "Utils.h"
 
 
 // Constants
@@ -120,7 +121,7 @@ void CSettings::DoInternalizeL(RReadStream& aStream)
 	aStream >> int8Val;
 	iUseHttpsProxy = static_cast<TBool>(int8Val);
 	aStream >> iHttpsProxyUrl;
-	ValidateHttpsProxyUrl();
+	ValidateHttpsProxyUrlL();
 	aStream >> int8Val;
 	iUseDiskCache = static_cast<TBool>(int8Val);
 	}
@@ -134,12 +135,12 @@ void CSettings::InternalizeL(RReadStream& aStream)
 		}
 	}
 
-void CSettings::ValidateHttpsProxyUrl()
+void CSettings::ValidateHttpsProxyUrlL()
 	{
 	// just check that string starts with "http"
 	// (for better check TUriC16::Validate() may be used instead)
 	_LIT(KUrlStart, "http");
-	if (iHttpsProxyUrl.Find(KUrlStart) != 0)
+	if (!StrUtils::StartsWithL(iHttpsProxyUrl, KUrlStart, ETrue))
 		{
 		iHttpsProxyUrl = KDefaultHttpsProxyUrl;
 		}

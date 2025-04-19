@@ -1508,7 +1508,7 @@ void CTileBitmapManager::StartDownloadTileL(const TTile &aTile)
 	iTileProvider->TileUrl(tileUrl, aTile);
 	
 	_LIT8(KHttpsUrlStart, "https://");
-	if (appUi->Settings()->iUseHttpsProxy && tileUrl.Left(8) == KHttpsUrlStart)
+	if (appUi->Settings()->iUseHttpsProxy && StrUtils::StartsWithL(tileUrl, KHttpsUrlStart, ETrue))
 	{
 		DEBUG(_L("https-proxy used"));
 		HBufC8* encodedTileUrl = EscapeUtils::EscapeEncodeL(tileUrl, EscapeUtils::EEscapeUrlEncoded);

@@ -129,7 +129,7 @@ void CSettingsListBox::EditItemL(TInt aIndex, TBool aCalledFromMenu)
 		case ESettingHttpsProxyUrl:
 			// reset to default value if input incorrect
 			{
-			appUi->Settings()->ValidateHttpsProxyUrl();
+			appUi->Settings()->ValidateHttpsProxyUrlL();
 			(*SettingItemArray())[aIndex]->LoadL();
 			HandleChangeInItemArrayOrVisibilityL();
 			}
