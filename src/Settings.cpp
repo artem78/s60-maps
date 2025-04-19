@@ -20,7 +20,7 @@ const TReal64 KDefaultLat = 50.0;
 const TReal64 KDefaultLon = 9.0;
 const TZoom KDefaultZoom = 3;
 _LIT(KDefaultTileProviderId, "osm");
-_LIT/*8*/(KDefaultHttpsProxyUrl, "http://s60maps.work.gd:8088/proxy?url=");
+_LIT/*8*/(KDefaultHttpsProxyUrl, "http://s60maps.publicvm.com:8088/proxy?url=");
 
 
 CSettings::CSettings() :
@@ -139,8 +139,12 @@ void CSettings::ValidateHttpsProxyUrlL()
 	{
 	// just check that string starts with "http"
 	// (for better check TUriC16::Validate() may be used instead)
+	// and restore to default if old domain used
+	
 	_LIT(KUrlStart, "http");
-	if (!StrUtils::StartsWithL(iHttpsProxyUrl, KUrlStart, ETrue))
+	_LIT(KOldProxyDomain, "s60maps.work.gd");
+	if (!StrUtils::StartsWithL(iHttpsProxyUrl, KUrlStart, ETrue)
+			|| StrUtils::ContainsL(iHttpsProxyUrl, KOldProxyDomain, ETrue))
 		{
 		iHttpsProxyUrl = KDefaultHttpsProxyUrl;
 		}
