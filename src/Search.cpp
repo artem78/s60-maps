@@ -45,13 +45,16 @@ void CSearch::ConstructL()
 
 	}
 
-void CSearch::RunL()
+TBool CSearch::RunL(TCoordinate &aCoord)
 	{
 	if (!RunQueryDialogL())
-		return;
+		return EFalse;
 				
 	if (!RunResultsDialogL())
-		return;
+		return EFalse;
+	
+	aCoord = iCoord;
+	return ETrue;
 	}
 
 TBool CSearch::RunQueryDialogL()
@@ -75,12 +78,26 @@ TBool CSearch::RunResultsDialogL()
 	const TInt KGranularity = 10;
 	CDesCArraySeg* resultsArray = new (ELeave) CDesCArraySeg(KGranularity);
 	CleanupStack::PushL(resultsArray);
+	CArrayFixSeg<TCoordinate>* coordsArray = new (ELeave) CArrayFixSeg<TCoordinate>(KGranularity);
+	CleanupStack::PushL(coordsArray);
 	
 	///
+	TCoordinate coord;
 	resultsArray->AppendL(_L("\tOne"));
+	coord.SetCoordinate(34.86685, 134.60406);
+	coordsArray->AppendL(coord);
+	
 	resultsArray->AppendL(_L("\tTwo"));
+	coord.SetCoordinate(38.93691, -77.02060);
+	coordsArray->AppendL(coord);
+	
 	resultsArray->AppendL(_L("\tThree"));
+	coord.SetCoordinate(0.0323, -51.0645);
+	coordsArray->AppendL(coord);
+	
 	resultsArray->AppendL(_L("\tFour"));
+	coord.SetCoordinate(-37.805, 145.047);
+	coordsArray->AppendL(coord);
 	///
 	
 	TInt chosenItem = -1;
@@ -92,11 +109,15 @@ TBool CSearch::RunResultsDialogL()
 	
 	if (res)
 		{
-		//DEBUG(_L("Selected result: %S"), &resultsArray[chosenItem]);
-		DEBUG(_L("Selected result: %d"), chosenItem);
+		DEBUG(_L("Selected name=%S idx=%d lat=%f lon=%f"), &(*resultsArray)[chosenItem],
+				chosenItem,
+				coordsArray->At(chosenItem).Latitude(),
+				coordsArray->At(chosenItem).Longitude());
+		
+		iCoord = coordsArray->At(chosenItem);
 		}
 	
-	CleanupStack::PopAndDestroy(resultsArray);
+	CleanupStack::PopAndDestroy(2, resultsArray);
 	
 	return res;
 	}

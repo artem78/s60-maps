@@ -631,6 +631,11 @@ void CMapView::HandleReloadVisibleAreaL()
 void CMapView::HandleSearchL()
 	{
 	CSearch* search = CSearch::NewLC();
-	search->RunL();
+	TCoordinate coord;
+	if (search->RunL(coord))
+		{
+		MapControl()->SetFollowUser(EFalse);
+		MapControl()->MoveAndZoomIn(coord);
+		}
 	CleanupStack::PopAndDestroy(search);
 	}

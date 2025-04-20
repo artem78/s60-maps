@@ -14,6 +14,7 @@
 // INCLUDES
 #include <e32std.h>
 #include <e32base.h>
+#include <lbsposition.h>
 
 // CLASS DECLARATION
 
@@ -57,12 +58,13 @@ private:
 	
 private:
 	TBuf<128> iQuery;
+	TCoordinate iCoord;
 	
 	TBool RunQueryDialogL();
 	TBool RunResultsDialogL();
 	
 public:
-	void RunL();
+	TBool RunL(TCoordinate &aCoord);
 
 	};
 
