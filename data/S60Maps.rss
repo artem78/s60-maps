@@ -488,6 +488,7 @@ RESOURCE TBUF r_input_name { buf=qtn_input_name; }
 RESOURCE TBUF r_confirm_landmark_deletion { buf=qtn_confirm_landmark_deletion; }
 RESOURCE TBUF r_settings_title { buf=qtn_settings; }
 RESOURCE TBUF r_search { buf=qtn_search; }
+RESOURCE TBUF r_search_results { buf=qtn_search_results; }
 
 // Language names
 RESOURCE TBUF r_lang_english_name	{ buf=qtn_lang_english_name; }
@@ -798,6 +799,41 @@ RESOURCE DIALOG r_search_input_query_dlg
     };
   }
 
+
+// Search results list dialog
+
+RESOURCE DIALOG r_search_results_query_dialog
+	{
+	flags = EAknDialogSelectionList;
+	buttons = R_AVKON_SOFTKEYS_SELECT_CANCEL;
+	items =
+		{
+		DLG_LINE
+			{
+			type = EAknCtSingleListBox;
+			id = ESelectionListControl;
+			control = LISTBOX
+				{
+				flags = EAknListBoxSelectionList;
+				};
+			},
+
+		DLG_LINE
+			{
+			itemflags = EEikDlgItemNonFocusing;
+			id = EFindControl;
+			type = EAknCtSelectionListFixedFind /*EAknCtSelectionListPopupFind*/;
+			}
+		};
+	}
+
+RESOURCE MENU_BAR r_search_results_query_dialog_menubar
+	{
+	titles =
+		{
+		MENU_TITLE { menu_pane = R_AVKON_MENUPANE_SELECTION_LIST; } 
+		};
+	};
 
 
 

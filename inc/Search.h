@@ -53,9 +53,16 @@ private:
 	 */
 	void ConstructL();
 	
-// New methods
+// New members
+	
+private:
+	TBuf<128> iQuery;
+	
+	TBool RunQueryDialogL();
+	TBool RunResultsDialogL();
+	
 public:
-	void RunDialogL();
+	void RunL();
 
 	};
 

@@ -631,6 +631,6 @@ void CMapView::HandleReloadVisibleAreaL()
 void CMapView::HandleSearchL()
 	{
 	CSearch* search = CSearch::NewLC();
-	search->RunDialogL();
+	search->RunL();
 	CleanupStack::PopAndDestroy(search);
 	}
