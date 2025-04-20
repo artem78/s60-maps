@@ -152,6 +152,9 @@ public:
 	void ChangeLanguageL(TLanguage aLang);
 	TBool IsLanguageExists(TLanguage aLang);
 	void AvailableLanguagesL(RArray<TLanguage> &aLangArr);
+	
+	void ShowStatusPaneAndHideMapControlL(TInt aPaneTitleResourceId);
+	void HideStatusPaneAndShowMapControlL();
 
 private:
 	CSettings* iSettings;
@@ -173,6 +176,7 @@ private:
 	TInt iResourceOffset;
 	CHWRMLight* iLight;
 	CPeriodic* iResetInactivityTimer;
+	HBufC* iOriginalPaneTitle;
 	
 	//static TInt UpdateTilesClearingProgress(TAny* aSelfPtr);
 	

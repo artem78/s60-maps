@@ -17,7 +17,6 @@
 #include <aknmessagequerydialog.h>
 #include <epos_cposlandmarksearch.h>
 #include <aknselectionlist.h>
-#include <akntitle.h>
 #include <aknquerydialog.h>
 #include "Search.h"
 
@@ -573,25 +572,9 @@ void CMapView::HandleGotoLandmarkL()
 
 	TInt chosenItem;
 	CAknSelectionListDialog* dlg = CAknSelectionListDialog::NewL(chosenItem, lmNameArray, R_LANDMARKS_QUERY_DIALOG_MENUBAR);
-	iMapControl->MakeVisible(EFalse);
-	AppUi()->StatusPane()->MakeVisible(ETrue);
-	
-	// Save original pane title
-	CEikStatusPane* statusPane = iAvkonAppUi->StatusPane();
-	CAknTitlePane* titlePane = (CAknTitlePane*) statusPane->ControlL(TUid::Uid(EEikStatusPaneUidTitle));
-	HBufC* originalTitle = titlePane->Text()->AllocL();
-	
-	// Set new pane title
-	HBufC* title = iEikonEnv->AllocReadResourceL(R_LANDMARKS);
-	titlePane->SetText(title);
-	
+	appUi->ShowStatusPaneAndHideMapControlL(R_LANDMARKS);
 	TInt answer = dlg->ExecuteLD(R_LANDMARKS_QUERY_DIALOG);
-	
-	iMapControl->MakeVisible(ETrue);
-	AppUi()->StatusPane()->MakeVisible(EFalse);
-	
-	// Restore original pane title
-	titlePane->SetText(originalTitle);
+	appUi->HideStatusPaneAndShowMapControlL();
 	
 	if (EAknSoftkeyOk == answer) 
 		{
