@@ -1756,14 +1756,13 @@ TBool CTileBitmapManager::IsTileFileExists(const TTile &aTile) /*const*/
 
 void CTileBitmapManager::TileFileName(const TTile &aTile, TFileName &aFileName) const
 	{
-	_LIT(KUnderline, "_");
 	_LIT(KMBMExtension, ".mbm");
 	
 	/*TFileName*/ TBuf<32> originalFileName;
 	originalFileName.AppendNum(aTile.iZ);
-	originalFileName.Append(KUnderline);
+	originalFileName.Append('_');
 	originalFileName.AppendNum(aTile.iX);
-	originalFileName.Append(KUnderline);
+	originalFileName.Append('_');
 	originalFileName.AppendNum(aTile.iY);
 	originalFileName.Append(KMBMExtension);
 	
