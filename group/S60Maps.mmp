@@ -42,7 +42,7 @@ END
 
 
 USERINCLUDE	   ..\inc
-USERINCLUDE    ..\help ..\modules\Logger ..\modules\Positioning ..\modules\FileUtils ..\modules\HTTPClient
+USERINCLUDE    ..\help ..\modules\Logger ..\modules\Positioning ..\modules\FileUtils ..\modules\HTTPClient ..\modules\s-json\JsonParser\inc
 
 SYSTEMINCLUDE	 \epoc32\include
 
@@ -99,3 +99,5 @@ SOURCEPATH ..\src
 SOURCE Utils.cpp
 SOURCEPATH ..\src
 SOURCE MapView.cpp SettingsListBox.cpp SettingsView.cpp LBSSatelliteExtended.cpp Search.cpp HTTPClient2.cpp
+SOURCEPATH ..\modules\s-json\JsonParser\src
+SOURCE ConsumeString.cpp JsonParser.cpp

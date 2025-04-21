@@ -15,6 +15,7 @@
 #include <e32std.h>
 #include <e32base.h>
 #include <lbsposition.h>
+#include "badesca.h"
 
 // CLASS DECLARATION
 
@@ -62,6 +63,7 @@ private:
 	
 	TBool RunQueryDialogL();
 	TBool RunResultsDialogL();
+	void ParseApiResponseL(CDesCArray* aNamesArr, CArrayFix<TCoordinate>* aCoordsArr);
 	
 public:
 	TBool RunL(TCoordinate &aCoord);
