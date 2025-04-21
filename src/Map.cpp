@@ -24,7 +24,6 @@
 #include "icons.mbg"
 #include "Utils.h"
 #include "LBSSatelliteExtended.h"
-#include "EscapeUtils.h"
 
 CMapLayerBase::CMapLayerBase(/*const*/ CMapControl* aMapView) :
 		iMapView(aMapView)
@@ -1353,7 +1352,7 @@ void CTileBitmapManager::ConstructL(const TDesC &aCacheDir)
 	// otherwise CEcmtServer: 3 panic will be raised.
 	User::After(10 * KSecond);
 #endif
-	iHTTPClient = CHTTPClient::NewL(this);
+	iHTTPClient = CHTTPClient2::NewL(this);
 	
 	TBuf8<32> userAgent;
 	userAgent.Copy(_L8("S60Maps")); // ToDo: Move to constant
@@ -1507,31 +1506,10 @@ void CTileBitmapManager::StartDownloadTileL(const TTile &aTile)
 	tileUrl.CleanupClosePushL();
 	iTileProvider->TileUrl(tileUrl, aTile);
 	
-	_LIT8(KHttpsUrlStart, "https://");
-	if (appUi->Settings()->iUseHttpsProxy && tileUrl.Left(8) == KHttpsUrlStart)
-	{
-		DEBUG(_L("https-proxy used"));
-		HBufC8* encodedTileUrl = EscapeUtils::EscapeEncodeL(tileUrl, EscapeUtils::EEscapeUrlEncoded);
-		CleanupStack::PushL(encodedTileUrl);
-
-		RBuf8 proxifiedTileUrl;
-		proxifiedTileUrl.CreateL(appUi->Settings()->iHttpsProxyUrl.Length() + encodedTileUrl->Length());
-		proxifiedTileUrl.CleanupClosePushL();
-		proxifiedTileUrl.Copy(appUi->Settings()->iHttpsProxyUrl);
-		proxifiedTileUrl.Append(*encodedTileUrl);
-
-		iHTTPClient->GetL(proxifiedTileUrl);
-		// SetActive()
-		DEBUG(_L8("Started download tile %S from url %S"), &aTile.AsDes8(), &proxifiedTileUrl);
-		
-		CleanupStack::PopAndDestroy(2, encodedTileUrl);
-	}
-	else
-	{
-		iHTTPClient->GetL(tileUrl);
-		// SetActive()
-		DEBUG(_L8("Started download tile %S from url %S"), &aTile.AsDes8(), &tileUrl);
-	}
+	iHTTPClient->GetL(tileUrl);
+	// SetActive()
+	DEBUG(_L8("Started download tile %S from url %S"), &aTile.AsDes8(), &tileUrl);
+	
 	CleanupStack::PopAndDestroy(&tileUrl);
 	}
 
