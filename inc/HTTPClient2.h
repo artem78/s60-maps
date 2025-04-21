@@ -30,10 +30,13 @@ public:
 
 private:
 	CHTTPClient2(MHTTPClientObserver* aObserver);
+	void ConstructL();
 	
 	// From CHTTPClient
 private:
 	void SendRequestL(THTTPMethod aMethod, const TDesC8 &aUrl);
+	void SetUserAgentL(const TDesC8 &aDes); /* make private, not needed to be visible
+											outside because was set in ContructL() */
 	
 	// New
 private:

@@ -1353,18 +1353,6 @@ void CTileBitmapManager::ConstructL(const TDesC &aCacheDir)
 	User::After(10 * KSecond);
 #endif
 	iHTTPClient = CHTTPClient2::NewL(this);
-	
-	TBuf8<32> userAgent;
-	userAgent.Copy(_L8("S60Maps")); // ToDo: Move to constant
-	userAgent.Append(' ');
-	userAgent.Append('v');
-	userAgent.Append(KProgramVersion.Name());
-#ifdef _DEBUG
-	_LIT8(KDebugStr, "DEV");
-	userAgent.Append(' ');
-	userAgent.Append(KDebugStr);
-#endif
-	iHTTPClient->SetUserAgentL(userAgent);
 	_LIT8(KAllowedTypes, "image/png, image/jpeg"); // PNG and JPG supported
 	iHTTPClient->SetHeaderL(HTTP::EAccept, KAllowedTypes);
 	_LIT8(KKeepAlive, "Keep-Alive");

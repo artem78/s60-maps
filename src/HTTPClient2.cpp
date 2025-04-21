@@ -16,6 +16,25 @@ CHTTPClient2::CHTTPClient2(MHTTPClientObserver* aObserver)
 		: CHTTPClient(aObserver)
 	{}
 
+void CHTTPClient2::ConstructL()
+	{
+	// Run parent method
+	CHTTPClient::ConstructL();
+	
+	// Set default user-agent
+	TBuf8<32> userAgent;
+	userAgent.Copy(_L8("S60Maps")); // ToDo: Move to constant
+	userAgent.Append(' ');
+	userAgent.Append('v');
+	userAgent.Append(KProgramVersion.Name());
+#ifdef _DEBUG
+	_LIT8(KDebugStr, "DEV");
+	userAgent.Append(' ');
+	userAgent.Append(KDebugStr);
+#endif
+	SetUserAgentL(userAgent);
+	}
+
 CHTTPClient2* CHTTPClient2::NewLC(MHTTPClientObserver* aObserver)
 	{
 	CHTTPClient2* self = new (ELeave) CHTTPClient2(aObserver);
@@ -65,4 +84,9 @@ HBufC8* CHTTPClient2::ProxyfiHttpsUrlL(const TDesC8 &aUrl)
 	CleanupStack::PopAndDestroy(encodedUrl);
 	
 	return proxifiedUrl;
+	}
+
+void CHTTPClient2::SetUserAgentL(const TDesC8 &aDes)
+	{
+	CHTTPClient::SetUserAgentL(aDes);
 	}
