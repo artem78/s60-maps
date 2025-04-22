@@ -12,11 +12,12 @@
 
 #include <aknview.h>
 #include "MapControl.h"
+#include "Search.h"
 
 
 // Classes
 
-class CMapView : public CAknView
+class CMapView : public CAknView, public MSearchObserver
 	{
 	// Constructors / destructors
 public:
@@ -78,6 +79,10 @@ private:
 	void HandleSettingsL();
 	void HandleReloadVisibleAreaL();
 	void HandleSearchL();
+	
+	// Others
+	CSearch* iSearch;
+	void OnSearchFinished(TBool aSuccess, const TCoordinate &aCoord);
 	};
 
 #endif /* __MAPVIEW_H_ */

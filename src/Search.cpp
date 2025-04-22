@@ -15,46 +15,53 @@
 #include <aknselectionlist.h>
 #include "S60MapsAppUi.h"
 #include "JsonParser.h"
+#include "S60Maps.pan"
+#include "EscapeUtils.h"
+#include <utf.h>
 
 
-CSearch::CSearch()
+CSearch::CSearch(MSearchObserver* aObserver)
+		: iObserver(aObserver)
 	{
 	// No implementation required
 	}
 
 CSearch::~CSearch()
 	{
+	delete iHttpClient;
+	
+	DEBUG(_L("Destructor"));
 	}
 
-CSearch* CSearch::NewLC()
+CSearch* CSearch::NewLC(MSearchObserver* aObserver)
 	{
-	CSearch* self = new (ELeave) CSearch();
+	CSearch* self = new (ELeave) CSearch(aObserver);
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	return self;
 	}
 
-CSearch* CSearch::NewL()
+CSearch* CSearch::NewL(MSearchObserver* aObserver)
 	{
-	CSearch* self = CSearch::NewLC();
+	CSearch* self = CSearch::NewLC(aObserver);
 	CleanupStack::Pop(); // self;
 	return self;
 	}
 
 void CSearch::ConstructL()
 	{
-
+	iHttpClient = CHTTPClient2::NewL(this);
+	
+	DEBUG(_L("Constructor"));
 	}
 
-TBool CSearch::RunL(TCoordinate &aCoord)
+TBool CSearch::RunL()
 	{
 	if (!RunQueryDialogL())
 		return EFalse;
-				
-	if (!RunResultsDialogL())
-		return EFalse;
 	
-	aCoord = iCoord;
+	RunApiReqestL();
+	
 	return ETrue;
 	}
 
@@ -103,20 +110,18 @@ TBool CSearch::RunResultsDialogL()
 	
 	CleanupStack::PopAndDestroy(2, namesArray);
 	
-	return res;
+	iObserver->OnSearchFinished(res, iCoord);
 	}
 
 void CSearch::ParseApiResponseL(CDesCArray* aNamesArr, CArrayFix<TCoordinate>* aCoordsArr)
 	{
-	////////////
-	_LIT(KJson, "[{\"place_id\":182003351,\"licence\":\"Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright\",\"osm_type\":\"relation\",\"osm_id\":102269,\"lat\":\"55.6255780\",\"lon\":\"37.6063916\",\"class\":\"boundary\",\"type\":\"administrative\",\"place_rank\":8,\"importance\":0.8585195484457739,\"addresstype\":\"state\",\"name\":\"Москва\",\"display_name\":\"Москва, Центральный федеральный округ, Россия\",\"boundingbox\":[\"55.1421745\",\"56.0212238\",\"36.8031012\",\"37.9674277\"]},{\"place_id\":181667215,\"licence\":\"Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright\",\"osm_type\":\"relation\",\"osm_id\":2555133,\"lat\":\"55.7505412\",\"lon\":\"37.6174782\",\"class\":\"place\",\"type\":\"city\",\"place_rank\":16,\"importance\":0.8585195484457739,\"addresstype\":\"city\",\"name\":\"Москва\",\"display_name\":\"Москва, Центральный федеральный округ, Россия\",\"boundingbox\":[\"55.5166840\",\"55.9577717\",\"37.2905020\",\"37.9674277\"]},{\"place_id\":305728094,\"licence\":\"Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright\",\"osm_type\":\"relation\",\"osm_id\":129775,\"lat\":\"37.3240640\",\"lon\":\"-101.2054630\",\"class\":\"boundary\",\"type\":\"administrative\",\"place_rank\":16,\"importance\":0.42676956835189356,\"addresstype\":\"village\",\"name\":\"Moscow\",\"display_name\":\"Moscow, Stevens County, Канзас, 67952, Соединённые Штаты Америки\",\"boundingbox\":[\"37.3221469\",\"37.3296130\",\"-101.2126096\",\"-101.2030970\"]},{\"place_id\":336246695,\"licence\":\"Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright\",\"osm_type\":\"relation\",\"osm_id\":12196304,\"lat\":\"45.0710960\",\"lon\":\"-69.8915860\",\"class\":\"boundary\",\"type\":\"administrative\",\"place_rank\":16,\"importance\":0.4164100037473589,\"addresstype\":\"town\",\"name\":\"Moscow\",\"display_name\":\"Moscow, Somerset County, Мэн, 04920, Соединённые Штаты Америки\",\"boundingbox\":[\"45.0647356\",\"45.1773584\",\"-69.9665917\",\"-69.7874730\"]},{\"place_id\":310517220,\"licence\":\"Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright\",\"osm_type\":\"relation\",\"osm_id\":197198,\"lat\":\"35.0619984\",\"lon\":\"-89.4039612\",\"class\":\"boundary\",\"type\":\"administrative\",\"place_rank\":16,\"importance\":0.38360068645110323,\"addresstype\":\"village\",\"name\":\"Moscow\",\"display_name\":\"Moscow, Fayette County, West Tennessee, Теннесси, 38057, Соединённые Штаты Америки\",\"boundingbox\":[\"35.0507500\",\"35.0661730\",\"-89.4110410\",\"-89.3718350\"]},{\"place_id\":322916586,\"licence\":\"Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright\",\"osm_type\":\"node\",\"osm_id\":157606151,\"lat\":\"39.5437014\",\"lon\":\"-79.0050273\",\"class\":\"place\",\"type\":\"hamlet\",\"place_rank\":20,\"importance\":0.37360304719775245,\"addresstype\":\"hamlet\",\"name\":\"Moscow\",\"display_name\":\"Moscow, Allegany County, Мэриленд, 21521, Соединённые Штаты Америки\",\"boundingbox\":[\"39.5237014\",\"39.5637014\",\"-79.0250273\",\"-78.9850273\"]},{\"place_id\":313782700,\"licence\":\"Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright\",\"osm_type\":\"relation\",\"osm_id\":182742,\"lat\":\"38.8570117\",\"lon\":\"-84.2291017\",\"class\":\"boundary\",\"type\":\"administrative\",\"place_rank\":16,\"importance\":0.36105344208987866,\"addresstype\":\"village\",\"name\":\"Moscow\",\"display_name\":\"Moscow, Washington Township, Clermont County, Огайо, Соединённые Штаты Америки\",\"boundingbox\":[\"38.8543290\",\"38.8666503\",\"-84.2336270\",\"-84.2195162\"]}]");
-	///////////////
-	
-
 	CJsonParser* parser = new (ELeave) CJsonParser();
 	CleanupStack::PushL(parser);
 	
-	parser->StartDecodingL(KJson);
+	HBufC* jsonData = CnvUtfConverter::ConvertToUnicodeFromUtf8L(*iResponseBuff);
+	CleanupStack::PushL(jsonData);
+
+	parser->StartDecodingL(*jsonData);
 	
 	TInt itemsCount = parser->GetParameterCount(KNullDesC);
 	TBuf<256> name;
@@ -154,5 +159,65 @@ void CSearch::ParseApiResponseL(CDesCArray* aNamesArr, CArrayFix<TCoordinate>* a
 		aCoordsArr->AppendL(coord);
 		}
 	
-	CleanupStack::PopAndDestroy(parser);
+	CleanupStack::PopAndDestroy(2, parser);
+	}
+
+void CSearch::RunApiReqestL()
+	{
+	__ASSERT_DEBUG(iQuery != KNullDesC, Panic());
+	
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(iAvkonAppUi);
+	
+	_LIT8(KApiBaseUrl, "https://nominatim.openstreetmap.org/search?format=json&q=");
+	
+	HBufC8* utf8Query = CnvUtfConverter::ConvertFromUnicodeToUtf8L(iQuery);
+	CleanupStack::PushL(utf8Query);
+	
+	HBufC8* encodedQuery = EscapeUtils::EscapeEncodeL(*utf8Query, EscapeUtils::EEscapeUrlEncoded);
+	CleanupStack::PushL(encodedQuery);
+	
+	RBuf8 url;
+	url.CreateL(KApiBaseUrl().Length() + encodedQuery->Length());
+	CleanupClosePushL(url);
+	url = KApiBaseUrl;
+	url.Append(*encodedQuery);
+	
+	iHttpClient->GetL(url);
+		
+	CleanupStack::PopAndDestroy(3, utf8Query);
+	}
+
+void CSearch::OnHTTPResponseDataChunkRecieved(const RHTTPTransaction aTransaction,
+		const TDesC8 &aDataChunk, TInt anOverallDataSize, TBool anIsLastChunk)
+	{
+	if (iResponseBuff == NULL)
+		{
+		iResponseBuff = HBufC8::NewL(anOverallDataSize);
+		}
+	
+	iResponseBuff->Des().Append(aDataChunk);
+	
+	if (anIsLastChunk)
+		{
+		RunResultsDialogL();
+		
+		delete iResponseBuff;
+		iResponseBuff = NULL;
+		}
+	}
+
+void CSearch::OnHTTPResponse(const RHTTPTransaction aTransaction)
+	{
+	
+	}
+
+void CSearch::OnHTTPError(TInt aError, const RHTTPTransaction aTransaction)
+	{
+	delete iResponseBuff;
+	iResponseBuff = NULL;
+	}
+
+void CSearch::OnHTTPHeadersRecieved(const RHTTPTransaction aTransaction)
+	{
+
 	}

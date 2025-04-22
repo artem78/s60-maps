@@ -18,7 +18,6 @@
 #include <epos_cposlandmarksearch.h>
 #include <aknselectionlist.h>
 #include <aknquerydialog.h>
-#include "Search.h"
 
 // CMapView
 
@@ -28,6 +27,7 @@ CMapView::CMapView()
 
 CMapView::~CMapView()
 	{
+	delete iSearch;
 	delete iMapControl;
 	}
 
@@ -630,12 +630,23 @@ void CMapView::HandleReloadVisibleAreaL()
 
 void CMapView::HandleSearchL()
 	{
-	CSearch* search = CSearch::NewLC();
+	iSearch = CSearch::NewLC(this);
 	TCoordinate coord;
-	if (search->RunL(coord))
+	if (!iSearch->RunL())
+		{
+		delete iSearch;
+		iSearch = NULL;
+		}
+	}
+
+void CMapView::OnSearchFinished(TBool aSuccess, const TCoordinate &aCoord)
+	{
+	if (aSuccess)
 		{
 		MapControl()->SetFollowUser(EFalse);
-		MapControl()->MoveAndZoomIn(coord);
+		MapControl()->MoveAndZoomIn(aCoord);
 		}
-	CleanupStack::PopAndDestroy(search);
+	
+	//delete iSearch;
+	//iSearch = NULL;
 	}
