@@ -79,7 +79,7 @@ CHARACTER_SET UTF8
 #define qtn_https_proxy_url "HTTPS proxy url"
 #define qtn_use_disk_cache "Cache tiles on disk"
 
-// Added in version X.XX
+// Added in version 1.13
 
 #define qtn_search "Search"
 #define qtn_search_results "Search results"

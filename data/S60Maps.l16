@@ -79,7 +79,7 @@ CHARACTER_SET UTF8
 #define qtn_https_proxy_url "Адрес HTTPS прокси"
 #define qtn_use_disk_cache "Кэшировать тайлы на диск"
 
-// Added in version X.XX
+// Added in version 1.13
 
 #define qtn_search "Поиск"
 #define qtn_search_results "Результаты поиска"
