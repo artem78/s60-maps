@@ -12,7 +12,7 @@ TARGETFILENAME=$(HEADERSDIR)\GitInfo.h
 
 COMMIT := $(shell git rev-parse --short HEAD 2>nul || ECHO unknown)
 BRANCH := $(shell git symbolic-ref --short HEAD 2>nul || ECHO unknown)
-LONG_VERSION := $(shell git describe --long 2>nul || ECHO unknown)
+LONG_VERSION := $(shell git describe --long --dirty 2>nul || ECHO unknown)
 
 do_nothing :
 	@rem do_nothing
