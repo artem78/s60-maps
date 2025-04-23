@@ -630,13 +630,16 @@ void CMapView::HandleReloadVisibleAreaL()
 
 void CMapView::HandleSearchL()
 	{
-	iSearch = CSearch::NewLC(this);
-	TCoordinate coord;
-	if (!iSearch->RunL())
-		{
-		delete iSearch;
-		iSearch = NULL;
-		}
+	DEBUG(_L("begin"));
+	
+	// delete search object if previously used
+	delete iSearch;
+	iSearch = NULL;
+	
+	iSearch = CSearch::NewL(this);
+	iSearch->RunL();
+	
+	DEBUG(_L("end"));
 	}
 
 void CMapView::OnSearchFinished(TBool aSuccess, const TCoordinate &aCoord)

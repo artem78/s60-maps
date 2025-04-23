@@ -67,6 +67,8 @@ TBool CSearch::RunL()
 
 TBool CSearch::RunQueryDialogL()
 	{
+	DEBUG(_L("begin"));
+	
 	//TBuf<KSearchInputFieldMaxLength> queryText;	
 	CAknTextQueryDialog* dlg = new (ELeave) CAknTextQueryDialog(iQuery);
 	dlg->SetMaxLength(/*KSearchInputFieldMaxLength*/iQuery.MaxLength());
@@ -76,11 +78,14 @@ TBool CSearch::RunQueryDialogL()
 		DEBUG(_L("Search query: %S"), &iQuery);
 		}
 	
+	DEBUG(_L("end with result=%d"), res);
 	return res;	
 	}
 
 TBool CSearch::RunResultsDialogL()
 	{
+	DEBUG(_L("begin"));
+	
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(iAvkonAppUi);
 	
 	const TInt KGranularity = 10;
@@ -111,10 +116,14 @@ TBool CSearch::RunResultsDialogL()
 	CleanupStack::PopAndDestroy(2, namesArray);
 	
 	iObserver->OnSearchFinished(res, iCoord);
+	
+	DEBUG(_L("end"));
 	}
 
 void CSearch::ParseApiResponseL(CDesCArray* aNamesArr, CArrayFix<TCoordinate>* aCoordsArr)
 	{
+	DEBUG(_L("begin"));
+	
 	CJsonParser* parser = new (ELeave) CJsonParser();
 	CleanupStack::PushL(parser);
 	
@@ -160,10 +169,13 @@ void CSearch::ParseApiResponseL(CDesCArray* aNamesArr, CArrayFix<TCoordinate>* a
 		}
 	
 	CleanupStack::PopAndDestroy(2, parser);
+	
+	DEBUG(_L("end"));
 	}
 
 void CSearch::RunApiReqestL()
 	{
+	DEBUG(_L("begin"));
 	__ASSERT_DEBUG(iQuery != KNullDesC, Panic());
 	
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(iAvkonAppUi);
@@ -185,6 +197,8 @@ void CSearch::RunApiReqestL()
 	iHttpClient->GetL(url);
 		
 	CleanupStack::PopAndDestroy(3, utf8Query);
+	
+	DEBUG(_L("end"));
 	}
 
 void CSearch::OnHTTPResponseDataChunkRecieved(const RHTTPTransaction aTransaction,
