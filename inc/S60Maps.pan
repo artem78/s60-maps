@@ -20,10 +20,11 @@ enum TS60MapsPanics
 	ES60MapsPosRequestorIsNull,
 	ES60MapsInvalidPosition, // e.g., lat/lon = NaN
 	ES60MapsInvalidResourceOffset,
-	ES60MapsInvaidSignalValuePanic
+	ES60MapsInvaidSignalValuePanic,
+	ES60MapsUnknownPanic = 99999
 	};
 
-inline void Panic(TS60MapsPanics aReason)
+inline void Panic(TS60MapsPanics aReason = ES60MapsUnknownPanic)
 	{
 	_LIT(applicationName, "S60Maps");
 	User::Panic(applicationName, aReason);

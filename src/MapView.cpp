@@ -17,7 +17,7 @@
 #include <aknmessagequerydialog.h>
 #include <epos_cposlandmarksearch.h>
 #include <aknselectionlist.h>
-#include <akntitle.h>
+#include <aknquerydialog.h>
 
 // CMapView
 
@@ -27,6 +27,7 @@ CMapView::CMapView()
 
 CMapView::~CMapView()
 	{
+	delete iSearch;
 	delete iMapControl;
 	}
 
@@ -175,6 +176,10 @@ void CMapView::HandleCommandL(TInt aCommand)
 			
 		case EReloadVisibleArea:
 			HandleReloadVisibleAreaL();
+			break;
+			
+		case ESearch:
+			HandleSearchL();
 			break;
 			
 		default:
@@ -567,25 +572,9 @@ void CMapView::HandleGotoLandmarkL()
 
 	TInt chosenItem;
 	CAknSelectionListDialog* dlg = CAknSelectionListDialog::NewL(chosenItem, lmNameArray, R_LANDMARKS_QUERY_DIALOG_MENUBAR);
-	iMapControl->MakeVisible(EFalse);
-	AppUi()->StatusPane()->MakeVisible(ETrue);
-	
-	// Save original pane title
-	CEikStatusPane* statusPane = iAvkonAppUi->StatusPane();
-	CAknTitlePane* titlePane = (CAknTitlePane*) statusPane->ControlL(TUid::Uid(EEikStatusPaneUidTitle));
-	HBufC* originalTitle = titlePane->Text()->AllocL();
-	
-	// Set new pane title
-	HBufC* title = iEikonEnv->AllocReadResourceL(R_LANDMARKS);
-	titlePane->SetText(title);
-	
+	appUi->ShowStatusPaneAndHideMapControlL(R_LANDMARKS);
 	TInt answer = dlg->ExecuteLD(R_LANDMARKS_QUERY_DIALOG);
-	
-	iMapControl->MakeVisible(ETrue);
-	AppUi()->StatusPane()->MakeVisible(EFalse);
-	
-	// Restore original pane title
-	titlePane->SetText(originalTitle);
+	appUi->HideStatusPaneAndShowMapControlL();
 	
 	if (EAknSoftkeyOk == answer) 
 		{
@@ -637,4 +626,30 @@ void CMapView::HandleSettingsL()
 void CMapView::HandleReloadVisibleAreaL()
 	{
 	iMapControl->ReloadVisibleAreaL();
+	}
+
+void CMapView::HandleSearchL()
+	{
+	DEBUG(_L("begin"));
+	
+	// delete search object if previously used
+	delete iSearch;
+	iSearch = NULL;
+	
+	iSearch = CSearch::NewL(this);
+	iSearch->RunL();
+	
+	DEBUG(_L("end"));
+	}
+
+void CMapView::OnSearchFinished(TBool aSuccess, const TCoordinate &aCoord)
+	{
+	if (aSuccess)
+		{
+		MapControl()->SetFollowUser(EFalse);
+		MapControl()->MoveAndZoomIn(aCoord);
+		}
+	
+	//delete iSearch;
+	//iSearch = NULL;
 	}

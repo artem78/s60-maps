@@ -108,6 +108,11 @@ RESOURCE MENU_PANE r_menu
 				},
 		MENU_ITEM
 				{
+				command = ESearch;
+				txt = qtn_search;
+				},
+		MENU_ITEM
+				{
 				//command = ...;
 				txt = qtn_goto;
 				cascade = r_submenu_goto;
@@ -478,6 +483,8 @@ RESOURCE TBUF r_input_name { buf=qtn_input_name; }
 //RESOURCE TBUF r_delete { buf=qtn_delete; }
 RESOURCE TBUF r_confirm_landmark_deletion { buf=qtn_confirm_landmark_deletion; }
 RESOURCE TBUF r_settings_title { buf=qtn_settings; }
+RESOURCE TBUF r_search { buf=qtn_search; }
+RESOURCE TBUF r_search_results { buf=qtn_search_results; }
 
 // Language names
 RESOURCE TBUF r_lang_english_name	{ buf=qtn_lang_english_name; }
@@ -752,6 +759,79 @@ RESOURCE ARRAY r_use_disk_cache_texts
         AVKON_ENUMERATED_TEXT { value=0; text = qtn_disabled; }
         };
     }
+
+
+// Search input dialog
+
+RESOURCE DIALOG r_search_input_query_dlg
+  {
+  flags = EGeneralQueryFlags;
+  buttons = R_AVKON_SOFTKEYS_SEARCH_BACK;
+  items =
+    {
+    DLG_LINE
+      {
+      type = EAknCtQuery;
+      id = EGeneralQuery;
+      control = AVKON_DATA_QUERY
+        {
+        layout = EDataLayout;
+        label = qtn_search;
+        control = EDWIN
+          {
+          flags = EEikEdwinNoHorizScrolling | EEikEdwinResizable;
+//          width = AKNTAQUERY_EDWIN_WIDTH;
+//          maxlength = AKNTAQUERY_EDWIN_MAXLENGTH;
+//          maxlength = KSearchInputFieldMaxLength;
+          // added to limit expanding in forms. 
+          // If you want full screen use 6 here
+//          max_view_height_in_lines = AKNEXQUERY_EDWIN_LINES; 
+          // if you have the line above, you must have this. 
+          // It's calculable from LAF
+          base_line_delta = 21; 
+          };
+        };
+      }
+    };
+  }
+
+
+// Search results list dialog
+
+RESOURCE DIALOG r_search_results_query_dialog
+	{
+	flags = EAknDialogSelectionList;
+	buttons = R_AVKON_SOFTKEYS_SELECT_CANCEL;
+	items =
+		{
+		DLG_LINE
+			{
+			type = EAknCtSingleListBox;
+			id = ESelectionListControl;
+			control = LISTBOX
+				{
+				flags = EAknListBoxSelectionList;
+				};
+			},
+
+		DLG_LINE
+			{
+			itemflags = EEikDlgItemNonFocusing;
+			id = EFindControl;
+			type = EAknCtSelectionListFixedFind /*EAknCtSelectionListPopupFind*/;
+			}
+		};
+	}
+
+RESOURCE MENU_BAR r_search_results_query_dialog_menubar
+	{
+	titles =
+		{
+		MENU_TITLE { menu_pane = R_AVKON_MENUPANE_SELECTION_LIST; } 
+		};
+	};
+
+
 
 
 // End of File

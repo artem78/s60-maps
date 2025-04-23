@@ -34,6 +34,7 @@
 #include <bautils.h>
 #include "Utils.h"
 #include "ApiKeys.h"
+#include <akntitle.h>
 
 
 // Constants
@@ -241,6 +242,8 @@ CS60MapsAppUi::~CS60MapsAppUi()
 	//	{
 	//	CCoeEnv::Static()->DeleteResourceFile(iResourceOffset);
 	//	}
+	
+	delete iOriginalPaneTitle;
 	}
 
 //// -----------------------------------------------------------------------------
@@ -834,6 +837,37 @@ void CS60MapsAppUi::DisableScreenSaver()
 		}
 	iResetInactivityTimer->Start(0, KMinScreenSaverTimeout - KSecond, callback);
 	DEBUG(_L("Screensaver disabled"));
+	}
+
+void CS60MapsAppUi::ShowStatusPaneAndHideMapControlL(TInt aTitleResourceId)
+	{
+	CEikStatusPane* statusPane = iAvkonAppUi->StatusPane();
+	CAknTitlePane* titlePane = (CAknTitlePane*) statusPane->ControlL(TUid::Uid(EEikStatusPaneUidTitle));
+	
+	// Save original pane title
+	iOriginalPaneTitle = titlePane->Text()->AllocL();
+	
+	// Set new pane title
+	HBufC* title = iEikonEnv->AllocReadResourceL(aTitleResourceId);
+	titlePane->SetText(title);
+	
+	// Toggle visibility
+	MapView()->MapControl()->MakeVisible(EFalse);
+	statusPane->MakeVisible(ETrue);
+	}
+
+void CS60MapsAppUi::HideStatusPaneAndShowMapControlL()
+	{
+	CEikStatusPane* statusPane = iAvkonAppUi->StatusPane();
+	CAknTitlePane* titlePane = (CAknTitlePane*) statusPane->ControlL(TUid::Uid(EEikStatusPaneUidTitle));
+	
+	// Toggle visibility
+	MapView()->MapControl()->MakeVisible(ETrue);
+	statusPane->MakeVisible(EFalse);
+	
+	// Restore original pane title
+	titlePane->SetText(iOriginalPaneTitle);
+	iOriginalPaneTitle = NULL;
 	}
 
 // End of File

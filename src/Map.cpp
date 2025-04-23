@@ -24,7 +24,6 @@
 #include "icons.mbg"
 #include "Utils.h"
 #include "LBSSatelliteExtended.h"
-#include "EscapeUtils.h"
 
 CMapLayerBase::CMapLayerBase(/*const*/ CMapControl* aMapView) :
 		iMapView(aMapView)
@@ -1353,19 +1352,7 @@ void CTileBitmapManager::ConstructL(const TDesC &aCacheDir)
 	// otherwise CEcmtServer: 3 panic will be raised.
 	User::After(10 * KSecond);
 #endif
-	iHTTPClient = CHTTPClient::NewL(this);
-	
-	TBuf8<32> userAgent;
-	userAgent.Copy(_L8("S60Maps")); // ToDo: Move to constant
-	userAgent.Append(' ');
-	userAgent.Append('v');
-	userAgent.Append(KProgramVersion.Name());
-#ifdef _DEBUG
-	_LIT8(KDebugStr, "DEV");
-	userAgent.Append(' ');
-	userAgent.Append(KDebugStr);
-#endif
-	iHTTPClient->SetUserAgentL(userAgent);
+	iHTTPClient = CHTTPClient2::NewL(this);
 	_LIT8(KAllowedTypes, "image/png, image/jpeg"); // PNG and JPG supported
 	iHTTPClient->SetHeaderL(HTTP::EAccept, KAllowedTypes);
 	_LIT8(KKeepAlive, "Keep-Alive");
@@ -1507,31 +1494,10 @@ void CTileBitmapManager::StartDownloadTileL(const TTile &aTile)
 	tileUrl.CleanupClosePushL();
 	iTileProvider->TileUrl(tileUrl, aTile);
 	
-	_LIT8(KHttpsUrlStart, "https://");
-	if (appUi->Settings()->iUseHttpsProxy && StrUtils::StartsWithL(tileUrl, KHttpsUrlStart, ETrue))
-	{
-		DEBUG(_L("https-proxy used"));
-		HBufC8* encodedTileUrl = EscapeUtils::EscapeEncodeL(tileUrl, EscapeUtils::EEscapeUrlEncoded);
-		CleanupStack::PushL(encodedTileUrl);
-
-		RBuf8 proxifiedTileUrl;
-		proxifiedTileUrl.CreateL(appUi->Settings()->iHttpsProxyUrl.Length() + encodedTileUrl->Length());
-		proxifiedTileUrl.CleanupClosePushL();
-		proxifiedTileUrl.Copy(appUi->Settings()->iHttpsProxyUrl);
-		proxifiedTileUrl.Append(*encodedTileUrl);
-
-		iHTTPClient->GetL(proxifiedTileUrl);
-		// SetActive()
-		DEBUG(_L8("Started download tile %S from url %S"), &aTile.AsDes8(), &proxifiedTileUrl);
-		
-		CleanupStack::PopAndDestroy(2, encodedTileUrl);
-	}
-	else
-	{
-		iHTTPClient->GetL(tileUrl);
-		// SetActive()
-		DEBUG(_L8("Started download tile %S from url %S"), &aTile.AsDes8(), &tileUrl);
-	}
+	iHTTPClient->GetL(tileUrl);
+	// SetActive()
+	DEBUG(_L8("Started download tile %S from url %S"), &aTile.AsDes8(), &tileUrl);
+	
 	CleanupStack::PopAndDestroy(&tileUrl);
 	}
 

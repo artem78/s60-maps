@@ -17,7 +17,7 @@
 #include "MapMath.h"
 #include <e32base.h>
 #include <e32std.h>		// For RTimer
-#include "HttpClient.h"
+#include "HttpClient2.h"
 #include "FileUtils.h"
 #include <e32msgqueue.h>
 #include <epos_cposlandmarkdatabase.h>
@@ -359,7 +359,7 @@ private:
 	/*TInt*/ void Append/*L*/(const TTile &aTile); 
 	
 	RArray<TTile> /*iItemsForLoading*/ iItemsLoadingQueue;
-	CHTTPClient* iHTTPClient;
+	CHTTPClient2* iHTTPClient;
 	TTileProvider* iTileProvider;
 	//TFileName iCacheDir;
 	//TBool iIsLoading;

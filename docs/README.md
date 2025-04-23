@@ -20,6 +20,7 @@ Map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wiki/Symb
 - Can work without GPS (no positioning)
 - Map tiles caching (you can see previously viewed area without network connection)
 - Display and edit landmarks
+- Search
 - Multilanguage:
   - English
   - Spanish
@@ -115,7 +116,7 @@ Read [docs/COMPILING.md](/docs/COMPILING.md)
 - [ ] Add ability to define custom map layers providing tile\`s URLs
 - [x] Update old cached tiles **(done: manually for viewed area)**
 - [x] Display and edit landmarks
-- [ ] Search (using [Nominatim](https://nominatim.openstreetmap.org/))
+- [x] Search (using [Nominatim](https://nominatim.openstreetmap.org/))
 - [x] Show satellites info (amount, signal strength, etc...)
 - [ ] Offline maps (zipped set of PNGs)
 
