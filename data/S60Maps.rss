@@ -112,6 +112,11 @@ RESOURCE MENU_PANE r_menu
 				},
 		MENU_ITEM
 				{
+				command = ESearch;
+				txt = qtn_search;
+				},
+		MENU_ITEM
+				{
 				//command = ...;
 				txt = qtn_goto;
 				cascade = r_submenu_goto;
@@ -133,11 +138,6 @@ RESOURCE MENU_PANE r_menu
 				//command = ...;
 				txt = qtn_landmarks;
 				cascade = r_submenu_landmarks;
-				},
-		MENU_ITEM
-				{
-				command = ESearch;
-				txt = qtn_search;
 				},
 		MENU_ITEM
 				{
