@@ -74,15 +74,15 @@ void CS60MapsDocument::ConstructL()
 	dateTimeBuff8.Append(_L8(__TIME__));
 	TBuf<32> dateTimeBuff;
 	dateTimeBuff.Copy(dateTimeBuff8);
-	INFO(_L("Program info: S60Maps v%S (git: %S-%S, build: %S)"), &KProgramVersion.Name(),
-			&KGITBranch, &KGITCommit, &dateTimeBuff);
+	INFO(_L("Program info: S60Maps v%S, git: %S (branch %S), build: %S"), &KProgramVersion.Name(),
+			&KGITLongVersion, &KGITBranch, &dateTimeBuff);
 	
 	_LIT(KDateFmt, "%F%Y-%M-%D %H:%T:%S");
 	TTime now;
 	now.HomeTime();
 	TBuf<32> nowBuf;
 	now.FormatL(nowBuf, KDateFmt);
-	INFO(_L("Current date: %S"), &nowBuf);
+	INFO(_L("Current date and time: %S"), &nowBuf);
 	
 	INFO(_L("Log started"));
 #endif
