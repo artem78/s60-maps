@@ -156,13 +156,13 @@ void CSearch::ParseApiResponseL(CDesCArray* aNamesArr, CArrayFix<TCoordinate>* a
 		parser->GetParameterValue(path, &latDes);
 		lex.Assign(latDes);
 		lat = KNaN;
-		User::LeaveIfError(lex.Val(lat));
+		User::LeaveIfError(lex.Val(lat, '.'));
 
 		path.Format(KLonPathFmt, i);
 		parser->GetParameterValue(path, &lonDes);
 		lex.Assign(lonDes);
 		lon = KNaN;
-		User::LeaveIfError(lex.Val(lon));
+		User::LeaveIfError(lex.Val(lon, '.'));
 
 		coord.SetCoordinate(lat, lon);
 		aCoordsArr->AppendL(coord);
