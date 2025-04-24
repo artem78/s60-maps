@@ -96,26 +96,43 @@ void CSearch::RunResultsDialogL()
 	
 	ParseApiResponseL(namesArray, coordsArray);
 	
-	TInt chosenItem = -1;
-	CAknSelectionListDialog* dlg = CAknSelectionListDialog::NewL(chosenItem, namesArray,
-			R_SEARCH_RESULTS_QUERY_DIALOG_MENUBAR);
-	appUi->ShowStatusPaneAndHideMapControlL(R_SEARCH_RESULTS);
-	TBool res = dlg->ExecuteLD(R_SEARCH_RESULTS_QUERY_DIALOG) != 0;
-	appUi->HideStatusPaneAndShowMapControlL();
-	
-	if (res)
+	switch (coordsArray->Count())
 		{
-		DEBUG(_L("Selected name=%S idx=%d lat=%f lon=%f"), &(*namesArray)[chosenItem],
-				chosenItem,
-				coordsArray->At(chosenItem).Latitude(),
-				coordsArray->At(chosenItem).Longitude());
+		case 1:
+			{ // go directly to single result
+			iCoord = coordsArray->At(0);
+			iObserver->OnSearchFinished(ETrue, iCoord);
+			
+			break;
+			}
 		
-		iCoord = coordsArray->At(chosenItem);
+		default:
+			{
+			TInt chosenItem = -1;
+			CAknSelectionListDialog* dlg = CAknSelectionListDialog::NewL(chosenItem, namesArray,
+					R_SEARCH_RESULTS_QUERY_DIALOG_MENUBAR);
+			appUi->ShowStatusPaneAndHideMapControlL(R_SEARCH_RESULTS);
+			TBool res = dlg->ExecuteLD(R_SEARCH_RESULTS_QUERY_DIALOG) != 0;
+			appUi->HideStatusPaneAndShowMapControlL();
+			
+			if (res)
+				{
+				DEBUG(_L("Selected name=%S idx=%d lat=%f lon=%f"), &(*namesArray)[chosenItem],
+						chosenItem,
+						coordsArray->At(chosenItem).Latitude(),
+						coordsArray->At(chosenItem).Longitude());
+				
+				iCoord = coordsArray->At(chosenItem);
+				}
+
+			iObserver->OnSearchFinished(res, iCoord);
+			
+			break;
+			}
 		}
 	
 	CleanupStack::PopAndDestroy(2, namesArray);
 	
-	iObserver->OnSearchFinished(res, iCoord);
 	
 	DEBUG(_L("end"));
 	}
