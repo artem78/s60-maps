@@ -18,6 +18,7 @@
 #include "Map.h"
 #include "Defs.h"
 #include <s32strm.h>
+#include "Utils.h"
 
 // Constants
 const TUint KMapDefaultMoveStep = 20; // In pixels
@@ -244,6 +245,7 @@ public:
 	void ReloadVisibleAreaL();
 	inline const CFont* DefaultFont() const
 		{ return iDefaultFont; };
+	TZoom PreferredZoomForBounds(const TBounds &aBounds) const;
 
 	};
 	

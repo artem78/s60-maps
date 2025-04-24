@@ -92,12 +92,12 @@ TBool CSearch::RunResultsDialogL()
 	const TInt KGranularity = 10;
 	CDesCArraySeg* namesArray = new (ELeave) CDesCArraySeg(KGranularity);
 	CleanupStack::PushL(namesArray);
-	CArrayFixSeg<TCoordinate>* coordsArray = new (ELeave) CArrayFixSeg<TCoordinate>(KGranularity);
-	CleanupStack::PushL(coordsArray);
+	CArrayFixSeg<TResultItem>* items = new (ELeave) CArrayFixSeg<TResultItem>(KGranularity);
+	CleanupStack::PushL(items);
 	
-	ParseApiResponseL(namesArray, coordsArray);
+	ParseApiResponseL(namesArray, items);
 	
-	switch (coordsArray->Count())
+	switch (items->Count())
 		{
 		case 0:
 			{ // nothing found
@@ -107,15 +107,17 @@ TBool CSearch::RunResultsDialogL()
 			CleanupStack::PopAndDestroy(msg);
 			
 			iCoord.SetCoordinate(KNaN, KNaN);
-			iObserver->OnSearchFinished(EFalse, iCoord);
+			TBounds bounds;
+			//bounds.SetCoords(KNaN, KNaN, KNaN, KNaN);
+			iObserver->OnSearchFinished(EFalse, iCoord, bounds);
 			
 			break;
 			}
 		
 		case 1:
 			{ // go directly to single result
-			iCoord = coordsArray->At(0);
-			iObserver->OnSearchFinished(ETrue, iCoord);
+			iCoord = items->At(0).iCoord;
+			iObserver->OnSearchFinished(ETrue, iCoord, items->At(0).iBounds);
 			
 			break;
 			}
@@ -133,13 +135,13 @@ TBool CSearch::RunResultsDialogL()
 				{
 				DEBUG(_L("Selected name=%S idx=%d lat=%f lon=%f"), &(*namesArray)[chosenItem],
 						chosenItem,
-						coordsArray->At(chosenItem).Latitude(),
-						coordsArray->At(chosenItem).Longitude());
+						items->At(chosenItem).iCoord.Latitude(),
+						items->At(chosenItem).iCoord.Longitude());
 				
-				iCoord = coordsArray->At(chosenItem);
+				iCoord = items->At(chosenItem).iCoord;
 				}
 
-			iObserver->OnSearchFinished(res, iCoord);
+			iObserver->OnSearchFinished(res, iCoord, items->At(chosenItem).iBounds);
 			
 			break;
 			}
@@ -151,9 +153,11 @@ TBool CSearch::RunResultsDialogL()
 	DEBUG(_L("end"));
 	}
 
-void CSearch::ParseApiResponseL(CDesCArray* aNamesArr, CArrayFix<TCoordinate>* aCoordsArr)
+void CSearch::ParseApiResponseL(CDesCArray* aNamesArr, CArrayFix<TResultItem>* aCoordsArr)
 	{
 	DEBUG(_L("begin"));
+	
+	enum TBoundsArrIdx {ELat1, ELat2, ELon1, ELon2};
 	
 	CJsonParser* parser = new (ELeave) CJsonParser();
 	CleanupStack::PushL(parser);
@@ -165,38 +169,74 @@ void CSearch::ParseApiResponseL(CDesCArray* aNamesArr, CArrayFix<TCoordinate>* a
 	
 	TInt itemsCount = parser->GetParameterCount(KNullDesC);
 	TBuf<256> name;
-	TBuf<16> latDes, lonDes;
-	TReal64 lat, lon;
+	TBuf<16> latDes, lonDes, buff;
+	TReal64 lat, lon, bLat1, bLat2, bLon1, bLon2;
 	TBuf<32> path;
 	_LIT(KNamePathFmt, "[%d][display_name]");
 	_LIT(KLatPathFmt, "[%d][lat]");
 	_LIT(KLonPathFmt, "[%d][lon]");
+	_LIT(KBBoxPathFmt, "[%d][boundingbox][%d]");
 	_LIT(KTab, "\t");
 	TLex lex;
-	TCoordinate coord;
+	TResultItem result;
 	for (TInt i = 0; i < itemsCount; i++)
 		{
 		// Parse name
 		path.Format(KNamePathFmt, i);
-		parser->GetParameterValue(path, &name);
+		if (!parser->GetParameterValue(path, &name))
+			User::Leave(KErrNotFound);
 		name.Insert(0, KTab);
 		aNamesArr->AppendL(name);
 		
 		// Parse coordinates
 		path.Format(KLatPathFmt, i);
-		parser->GetParameterValue(path, &latDes);
+		if (!parser->GetParameterValue(path, &latDes))
+			User::Leave(KErrNotFound);
 		lex.Assign(latDes);
 		lat = KNaN;
 		User::LeaveIfError(lex.Val(lat, '.'));
 
 		path.Format(KLonPathFmt, i);
-		parser->GetParameterValue(path, &lonDes);
+		if (!parser->GetParameterValue(path, &lonDes))
+			User::Leave(KErrNotFound);
 		lex.Assign(lonDes);
 		lon = KNaN;
 		User::LeaveIfError(lex.Val(lon, '.'));
 
-		coord.SetCoordinate(lat, lon);
-		aCoordsArr->AppendL(coord);
+		result.iCoord.SetCoordinate(lat, lon);
+		
+		// Parse bounds
+		path.Format(KBBoxPathFmt, i, ELat1);
+		if (!parser->GetParameterValue(path, &buff))
+			User::Leave(KErrNotFound);
+		lex.Assign(buff);
+		bLat1 = KNaN;
+		User::LeaveIfError(lex.Val(bLat1, '.'));
+		
+		path.Format(KBBoxPathFmt, i, ELat2);
+		if (!parser->GetParameterValue(path, &buff))
+			User::Leave(KErrNotFound);
+		lex.Assign(buff);
+		bLat2 = KNaN;
+		User::LeaveIfError(lex.Val(bLat2, '.'));
+		
+		path.Format(KBBoxPathFmt, i, ELon1);
+		if (!parser->GetParameterValue(path, &buff))
+			User::Leave(KErrNotFound);
+		lex.Assign(buff);
+		bLon1 = KNaN;
+		User::LeaveIfError(lex.Val(bLon1, '.'));
+		
+		path.Format(KBBoxPathFmt, i, ELon2);
+		if (!parser->GetParameterValue(path, &buff))
+			User::Leave(KErrNotFound);
+		lex.Assign(buff);
+		bLon2 = KNaN;
+		User::LeaveIfError(lex.Val(bLon2, '.'));
+		
+		result.iBounds.SetCoords(bLat1, bLon1, bLat2, bLon2);
+		
+		aCoordsArr->AppendL(result);
 		}
 	
 	CleanupStack::PopAndDestroy(2, parser);

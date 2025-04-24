@@ -199,3 +199,32 @@ TBool StrUtils::EndsWithL(const TDesC8& aStr, const TDesC8& aSubstr, TBool aIgno
 	//...
 	}
 */
+
+
+// TBounds
+
+void TBounds::SetCoords(const TCoordinate &aTlCoord, const TCoordinate &aBrCoord)
+	{
+	iTlCoord = aTlCoord;
+	iBrCoord = aBrCoord;
+	}
+
+void TBounds::SetCoords(TReal64 &aLat1, TReal64 &aLon1, TReal64 &aLat2, TReal64 &aLon2)
+	{
+	iTlCoord.SetCoordinate(Max(aLat1, aLat2), Min(aLon1, aLon2));
+	iBrCoord.SetCoordinate(Min(aLat1, aLat2), Max(aLon1, aLon2));
+	}
+
+bool operator == (const TBounds &aCoordRect1, const TBounds &aCoordRect2)
+	{
+	return (aCoordRect1.iTlCoord.Longitude() == aCoordRect2.iTlCoord.Longitude())
+			&& (aCoordRect1.iTlCoord.Latitude() == aCoordRect2.iTlCoord.Latitude())
+			&& (aCoordRect1.iBrCoord.Longitude() == aCoordRect2.iBrCoord.Longitude())
+			&& (aCoordRect1.iBrCoord.Latitude() == aCoordRect2.iBrCoord.Latitude());
+	}
+
+bool operator != (const TBounds &aCoordRect1, const TBounds &aCoordRect2)
+	{
+	return !(aCoordRect1 == aCoordRect2);
+	}
+

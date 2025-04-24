@@ -82,7 +82,7 @@ private:
 	
 	// Others
 	CSearch* iSearch;
-	void OnSearchFinished(TBool aSuccess, const TCoordinate &aCoord);
+	void OnSearchFinished(TBool aSuccess, const TCoordinate &aCoord, const TBounds &aBounds);
 	};
 
 #endif /* __MAPVIEW_H_ */

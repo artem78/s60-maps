@@ -11,6 +11,7 @@
 // INCLUDES
 #include <e32std.h>
 #include <e32base.h>
+#include <lbsposition.h>
 
 // CLASS DECLARATION
 
@@ -58,6 +59,20 @@ public:
 	static TBool StartsWithL(const TDesC8& aStr, const TDesC8& aSubstr, TBool aIgnoreCase = EFalse);
 	//static TBool EndsWithL(const TDesC16& aStr, const TDesC16& aSubstr, TBool aIgnoreCase = EFalse);
 	//static TBool EndsWithL(const TDesC8& aStr, const TDesC8& aSubstr, TBool aIgnoreCase = EFalse);
+	};
+
+
+// Similar as TRect but for couple of TCoordinate objects
+class /*TCoordRect*/ /*TBoundingRect*/ TBounds
+	{
+public:
+	TCoordinate iTlCoord, iBrCoord;
+	
+	void SetCoords(const TCoordinate &aTlCoord, const TCoordinate &aBrCoord);
+	void SetCoords(TReal64 &aLat1, TReal64 &aLon1, TReal64 &aLat2, TReal64 &aLon2);
+	
+    friend bool operator == (const TBounds &aCoordRect1, const TBounds &aCoordRect2);
+    friend bool operator != (const TBounds &aCoordRect1, const TBounds &aCoordRect2);
 	};
 
 #endif // UTILS_H
