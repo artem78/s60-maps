@@ -919,4 +919,26 @@ void CMapControl::NotifyLandmarksUpdated()
 	static_cast<CLandmarksLayer*>(iLayers[ELandmarksLayerId])->NotifyLandmarksUpdated();
 	}
 
+TZoom CMapControl::PreferredZoomForBounds(const TBounds &aBounds) const
+	{
+	TZoom zoom = iMaxZoom;
+	while (zoom > iMinZoom)
+		{
+		TPoint pTl = MapMath::GeoCoordsToProjectionPoint(aBounds.iTlCoord, zoom);
+		TPoint pBr = MapMath::GeoCoordsToProjectionPoint(aBounds.iBrCoord, zoom);
+		TInt w = pBr.iX - pTl.iX;
+		TInt h = pBr.iY - pTl.iY;
+		
+		__ASSERT_DEBUG(w >= 0, Panic(ES60MapsUnknownPanic));
+		__ASSERT_DEBUG(h >= 0, Panic(ES60MapsUnknownPanic));
+		
+		if (w <= Rect().Width() and h <= Rect().Height())
+			break;
+		
+		zoom--;
+		}
+	
+	return zoom;
+	}
+
 // End of File

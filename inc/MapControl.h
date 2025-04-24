@@ -18,6 +18,7 @@
 #include "Map.h"
 #include "Defs.h"
 #include <s32strm.h>
+#include "Utils.h"
 
 // Constants
 const TUint KMapDefaultMoveStep = 20; // In pixels
@@ -249,6 +250,7 @@ public:
 		{ return iSmallFont; };
 	void NotifyLandmarksUpdated();
 	/*inline*/ TPoint ScreenCoordsToProjectionCoords(const TPoint &aPoint) const;
+	TZoom PreferredZoomForBounds(const TBounds &aBounds) const;
 
 	};
 	

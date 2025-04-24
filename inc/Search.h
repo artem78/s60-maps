@@ -17,10 +17,13 @@
 #include <lbsposition.h>
 #include "HTTPClient2.h"
 #include <badesca.h>
+#include "Utils.h"
 
 
 
 class MSearchObserver;
+class TResultItem;
+
 
 // CLASS DECLARATION
 
@@ -92,9 +95,17 @@ public:
 class MSearchObserver
 	{
 protected:
-	virtual void OnSearchFinished(TBool aSuccess, const TCoordinate &aCoord) = 0;
+	virtual void OnSearchFinished(TBool aSuccess, const TCoordinate &aCoord, const TBounds &aBounds) = 0;
 	
 	friend class CSearch;
+	};
+
+
+class TResultItem
+	{
+public:
+	TCoordinate iCoord;
+	TBounds iBounds;
 	};
 
 #endif // SEARCH_H

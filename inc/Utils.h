@@ -93,4 +93,21 @@ public:
 	static void DbgMsgL(const TDesC &aMsg);
 	};
 
+
+// Similar as TRect but for couple of TCoordinate objects
+class /*TCoordRect*/ /*TBoundingRect*/ TBounds
+	{
+public:
+	TCoordinate iTlCoord, iBrCoord;
+	
+	void SetCoords(const TCoordinate &aTlCoord, const TCoordinate &aBrCoord);
+	void SetCoords(TReal64 &aLat1, TReal64 &aLon1, TReal64 &aLat2, TReal64 &aLon2);
+	
+	// Returns ETrue if given rect completely located inside this rect
+	TBool Contains(const TBounds &aCoordRect) const;
+	
+    friend bool operator == (const TBounds &aCoordRect1, const TBounds &aCoordRect2);
+    friend bool operator != (const TBounds &aCoordRect1, const TBounds &aCoordRect2);
+	};
+
 #endif // UTILS_H
