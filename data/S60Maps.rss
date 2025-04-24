@@ -485,6 +485,7 @@ RESOURCE TBUF r_confirm_landmark_deletion { buf=qtn_confirm_landmark_deletion; }
 RESOURCE TBUF r_settings_title { buf=qtn_settings; }
 RESOURCE TBUF r_search { buf=qtn_search; }
 RESOURCE TBUF r_search_results { buf=qtn_search_results; }
+RESOURCE TBUF r_no_results { buf=qtn_no_results; }
 
 // Language names
 RESOURCE TBUF r_lang_english_name	{ buf=qtn_lang_english_name; }

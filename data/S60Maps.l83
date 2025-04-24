@@ -80,3 +80,7 @@ CHARACTER_SET UTF8
 
 #define qtn_search "Search"
 #define qtn_search_results "Search results"
+
+// Added in version X.XX
+
+#define qtn_no_results "No results!"
