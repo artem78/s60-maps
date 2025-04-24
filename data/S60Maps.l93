@@ -93,3 +93,7 @@ CHARACTER_SET UTF8
 #define qtn_map_data "данные карты"
 #define qtn_map_style "стиль карты"
 #define qtn_positioning "Определять местоположение"
+
+// Added in version X.XX
+
+#define qtn_no_results "Ничего не найдено!"

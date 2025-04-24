@@ -18,6 +18,7 @@
 #include "S60Maps.pan"
 #include "EscapeUtils.h"
 #include <utf.h>
+#include <aknnotewrappers.h> 
 
 
 CSearch::CSearch(MSearchObserver* aObserver)
@@ -98,6 +99,19 @@ void CSearch::RunResultsDialogL()
 	
 	switch (coordsArray->Count())
 		{
+		case 0:
+			{ // nothing found
+			CAknErrorNote* dlg = new (ELeave) CAknErrorNote();
+			HBufC* msg = CCoeEnv::Static()->AllocReadResourceLC(R_NO_RESULTS);
+			dlg->ExecuteLD(*msg);
+			CleanupStack::PopAndDestroy(msg);
+			
+			iCoord.SetCoordinate(KNaN, KNaN);
+			iObserver->OnSearchFinished(EFalse, iCoord);
+			
+			break;
+			}
+		
 		case 1:
 			{ // go directly to single result
 			iCoord = coordsArray->At(0);
@@ -107,7 +121,7 @@ void CSearch::RunResultsDialogL()
 			}
 		
 		default:
-			{
+			{ // show choosing list if more than one result
 			TInt chosenItem = -1;
 			CAknSelectionListDialog* dlg = CAknSelectionListDialog::NewL(chosenItem, namesArray,
 					R_SEARCH_RESULTS_QUERY_DIALOG_MENUBAR);
