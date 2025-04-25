@@ -70,9 +70,8 @@ TBool CSearch::RunQueryDialogL()
 	{
 	DEBUG(_L("begin"));
 	
-	//TBuf<KSearchInputFieldMaxLength> queryText;	
 	CAknTextQueryDialog* dlg = new (ELeave) CAknTextQueryDialog(iQuery);
-	dlg->SetMaxLength(/*KSearchInputFieldMaxLength*/iQuery.MaxLength());
+	dlg->SetMaxLength(iQuery.MaxLength());
 	TBool res = dlg->ExecuteLD(R_SEARCH_INPUT_QUERY_DLG) == EAknSoftkeySearch;
 	if (res)
 		{
@@ -90,12 +89,11 @@ void CSearch::RunResultsDialogL()
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(iAvkonAppUi);
 	
 	const TInt KGranularity = 10;
-	CDesCArraySeg* namesArray = new (ELeave) CDesCArraySeg(KGranularity);
-	CleanupStack::PushL(namesArray);
-	CArrayFixSeg<TResultItem>* items = new (ELeave) CArrayFixSeg<TResultItem>(KGranularity);
+	
+	CArrayFixSeg<TSearchResultItem>* items = new (ELeave) CArrayFixSeg<TSearchResultItem>(KGranularity);
 	CleanupStack::PushL(items);
 	
-	ParseApiResponseL(namesArray, items);
+	ParseApiResponseL(items);
 	
 	switch (items->Count())
 		{
@@ -106,24 +104,28 @@ void CSearch::RunResultsDialogL()
 			dlg->ExecuteLD(*msg);
 			CleanupStack::PopAndDestroy(msg);
 			
-			iCoord.SetCoordinate(KNaN, KNaN);
-			TBounds bounds;
-			//bounds.SetCoords(KNaN, KNaN, KNaN, KNaN);
-			iObserver->OnSearchFinished(EFalse, iCoord, bounds);
+			iObserver->OnSearchFailed();
 			
 			break;
 			}
 		
 		case 1:
 			{ // go directly to single result
-			iCoord = items->At(0).iCoord;
-			iObserver->OnSearchFinished(ETrue, iCoord, items->At(0).iBounds);
+			iObserver->OnSearchFinished(items->At(0));
 			
 			break;
 			}
 		
 		default:
 			{ // show choosing list if more than one result
+			CPtrCArray* namesArray = new (ELeave) CPtrCArray(KGranularity);
+			CleanupStack::PushL(namesArray);
+			
+			for (TInt i = 0; i < items->Count(); i++)
+				{
+				namesArray->AppendL(TPtrC(items->At(i).iName));
+				}
+			
 			TInt chosenItem = -1;
 			CAknSelectionListDialog* dlg = CAknSelectionListDialog::NewL(chosenItem, namesArray,
 					R_SEARCH_RESULTS_QUERY_DIALOG_MENUBAR);
@@ -131,29 +133,33 @@ void CSearch::RunResultsDialogL()
 			TBool res = dlg->ExecuteLD(R_SEARCH_RESULTS_QUERY_DIALOG) != 0;
 			appUi->HideStatusPaneAndShowMapControlL();
 			
+			CleanupStack::PopAndDestroy(namesArray);
+			
 			if (res)
 				{
-				DEBUG(_L("Selected name=%S idx=%d lat=%f lon=%f"), &(*namesArray)[chosenItem],
+				DEBUG(_L("Selected name=%S idx=%d lat=%f lon=%f"), &items->At(chosenItem).iName,
 						chosenItem,
 						items->At(chosenItem).iCoord.Latitude(),
 						items->At(chosenItem).iCoord.Longitude());
 				
-				iCoord = items->At(chosenItem).iCoord;
+				iObserver->OnSearchFinished(items->At(chosenItem));
 				}
-
-			iObserver->OnSearchFinished(res, iCoord, items->At(chosenItem).iBounds);
+			else
+				{
+				iObserver->OnSearchFailed();
+				}
 			
 			break;
 			}
 		}
 	
-	CleanupStack::PopAndDestroy(2, namesArray);
+	CleanupStack::PopAndDestroy(items);
 	
 	
 	DEBUG(_L("end"));
 	}
 
-void CSearch::ParseApiResponseL(CDesCArray* aNamesArr, CArrayFix<TResultItem>* aCoordsArr)
+void CSearch::ParseApiResponseL(CArrayFix<TSearchResultItem>* aResultsArr)
 	{
 	DEBUG(_L("begin"));
 	
@@ -168,7 +174,6 @@ void CSearch::ParseApiResponseL(CDesCArray* aNamesArr, CArrayFix<TResultItem>* a
 	parser->StartDecodingL(*jsonData);
 	
 	TInt itemsCount = parser->GetParameterCount(KNullDesC);
-	TBuf<256> name;
 	TBuf<16> latDes, lonDes, buff;
 	TReal64 lat, lon, bLat1, bLat2, bLon1, bLon2;
 	TBuf<32> path;
@@ -178,15 +183,14 @@ void CSearch::ParseApiResponseL(CDesCArray* aNamesArr, CArrayFix<TResultItem>* a
 	_LIT(KBBoxPathFmt, "[%d][boundingbox][%d]");
 	_LIT(KTab, "\t");
 	TLex lex;
-	TResultItem result;
+	TSearchResultItem result;
 	for (TInt i = 0; i < itemsCount; i++)
 		{
 		// Parse name
 		path.Format(KNamePathFmt, i);
-		if (!parser->GetParameterValue(path, &name))
+		if (!parser->GetParameterValue(path, &result.iName))
 			User::Leave(KErrNotFound);
-		name.Insert(0, KTab);
-		aNamesArr->AppendL(name);
+		result.iName.Insert(0, KTab);
 		
 		// Parse coordinates
 		path.Format(KLatPathFmt, i);
@@ -236,7 +240,7 @@ void CSearch::ParseApiResponseL(CDesCArray* aNamesArr, CArrayFix<TResultItem>* a
 		
 		result.iBounds.SetCoords(bLat1, bLon1, bLat2, bLon2);
 		
-		aCoordsArr->AppendL(result);
+		aResultsArr->AppendL(result);
 		}
 	
 	CleanupStack::PopAndDestroy(2, parser);
@@ -298,9 +302,16 @@ void CSearch::OnHTTPError(TInt /*aError*/, const RHTTPTransaction /*aTransaction
 	{
 	delete iResponseBuff;
 	iResponseBuff = NULL;
+	
+	iObserver->OnSearchFailed(/*aError*/);
 	}
 
 void CSearch::OnHTTPHeadersRecieved(const RHTTPTransaction /*aTransaction*/)
 	{
 
+	}
+
+void MSearchObserver::OnSearchFailed(/*TInt aError*/)
+	{
+	
 	}

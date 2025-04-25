@@ -22,7 +22,7 @@
 
 
 class MSearchObserver;
-class TResultItem;
+class TSearchResultItem;
 
 
 // CLASS DECLARATION
@@ -77,14 +77,13 @@ private:
 	
 private:
 	TBuf<128> iQuery;
-	TCoordinate iCoord;
 	CHTTPClient2* iHttpClient;
 	HBufC8* iResponseBuff;
 	MSearchObserver* iObserver;
 	
 	TBool RunQueryDialogL();
 	/*TBool*/ void RunResultsDialogL();
-	void ParseApiResponseL(CDesCArray* aNamesArr, CArrayFix<TCoordinate>* aCoordsArr);
+	void ParseApiResponseL(CArrayFix<TSearchResultItem>* aResultsArr);
 	void RunApiReqestL();
 	
 public:
@@ -92,18 +91,21 @@ public:
 
 	};
 
+
 class MSearchObserver
 	{
 protected:
-	virtual void OnSearchFinished(TBool aSuccess, const TCoordinate &aCoord, const TBounds &aBounds) = 0;
+	virtual void OnSearchFinished(const TSearchResultItem &aResultData) = 0;
+	virtual void OnSearchFailed(/*TInt aError*/);
 	
 	friend class CSearch;
 	};
 
 
-class TResultItem
+class TSearchResultItem
 	{
 public:
+	TBuf<256> iName;
 	TCoordinate iCoord;
 	TBounds iBounds;
 	};

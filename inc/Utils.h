@@ -94,7 +94,7 @@ public:
 	};
 
 
-// Similar as TRect but for couple of TCoordinate objects
+// Holds bounding box defined with top-left and bottom-right TCoordinate
 class /*TCoordRect*/ /*TBoundingRect*/ TBounds
 	{
 public:
