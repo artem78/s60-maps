@@ -23,6 +23,7 @@
 
 class MSearchObserver;
 class TSearchResultItem;
+class CJsonParser;
 
 
 // CLASS DECLARATION
@@ -85,6 +86,8 @@ private:
 	TBool RunResultsDialogL();
 	void ParseApiResponseL(CArrayFix<TSearchResultItem>* aResultsArr);
 	void RunApiReqestL();
+	static void ParseJsonValueL(CJsonParser* aParser, const TDesC &aParam, TDes &aVal);
+	static void ParseJsonValueL(CJsonParser* aParser, const TDesC &aParam, TReal64 &aVal);
 	
 public:
 	TBool RunL();

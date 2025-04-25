@@ -174,7 +174,6 @@ void CSearch::ParseApiResponseL(CArrayFix<TSearchResultItem>* aResultsArr)
 	parser->StartDecodingL(*jsonData);
 	
 	TInt itemsCount = parser->GetParameterCount(KNullDesC);
-	TBuf<16> latDes, lonDes, buff;
 	TReal64 lat, lon, bLat1, bLat2, bLon1, bLon2;
 	TBuf<32> path;
 	_LIT(KNamePathFmt, "[%d][display_name]");
@@ -182,63 +181,38 @@ void CSearch::ParseApiResponseL(CArrayFix<TSearchResultItem>* aResultsArr)
 	_LIT(KLonPathFmt, "[%d][lon]");
 	_LIT(KBBoxPathFmt, "[%d][boundingbox][%d]");
 	_LIT(KTab, "\t");
-	TLex lex;
 	TSearchResultItem result;
 	for (TInt i = 0; i < itemsCount; i++)
 		{
 		// Parse name
 		path.Format(KNamePathFmt, i);
-		if (!parser->GetParameterValue(path, &result.iName))
-			User::Leave(KErrNotFound);
+		ParseJsonValueL(parser, path, result.iName);
 		result.iName.Insert(0, KTab);
 		
 		// Parse coordinates
 		path.Format(KLatPathFmt, i);
-		if (!parser->GetParameterValue(path, &latDes))
-			User::Leave(KErrNotFound);
-		lex.Assign(latDes);
-		lat = KNaN;
-		User::LeaveIfError(lex.Val(lat, '.'));
+		ParseJsonValueL(parser, path, lat);
 
 		path.Format(KLonPathFmt, i);
-		if (!parser->GetParameterValue(path, &lonDes))
-			User::Leave(KErrNotFound);
-		lex.Assign(lonDes);
-		lon = KNaN;
-		User::LeaveIfError(lex.Val(lon, '.'));
+		ParseJsonValueL(parser, path, lon);
 
 		result.iCoord.SetCoordinate(lat, lon);
 		
 		// Parse bounds
 		path.Format(KBBoxPathFmt, i, ELat1);
-		if (!parser->GetParameterValue(path, &buff))
-			User::Leave(KErrNotFound);
-		lex.Assign(buff);
-		bLat1 = KNaN;
-		User::LeaveIfError(lex.Val(bLat1, '.'));
+		ParseJsonValueL(parser, path, bLat1);
 		
 		path.Format(KBBoxPathFmt, i, ELat2);
-		if (!parser->GetParameterValue(path, &buff))
-			User::Leave(KErrNotFound);
-		lex.Assign(buff);
-		bLat2 = KNaN;
-		User::LeaveIfError(lex.Val(bLat2, '.'));
+		ParseJsonValueL(parser, path, bLat2);
 		
 		path.Format(KBBoxPathFmt, i, ELon1);
-		if (!parser->GetParameterValue(path, &buff))
-			User::Leave(KErrNotFound);
-		lex.Assign(buff);
-		bLon1 = KNaN;
-		User::LeaveIfError(lex.Val(bLon1, '.'));
+		ParseJsonValueL(parser, path, bLon1);
 		
 		path.Format(KBBoxPathFmt, i, ELon2);
-		if (!parser->GetParameterValue(path, &buff))
-			User::Leave(KErrNotFound);
-		lex.Assign(buff);
-		bLon2 = KNaN;
-		User::LeaveIfError(lex.Val(bLon2, '.'));
+		ParseJsonValueL(parser, path, bLon2);
 		
 		result.iBounds.SetCoords(bLat1, bLon1, bLat2, bLon2);
+		
 		
 		aResultsArr->AppendL(result);
 		}
@@ -246,6 +220,26 @@ void CSearch::ParseApiResponseL(CArrayFix<TSearchResultItem>* aResultsArr)
 	CleanupStack::PopAndDestroy(2, parser);
 	
 	DEBUG(_L("end"));
+	}
+
+void CSearch::ParseJsonValueL(CJsonParser* aParser, const TDesC &aParam, TDes &aVal)
+	{
+	aVal = KNullDesC;
+	
+	if (!aParser->GetParameterValue(aParam, &aVal))
+		User::Leave(KErrNotFound);
+	}
+
+void CSearch::ParseJsonValueL(CJsonParser* aParser, const TDesC &aParam, TReal64 &aVal)
+	{
+	TLex lex;
+	TBuf<32> buff = KNullDesC;
+	aVal = KNaN;
+	
+	if (!aParser->GetParameterValue(aParam, &buff))
+		User::Leave(KErrNotFound);
+	lex.Assign(buff);
+	User::LeaveIfError(lex.Val(aVal, '.'));
 	}
 
 void CSearch::RunApiReqestL()
