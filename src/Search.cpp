@@ -261,13 +261,15 @@ void CSearch::RunApiReqestL()
 	CleanupStack::PushL(encodedQuery);
 	
 	RBuf8 url;
-	url.CreateL(KApiBaseUrl().Length() + encodedQuery->Length() + 10);
+	url.CreateL(KApiBaseUrl().Length() + encodedQuery->Length() + 100 /* for additional params */);
 	CleanupClosePushL(url);
 	url = KApiBaseUrl;
 	url.Append(*encodedQuery);
 	_LIT8(KLimitArg, "&limit=");
 	url.Append(KLimitArg);
 	url.AppendNum(KMaxSearchResults);
+	_LIT8(KEmailArgWithValue, "&email=megabyte1024%40ya.ru");
+	url.Append(KEmailArgWithValue);
 	
 	iHttpClient->GetL(url);
 		
