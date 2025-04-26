@@ -18,7 +18,10 @@
 #include "S60Maps.pan"
 #include "EscapeUtils.h"
 #include <utf.h>
-#include <aknnotewrappers.h> 
+#include <aknnotewrappers.h>
+
+
+const TInt KMaxSearchResults = 15;
 
 
 CSearch::CSearch(MSearchObserver* aObserver)
@@ -258,10 +261,13 @@ void CSearch::RunApiReqestL()
 	CleanupStack::PushL(encodedQuery);
 	
 	RBuf8 url;
-	url.CreateL(KApiBaseUrl().Length() + encodedQuery->Length());
+	url.CreateL(KApiBaseUrl().Length() + encodedQuery->Length() + 10);
 	CleanupClosePushL(url);
 	url = KApiBaseUrl;
 	url.Append(*encodedQuery);
+	_LIT8(KLimitArg, "&limit=");
+	url.Append(KLimitArg);
+	url.AppendNum(KMaxSearchResults);
 	
 	iHttpClient->GetL(url);
 		
