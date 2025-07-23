@@ -193,56 +193,73 @@ void CMapView::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
 	{
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(AppUi());
 	
-	if (aMenuID == R_MENU)
+	switch (aMenuID)
 		{
-		//aMenuPane->SetItemButtonState(EFindMe,
-		//		iAppView->IsFollowingUser() ? EEikMenuItemSymbolOn : EEikMenuItemSymbolIndeterminate
-		//);
-		aMenuPane->SetItemDimmed(EFindMe, !appUi->IsPositioningAvailable() || MapControl()->IsFollowingUser());
-		}
-	else if (aMenuID == R_SUBMENU_GOTO)
-		{
-		CPosLmItemIterator* landmarkIterator = appUi->LandmarkDb()->LandmarkIteratorL();
-		if (!(landmarkIterator && landmarkIterator->NumOfItemsL() > 0))
-			aMenuPane->SetItemDimmed(EGotoLandmark, ETrue);
-		delete landmarkIterator;
-		}
-	else if (aMenuID == R_SUBMENU_TILE_PROVIDERS)
-		{
-		// Fill list of available tiles services in menu
-		
-		for (TInt idx = 0; idx < appUi->AvailableTileProviders().Count(); idx++)
+		case R_MENU:
 			{
-			TInt commandId = ESetTileProviderBase + idx;
-			
-			CEikMenuPaneItem::SData menuItem;
-			menuItem.iCommandId = commandId;
-			menuItem.iCascadeId = 0;
-			menuItem.iFlags = EEikMenuItemCheckBox;
-			menuItem.iText.Copy(appUi->AvailableTileProviders()[idx]->iTitle);
-			menuItem.iExtraText.Zero();
-			aMenuPane->AddMenuItemL(menuItem);
-			aMenuPane->SetItemButtonState(commandId,
-					/*commandId == selectedTileProviderCommId*/
-					appUi->AvailableTileProviders()[idx] == appUi->TileProvider() ?
-							EEikMenuItemSymbolOn : EEikMenuItemSymbolIndeterminate);				
+				//aMenuPane->SetItemButtonState(EFindMe,
+				//		iAppView->IsFollowingUser() ? EEikMenuItemSymbolOn : EEikMenuItemSymbolIndeterminate
+				//);
+				aMenuPane->SetItemDimmed(EFindMe, !appUi->IsPositioningAvailable() || MapControl()->IsFollowingUser());
+				
+				break;
 			}
+			
+		case R_SUBMENU_GOTO:
+			{
+			CPosLmItemIterator* landmarkIterator = appUi->LandmarkDb()->LandmarkIteratorL();
+			if (!(landmarkIterator && landmarkIterator->NumOfItemsL() > 0))
+				aMenuPane->SetItemDimmed(EGotoLandmark, ETrue);
+			delete landmarkIterator;
+			
+			break;
+			}
+			
+		case R_SUBMENU_TILE_PROVIDERS:
+			{
+			// Fill list of available tiles services in menu
+					
+			for (TInt idx = 0; idx < appUi->AvailableTileProviders().Count(); idx++)
+				{
+				TInt commandId = ESetTileProviderBase + idx;
+				
+				CEikMenuPaneItem::SData menuItem;
+				menuItem.iCommandId = commandId;
+				menuItem.iCascadeId = 0;
+				menuItem.iFlags = EEikMenuItemCheckBox;
+				menuItem.iText.Copy(appUi->AvailableTileProviders()[idx]->iTitle);
+				menuItem.iExtraText.Zero();
+				aMenuPane->AddMenuItemL(menuItem);
+				aMenuPane->SetItemButtonState(commandId,
+						/*commandId == selectedTileProviderCommId*/
+						appUi->AvailableTileProviders()[idx] == appUi->TileProvider() ?
+								EEikMenuItemSymbolOn : EEikMenuItemSymbolIndeterminate);				
+				}
+			
+			break;
+			}
+			
+		case R_SUBMENU_LANDMARKS:
+			{
+			aMenuPane->SetItemButtonState(EToggleLandmarksVisibility,
+					appUi->Settings()->GetLandmarksVisibility() ? EEikMenuItemSymbolOn : EEikMenuItemSymbolIndeterminate
+			);
+			CPosLandmark* nearestLandmark = GetNearestLandmarkAroundTheCenterL();
+			TBool isDisplayEditOrDeleteLandmark = appUi->Settings()->GetLandmarksVisibility() && nearestLandmark;
+			delete nearestLandmark;
+			aMenuPane->SetItemDimmed(ERenameLandmark, !isDisplayEditOrDeleteLandmark);
+			aMenuPane->SetItemDimmed(EDeleteLandmark, !isDisplayEditOrDeleteLandmark);
+			
+			break;
+			}
+			
+		/*default:
+			{
+			AppUi()->DynInitMenuPaneL(aMenuID, aMenuPane);
+			
+			break;
+			}*/
 		}
-	else if (aMenuID == R_SUBMENU_LANDMARKS)
-		{
-		aMenuPane->SetItemButtonState(EToggleLandmarksVisibility,
-				appUi->Settings()->GetLandmarksVisibility() ? EEikMenuItemSymbolOn : EEikMenuItemSymbolIndeterminate
-		);
-		CPosLandmark* nearestLandmark = GetNearestLandmarkAroundTheCenterL();
-		TBool isDisplayEditOrDeleteLandmark = appUi->Settings()->GetLandmarksVisibility() && nearestLandmark;
-		delete nearestLandmark;
-		aMenuPane->SetItemDimmed(ERenameLandmark, !isDisplayEditOrDeleteLandmark);
-		aMenuPane->SetItemDimmed(EDeleteLandmark, !isDisplayEditOrDeleteLandmark);
-		}
-	/*else
-		{
-		AppUi()->DynInitMenuPaneL(aMenuID, aMenuPane);
-		}*/
 	}
 
 void CMapView::HandleFindMeL()
