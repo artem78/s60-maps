@@ -137,64 +137,64 @@ TBool StrUtils::ContainsL(const TDesC8& aStr, const TDesC8& aSubstr, TBool aIgno
 		}
 	}
 
-TBool StrUtils::StartsWithL(const TDesC& aStr, const TDesC& aSubstr, TBool aIgnoreCase)
+TBool StrUtils::StartsWith(const TDesC& aStr, const TDesC& aSubstr, TBool aIgnoreCase)
 	{
-	if (!aIgnoreCase)
+	if (aStr.Length() < aSubstr.Length())
 		{
-		return aStr.Find(aSubstr) == 0;
+		return EFalse;
 		}
-	else
+	
+	for (TInt i = 0; i < aSubstr.Length(); i++)
 		{
-		RBuf strLower, substrLower;
+		TChar ch1, ch2;
+		ch1 = aStr[i];
+		ch2 = aSubstr[i];
+		if (aIgnoreCase)
+			{
+			ch1.LowerCase();
+			ch2.LowerCase();
+			}
 		
-		strLower.CreateL(aStr);
-		CleanupClosePushL(strLower);
-		
-		substrLower.CreateL(aSubstr);
-		CleanupClosePushL(substrLower);
-		
-		strLower.LowerCase();
-		substrLower.LowerCase();
-		TBool res = strLower.Find(substrLower) == 0;
-		
-		CleanupStack::PopAndDestroy(2, &strLower);
-		
-		return res;
+		if (ch1 != ch2)
+			{
+			return EFalse;
+			}
 		}
+	return ETrue;
 	}
 
-TBool StrUtils::StartsWithL(const TDesC8& aStr, const TDesC8& aSubstr, TBool aIgnoreCase)
+TBool StrUtils::StartsWith(const TDesC8& aStr, const TDesC8& aSubstr, TBool aIgnoreCase)
 	{
-	if (!aIgnoreCase)
+	if (aStr.Length() < aSubstr.Length())
 		{
-		return aStr.Find(aSubstr) == 0;
+		return EFalse;
 		}
-	else
+	
+	for (TInt i = 0; i < aSubstr.Length(); i++)
 		{
-		RBuf8 strLower, substrLower;
+		TChar ch1, ch2;
+		ch1 = aStr[i];
+		ch2 = aSubstr[i];
+		if (aIgnoreCase)
+			{
+			ch1.LowerCase();
+			ch2.LowerCase();
+			}
 		
-		strLower.CreateL(aStr);
-		CleanupClosePushL(strLower);
-		
-		substrLower.CreateL(aSubstr);
-		CleanupClosePushL(substrLower);
-		
-		strLower.LowerCase();
-		substrLower.LowerCase();
-		TBool res = strLower.Find(substrLower) == 0;
-		
-		CleanupStack::PopAndDestroy(2, &strLower);
-		
-		return res;
+		if (ch1 != ch2)
+			{
+			return EFalse;
+			}
 		}
+	return ETrue;
 	}
 
-/*TBool StrUtils::EndsWithL(const TDesC16& aStr, const TDesC16& aSubstr, TBool aIgnoreCase)
+/*TBool StrUtils::EndsWith(const TDesC16& aStr, const TDesC16& aSubstr, TBool aIgnoreCase)
 	{
 	//...
 	}
 	
-TBool StrUtils::EndsWithL(const TDesC8& aStr, const TDesC8& aSubstr, TBool aIgnoreCase)
+TBool StrUtils::EndsWith(const TDesC8& aStr, const TDesC8& aSubstr, TBool aIgnoreCase)
 	{
 	//...
 	}

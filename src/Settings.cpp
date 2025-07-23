@@ -143,7 +143,7 @@ void CSettings::ValidateHttpsProxyUrlL()
 	
 	_LIT(KUrlStart, "http");
 	_LIT(KOldProxyDomain, "s60maps.work.gd");
-	if (!StrUtils::StartsWithL(iHttpsProxyUrl, KUrlStart, ETrue)
+	if (!StrUtils::StartsWith(iHttpsProxyUrl, KUrlStart, ETrue)
 			|| StrUtils::ContainsL(iHttpsProxyUrl, KOldProxyDomain, ETrue))
 		{
 		iHttpsProxyUrl = KDefaultHttpsProxyUrl;

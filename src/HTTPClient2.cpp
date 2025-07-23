@@ -55,7 +55,7 @@ void CHTTPClient2::SendRequestL(THTTPMethod aMethod, const TDesC8 &aUrl)
 	{
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());	
 	_LIT8(KHttpsUrlStart, "https://");
-	if (appUi->Settings()->iUseHttpsProxy && StrUtils::StartsWithL(aUrl, KHttpsUrlStart, ETrue))
+	if (appUi->Settings()->iUseHttpsProxy && StrUtils::StartsWith(aUrl, KHttpsUrlStart, ETrue))
 		{
 		DEBUG(_L("HTTPS-proxy used for request"));
 		
