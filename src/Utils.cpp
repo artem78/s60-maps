@@ -85,56 +85,54 @@ TRectEx::TRectEx(TInt aAx, TInt aAy, TInt aBx, TInt aBy)
 // StrUtils
 // todo: reduce code duplications
 
-TBool StrUtils::ContainsL(const TDesC& aStr, const TDesC& aSubstr, TBool aIgnoreCase)
+TBool StrUtils::Contains(const TDesC& aStr, const TDesC& aSubstr, TBool aIgnoreCase)
 	{
+	if (aStr.Length() < aSubstr.Length())
+		{
+		return EFalse;
+		}
+	
 	if (!aIgnoreCase)
 		{
 		return aStr.Find(aSubstr) != KErrNotFound;
 		}
 	else
-		{
-		RBuf strLower, substrLower;
-		
-		strLower.CreateL(aStr);
-		CleanupClosePushL(strLower);
-		
-		substrLower.CreateL(aSubstr);
-		CleanupClosePushL(substrLower);
-		
-		strLower.LowerCase();
-		substrLower.LowerCase();
-		TBool res = strLower.Find(substrLower) != KErrNotFound;
-		
-		CleanupStack::PopAndDestroy(2, &strLower);
-		
-		return res;
+		{		
+		for (TInt pos = 0; pos <= aStr.Length() - aSubstr.Length(); pos++)
+			{
+			TPtrC s = aStr.Mid(pos, aSubstr.Length());
+			if (StartsWith(s, aSubstr, aIgnoreCase))
+				{
+				return ETrue;
+				}
+			}
 		}
+		return EFalse;
 	}
 
-TBool StrUtils::ContainsL(const TDesC8& aStr, const TDesC8& aSubstr, TBool aIgnoreCase)
+TBool StrUtils::Contains(const TDesC8& aStr, const TDesC8& aSubstr, TBool aIgnoreCase)
 	{
+	if (aStr.Length() < aSubstr.Length())
+		{
+		return EFalse;
+		}
+	
 	if (!aIgnoreCase)
 		{
 		return aStr.Find(aSubstr) != KErrNotFound;
 		}
 	else
-		{
-		RBuf8 strLower, substrLower;
-		
-		strLower.CreateL(aStr);
-		CleanupClosePushL(strLower);
-		
-		substrLower.CreateL(aSubstr);
-		CleanupClosePushL(substrLower);
-		
-		strLower.LowerCase();
-		substrLower.LowerCase();
-		TBool res = strLower.Find(substrLower) != KErrNotFound;
-		
-		CleanupStack::PopAndDestroy(2, &strLower);
-		
-		return res;
+		{		
+		for (TInt pos = 0; pos <= aStr.Length() - aSubstr.Length(); pos++)
+			{
+			TPtrC8 s = aStr.Mid(pos, aSubstr.Length());
+			if (StartsWith(s, aSubstr, aIgnoreCase))
+				{
+				return ETrue;
+				}
+			}
 		}
+		return EFalse;
 	}
 
 TBool StrUtils::StartsWith(const TDesC& aStr, const TDesC& aSubstr, TBool aIgnoreCase)

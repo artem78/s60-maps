@@ -121,7 +121,7 @@ void CSettings::DoInternalizeL(RReadStream& aStream)
 	aStream >> int8Val;
 	iUseHttpsProxy = static_cast<TBool>(int8Val);
 	aStream >> iHttpsProxyUrl;
-	ValidateHttpsProxyUrlL();
+	ValidateHttpsProxyUrl();
 	aStream >> int8Val;
 	iUseDiskCache = static_cast<TBool>(int8Val);
 	}
@@ -135,7 +135,7 @@ void CSettings::InternalizeL(RReadStream& aStream)
 		}
 	}
 
-void CSettings::ValidateHttpsProxyUrlL()
+void CSettings::ValidateHttpsProxyUrl()
 	{
 	// just check that string starts with "http"
 	// (for better check TUriC16::Validate() may be used instead)
@@ -144,7 +144,7 @@ void CSettings::ValidateHttpsProxyUrlL()
 	_LIT(KUrlStart, "http");
 	_LIT(KOldProxyDomain, "s60maps.work.gd");
 	if (!StrUtils::StartsWith(iHttpsProxyUrl, KUrlStart, ETrue)
-			|| StrUtils::ContainsL(iHttpsProxyUrl, KOldProxyDomain, ETrue))
+			|| StrUtils::Contains(iHttpsProxyUrl, KOldProxyDomain, ETrue))
 		{
 		iHttpsProxyUrl = KDefaultHttpsProxyUrl;
 		}
