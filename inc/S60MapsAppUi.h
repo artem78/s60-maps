@@ -33,7 +33,7 @@
 enum TPositioningState
 	{
 	EPositioningUnavailable,	// Phone doesn't support positioning (gps) or it disabled in phone settings
-//	EPositioningDisabled,		// Using positioning is disabled in s60maps settings
+	EPositioningDisabled,		// Using positioning is disabled in s60maps settings
 	EPositioningEnabled,		// Positioning enabled, but location not recieved yet
 	EPositionRecieved			// Current location is determined
 	};
@@ -217,7 +217,7 @@ public:
 			{ return iIsPositioningAvailable; }
 	
 	inline TBool IsPositionRecieved()
-			{ return IsPositioningAvailable() && iPosRequestor->IsPositionRecieved(); }
+			{ return IsPositioningAvailable() && iPosRequestor && iPosRequestor->IsPositionRecieved(); }
 	
 	inline CMapView* MapView()
 			{ return iMapView; }
@@ -233,6 +233,8 @@ public:
 	
 	TPositioningState PositioningState() /*const*/;
 
+	void EnablePositioningL();
+	void DisablePositioning();
 	
 	};
 

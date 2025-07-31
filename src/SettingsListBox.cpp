@@ -82,6 +82,17 @@ CAknSettingItem* CSettingsListBox::CreateSettingItemL(TInt aSettingId)
 										appUi->Settings()->iUseDiskCache);
 			}
 			break;
+			
+		case ESettingPositioningEnabled:
+			{
+			if (appUi->IsPositioningAvailable())
+				{
+				settingItem = new (ELeave) CAknBinaryPopupSettingItem(aSettingId,
+										appUi->Settings()->iPositioningEnabled);
+				}
+			}
+			break;
+			
 		}
 	
 	return settingItem;
@@ -96,6 +107,7 @@ void CSettingsListBox::EditItemL(TInt aIndex, TBool aCalledFromMenu)
 	//(*SettingItemArray())[aIndex]->UpdateListBoxTextL();
 	(*SettingItemArray())[aIndex]->StoreL();
 	
+	// Perform any action after setting was changed (if needed)
 	switch ((*SettingItemArray())[aIndex]->Identifier())
 		{
 		case ESettingLanguage:
@@ -134,6 +146,22 @@ void CSettingsListBox::EditItemL(TInt aIndex, TBool aCalledFromMenu)
 			HandleChangeInItemArrayOrVisibilityL();
 			}
 			break;
+			
+		case ESettingPositioningEnabled:
+			{
+			if (appUi->Settings()->iPositioningEnabled)
+				{
+				appUi->EnablePositioningL();
+				}
+			else
+				{
+				appUi->DisablePositioning();
+				}
+			(*SettingItemArray())[ESettingShowSignalIndicator]->SetHidden(!appUi->Settings()->iPositioningEnabled);
+			(*SettingItemArray())[ESettingSignalIndicatorType]->SetHidden(!appUi->Settings()->iPositioningEnabled || !appUi->Settings()->iIsSignalIndicatorVisible);
+			HandleChangeInItemArrayOrVisibilityL();
+			break;
+			}
 		}
 	}
 

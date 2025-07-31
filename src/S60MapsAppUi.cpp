@@ -162,15 +162,12 @@ void CS60MapsAppUi::ConstructL()
 	iSettingsView = CSettingsView::NewL();
 	AddViewL(iSettingsView);
 	
-	// Position requestor
-	_LIT(KPosRequestorName, "S60 Maps"); // ToDo: Move to global const
-	TRAPD(err, iPosRequestor = CPositionRequestor::NewL(this, KPosRequestorName));
-	iIsPositioningAvailable = /*iPosRequestor != NULL*/ err == KErrNone;
-	if (err == KErrNone)
-		{
-		iPosRequestor->Start(); // Must be started after view created
-		}
-	else
+	// Test if positioning available (todo: remake, can be moved to something like CPositionRequestor::IsPositioningAvailable() )
+	CPositionRequestor* posReqTmp = NULL;
+	TRAPD(err, posReqTmp = CPositionRequestor::NewL(this, /*KPosRequestorName*/ KNullDesC));
+	iIsPositioningAvailable = err == KErrNone;
+	delete posReqTmp;
+	if (/*PositioningState() == EPositioningUnavailable*/ !IsPositioningAvailable())
 		{
 		// Message to user will be shown later after language will be readed from settings
 		WARNING(_L("Failed to create position requestor (error: %d), continue without GPS"), err);
@@ -385,6 +382,13 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 	DEBUG(_L("Settings reading started"));
 	
 	TRAP_IGNORE(aStream >> *iSettings);
+	
+	// Enable position requestor if turned on
+	if (PositioningState() != EPositioningUnavailable && iSettings->iPositioningEnabled)
+		{
+		EnablePositioningL();
+		}
+	
 	iMapView->MapControl()->Move(iSettings->GetLat(), iSettings->GetLon(), iSettings->GetZoom());
 	
 	// Tile provider
@@ -898,6 +902,10 @@ TPositioningState CS60MapsAppUi::PositioningState()
 		{
 		return EPositioningUnavailable;
 		}
+	else if (!iSettings->iPositioningEnabled)
+		{
+		return EPositioningDisabled;
+		}
 	else if (IsPositionRecieved())
 		{
 		return EPositionRecieved;
@@ -906,6 +914,41 @@ TPositioningState CS60MapsAppUi::PositioningState()
 		{
 		return EPositioningEnabled;
 		}
+	}
+
+void CS60MapsAppUi::EnablePositioningL()
+	{
+	if (iPosRequestor)
+		{ // Positioning already started
+		return;
+		}
+	
+	_LIT(KPosRequestorName, "S60 Maps"); // ToDo: Move to global const
+	/*TRAPD(err,*/ iPosRequestor = CPositionRequestor::NewL(this, KPosRequestorName)/*)*/;
+	//iIsPositioningAvailable = /*iPosRequestor != NULL*/ err == KErrNone;
+	/*if (err == KErrNone)
+		{
+		if (iSettings->iGpsEnabled)
+			{*/
+			iPosRequestor->Start(); // Must be started after view created
+			/*}
+		else
+			{
+			delete iPosRequestor;
+			iPosRequestor = NULL;
+			}
+		}
+	else
+		{
+		// Message to user will be shown later after language will be readed from settings
+		WARNING(_L("Failed to create position requestor (error: %d), continue without GPS"), err);
+		}*/
+	}
+
+void CS60MapsAppUi::DisablePositioning()
+	{
+	delete iPosRequestor;
+	iPosRequestor = NULL;
 	}
 
 // End of File

@@ -83,3 +83,7 @@ CHARACTER_SET UTF8
 
 #define qtn_search "Поиск"
 #define qtn_search_results "Результаты поиска"
+
+// Added in version X.XX
+
+#define qtn_positioning "Определять местоположение"

@@ -575,6 +575,13 @@ RESOURCE AVKON_SETTING_ITEM_LIST r_setting_item_list
 			setting_page_resource = r_use_disk_cache_setting_page;
 			associated_resource = r_popup_setting_use_disk_cache_texts;
 			name = qtn_use_disk_cache;
+			},
+		AVKON_SETTING_ITEM
+			{
+			identifier = ESettingPositioningEnabled;
+			setting_page_resource = r_use_positioning_setting_page;
+			associated_resource = r_popup_setting_use_positioning_texts;
+			name = qtn_positioning;
 			}
 		};
 	}
@@ -759,6 +766,32 @@ RESOURCE ARRAY r_use_disk_cache_texts
         AVKON_ENUMERATED_TEXT { value=0; text = qtn_disabled; }
         };
     }
+
+
+// Show positioning enabled setting
+
+RESOURCE AVKON_SETTING_PAGE r_use_positioning_setting_page
+    {   
+    number = 0;
+    label = qtn_positioning;
+    type = EAknCtPopupSettingList;
+    }
+
+RESOURCE AVKON_POPUP_SETTING_TEXTS r_popup_setting_use_positioning_texts
+    {
+    flags = 0;
+    setting_texts_resource = r_use_positioning_texts;
+    }
+
+RESOURCE ARRAY r_use_positioning_texts
+    {
+    items =
+        {
+        AVKON_ENUMERATED_TEXT { value=1; text = qtn_enabled; },
+        AVKON_ENUMERATED_TEXT { value=0; text = qtn_disabled; }
+        };
+    }
+
 
 
 // Search input dialog
