@@ -165,6 +165,7 @@ void CS60MapsAppUi::ConstructL()
 	// Position requestor
 	_LIT(KPosRequestorName, "S60 Maps"); // ToDo: Move to global const
 	TRAPD(err, iPosRequestor = CPositionRequestor::NewL(this, KPosRequestorName));
+	iIsPositioningAvailable = /*iPosRequestor != NULL*/ err == KErrNone;
 	if (err == KErrNone)
 		{
 		iPosRequestor->Start(); // Must be started after view created

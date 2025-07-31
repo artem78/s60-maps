@@ -186,6 +186,7 @@ private:
 	CHWRMLight* iLight;
 	CPeriodic* iResetInactivityTimer;
 	HBufC* iOriginalPaneTitle;
+	TBool iIsPositioningAvailable;
 	
 	//static TInt UpdateTilesClearingProgress(TAny* aSelfPtr);
 	
@@ -213,7 +214,7 @@ public:
 //			{ return iPosRequestor; }
 	
 	inline TBool IsPositioningAvailable()
-			{ return (TBool) iPosRequestor; }
+			{ return iIsPositioningAvailable; }
 	
 	inline TBool IsPositionRecieved()
 			{ return IsPositioningAvailable() && iPosRequestor->IsPositionRecieved(); }
