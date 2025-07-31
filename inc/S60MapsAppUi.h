@@ -29,6 +29,15 @@
 #include <lbssatellite.h>
 #include <hwrmlight.h> // For CHWRMLight
 
+
+enum TPositioningState
+	{
+	EPositioningUnavailable,	// Phone doesn't support positioning (gps) or it disabled in phone settings
+//	EPositioningDisabled,		// Using positioning is disabled in s60maps settings
+	EPositioningEnabled,		// Positioning enabled, but location not recieved yet
+	EPositionRecieved			// Current location is determined
+	};
+
 // FORWARD DECLARATIONS
 class CMapView;
 
@@ -216,10 +225,13 @@ public:
 			{ return iSettingsView; }
 	
 	inline const TPositionSatelliteInfo* SatelliteInfo()
-			{ return IsPositioningAvailable() && iPosRequestor->LastKnownPositionInfo()->PositionClassType() & EPositionSatelliteInfoClass ?
+			{ return PositioningState() >= EPositioningEnabled && iPosRequestor->LastKnownPositionInfo()->PositionClassType() & EPositionSatelliteInfoClass ?
 					static_cast<const TPositionSatelliteInfo*>(iPosRequestor->LastKnownPositionInfo()) :
 					NULL;
 			}
+	
+	TPositioningState PositioningState() /*const*/;
+
 	
 	};
 

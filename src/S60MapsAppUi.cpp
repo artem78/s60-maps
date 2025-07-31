@@ -414,7 +414,7 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 	ChangeLanguageL(iSettings->iLanguage);
 	
 	// After localization loaded show translated message if positioning unavailable
-	if (!iPosRequestor)
+	if (PositioningState() == EPositioningUnavailable)
 		{
 		HBufC* msg = iEikonEnv->AllocReadResourceLC(R_POSITIONING_DISABLED);
 		//CAknWarningNote* note = new (ELeave) CAknWarningNote;
@@ -889,6 +889,22 @@ void CS60MapsAppUi::HideStatusPaneAndShowMapControlL()
 	// Restore original pane title
 	titlePane->SetText(iOriginalPaneTitle);
 	iOriginalPaneTitle = NULL;
+	}
+
+TPositioningState CS60MapsAppUi::PositioningState()
+	{
+	if (!IsPositioningAvailable())
+		{
+		return EPositioningUnavailable;
+		}
+	else if (IsPositionRecieved())
+		{
+		return EPositionRecieved;
+		}
+	else
+		{
+		return EPositioningEnabled;
+		}
 	}
 
 // End of File

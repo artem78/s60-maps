@@ -30,7 +30,7 @@ CAknSettingItem* CSettingsListBox::CreateSettingItemL(TInt aSettingId)
 			
 		case ESettingShowSignalIndicator:
 			{
-			if (appUi->IsPositioningAvailable())
+			if (appUi->PositioningState() >= EPositioningEnabled)
 				{
 				settingItem = new (ELeave) CAknBinaryPopupSettingItem(aSettingId,
 								appUi->Settings()->iIsSignalIndicatorVisible);
@@ -52,7 +52,7 @@ CAknSettingItem* CSettingsListBox::CreateSettingItemL(TInt aSettingId)
 			settingItem = new (ELeave) CAknBinaryPopupSettingItem(aSettingId,
 							*boolPtr);
 			
-			TBool isVisible = appUi->IsPositioningAvailable()
+			TBool isVisible = appUi->PositioningState() >= EPositioningEnabled
 					&& appUi->Settings()->iIsSignalIndicatorVisible;
 			settingItem->SetHidden(!isVisible);
 			}
@@ -109,7 +109,7 @@ void CSettingsListBox::EditItemL(TInt aIndex, TBool aCalledFromMenu)
 			
 		case ESettingShowSignalIndicator:
 			{
-			TBool isVisible = appUi->IsPositioningAvailable()
+			TBool isVisible = appUi->PositioningState() >= EPositioningEnabled
 					&& appUi->Settings()->iIsSignalIndicatorVisible;
 			
 			(*SettingItemArray())[ESettingSignalIndicatorType]->SetHidden(!isVisible);

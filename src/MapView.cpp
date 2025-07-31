@@ -200,7 +200,7 @@ void CMapView::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
 				//aMenuPane->SetItemButtonState(EFindMe,
 				//		iAppView->IsFollowingUser() ? EEikMenuItemSymbolOn : EEikMenuItemSymbolIndeterminate
 				//);
-				aMenuPane->SetItemDimmed(EFindMe, !appUi->IsPositioningAvailable() || MapControl()->IsFollowingUser());
+				aMenuPane->SetItemDimmed(EFindMe, appUi->PositioningState() < EPositioningEnabled || MapControl()->IsFollowingUser());
 				
 				break;
 			}
