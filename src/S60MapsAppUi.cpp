@@ -185,7 +185,8 @@ void CS60MapsAppUi::ConstructL()
 	
 	// Make infinite backlight
 	iLight = CHWRMLight::NewL();
-	EnableInfiniteBacklightL();
+	TRAP_IGNORE(EnableInfiniteBacklightL());	// sometimes on emulator iLight->ReserveLightL()
+												// leaves with KErrNotReady, just ignore any errors
 	//DEBUG(_L("light status=%d"), iLight->LightStatus(KLightTarget));
 	
 	// Prevent screensaver to be visible
