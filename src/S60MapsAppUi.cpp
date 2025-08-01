@@ -804,6 +804,11 @@ void CS60MapsAppUi::HandleForegroundEventL(TBool aForeground)
 
 void CS60MapsAppUi::EnableInfiniteBacklightL()
 	{
+	if (!iLight)
+		{
+		return;
+		}
+	
 	iLight->ReserveLightL(KLightTarget);
 	iLight->LightOnL(KLightTarget);
 	
@@ -812,6 +817,11 @@ void CS60MapsAppUi::EnableInfiniteBacklightL()
 
 void CS60MapsAppUi::DisableInfiniteBacklight()
 	{
+	if (!iLight)
+		{
+		return;
+		}
+	
 	iLight->ReleaseLight(KLightTarget);
 	
 	DEBUG(_L("Infinite backlight disabled"));
@@ -819,6 +829,11 @@ void CS60MapsAppUi::DisableInfiniteBacklight()
 
 void CS60MapsAppUi::EnableScreenSaver()
 	{
+	if (!iResetInactivityTimer)
+		{
+		return;
+		}
+	
 	if (iResetInactivityTimer->IsActive())
 		{
 		iResetInactivityTimer->Cancel();
@@ -828,6 +843,11 @@ void CS60MapsAppUi::EnableScreenSaver()
 
 void CS60MapsAppUi::DisableScreenSaver()
 	{
+	if (!iResetInactivityTimer)
+		{
+		return;
+		}
+	
 	const TInt KMinScreenSaverTimeout = 5000000; // 5 seconds is minimal value on my phone
 												// ToDo: Is there system constant for this value?
 	TCallBack callback(ResetInactivityTimer, NULL);
