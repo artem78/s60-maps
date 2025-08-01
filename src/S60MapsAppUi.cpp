@@ -185,7 +185,7 @@ void CS60MapsAppUi::ConstructL()
 	
 	// Make infinite backlight
 	iLight = CHWRMLight::NewL();
-	EnableInfiniteBacklight();
+	EnableInfiniteBacklightL();
 	//DEBUG(_L("light status=%d"), iLight->LightStatus(KLightTarget));
 	
 	// Prevent screensaver to be visible
@@ -802,7 +802,7 @@ void CS60MapsAppUi::HandleForegroundEventL(TBool aForeground)
 		}
 	}
 
-void CS60MapsAppUi::EnableInfiniteBacklight()
+void CS60MapsAppUi::EnableInfiniteBacklightL()
 	{
 	iLight->ReserveLightL(KLightTarget);
 	iLight->LightOnL(KLightTarget);

@@ -182,7 +182,7 @@ private:
 	
 	TLanguage PreferredLanguage();
 	static TInt ResetInactivityTimer(TAny* aPtr);
-	void EnableInfiniteBacklight();
+	void EnableInfiniteBacklightL();
 	void DisableInfiniteBacklight();
 	void EnableScreenSaver();
 	void DisableScreenSaver();
