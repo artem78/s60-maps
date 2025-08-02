@@ -30,13 +30,6 @@
 #include <hwrmlight.h> // For CHWRMLight
 
 
-enum TPositioningState
-	{
-	EPositioningUnavailable,	// Phone doesn't support positioning (gps) or it disabled in phone settings
-	EPositioningDisabled,		// Using positioning is disabled in s60maps settings
-	EPositioningEnabled,		// Positioning enabled, but location not recieved yet
-	EPositionRecieved			// Current location is determined
-	};
 
 // FORWARD DECLARATIONS
 class CMapView;
@@ -213,11 +206,17 @@ public:
 //	inline CPositionRequestor Positionrequestor()
 //			{ return iPosRequestor; }
 	
+	/* Return ETrue if phone supports positioning (gps) and it enabled in phone settings */
 	inline TBool IsPositioningAvailable()
 			{ return iIsPositioningAvailable; }
 	
+	/* Return ETrue if current position is determined */
 	inline TBool IsPositionRecieved()
 			{ return IsPositioningAvailable() && iPosRequestor && iPosRequestor->IsPositionRecieved(); }
+	
+	/* Return ETrue if phone supports positioning and it enabled in program settings */
+	inline TBool IsPositioningAvailableAndEnabled()
+			{ return IsPositioningAvailable() && Settings()->iPositioningEnabled; }
 	
 	inline CMapView* MapView()
 			{ return iMapView; }
@@ -226,12 +225,11 @@ public:
 			{ return iSettingsView; }
 	
 	inline const TPositionSatelliteInfo* SatelliteInfo()
-			{ return PositioningState() >= EPositioningEnabled && iPosRequestor->LastKnownPositionInfo()->PositionClassType() & EPositionSatelliteInfoClass ?
+			{ return IsPositioningAvailable() && iSettings->iPositioningEnabled && iPosRequestor->LastKnownPositionInfo()->PositionClassType() & EPositionSatelliteInfoClass ?
 					static_cast<const TPositionSatelliteInfo*>(iPosRequestor->LastKnownPositionInfo()) :
 					NULL;
 			}
 	
-	TPositioningState PositioningState() /*const*/;
 
 	void EnablePositioningL();
 	void DisablePositioning();

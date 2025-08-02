@@ -384,7 +384,7 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 	TRAP_IGNORE(aStream >> *iSettings);
 	
 	// Enable position requestor if turned on
-	if (PositioningState() != EPositioningUnavailable && iSettings->iPositioningEnabled)
+	if (IsPositioningAvailableAndEnabled())
 		{
 		EnablePositioningL();
 		}
@@ -419,7 +419,7 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 	ChangeLanguageL(iSettings->iLanguage);
 	
 	// After localization loaded show translated message if positioning unavailable
-	if (PositioningState() == EPositioningUnavailable)
+	if (!IsPositioningAvailable())
 		{
 		HBufC* msg = iEikonEnv->AllocReadResourceLC(R_POSITIONING_DISABLED);
 		//CAknWarningNote* note = new (ELeave) CAknWarningNote;
@@ -896,7 +896,7 @@ void CS60MapsAppUi::HideStatusPaneAndShowMapControlL()
 	iOriginalPaneTitle = NULL;
 	}
 
-TPositioningState CS60MapsAppUi::PositioningState()
+/*TPositioningState CS60MapsAppUi::PositioningState()
 	{
 	if (!IsPositioningAvailable())
 		{
@@ -914,7 +914,7 @@ TPositioningState CS60MapsAppUi::PositioningState()
 		{
 		return EPositioningEnabled;
 		}
-	}
+	}*/
 
 void CS60MapsAppUi::EnablePositioningL()
 	{
