@@ -409,7 +409,7 @@ RESOURCE MENU_BAR r_landmarks_query_dialog_menubar
 		{
 		MENU_TITLE { menu_pane = R_AVKON_MENUPANE_SELECTION_LIST; } 
 		};
-	};
+	}
 
 // Location query dialog
 RESOURCE DIALOG r_location_query_dialog
@@ -829,7 +829,7 @@ RESOURCE MENU_BAR r_search_results_query_dialog_menubar
 		{
 		MENU_TITLE { menu_pane = R_AVKON_MENUPANE_SELECTION_LIST; } 
 		};
-	};
+	}
 
 
 

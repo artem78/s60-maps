@@ -201,7 +201,7 @@ void CSearch::RunApiReqestL()
 	DEBUG(_L("end"));
 	}
 
-void CSearch::OnHTTPResponseDataChunkRecieved(const RHTTPTransaction aTransaction,
+void CSearch::OnHTTPResponseDataChunkRecieved(const RHTTPTransaction /*aTransaction*/,
 		const TDesC8 &aDataChunk, TInt anOverallDataSize, TBool anIsLastChunk)
 	{
 	if (iResponseBuff == NULL)
@@ -220,18 +220,18 @@ void CSearch::OnHTTPResponseDataChunkRecieved(const RHTTPTransaction aTransactio
 		}
 	}
 
-void CSearch::OnHTTPResponse(const RHTTPTransaction aTransaction)
+void CSearch::OnHTTPResponse(const RHTTPTransaction /*aTransaction*/)
 	{
 	
 	}
 
-void CSearch::OnHTTPError(TInt aError, const RHTTPTransaction aTransaction)
+void CSearch::OnHTTPError(TInt /*aError*/, const RHTTPTransaction /*aTransaction*/)
 	{
 	delete iResponseBuff;
 	iResponseBuff = NULL;
 	}
 
-void CSearch::OnHTTPHeadersRecieved(const RHTTPTransaction aTransaction)
+void CSearch::OnHTTPHeadersRecieved(const RHTTPTransaction /*aTransaction*/)
 	{
 
 	}
