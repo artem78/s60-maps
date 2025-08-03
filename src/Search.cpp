@@ -82,7 +82,7 @@ TBool CSearch::RunQueryDialogL()
 	return res;	
 	}
 
-TBool CSearch::RunResultsDialogL()
+void CSearch::RunResultsDialogL()
 	{
 	DEBUG(_L("begin"));
 	
