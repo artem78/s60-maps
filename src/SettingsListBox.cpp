@@ -225,6 +225,9 @@ void CLanguageListSettingItem::LoadLanguageListL()
 				resourceId = R_LANG_UKRAINISN_NAME;
 				break;
 				}
+				
+			default:
+				{} // supress compiller warnings
 			}
 		
 		HBufC* langName = NULL;
