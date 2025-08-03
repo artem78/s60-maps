@@ -30,10 +30,13 @@ CAknSettingItem* CSettingsListBox::CreateSettingItemL(TInt aSettingId)
 			
 		case ESettingShowSignalIndicator:
 			{
-			if (appUi->IsPositioningAvailableAndEnabled())
+			if (appUi->IsPositioningAvailable())
 				{
 				settingItem = new (ELeave) CAknBinaryPopupSettingItem(aSettingId,
 								appUi->Settings()->iIsSignalIndicatorVisible);
+				
+				TBool isVisible = appUi->IsPositioningAvailableAndEnabled();
+				settingItem->SetHidden(!isVisible);
 				}
 			}
 			break;
@@ -47,14 +50,17 @@ CAknSettingItem* CSettingsListBox::CreateSettingItemL(TInt aSettingId)
 			
 		case ESettingSignalIndicatorType:
 			{
-			// Only two possible values in enum (0 and 1)
-			TBool* boolPtr = (TBool*)(&appUi->Settings()->iSignalIndicatorType);
-			settingItem = new (ELeave) CAknBinaryPopupSettingItem(aSettingId,
-							*boolPtr);
-			
-			TBool isVisible = appUi->IsPositioningAvailableAndEnabled()
-					&& appUi->Settings()->iIsSignalIndicatorVisible;
-			settingItem->SetHidden(!isVisible);
+			if (appUi->IsPositioningAvailable())
+				{
+				// Only two possible values in enum (0 and 1)
+				TBool* boolPtr = (TBool*)(&appUi->Settings()->iSignalIndicatorType);
+				settingItem = new (ELeave) CAknBinaryPopupSettingItem(aSettingId,
+								*boolPtr);
+				
+				TBool isVisible = appUi->IsPositioningAvailableAndEnabled()
+						&& appUi->Settings()->iIsSignalIndicatorVisible;
+				settingItem->SetHidden(!isVisible);
+				}
 			}
 			break;
 			
