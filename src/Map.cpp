@@ -205,6 +205,9 @@ void CTiledMapLayer::Draw(CWindowGc &aGc)
 		}
 	
 	tiles.Close();
+	
+	DrawCopyrightText(aGc);
+	
 	DEBUG(_L("End layer drawing"));
 	}
 
@@ -293,6 +296,38 @@ void CTiledMapLayer::ReloadVisibleAreaL()
 		}
 	
 	tiles.Close();
+	}
+
+void CTiledMapLayer::DrawCopyrightText(CWindowGc &aGc)
+	{
+	if (!iTileProvider->iCopyrightText.Length())
+		{ // no copyright info provided
+		return;
+		}
+	
+	RBuf copyrightText;
+	TInt r = copyrightText.Create(iTileProvider->iCopyrightText.Length() + 10);
+	if (r == KErrNone)
+		{
+		copyrightText.Append('(');
+		copyrightText.Append(/*'c'*/ 'C');
+		copyrightText.Append(')');
+		copyrightText.Append(' ');
+		copyrightText.Append(iTileProvider->iCopyrightText);
+		
+		const TInt KMargin = /*10*/ 14;
+		TRect textRect;
+		textRect = iMapView->Rect();
+		textRect.Shrink(KMargin, 0);
+		TInt textBaseline = textRect.Height() - KMargin;
+		aGc.SetPenColor(KRgbDarkGray);
+		
+		aGc.UseFont(iMapView->DefaultFont());
+		aGc.DrawText(copyrightText, textRect, textBaseline, CGraphicsContext::ERight);
+		aGc.DiscardFont();
+		
+		copyrightText.Close();
+		}
 	}
 
 
@@ -1830,13 +1865,15 @@ void CTileBitmapManagerItem::CreateBitmapIfNotExistL()
 // TTileProvider
 
 TTileProvider::TTileProvider(const TDesC& anId, const TDesC& aTitle,
-		const TDesC8& anUrlTemplate, TZoom aMinZoom, TZoom aMaxZoom)
+		const TDesC8& anUrlTemplate, TZoom aMinZoom, TZoom aMaxZoom,
+		const TDesC& aCopyrightText)
 	{
 	iId.Copy(anId);
 	iTitle.Copy(aTitle);
 	iTileUrlTemplate.Copy(anUrlTemplate);
 	iMinZoomLevel = aMinZoom;
 	iMaxZoomLevel = aMaxZoom;
+	iCopyrightText = aCopyrightText;
 	}
 
 void TTileProvider::TileUrl(TDes8 &aUrl, const TTile &aTile)

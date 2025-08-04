@@ -112,6 +112,7 @@ private:
 	TTileProvider *iTileProvider;
 	void VisibleTiles(RArray<TTile> &aTiles); // Return list of visible tiles
 	void DrawTile(CWindowGc &aGc, const TTile &aTile, const CFbsBitmap *aBitmap);
+	void DrawCopyrightText(CWindowGc &aGc);
 	
 public:
 	void SetTileProviderL(TTileProvider* aTileProvider);
@@ -448,7 +449,7 @@ class TTileProvider
 	{
 public:
 	TTileProvider(const TDesC& anId, const TDesC& aTitle, const TDesC8& anUrlTemplate,
-			TZoom aMinZoom, TZoom aMaxZoom);
+			TZoom aMinZoom, TZoom aMaxZoom, const TDesC& aCopyrightText = KNullDesC);
 
 	// Short string identifier of tile provider. Used in cache subdir name.
 	// Must be unique and do not contains any special symbols (allowed: a-Z, 0-9, - and _). 
@@ -465,6 +466,8 @@ public:
 	// Minimum and maximum zoom level
 	TZoom iMinZoomLevel; // /*Default is 0*/
 	TZoom iMaxZoomLevel; // /*Default is 18*/
+	
+	/*HBufC**/ TBuf<64> iCopyrightText;
 	
 	// Return url of given tile
 	// ToDo: It is a good idea to make tests for this method
