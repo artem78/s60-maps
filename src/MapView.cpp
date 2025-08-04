@@ -431,8 +431,9 @@ void CMapView::HandleAboutL()
 		msg.AppendFormat(KCopyrightLineFmt, &provider->iTitle,
 				&provider->iCopyrightText, &provider->iCopyrightUrl);
 		}
-	msg.TrimRight();
 	
+	_LIT(KCopyrightLineSearch, "Search API - (c) Nominatim (https://nominatim.openstreetmap.org)");
+	msg.Append(KCopyrightLineSearch);
 	
 	
 	dlg->SetMessageTextL(msg);
