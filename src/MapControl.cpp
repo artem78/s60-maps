@@ -146,6 +146,13 @@ void CMapControl::ConstructL(const TRect& aRect, const TCoordinate &aInitialPosi
 	TInt r = screenDevice->/*GetNearestFontToMaxHeightInTwips*/ GetNearestFontInTwips(iDefaultFont, fontSpec);
 	User::LeaveIfError(r);
 	
+	// Prepare secondary (small) font
+	fontSpec = TFontSpec(KFontName, 8 * 12);
+	fontSpec.iTypeface.SetIsSerif(EFalse);
+	fontSpec.iFontStyle.SetStrokeWeight(EStrokeWeightNormal);
+	r = screenDevice->GetNearestFontInTwips(iSmallFont, fontSpec);
+	User::LeaveIfError(r);
+	
 	// Create layers
 	iLayers = RPointerArray<CMapLayerBase>(10);
 	iLayers.Append(CTiledMapLayer::NewL(this, aTileProvider));
@@ -211,6 +218,7 @@ CMapControl::~CMapControl()
 	delete iMovementRepeater;
 	iMovementRepeater = NULL;
 	
+	CCoeEnv::Static()->ScreenDevice()->ReleaseFont(iSmallFont);
 	CCoeEnv::Static()->ScreenDevice()->ReleaseFont(iDefaultFont);
 	}
 

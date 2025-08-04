@@ -315,14 +315,14 @@ void CTiledMapLayer::DrawCopyrightText(CWindowGc &aGc)
 		copyrightText.Append(' ');
 		copyrightText.Append(iTileProvider->iCopyrightText);
 		
-		const TInt KMargin = /*10*/ 14;
+		const TInt KMargin = /*14*/ 8;
 		TRect textRect;
 		textRect = iMapView->Rect();
 		textRect.Shrink(KMargin, 0);
 		TInt textBaseline = textRect.Height() - KMargin;
 		aGc.SetPenColor(KRgbDarkGray);
 		
-		aGc.UseFont(iMapView->DefaultFont());
+		aGc.UseFont(iMapView->SmallFont());
 		aGc.DrawText(copyrightText, textRect, textBaseline, CGraphicsContext::ERight);
 		aGc.DiscardFont();
 		
