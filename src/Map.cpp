@@ -305,6 +305,8 @@ void CTiledMapLayer::DrawCopyrightText(CWindowGc &aGc)
 		return;
 		}
 	
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
+	
 	RBuf copyrightText;
 	TInt r = copyrightText.Create(iTileProvider->iCopyrightText.Length() + 10);
 	if (r == KErrNone)
@@ -320,7 +322,15 @@ void CTiledMapLayer::DrawCopyrightText(CWindowGc &aGc)
 		textRect = iMapView->Rect();
 		textRect.Shrink(KMargin, 0);
 		TInt textBaseline = textRect.Height() - KMargin;
-		aGc.SetPenColor(KRgbDarkGray);
+		//if (iTileProvider->iId == _L("esri"))
+		if (iTileProvider == appUi->AvailableTileProviders()[5] /*esri*/)
+			{
+			aGc.SetPenColor(KRgbWhite);
+			}
+		else
+			{
+			aGc.SetPenColor(KRgbDarkGray);
+			}
 		
 		aGc.UseFont(iMapView->SmallFont());
 		aGc.DrawText(copyrightText, textRect, textBaseline, CGraphicsContext::ERight);
