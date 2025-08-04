@@ -396,6 +396,8 @@ void CMapView::HandleAboutL()
 	_LIT(KWebSite,	"https://github.com/artem78/s60-maps");
 	_LIT(KThanksTo,	"baranovskiykonstantin, Symbian9, Men770, fizolas, bent");
 	
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(AppUi());
+	
 	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
 	dlg->PrepareLC(R_QUERY_DIALOG);
 	HBufC* title = iEikonEnv->AllocReadResourceLC(R_ABOUT_DIALOG_TITLE);
@@ -403,7 +405,7 @@ void CMapView::HandleAboutL()
 	CleanupStack::PopAndDestroy(); //title
 	
 	RBuf msg;
-	msg.CreateL(512);
+	msg.CreateL(2048);
 	msg.CleanupClosePushL();
 	TBuf<32> version;
 	version.Copy(KProgramVersion.Name());
@@ -417,6 +419,22 @@ void CMapView::HandleAboutL()
 	gitInfo.Format(KFmt, &KGITLongVersion, &KGITBranch);
 	iEikonEnv->Format128/*256*/(msg, R_ABOUT_DIALOG_TEXT, &version,
 			&gitInfo, &KAuthor, &KWebSite, &KThanksTo);
+	
+	
+	// Data licences
+	_LIT(KDataLic, "\r\n\r\nData licences:\r\n");
+	msg.Append(KDataLic);
+	_LIT(KCopyrightLineFmt, "\"%S\" layer - (c) %S (%S)\r\n");
+	for (TInt i = 0; i < appUi->AvailableTileProviders().Count(); i++)
+		{
+		TTileProvider* provider = appUi->AvailableTileProviders()[i];
+		msg.AppendFormat(KCopyrightLineFmt, &provider->iTitle,
+				&provider->iCopyrightText, &provider->iCopyrightUrl);
+		}
+	msg.TrimRight();
+	
+	
+	
 	dlg->SetMessageTextL(msg);
 	CleanupStack::PopAndDestroy(&msg);
 	dlg->RunLD();

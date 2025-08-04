@@ -449,7 +449,8 @@ class TTileProvider
 	{
 public:
 	TTileProvider(const TDesC& anId, const TDesC& aTitle, const TDesC8& anUrlTemplate,
-			TZoom aMinZoom, TZoom aMaxZoom, const TDesC& aCopyrightText = KNullDesC);
+			TZoom aMinZoom, TZoom aMaxZoom, const TDesC& aCopyrightText = KNullDesC,
+			const TDesC& aCopyrightUrl = KNullDesC);
 
 	// Short string identifier of tile provider. Used in cache subdir name.
 	// Must be unique and do not contains any special symbols (allowed: a-Z, 0-9, - and _). 
@@ -468,6 +469,7 @@ public:
 	TZoom iMaxZoomLevel; // /*Default is 18*/
 	
 	/*HBufC**/ TBuf<64> iCopyrightText;
+	/*HBufC8**/ TBuf/*8*/<256> iCopyrightUrl;
 	
 	// Return url of given tile
 	// ToDo: It is a good idea to make tests for this method
