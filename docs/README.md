@@ -119,6 +119,7 @@ Read [docs/COMPILING.md](/docs/COMPILING.md)
 - [x] Search (using [Nominatim](https://nominatim.openstreetmap.org/))
 - [x] Show satellites info (amount, signal strength, etc...)
 - [ ] Offline maps (zipped set of PNGs)
+- [ ] Implement automatic tile refreshing using [HTTP ETag](https://en.wikipedia.org/wiki/HTTP_ETag)
 
 ## License
 
@@ -138,3 +139,4 @@ This is Open Source software licensed under [GNU GPL v3.0](/LICENSE.txt)
 - [GPS Track recorder for Symbian OS](https://github.com/artem78/s60-gps-tracker#readme)
 - [Accuracy of GNSS data](https://wiki.openstreetmap.org/wiki/Accuracy_of_GNSS_data)
 - [MahoMaps - Yandex.Maps client for Symbian OS](https://github.com/mahomaps/mm-v1)
+
