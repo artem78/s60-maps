@@ -63,13 +63,14 @@ void CS60MapsAppUi::ConstructL()
 
 	// OpenStreetMap standard tile layer
 	// https://www.openstreetmap.org/
-	_LIT(KOsmCopyright, "OpenStreetMap");
+	_LIT(KOsmCopyrightShort, "OpenStreetMap");
+	_LIT(KOsmCopyright, "OpenStreetMap contributors");
 	_LIT(KOsmCopyrightUrl, "https://www.openstreetmap.org/copyright");
 	iAvailableTileProviders[0] = new (ELeave) TTileProvider(
 			_L("osm"), _L("OpenStreetMap"),
 			_L8("http://tile.openstreetmap.org/{$z}/{$x}/{$y}.png"),
 			0, 19,
-			KOsmCopyright, KOsmCopyrightUrl);
+			KOsmCopyrightShort, KOsmCopyright, KOsmCopyrightUrl);
 	
 	// OpenCycleMap
 	// https://wiki.openstreetmap.org/wiki/OpenCycleMap
@@ -83,13 +84,14 @@ void CS60MapsAppUi::ConstructL()
 		{
 		openCycleMapUrl.AppendFormat(KApiKeyArgFmt, &KThunderForestApiKey);
 		}
-	_LIT(KThunderforestCopyright, "OpenStreetMap & Thunderforest");
+	_LIT(KThunderforestCopyrightShort, "OpenStreetMap & Thunderforest");
+	_LIT(KThunderforestCopyright, "map data: OpenStreetMap, map style: Thunderforest");
 	_LIT(KThunderforestCopyrightUrl, "https://www.thunderforest.com/");
 	iAvailableTileProviders[1] = new (ELeave) TTileProvider(
 			_L("opencycle"), _L("OpenCycleMap"),
 			openCycleMapUrl,
 			0, 22,
-			KThunderforestCopyright, KThunderforestCopyrightUrl);
+			KThunderforestCopyrightShort, KThunderforestCopyright, KThunderforestCopyrightUrl);
 	CleanupStack::PopAndDestroy(&openCycleMapUrl);
 	
 	// Transport Map
@@ -108,30 +110,32 @@ void CS60MapsAppUi::ConstructL()
 			_L("transport"), _L("Transport Map"),
 			transportMapUrl,
 			0, 22,
-			KThunderforestCopyright, KThunderforestCopyrightUrl);
+			KThunderforestCopyrightShort, KThunderforestCopyright, KThunderforestCopyrightUrl);
 	CleanupStack::PopAndDestroy(&transportMapUrl);
 	
 	// Humanitarian Map
 	// https://wiki.openstreetmap.org/wiki/Humanitarian_map_style
 	// https://www.openstreetmap.org/?layers=H
-	_LIT(KHumanCopyright, "Humanitarian OpenStreetMap team");
+	_LIT(KHumanCopyrightShort, "Humanitarian OpenStreetMap team");
+	_LIT(KHumanCopyright, "map data: OpenStreetName, map style: Humanitarian OpenStreetMap team");
 	_LIT(KHumanCopyrightUrl, "https://www.hotosm.org/");
 	iAvailableTileProviders[3] = new (ELeave) TTileProvider(
 			_L("humanitarian"), _L("Humanitarian"),
 			_L8("https://a.tile.openstreetmap.fr/hot/{$z}/{$x}/{$y}.png"),
 			0, 20,
-			KHumanCopyright, KHumanCopyrightUrl);
+			KHumanCopyrightShort, KHumanCopyright, KHumanCopyrightUrl);
 	
 	// OpenTopoMap
 	// https://wiki.openstreetmap.org/wiki/OpenTopoMap
 	// https://opentopomap.org/
-	_LIT(KOpentopoCopyright, "OpenTopoMap");
+	_LIT(KOpentopoCopyrightShort, "OpenTopoMap");
+	_LIT(KOpentopoCopyright, "map data: OpenStreetMap, map style: OpenTopoMap");
 	_LIT(KOpentopoCopyrightUrl, "https://opentopomap.org/");
 	iAvailableTileProviders[4] = new (ELeave) TTileProvider(
 			_L("opentopomap"), _L("OpenTopoMap"),
 			_L8("https://tile.opentopomap.org/{$z}/{$x}/{$y}.png"),
 			0, /*17*/ 15,
-			KOpentopoCopyright, KOpentopoCopyrightUrl);
+			KOpentopoCopyrightShort, KOpentopoCopyright, KOpentopoCopyrightUrl);
 	
 	// Esri World Imagery (Clarity) Beta
 	// https://wiki.openstreetmap.org/wiki/Esri
@@ -141,7 +145,7 @@ void CS60MapsAppUi::ConstructL()
 			_L("esri"), _L(/*"Esri World Imagery (Clarity) Beta"*/ "Esri (Clarity) Beta"),
 			_L8("http://clarity.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/MapServer/tile/{$z}/{$y}/{$x}"),
 			0, 22,
-			KEsriCopyright, KEsriCopyrightUrl);
+			KEsriCopyright, KNullDesC, KEsriCopyrightUrl);
 	
 	iActiveTileProvider = iAvailableTileProviders[0]; // Use first
 	

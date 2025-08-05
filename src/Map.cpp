@@ -300,7 +300,7 @@ void CTiledMapLayer::ReloadVisibleAreaL()
 
 void CTiledMapLayer::DrawCopyrightText(CWindowGc &aGc)
 	{
-	if (!iTileProvider->iCopyrightText.Length())
+	if (!iTileProvider->iCopyrightTextShort.Length())
 		{ // no copyright info provided
 		return;
 		}
@@ -308,14 +308,14 @@ void CTiledMapLayer::DrawCopyrightText(CWindowGc &aGc)
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
 	
 	RBuf copyrightText;
-	TInt r = copyrightText.Create(iTileProvider->iCopyrightText.Length() + 10);
+	TInt r = copyrightText.Create(iTileProvider->iCopyrightTextShort.Length() + 10);
 	if (r == KErrNone)
 		{
 		copyrightText.Append('(');
 		copyrightText.Append(/*'c'*/ 'C');
 		copyrightText.Append(')');
 		copyrightText.Append(' ');
-		copyrightText.Append(iTileProvider->iCopyrightText);
+		copyrightText.Append(iTileProvider->iCopyrightTextShort);
 		
 		const TInt KMargin = /*14*/ 8;
 		TRect textRect;
@@ -1876,14 +1876,23 @@ void CTileBitmapManagerItem::CreateBitmapIfNotExistL()
 
 TTileProvider::TTileProvider(const TDesC& anId, const TDesC& aTitle,
 		const TDesC8& anUrlTemplate, TZoom aMinZoom, TZoom aMaxZoom,
-		const TDesC& aCopyrightText, const TDesC& aCopyrightUrl)
+		const TDesC& aCopyrightTextShort, const TDesC& aCopyrightText,
+		const TDesC& aCopyrightUrl)
 	{
 	iId.Copy(anId);
 	iTitle.Copy(aTitle);
 	iTileUrlTemplate.Copy(anUrlTemplate);
 	iMinZoomLevel = aMinZoom;
 	iMaxZoomLevel = aMaxZoom;
-	iCopyrightText = aCopyrightText;
+	iCopyrightTextShort = aCopyrightTextShort;
+	if (aCopyrightText.Length() == 0 && aCopyrightTextShort.Length() > 0)
+		{
+		iCopyrightText = aCopyrightTextShort;
+		}
+	else
+		{
+		iCopyrightText = aCopyrightText;
+		}
 	iCopyrightUrl = aCopyrightUrl;
 	}
 
