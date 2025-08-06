@@ -1383,6 +1383,7 @@ TInt CTileBitmapManager::GetTileBitmap(const TTile &aTile, CFbsBitmap* &aBitmap)
 		return KErrNotReady;
 	
 	aBitmap = item->Bitmap();
+	item->iLastAccessTime.HomeTime(); // update access time
 	return KErrNone;
 	}
 
@@ -1413,10 +1414,27 @@ void CTileBitmapManager::AddToLoading(const TTile &aTile, TBool aForce)
 	
 	if (iItems.Count() >= iLimit)
 		{
-		// Delete oldest item
-		DEBUG(_L("Delete old bitmap of %S from cache"), &iItems[0]->Tile().AsDes());
-		delete iItems[0];
-		iItems.Remove(0);
+		// Delete most rarely used item
+		TInt idx(0);
+		TTime minTime;
+		minTime.HomeTime();
+		for (TInt i = 0; i < iItems.Count(); i++)
+			{
+			if (iItems[i]->iLastAccessTime < minTime)
+				{
+				idx = i;
+				minTime = iItems[i]->iLastAccessTime;
+				}
+			}
+		
+#ifdef _DEBUG
+		TBuf<32> timeDes;
+		iItems[idx]->iLastAccessTime.FormatL(timeDes, _L("%H:%T:%S"));
+		DEBUG(_L("Delete most rarely used bitmap of %S from cache with idx=%d and last acess time=%S"),
+				&iItems[idx]->Tile().AsDes(), idx, &timeDes);
+#endif
+		delete iItems[idx];
+		iItems.Remove(idx);
 		}
 	
 	// Add new one
@@ -1469,7 +1487,10 @@ CTileBitmapManagerItem* CTileBitmapManager::Find(const TTile &aTile) const
 											// located at the end of array (newest)
 		{
 		if (iItems[idx]->Tile() == aTile)
+			{
+			//iItems[idx]->iLastAccessTime.HomeTime();
 			return iItems[idx];
+			}
 		}
 	
 	return NULL;
@@ -1811,7 +1832,7 @@ CTileBitmapManagerItem::CTileBitmapManagerItem(const TTile &aTile) :
 
 void CTileBitmapManagerItem::ConstructL()
 	{
-	// Second phase construction is not used at the moment
+	iLastAccessTime.HomeTime();
 	}
 
 void CTileBitmapManagerItem::CreateBitmapIfNotExistL()

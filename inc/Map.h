@@ -427,6 +427,8 @@ private:
 	CFbsBitmap* iBitmap;
 	TBool iIsReady; // ETrue when image completely drawn and ready to use
 public:
+	TTime iLastAccessTime;
+
 	void CreateBitmapIfNotExistL();
 	inline TBool IsReady() { return iIsReady && iBitmap != NULL; };
 	inline void SetReady() { iIsReady = ETrue; };
