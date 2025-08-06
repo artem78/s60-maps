@@ -422,18 +422,28 @@ void CMapView::HandleAboutL()
 	
 	
 	// Data licences
-	_LIT(KDataLic, "\r\n\r\nData licences:\r\n");
-	msg.Append(KDataLic);
-	_LIT(KCopyrightLineFmt, "\"%S\" layer - (c) %S (%S)\r\n");
+	HBufC* dataLicences = iEikonEnv->AllocReadResourceLC(R_DATA_LICENCES);
+	HBufC* layerFmt = iEikonEnv->AllocReadResourceLC(R_LAYER_FMT);
+	HBufC* searchApi = iEikonEnv->AllocReadResourceLC(R_SEARCH_API);
+	_LIT(KDataLicFmt, "\r\n\r\n%S:\r\n");
+	msg.AppendFormat(KDataLicFmt, &(*dataLicences));
+	_LIT(KCopyrightLineFmt, " - (c) %S (%S)\r\n");
+	RBuf copyrightLineFmt;
+	copyrightLineFmt.CreateL(layerFmt->Length() + KCopyrightLineFmt().Length());
+	CleanupClosePushL(copyrightLineFmt);
+	copyrightLineFmt.Append(*layerFmt);
+	//copyrightLineFmt.Capitalize();
+	copyrightLineFmt.Append(KCopyrightLineFmt);
 	for (TInt i = 0; i < appUi->AvailableTileProviders().Count(); i++)
 		{
 		TTileProvider* provider = appUi->AvailableTileProviders()[i];
-		msg.AppendFormat(KCopyrightLineFmt, &provider->iTitle,
+		msg.AppendFormat(copyrightLineFmt, &provider->iTitle,
 				&provider->iCopyrightText, &provider->iCopyrightUrl);
 		}
 	
-	_LIT(KCopyrightLineSearch, "Search API - (c) Nominatim (https://nominatim.openstreetmap.org)");
-	msg.Append(KCopyrightLineSearch);
+	_LIT(KCopyrightLineSearchFmt, "%S - (c) Nominatim (https://nominatim.openstreetmap.org)");
+	msg.AppendFormat(KCopyrightLineSearchFmt, &(*searchApi));
+	CleanupStack::PopAndDestroy(4, dataLicences);
 	
 	
 	dlg->SetMessageTextL(msg);

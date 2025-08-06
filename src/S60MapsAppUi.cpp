@@ -740,6 +740,31 @@ void CS60MapsAppUi::ChangeLanguageL(TLanguage aLang)
 	
 	// Update strings for scale bar layer
 	iMapView->MapControl()->HandleLanguageChangedL();
+	
+	// Update copyright strings
+	HBufC* osmContributors = iEikonEnv->AllocReadResourceLC(R_OSM_CONTRIBUTORS);
+	HBufC* mapData = iEikonEnv->AllocReadResourceLC(R_MAP_DATA);
+	HBufC* mapStyle = iEikonEnv->AllocReadResourceLC(R_MAP_STYLE);
+	TBuf<128> buff;
+	
+	AvailableTileProviders()[0]->iCopyrightText = *osmContributors;
+	
+	_LIT(KCopyrightFmt, "%S: %S, %S: %S");
+	_LIT(KOsm, "OpenStreetMap");
+	_LIT(KThunderforest, "Thunderforest");
+	buff.Format(KCopyrightFmt, &*mapData, &KOsm, &*mapStyle, &KThunderforest);
+	AvailableTileProviders()[1]->iCopyrightText = buff;
+	AvailableTileProviders()[2]->iCopyrightText = buff;
+	
+	_LIT(KHum, "Humanitarian OpenStreetMap team");
+	buff.Format(KCopyrightFmt, &*mapData, &KOsm, &*mapStyle, &KHum);
+	AvailableTileProviders()[3]->iCopyrightText = buff;
+	
+	_LIT(KOpenTopo, "OpenTopoMap");
+	buff.Format(KCopyrightFmt, &*mapData, &KOsm, &*mapStyle, &KOpenTopo);
+	AvailableTileProviders()[4]->iCopyrightText = buff;
+	
+	CleanupStack::PopAndDestroy(3, osmContributors);
 	}
 
 TBool CS60MapsAppUi::IsLanguageExists(TLanguage aLang)
