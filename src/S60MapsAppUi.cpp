@@ -66,7 +66,7 @@ void CS60MapsAppUi::ConstructL()
 	_LIT(KOsmCopyrightShort, "OpenStreetMap");
 	_LIT(KOsmCopyright, "OpenStreetMap contributors");
 	_LIT(KOsmCopyrightUrl, "https://www.openstreetmap.org/copyright");
-	iAvailableTileProviders[0] = new (ELeave) TTileProvider(
+	iAvailableTileProviders[EOpenStreetMapIdx] = new (ELeave) TTileProvider(
 			_L("osm"), _L("OpenStreetMap"),
 			_L8("http://tile.openstreetmap.org/{$z}/{$x}/{$y}.png"),
 			0, 19,
@@ -87,7 +87,7 @@ void CS60MapsAppUi::ConstructL()
 	_LIT(KThunderforestCopyrightShort, "OpenStreetMap & Thunderforest");
 	_LIT(KThunderforestCopyright, "map data: OpenStreetMap, map style: Thunderforest");
 	_LIT(KThunderforestCopyrightUrl, "https://www.thunderforest.com/");
-	iAvailableTileProviders[1] = new (ELeave) TTileProvider(
+	iAvailableTileProviders[EOpenCycleMapIdx] = new (ELeave) TTileProvider(
 			_L("opencycle"), _L("OpenCycleMap"),
 			openCycleMapUrl,
 			0, 22,
@@ -106,7 +106,7 @@ void CS60MapsAppUi::ConstructL()
 		{
 		transportMapUrl.AppendFormat(KApiKeyArgFmt, &KThunderForestApiKey);
 		}
-	iAvailableTileProviders[2] = new (ELeave) TTileProvider(
+	iAvailableTileProviders[ETransportMapIdx] = new (ELeave) TTileProvider(
 			_L("transport"), _L("Transport Map"),
 			transportMapUrl,
 			0, 22,
@@ -119,7 +119,7 @@ void CS60MapsAppUi::ConstructL()
 	_LIT(KHumanCopyrightShort, "Humanitarian OpenStreetMap team");
 	_LIT(KHumanCopyright, "map data: OpenStreetName, map style: Humanitarian OpenStreetMap team");
 	_LIT(KHumanCopyrightUrl, "https://www.hotosm.org/");
-	iAvailableTileProviders[3] = new (ELeave) TTileProvider(
+	iAvailableTileProviders[EHumanitarianMapIdx] = new (ELeave) TTileProvider(
 			_L("humanitarian"), _L("Humanitarian"),
 			_L8("https://a.tile.openstreetmap.fr/hot/{$z}/{$x}/{$y}.png"),
 			0, 20,
@@ -131,7 +131,7 @@ void CS60MapsAppUi::ConstructL()
 	_LIT(KOpentopoCopyrightShort, "OpenTopoMap");
 	_LIT(KOpentopoCopyright, "map data: OpenStreetMap, map style: OpenTopoMap");
 	_LIT(KOpentopoCopyrightUrl, "https://opentopomap.org/");
-	iAvailableTileProviders[4] = new (ELeave) TTileProvider(
+	iAvailableTileProviders[EOpenTopoMapIdx] = new (ELeave) TTileProvider(
 			_L("opentopomap"), _L("OpenTopoMap"),
 			_L8("https://tile.opentopomap.org/{$z}/{$x}/{$y}.png"),
 			0, /*17*/ 15,
@@ -747,22 +747,22 @@ void CS60MapsAppUi::ChangeLanguageL(TLanguage aLang)
 	HBufC* mapStyle = iEikonEnv->AllocReadResourceLC(R_MAP_STYLE);
 	TBuf<128> buff;
 	
-	AvailableTileProviders()[0]->iCopyrightText = *osmContributors;
+	AvailableTileProviders()[EOpenStreetMapIdx]->iCopyrightText = *osmContributors;
 	
 	_LIT(KCopyrightFmt, "%S: %S, %S: %S");
 	_LIT(KOsm, "OpenStreetMap");
 	_LIT(KThunderforest, "Thunderforest");
 	buff.Format(KCopyrightFmt, &*mapData, &KOsm, &*mapStyle, &KThunderforest);
-	AvailableTileProviders()[1]->iCopyrightText = buff;
-	AvailableTileProviders()[2]->iCopyrightText = buff;
+	AvailableTileProviders()[EOpenCycleMapIdx]->iCopyrightText = buff;
+	AvailableTileProviders()[ETransportMapIdx]->iCopyrightText = buff;
 	
 	_LIT(KHum, "Humanitarian OpenStreetMap team");
 	buff.Format(KCopyrightFmt, &*mapData, &KOsm, &*mapStyle, &KHum);
-	AvailableTileProviders()[3]->iCopyrightText = buff;
+	AvailableTileProviders()[EHumanitarianMapIdx]->iCopyrightText = buff;
 	
 	_LIT(KOpenTopo, "OpenTopoMap");
 	buff.Format(KCopyrightFmt, &*mapData, &KOsm, &*mapStyle, &KOpenTopo);
-	AvailableTileProviders()[4]->iCopyrightText = buff;
+	AvailableTileProviders()[EOpenTopoMapIdx]->iCopyrightText = buff;
 	
 	CleanupStack::PopAndDestroy(3, osmContributors);
 	}

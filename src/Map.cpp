@@ -323,7 +323,7 @@ void CTiledMapLayer::DrawCopyrightText(CWindowGc &aGc)
 		textRect.Shrink(KMargin, 0);
 		TInt textBaseline = textRect.Height() - KMargin;
 		//if (iTileProvider->iId == _L("esri"))
-		if (iTileProvider == appUi->AvailableTileProviders()[5] /*esri*/)
+		if (iTileProvider == appUi->AvailableTileProviders()[EEsriIdx])
 			{
 			aGc.SetPenColor(KRgbWhite);
 			}

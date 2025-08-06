@@ -29,6 +29,15 @@
 #include <lbssatellite.h>
 #include <hwrmlight.h> // For CHWRMLight
 
+enum TTileProviderIdx {
+	EOpenStreetMapIdx,
+	EOpenCycleMapIdx,
+	ETransportMapIdx,
+	EHumanitarianMapIdx,
+	EOpenTopoMapIdx,
+	EEsriIdx
+};
+
 // FORWARD DECLARATIONS
 class CMapView;
 
