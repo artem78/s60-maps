@@ -29,7 +29,7 @@ After that installation of SDK will be started. Upon completion you will be aske
 
 ## Carbide C++ IDE
 
-[Download](http://www.mediafire.com/file/6z54qrceef73x9s/Carbide_cpp_v2_7_en.exe/file) and install Carbide.C++ v2.7 IDE.
+Download and install [Carbide.C++ v3.2 IDE](https://mega.nz/#!Kt1wkArK!Aylrqj6x7LOw5DxdfJGbEeRK114698t-FuTV3MVzxSA) ([v2.7](http://www.mediafire.com/file/6z54qrceef73x9s/Carbide_cpp_v2_7_en.exe/file) also should works).
 
 After the install is complete start Carbide C++ IDE. At the first run you will be asked about workspace directory in which projects will be stored. You may leave it as default.
 
@@ -95,6 +95,8 @@ If compilation finished without errors emulator will be started with running S60
 
 ## Make SIS(X) installation package for phone
 
+Read [this note](#do-not-forget-to-set-api-keys-for-release-build-error) first.
+
 Set `Phone Release (GCCE) [S60_3rd_FP1]` build mode. Select `Project > Build Project` or `Project > Clean...` for force update all resources.
 
 After successful compilation you will find `S60Maps.sis` (unsigned) and `S60Maps.sisx` (self-signed) files in `sis` folder.
@@ -106,7 +108,32 @@ After successful compilation you will find `S60Maps.sis` (unsigned) and `S60Maps
 
 Emulator have 14 days trial period, but you can reset it unlimited number of times. Use [this BAT-script](https://gist.github.com/artem78/53c6529794c1c98fb640d1c7560fbaa5#file-nokia_registration_reset-bat) or directly remove `HKCU\Software\Nokia\Product Registration` subtree in `regedit`.
 
+## "Do not forget to set API keys for release build!" error
 
+When you try to build `Release` build typically you should recieved this error:
+
+> #error Todo: Do not forget to set API keys for release build!
+
+OpenCycleMap and Transport map layers requires API key. My own key do not publicly stored in git for security reason, but you can get you own for free [from Thunderforest](https://manage.thunderforest.com/dashboard).
+
+Another way - you may leave this key empty, but in this case you may see "api key required" message on OpenCycleMap and Transport Map tiles.
+
+Key defined in `inc/ApiKey.h`
+
+```
+#ifndef APIKEYS_H_
+#define APIKEYS_H_
+
+_LIT8(KThunderForestApiKey, ""); // leave empty string or put your own key
+
+#endif /* APIKEYS_H_ */
+```
+
+Don't forget to delete `#error ...` statement for success build.
+
+## Fix other problems
+
+https://gist.github.com/artem78/cb2b9650af186844f7b5654964676284#howto
 
 [1]: images/compiling/20211201_172149.png
 [2]: images/compiling/20211201_172734_2.png
@@ -118,3 +145,4 @@ Emulator have 14 days trial period, but you can reset it unlimited number of tim
 [8]: images/compiling/20211201_173521_2.png
 [9]: images/compiling/20211210_163048_2.png
 [10]: images/compiling/20211201_173754.png
+
