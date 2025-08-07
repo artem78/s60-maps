@@ -94,17 +94,17 @@ S60Maps uses phone's landmark database and all of them will be accessed within t
 
 ## SSL/TLS/HTTPS
 
-Some map providers (Humanitarian and OpenTopoMap) require SSL/TLS for download tiles. This is a problem for legacy Symbian devices, but there are 2 solutions.
+Some map providers (Humanitarian and OpenTopoMap) for download tiles and search api require SSL/TLS encryption. This is a problem for legacy Symbian devices, but there are 2 solutions.
 
-### Enable TLS support on system level
+### (1) Enable TLS support on system level
 
 Not so long ago (2024 year) one person make TLS 1.2/1.3 support for Symbian 9.1 and later. Got to https://nnproject.cc/tls/ for more info and installation instructions.
 
 After patch installed you need to **disable** "HTTPS proxy" option in s60maps settings.
 
-### Use https proxy
+### (2) Use https proxy
 
-This solution is easier and used by default. All http**s** requests pass via http proxy server. Make sure option "HTTPS proxy" is **enabled** in s60maps settings.
+This solution is easier and used by default. All http**S** requests pass via http proxy server. Make sure option "HTTPS proxy" is **enabled** in s60maps settings.
 
 ## How to build
 
@@ -139,4 +139,5 @@ This is Open Source software licensed under [GNU GPL v3.0](/LICENSE.txt)
 - [GPS Track recorder for Symbian OS](https://github.com/artem78/s60-gps-tracker#readme)
 - [Accuracy of GNSS data](https://wiki.openstreetmap.org/wiki/Accuracy_of_GNSS_data)
 - [MahoMaps - Yandex.Maps client for Symbian OS](https://github.com/mahomaps/mm-v1)
+
 
