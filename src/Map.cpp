@@ -312,7 +312,7 @@ void CTiledMapLayer::DrawCopyrightText(CWindowGc &aGc)
 	if (r == KErrNone)
 		{
 		copyrightText.Append('(');
-		copyrightText.Append(/*'c'*/ 'C');
+		copyrightText.Append('c' /*'C'*/);
 		copyrightText.Append(')');
 		copyrightText.Append(' ');
 		copyrightText.Append(iTileProvider->iCopyrightTextShort);
