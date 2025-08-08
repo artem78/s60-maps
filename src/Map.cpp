@@ -669,12 +669,13 @@ CLandmarksLayer::CLandmarksLayer(CMapControl* aMapView, CPosLandmarkDatabase* aL
 
 CLandmarksLayer::~CLandmarksLayer()
 	{
-	ReleaseLandmarkResources();
 	if (iCachedLandmarks)
 		{
 		iCachedLandmarks->ResetAndDestroy();
 		}
 	delete iCachedLandmarks;
+	ReleaseLandmarkResources();
+	
 	delete iIcon;
 	}
 
