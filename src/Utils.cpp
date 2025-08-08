@@ -7,6 +7,7 @@
 
 #include "Utils.h"
 #include <e32math.h>
+#include <aknglobalnote.h>
 
 TInt MathUtils::Digits(TInt aNum)
 	{
@@ -226,5 +227,16 @@ bool operator == (const TCoordRect &aCoordRect1, const TCoordRect &aCoordRect2)
 bool operator != (const TCoordRect &aCoordRect1, const TCoordRect &aCoordRect2)
 	{
 	return !(aCoordRect1 == aCoordRect2);
+	}
+
+
+// MiscUtils
+
+void MiscUtils::DbgMsgL(const TDesC &aMsg)
+	{
+	TPtrC ptr(aMsg);
+	CAknGlobalNote* globalNote = CAknGlobalNote::NewLC();
+	globalNote->ShowNoteL(EAknGlobalInformationNote, ptr);
+	CleanupStack::PopAndDestroy(globalNote);
 	}
 

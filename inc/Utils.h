@@ -78,4 +78,12 @@ public:
     friend bool operator != (const TCoordRect &aCoordRect1, const TCoordRect &aCoordRect2);
 	};
 
+
+// Other utils
+class MiscUtils
+	{
+public:
+	static void DbgMsgL(const TDesC &aMsg);
+	};
+
 #endif // UTILS_H

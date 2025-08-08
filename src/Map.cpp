@@ -787,6 +787,7 @@ void CLandmarksLayer::DrawL(CWindowGc &aGc)
 		ReloadLandmarksListL();
 		
 		DEBUG(_L("Landmarks list updated"));
+		//MiscUtils::DbgMsgL(_L("Landmarks list updated"));
 		}
 	else
 		{
