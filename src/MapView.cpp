@@ -495,6 +495,7 @@ void CMapView::HandleCreateLandmarkL()
 		
 		// Save landmark to DB
 		landmarkDb->AddLandmarkL(*newLandmark);
+		MapControl()->NotifyLandmarksUpdated();
 		MapControl()->DrawDeferred();
 		
 		CleanupStack::PopAndDestroy(catMgr);
@@ -531,6 +532,7 @@ void CMapView::HandleRenameLandmarkL()
 		// Update landmark in DB	
 		landmark->SetLandmarkNameL(landmarkName);
 		appUi->LandmarkDb()->UpdateLandmarkL(*landmark);
+		MapControl()->NotifyLandmarksUpdated();
 		MapControl()->DrawDeferred();
 		}
 	
@@ -577,6 +579,7 @@ void CMapView::HandleDeleteLandmarkL()
 		{
 		// Remove landmark from DB
 		appUi->LandmarkDb()->RemoveLandmarkL(landmark->LandmarkId());
+		MapControl()->NotifyLandmarksUpdated();
 		MapControl()->DrawDeferred();
 		}
 	

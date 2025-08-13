@@ -23,6 +23,7 @@
 #include <epos_cposlandmarkdatabase.h>
 #include <akniconutils.h> // For CAknIcon
 #include <lbssatellite.h>
+#include "Utils.h"
 
 
 // Constants
@@ -204,11 +205,17 @@ private:
 	CPosLandmarkDatabase* iLandmarksDb; // Not owned
 	CAknIcon* iIcon;
 	
-	// Result may be NULL if nothing found
-	CArrayPtr<CPosLandmark>* GetVisibleLandmarksL(); // ToDo: Is moving to another class needed?
+	TCoordRect iCachedArea; // Area for which landmarks are loaded
+	CArrayPtr<CPosLandmark>* iCachedLandmarks; // May be NULL if no landmarks
+	TBool iReloadNeeded; // Used for indication if landmarks may be changed outside (for ex. created/deleted/renamed)
+	
+	void ReloadLandmarksListL(); // ToDo: Is moving to another class needed?
 	void DrawL(CWindowGc &aGc);
-	void DrawLandmarks(CWindowGc &aGc, const CArrayPtr<CPosLandmark>* aLandmarks);
+	void DrawLandmarks(CWindowGc &aGc);
 	void DrawLandmark(CWindowGc &aGc, const CPosLandmark* aLandmark);
+	
+public:
+	inline void NotifyLandmarksUpdated() { iReloadNeeded = ETrue; };
 	};
 
 

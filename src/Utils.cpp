@@ -7,6 +7,7 @@
 
 #include "Utils.h"
 #include <e32math.h>
+#include <aknglobalnote.h>
 
 TInt MathUtils::Digits(TInt aNum)
 	{
@@ -197,3 +198,45 @@ TBool StrUtils::EndsWith(const TDesC8& aStr, const TDesC8& aSubstr, TBool aIgnor
 	//...
 	}
 */
+
+
+// TCoordRect
+
+void TCoordRect::SetCoords(const TCoordinate &aTlCoord, const TCoordinate &aBrCoord)
+	{
+	iTlCoord = aTlCoord;
+	iBrCoord = aBrCoord;
+	}
+
+TBool TCoordRect::Contains(const TCoordRect &aCoordRect) const
+	{
+	return (aCoordRect.iTlCoord.Latitude() <= iTlCoord.Latitude())
+			&& (aCoordRect.iTlCoord.Longitude() >= iTlCoord.Longitude())
+			&& (aCoordRect.iBrCoord.Latitude() >= iBrCoord.Latitude())
+			&& (aCoordRect.iBrCoord.Longitude() <= iBrCoord.Longitude());
+	}
+
+bool operator == (const TCoordRect &aCoordRect1, const TCoordRect &aCoordRect2)
+	{
+	return (aCoordRect1.iTlCoord.Longitude() == aCoordRect2.iTlCoord.Longitude())
+			&& (aCoordRect1.iTlCoord.Latitude() == aCoordRect2.iTlCoord.Latitude())
+			&& (aCoordRect1.iBrCoord.Longitude() == aCoordRect2.iBrCoord.Longitude())
+			&& (aCoordRect1.iBrCoord.Latitude() == aCoordRect2.iBrCoord.Latitude());
+	}
+
+bool operator != (const TCoordRect &aCoordRect1, const TCoordRect &aCoordRect2)
+	{
+	return !(aCoordRect1 == aCoordRect2);
+	}
+
+
+// MiscUtils
+
+void MiscUtils::DbgMsgL(const TDesC &aMsg)
+	{
+	TPtrC ptr(aMsg);
+	CAknGlobalNote* globalNote = CAknGlobalNote::NewLC();
+	globalNote->ShowNoteL(EAknGlobalInformationNote, ptr);
+	CleanupStack::PopAndDestroy(globalNote);
+	}
+
