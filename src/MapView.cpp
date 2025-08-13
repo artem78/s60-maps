@@ -193,56 +193,73 @@ void CMapView::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
 	{
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(AppUi());
 	
-	if (aMenuID == R_MENU)
+	switch (aMenuID)
 		{
-		//aMenuPane->SetItemButtonState(EFindMe,
-		//		iAppView->IsFollowingUser() ? EEikMenuItemSymbolOn : EEikMenuItemSymbolIndeterminate
-		//);
-		aMenuPane->SetItemDimmed(EFindMe, !appUi->IsPositioningAvailable() || MapControl()->IsFollowingUser());
-		}
-	else if (aMenuID == R_SUBMENU_GOTO)
-		{
-		CPosLmItemIterator* landmarkIterator = appUi->LandmarkDb()->LandmarkIteratorL();
-		if (!(landmarkIterator && landmarkIterator->NumOfItemsL() > 0))
-			aMenuPane->SetItemDimmed(EGotoLandmark, ETrue);
-		delete landmarkIterator;
-		}
-	else if (aMenuID == R_SUBMENU_TILE_PROVIDERS)
-		{
-		// Fill list of available tiles services in menu
-		
-		for (TInt idx = 0; idx < appUi->AvailableTileProviders().Count(); idx++)
+		case R_MENU:
 			{
-			TInt commandId = ESetTileProviderBase + idx;
-			
-			CEikMenuPaneItem::SData menuItem;
-			menuItem.iCommandId = commandId;
-			menuItem.iCascadeId = 0;
-			menuItem.iFlags = EEikMenuItemCheckBox;
-			menuItem.iText.Copy(appUi->AvailableTileProviders()[idx]->iTitle);
-			menuItem.iExtraText.Zero();
-			aMenuPane->AddMenuItemL(menuItem);
-			aMenuPane->SetItemButtonState(commandId,
-					/*commandId == selectedTileProviderCommId*/
-					appUi->AvailableTileProviders()[idx] == appUi->TileProvider() ?
-							EEikMenuItemSymbolOn : EEikMenuItemSymbolIndeterminate);				
+				//aMenuPane->SetItemButtonState(EFindMe,
+				//		iAppView->IsFollowingUser() ? EEikMenuItemSymbolOn : EEikMenuItemSymbolIndeterminate
+				//);
+				aMenuPane->SetItemDimmed(EFindMe, !appUi->IsPositioningAvailableAndEnabled() || MapControl()->IsFollowingUser());
+				
+				break;
 			}
+			
+		case R_SUBMENU_GOTO:
+			{
+			CPosLmItemIterator* landmarkIterator = appUi->LandmarkDb()->LandmarkIteratorL();
+			if (!(landmarkIterator && landmarkIterator->NumOfItemsL() > 0))
+				aMenuPane->SetItemDimmed(EGotoLandmark, ETrue);
+			delete landmarkIterator;
+			
+			break;
+			}
+			
+		case R_SUBMENU_TILE_PROVIDERS:
+			{
+			// Fill list of available tiles services in menu
+					
+			for (TInt idx = 0; idx < appUi->AvailableTileProviders().Count(); idx++)
+				{
+				TInt commandId = ESetTileProviderBase + idx;
+				
+				CEikMenuPaneItem::SData menuItem;
+				menuItem.iCommandId = commandId;
+				menuItem.iCascadeId = 0;
+				menuItem.iFlags = EEikMenuItemCheckBox;
+				menuItem.iText.Copy(appUi->AvailableTileProviders()[idx]->iTitle);
+				menuItem.iExtraText.Zero();
+				aMenuPane->AddMenuItemL(menuItem);
+				aMenuPane->SetItemButtonState(commandId,
+						/*commandId == selectedTileProviderCommId*/
+						appUi->AvailableTileProviders()[idx] == appUi->TileProvider() ?
+								EEikMenuItemSymbolOn : EEikMenuItemSymbolIndeterminate);				
+				}
+			
+			break;
+			}
+			
+		case R_SUBMENU_LANDMARKS:
+			{
+			aMenuPane->SetItemButtonState(EToggleLandmarksVisibility,
+					appUi->Settings()->GetLandmarksVisibility() ? EEikMenuItemSymbolOn : EEikMenuItemSymbolIndeterminate
+			);
+			CPosLandmark* nearestLandmark = GetNearestLandmarkAroundTheCenterL();
+			TBool isDisplayEditOrDeleteLandmark = appUi->Settings()->GetLandmarksVisibility() && nearestLandmark;
+			delete nearestLandmark;
+			aMenuPane->SetItemDimmed(ERenameLandmark, !isDisplayEditOrDeleteLandmark);
+			aMenuPane->SetItemDimmed(EDeleteLandmark, !isDisplayEditOrDeleteLandmark);
+			
+			break;
+			}
+			
+		/*default:
+			{
+			AppUi()->DynInitMenuPaneL(aMenuID, aMenuPane);
+			
+			break;
+			}*/
 		}
-	else if (aMenuID == R_SUBMENU_LANDMARKS)
-		{
-		aMenuPane->SetItemButtonState(EToggleLandmarksVisibility,
-				appUi->Settings()->GetLandmarksVisibility() ? EEikMenuItemSymbolOn : EEikMenuItemSymbolIndeterminate
-		);
-		CPosLandmark* nearestLandmark = GetNearestLandmarkAroundTheCenterL();
-		TBool isDisplayEditOrDeleteLandmark = appUi->Settings()->GetLandmarksVisibility() && nearestLandmark;
-		delete nearestLandmark;
-		aMenuPane->SetItemDimmed(ERenameLandmark, !isDisplayEditOrDeleteLandmark);
-		aMenuPane->SetItemDimmed(EDeleteLandmark, !isDisplayEditOrDeleteLandmark);
-		}
-	/*else
-		{
-		AppUi()->DynInitMenuPaneL(aMenuID, aMenuPane);
-		}*/
 	}
 
 void CMapView::HandleFindMeL()
@@ -379,6 +396,8 @@ void CMapView::HandleAboutL()
 	_LIT(KWebSite,	"https://github.com/artem78/s60-maps");
 	_LIT(KThanksTo,	"baranovskiykonstantin, Symbian9, Men770, fizolas, bent");
 	
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(AppUi());
+	
 	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
 	dlg->PrepareLC(R_QUERY_DIALOG);
 	HBufC* title = iEikonEnv->AllocReadResourceLC(R_ABOUT_DIALOG_TITLE);
@@ -386,7 +405,7 @@ void CMapView::HandleAboutL()
 	CleanupStack::PopAndDestroy(); //title
 	
 	RBuf msg;
-	msg.CreateL(512);
+	msg.CreateL(2048);
 	msg.CleanupClosePushL();
 	TBuf<32> version;
 	version.Copy(KProgramVersion.Name());
@@ -400,6 +419,33 @@ void CMapView::HandleAboutL()
 	gitInfo.Format(KFmt, &KGITLongVersion, &KGITBranch);
 	iEikonEnv->Format128/*256*/(msg, R_ABOUT_DIALOG_TEXT, &version,
 			&gitInfo, &KAuthor, &KWebSite, &KThanksTo);
+	
+	
+	// Data licences
+	HBufC* dataLicences = iEikonEnv->AllocReadResourceLC(R_DATA_LICENCES);
+	HBufC* layerFmt = iEikonEnv->AllocReadResourceLC(R_LAYER_FMT);
+	HBufC* searchApi = iEikonEnv->AllocReadResourceLC(R_SEARCH_API);
+	_LIT(KDataLicFmt, "\r\n\r\n%S:\r\n");
+	msg.AppendFormat(KDataLicFmt, &(*dataLicences));
+	_LIT(KCopyrightLineFmt, " - (c) %S (%S)\r\n");
+	RBuf copyrightLineFmt;
+	copyrightLineFmt.CreateL(layerFmt->Length() + KCopyrightLineFmt().Length());
+	CleanupClosePushL(copyrightLineFmt);
+	copyrightLineFmt.Append(*layerFmt);
+	//copyrightLineFmt.Capitalize();
+	copyrightLineFmt.Append(KCopyrightLineFmt);
+	for (TInt i = 0; i < appUi->AvailableTileProviders().Count(); i++)
+		{
+		TTileProvider* provider = appUi->AvailableTileProviders()[i];
+		msg.AppendFormat(copyrightLineFmt, &provider->iTitle,
+				&provider->iCopyrightText, &provider->iCopyrightUrl);
+		}
+	
+	_LIT(KCopyrightLineSearchFmt, "%S - (c) Nominatim (https://nominatim.openstreetmap.org)");
+	msg.AppendFormat(KCopyrightLineSearchFmt, &(*searchApi));
+	CleanupStack::PopAndDestroy(4, dataLicences);
+	
+	
 	dlg->SetMessageTextL(msg);
 	CleanupStack::PopAndDestroy(&msg);
 	dlg->RunLD();
@@ -449,6 +495,7 @@ void CMapView::HandleCreateLandmarkL()
 		
 		// Save landmark to DB
 		landmarkDb->AddLandmarkL(*newLandmark);
+		MapControl()->NotifyLandmarksUpdated();
 		MapControl()->DrawDeferred();
 		
 		CleanupStack::PopAndDestroy(catMgr);
@@ -485,6 +532,7 @@ void CMapView::HandleRenameLandmarkL()
 		// Update landmark in DB	
 		landmark->SetLandmarkNameL(landmarkName);
 		appUi->LandmarkDb()->UpdateLandmarkL(*landmark);
+		MapControl()->NotifyLandmarksUpdated();
 		MapControl()->DrawDeferred();
 		}
 	
@@ -531,6 +579,7 @@ void CMapView::HandleDeleteLandmarkL()
 		{
 		// Remove landmark from DB
 		appUi->LandmarkDb()->RemoveLandmarkL(landmark->LandmarkId());
+		MapControl()->NotifyLandmarksUpdated();
 		MapControl()->DrawDeferred();
 		}
 	

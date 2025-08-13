@@ -83,6 +83,7 @@ public:
 	TBool iUseHttpsProxy;
 	TBuf/*8*/<0x100> iHttpsProxyUrl;
 	TBool iUseDiskCache;
+	TBool iPositioningEnabled;
 	
 public:
 	CSettings();
@@ -124,7 +125,7 @@ public:
 		{ iIsSignalIndicatorVisible = aVisible; }*/
 	
 	// Check if https proxy url is valid string otherwise reset to default value
-	void ValidateHttpsProxyUrlL();
+	void ValidateHttpsProxyUrl();
 	
 	};
 

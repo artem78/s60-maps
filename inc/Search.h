@@ -80,7 +80,7 @@ private:
 	MSearchObserver* iObserver;
 	
 	TBool RunQueryDialogL();
-	TBool RunResultsDialogL();
+	/*TBool*/ void RunResultsDialogL();
 	void ParseApiResponseL(CDesCArray* aNamesArr, CArrayFix<TCoordinate>* aCoordsArr);
 	void RunApiReqestL();
 	

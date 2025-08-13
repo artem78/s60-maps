@@ -82,7 +82,7 @@ TBool CSearch::RunQueryDialogL()
 	return res;	
 	}
 
-TBool CSearch::RunResultsDialogL()
+void CSearch::RunResultsDialogL()
 	{
 	DEBUG(_L("begin"));
 	
@@ -178,8 +178,6 @@ void CSearch::RunApiReqestL()
 	DEBUG(_L("begin"));
 	__ASSERT_DEBUG(iQuery != KNullDesC, Panic());
 	
-	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(iAvkonAppUi);
-	
 	_LIT8(KApiBaseUrl, "https://nominatim.openstreetmap.org/search?format=json&q=");
 	
 	HBufC8* utf8Query = CnvUtfConverter::ConvertFromUnicodeToUtf8L(iQuery);
@@ -201,7 +199,7 @@ void CSearch::RunApiReqestL()
 	DEBUG(_L("end"));
 	}
 
-void CSearch::OnHTTPResponseDataChunkRecieved(const RHTTPTransaction aTransaction,
+void CSearch::OnHTTPResponseDataChunkRecieved(const RHTTPTransaction /*aTransaction*/,
 		const TDesC8 &aDataChunk, TInt anOverallDataSize, TBool anIsLastChunk)
 	{
 	if (iResponseBuff == NULL)
@@ -220,18 +218,18 @@ void CSearch::OnHTTPResponseDataChunkRecieved(const RHTTPTransaction aTransactio
 		}
 	}
 
-void CSearch::OnHTTPResponse(const RHTTPTransaction aTransaction)
+void CSearch::OnHTTPResponse(const RHTTPTransaction /*aTransaction*/)
 	{
 	
 	}
 
-void CSearch::OnHTTPError(TInt aError, const RHTTPTransaction aTransaction)
+void CSearch::OnHTTPError(TInt /*aError*/, const RHTTPTransaction /*aTransaction*/)
 	{
 	delete iResponseBuff;
 	iResponseBuff = NULL;
 	}
 
-void CSearch::OnHTTPHeadersRecieved(const RHTTPTransaction aTransaction)
+void CSearch::OnHTTPHeadersRecieved(const RHTTPTransaction /*aTransaction*/)
 	{
 
 	}

@@ -184,6 +184,7 @@ private:
 	TBool iIsCrosshairVisible;
 	CPeriodic* /*iUserInactivityTimer*/ iCrosshairAutoHideTimer;
 	CFont* iDefaultFont;
+	CFont* iSmallFont;
 	
 	void Move(const TPoint &aPoint, TBool savePos = ETrue); // Used by all another Move methods
 public:
@@ -228,6 +229,7 @@ public:
 	TPoint GeoCoordsToScreenCoords(const TCoordinate &aCoord) const;
 	TCoordinate ScreenCoordsToGeoCoords(const TPoint &aPoint) const;
 	void Bounds(TCoordinate &aTopLeftCoord, TCoordinate &aBottomRightCoord) const;
+	void Bounds(TCoordRect &aCoordRect) const;
 	void Bounds(TTile &aTopLeftTile, TTile &aBottomRightTile) const;
 	
 	void SetUserPosition(const TCoordinateEx& aPos);
@@ -244,6 +246,9 @@ public:
 	void ReloadVisibleAreaL();
 	inline const CFont* DefaultFont() const
 		{ return iDefaultFont; };
+	inline const CFont* SmallFont() const // for copyright string
+		{ return iSmallFont; };
+	void NotifyLandmarksUpdated();
 
 	};
 	

@@ -83,3 +83,13 @@ CHARACTER_SET UTF8
 
 #define qtn_search "Поиск"
 #define qtn_search_results "Результаты поиска"
+
+// Added in version X.XX
+
+#define qtn_data_licences "Лицензии на данные"
+#define qtn_layer_fmt "Слой \"%S\""
+#define qtn_search_api "API поиска"
+#define qtn_osm_contributors "участники OpenStreetMap"
+#define qtn_map_data "данные карты"
+#define qtn_map_style "стиль карты"
+#define qtn_positioning "Определять местоположение"

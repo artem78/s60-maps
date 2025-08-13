@@ -36,7 +36,8 @@ CSettings::CSettings() :
 		iSignalIndicatorType(ESignalIndicatorGeneralType),
 		iUseHttpsProxy(ETrue),
 		iHttpsProxyUrl(KDefaultHttpsProxyUrl),
-		iUseDiskCache(ETrue)
+		iUseDiskCache(ETrue),
+		iPositioningEnabled(ETrue)
 	{
 	}
 
@@ -64,6 +65,7 @@ CSettings::CSettings() :
 //
 //	}
 
+// Save setting to file
 void CSettings::ExternalizeL(RWriteStream& aStream) const
 	{
 	aStream << iLat;
@@ -86,8 +88,12 @@ void CSettings::ExternalizeL(RWriteStream& aStream) const
 	aStream << static_cast<TInt8>(iUseHttpsProxy);
 	aStream << iHttpsProxyUrl;
 	aStream << static_cast<TInt8>(iUseDiskCache);
+	
+	// Added in version X.XX
+	aStream << static_cast<TInt8>(iPositioningEnabled);
 	}
 
+// Load settings from file
 void CSettings::DoInternalizeL(RReadStream& aStream)
 	{
 	// FixMe: Reads mess in new settings for old config file (make sure to validate them)
@@ -121,9 +127,13 @@ void CSettings::DoInternalizeL(RReadStream& aStream)
 	aStream >> int8Val;
 	iUseHttpsProxy = static_cast<TBool>(int8Val);
 	aStream >> iHttpsProxyUrl;
-	ValidateHttpsProxyUrlL();
+	ValidateHttpsProxyUrl();
 	aStream >> int8Val;
 	iUseDiskCache = static_cast<TBool>(int8Val);
+	
+	// Added in version X.XX
+	aStream >> int8Val;
+	iPositioningEnabled = static_cast<TBool>(int8Val);
 	}
 
 void CSettings::InternalizeL(RReadStream& aStream)
@@ -135,7 +145,7 @@ void CSettings::InternalizeL(RReadStream& aStream)
 		}
 	}
 
-void CSettings::ValidateHttpsProxyUrlL()
+void CSettings::ValidateHttpsProxyUrl()
 	{
 	// just check that string starts with "http"
 	// (for better check TUriC16::Validate() may be used instead)
@@ -143,8 +153,8 @@ void CSettings::ValidateHttpsProxyUrlL()
 	
 	_LIT(KUrlStart, "http");
 	_LIT(KOldProxyDomain, "s60maps.work.gd");
-	if (!StrUtils::StartsWithL(iHttpsProxyUrl, KUrlStart, ETrue)
-			|| StrUtils::ContainsL(iHttpsProxyUrl, KOldProxyDomain, ETrue))
+	if (!StrUtils::StartsWith(iHttpsProxyUrl, KUrlStart, ETrue)
+			|| StrUtils::Contains(iHttpsProxyUrl, KOldProxyDomain, ETrue))
 		{
 		iHttpsProxyUrl = KDefaultHttpsProxyUrl;
 		}

@@ -34,6 +34,9 @@ CAknSettingItem* CSettingsListBox::CreateSettingItemL(TInt aSettingId)
 				{
 				settingItem = new (ELeave) CAknBinaryPopupSettingItem(aSettingId,
 								appUi->Settings()->iIsSignalIndicatorVisible);
+				
+				TBool isVisible = appUi->IsPositioningAvailableAndEnabled();
+				settingItem->SetHidden(!isVisible);
 				}
 			}
 			break;
@@ -47,14 +50,17 @@ CAknSettingItem* CSettingsListBox::CreateSettingItemL(TInt aSettingId)
 			
 		case ESettingSignalIndicatorType:
 			{
-			// Only two possible values in enum (0 and 1)
-			TBool* boolPtr = (TBool*)(&appUi->Settings()->iSignalIndicatorType);
-			settingItem = new (ELeave) CAknBinaryPopupSettingItem(aSettingId,
-							*boolPtr);
-			
-			TBool isVisible = appUi->IsPositioningAvailable()
-					&& appUi->Settings()->iIsSignalIndicatorVisible;
-			settingItem->SetHidden(!isVisible);
+			if (appUi->IsPositioningAvailable())
+				{
+				// Only two possible values in enum (0 and 1)
+				TBool* boolPtr = (TBool*)(&appUi->Settings()->iSignalIndicatorType);
+				settingItem = new (ELeave) CAknBinaryPopupSettingItem(aSettingId,
+								*boolPtr);
+				
+				TBool isVisible = appUi->IsPositioningAvailableAndEnabled()
+						&& appUi->Settings()->iIsSignalIndicatorVisible;
+				settingItem->SetHidden(!isVisible);
+				}
 			}
 			break;
 			
@@ -82,6 +88,17 @@ CAknSettingItem* CSettingsListBox::CreateSettingItemL(TInt aSettingId)
 										appUi->Settings()->iUseDiskCache);
 			}
 			break;
+			
+		case ESettingPositioningEnabled:
+			{
+			if (appUi->IsPositioningAvailable())
+				{
+				settingItem = new (ELeave) CAknBinaryPopupSettingItem(aSettingId,
+										appUi->Settings()->iPositioningEnabled);
+				}
+			}
+			break;
+			
 		}
 	
 	return settingItem;
@@ -96,6 +113,7 @@ void CSettingsListBox::EditItemL(TInt aIndex, TBool aCalledFromMenu)
 	//(*SettingItemArray())[aIndex]->UpdateListBoxTextL();
 	(*SettingItemArray())[aIndex]->StoreL();
 	
+	// Perform any action after setting was changed (if needed)
 	switch ((*SettingItemArray())[aIndex]->Identifier())
 		{
 		case ESettingLanguage:
@@ -109,7 +127,7 @@ void CSettingsListBox::EditItemL(TInt aIndex, TBool aCalledFromMenu)
 			
 		case ESettingShowSignalIndicator:
 			{
-			TBool isVisible = appUi->IsPositioningAvailable()
+			TBool isVisible = appUi->IsPositioningAvailableAndEnabled()
 					&& appUi->Settings()->iIsSignalIndicatorVisible;
 			
 			(*SettingItemArray())[ESettingSignalIndicatorType]->SetHidden(!isVisible);
@@ -129,11 +147,27 @@ void CSettingsListBox::EditItemL(TInt aIndex, TBool aCalledFromMenu)
 		case ESettingHttpsProxyUrl:
 			// reset to default value if input incorrect
 			{
-			appUi->Settings()->ValidateHttpsProxyUrlL();
+			appUi->Settings()->ValidateHttpsProxyUrl();
 			(*SettingItemArray())[aIndex]->LoadL();
 			HandleChangeInItemArrayOrVisibilityL();
 			}
 			break;
+			
+		case ESettingPositioningEnabled:
+			{
+			if (appUi->Settings()->iPositioningEnabled)
+				{
+				appUi->EnablePositioningL();
+				}
+			else
+				{
+				appUi->DisablePositioning();
+				}
+			(*SettingItemArray())[ESettingShowSignalIndicator]->SetHidden(!appUi->Settings()->iPositioningEnabled);
+			(*SettingItemArray())[ESettingSignalIndicatorType]->SetHidden(!appUi->Settings()->iPositioningEnabled || !appUi->Settings()->iIsSignalIndicatorVisible);
+			HandleChangeInItemArrayOrVisibilityL();
+			break;
+			}
 		}
 	}
 
@@ -225,6 +259,9 @@ void CLanguageListSettingItem::LoadLanguageListL()
 				resourceId = R_LANG_UKRAINISN_NAME;
 				break;
 				}
+				
+			default:
+				{} // supress compiller warnings
 			}
 		
 		HBufC* langName = NULL;

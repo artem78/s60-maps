@@ -23,6 +23,7 @@
 #include <epos_cposlandmarkdatabase.h>
 #include <akniconutils.h> // For CAknIcon
 #include <lbssatellite.h>
+#include "Utils.h"
 
 
 // Constants
@@ -112,6 +113,7 @@ private:
 	TTileProvider *iTileProvider;
 	void VisibleTiles(RArray<TTile> &aTiles); // Return list of visible tiles
 	void DrawTile(CWindowGc &aGc, const TTile &aTile, const CFbsBitmap *aBitmap);
+	void DrawCopyrightText(CWindowGc &aGc);
 	
 public:
 	void SetTileProviderL(TTileProvider* aTileProvider);
@@ -203,11 +205,17 @@ private:
 	CPosLandmarkDatabase* iLandmarksDb; // Not owned
 	CAknIcon* iIcon;
 	
-	// Result may be NULL if nothing found
-	CArrayPtr<CPosLandmark>* GetVisibleLandmarksL(); // ToDo: Is moving to another class needed?
+	TCoordRect iCachedArea; // Area for which landmarks are loaded
+	CArrayPtr<CPosLandmark>* iCachedLandmarks; // May be NULL if no landmarks
+	TBool iReloadNeeded; // Used for indication if landmarks may be changed outside (for ex. created/deleted/renamed)
+	
+	void ReloadLandmarksListL(); // ToDo: Is moving to another class needed?
 	void DrawL(CWindowGc &aGc);
-	void DrawLandmarks(CWindowGc &aGc, const CArrayPtr<CPosLandmark>* aLandmarks);
+	void DrawLandmarks(CWindowGc &aGc);
 	void DrawLandmark(CWindowGc &aGc, const CPosLandmark* aLandmark);
+	
+public:
+	inline void NotifyLandmarksUpdated() { iReloadNeeded = ETrue; };
 	};
 
 
@@ -427,6 +435,8 @@ private:
 	CFbsBitmap* iBitmap;
 	TBool iIsReady; // ETrue when image completely drawn and ready to use
 public:
+	TTime iLastAccessTime;
+
 	void CreateBitmapIfNotExistL();
 	inline TBool IsReady() { return iIsReady && iBitmap != NULL; };
 	inline void SetReady() { iIsReady = ETrue; };
@@ -448,7 +458,8 @@ class TTileProvider
 	{
 public:
 	TTileProvider(const TDesC& anId, const TDesC& aTitle, const TDesC8& anUrlTemplate,
-			TZoom aMinZoom, TZoom aMaxZoom);
+			TZoom aMinZoom, TZoom aMaxZoom, const TDesC& aCopyrightTextShort = KNullDesC,
+			const TDesC& aCopyrightText = KNullDesC, const TDesC& aCopyrightUrl = KNullDesC);
 
 	// Short string identifier of tile provider. Used in cache subdir name.
 	// Must be unique and do not contains any special symbols (allowed: a-Z, 0-9, - and _). 
@@ -465,6 +476,10 @@ public:
 	// Minimum and maximum zoom level
 	TZoom iMinZoomLevel; // /*Default is 0*/
 	TZoom iMaxZoomLevel; // /*Default is 18*/
+	
+	/*HBufC**/ TBuf<64> iCopyrightTextShort; // Short text, visible on the slippy map
+	/*HBufC**/ TBuf<128> iCopyrightText; // Full text, visible in About dialog
+	/*HBufC8**/ TBuf/*8*/<128> iCopyrightUrl;
 	
 	// Return url of given tile
 	// ToDo: It is a good idea to make tests for this method

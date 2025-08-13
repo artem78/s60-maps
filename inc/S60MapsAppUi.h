@@ -29,6 +29,17 @@
 #include <lbssatellite.h>
 #include <hwrmlight.h> // For CHWRMLight
 
+
+enum TTileProviderIdx {
+	EOpenStreetMapIdx,
+	EOpenCycleMapIdx,
+	ETransportMapIdx,
+	EHumanitarianMapIdx,
+	EOpenTopoMapIdx,
+	EEsriIdx
+};
+
+
 // FORWARD DECLARATIONS
 class CMapView;
 
@@ -177,12 +188,13 @@ private:
 	CHWRMLight* iLight;
 	CPeriodic* iResetInactivityTimer;
 	HBufC* iOriginalPaneTitle;
+	TBool iIsPositioningAvailable;
 	
 	//static TInt UpdateTilesClearingProgress(TAny* aSelfPtr);
 	
 	TLanguage PreferredLanguage();
 	static TInt ResetInactivityTimer(TAny* aPtr);
-	void EnableInfiniteBacklight();
+	void EnableInfiniteBacklightL();
 	void DisableInfiniteBacklight();
 	void EnableScreenSaver();
 	void DisableScreenSaver();
@@ -203,11 +215,17 @@ public:
 //	inline CPositionRequestor Positionrequestor()
 //			{ return iPosRequestor; }
 	
+	/* Return ETrue if phone supports positioning (gps) and it enabled in phone settings */
 	inline TBool IsPositioningAvailable()
-			{ return (TBool) iPosRequestor; }
+			{ return iIsPositioningAvailable; }
 	
+	/* Return ETrue if current position is determined */
 	inline TBool IsPositionRecieved()
-			{ return IsPositioningAvailable() && iPosRequestor->IsPositionRecieved(); }
+			{ return IsPositioningAvailable() && iPosRequestor && iPosRequestor->IsPositionRecieved(); }
+	
+	/* Return ETrue if phone supports positioning and it enabled in program settings */
+	inline TBool IsPositioningAvailableAndEnabled()
+			{ return IsPositioningAvailable() && Settings()->iPositioningEnabled; }
 	
 	inline CMapView* MapView()
 			{ return iMapView; }
@@ -216,10 +234,14 @@ public:
 			{ return iSettingsView; }
 	
 	inline const TPositionSatelliteInfo* SatelliteInfo()
-			{ return IsPositioningAvailable() && iPosRequestor->LastKnownPositionInfo()->PositionClassType() & EPositionSatelliteInfoClass ?
+			{ return IsPositioningAvailable() && iSettings->iPositioningEnabled && iPosRequestor->LastKnownPositionInfo()->PositionClassType() & EPositionSatelliteInfoClass ?
 					static_cast<const TPositionSatelliteInfo*>(iPosRequestor->LastKnownPositionInfo()) :
 					NULL;
 			}
+	
+
+	void EnablePositioningL();
+	void DisablePositioning();
 	
 	};
 

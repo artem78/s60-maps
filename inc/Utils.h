@@ -11,6 +11,7 @@
 // INCLUDES
 #include <e32std.h>
 #include <e32base.h>
+#include <lbsposition.h>
 
 // CLASS DECLARATION
 
@@ -49,15 +50,40 @@ public:
 		};
 	};
 
+
 class StrUtils
 	{
 public:
-	static TBool ContainsL(const TDesC16& aStr, const TDesC16& aSubstr, TBool aIgnoreCase = EFalse);
-	static TBool ContainsL(const TDesC8& aStr, const TDesC8& aSubstr, TBool aIgnoreCase = EFalse);
-	static TBool StartsWithL(const TDesC16& aStr, const TDesC16& aSubstr, TBool aIgnoreCase = EFalse);
-	static TBool StartsWithL(const TDesC8& aStr, const TDesC8& aSubstr, TBool aIgnoreCase = EFalse);
-	//static TBool EndsWithL(const TDesC16& aStr, const TDesC16& aSubstr, TBool aIgnoreCase = EFalse);
-	//static TBool EndsWithL(const TDesC8& aStr, const TDesC8& aSubstr, TBool aIgnoreCase = EFalse);
+	static TBool Contains(const TDesC16& aStr, const TDesC16& aSubstr, TBool aIgnoreCase = EFalse);
+	static TBool Contains(const TDesC8& aStr, const TDesC8& aSubstr, TBool aIgnoreCase = EFalse);
+	static TBool StartsWith(const TDesC16& aStr, const TDesC16& aSubstr, TBool aIgnoreCase = EFalse);
+	static TBool StartsWith(const TDesC8& aStr, const TDesC8& aSubstr, TBool aIgnoreCase = EFalse);
+	//static TBool EndsWith(const TDesC16& aStr, const TDesC16& aSubstr, TBool aIgnoreCase = EFalse);
+	//static TBool EndsWith(const TDesC8& aStr, const TDesC8& aSubstr, TBool aIgnoreCase = EFalse);
+	};
+
+
+// Similar as TRect but for couple of TCoordinate objects
+class TCoordRect
+	{
+public:
+	TCoordinate iTlCoord, iBrCoord;
+	
+	void SetCoords(const TCoordinate &aTlCoord, const TCoordinate &aBrCoord);
+	
+	// Returns ETrue if given rect completely located inside this rect
+	TBool Contains(const TCoordRect &aCoordRect) const;
+	
+    friend bool operator == (const TCoordRect &aCoordRect1, const TCoordRect &aCoordRect2);
+    friend bool operator != (const TCoordRect &aCoordRect1, const TCoordRect &aCoordRect2);
+	};
+
+
+// Other utils
+class MiscUtils
+	{
+public:
+	static void DbgMsgL(const TDesC &aMsg);
 	};
 
 #endif // UTILS_H

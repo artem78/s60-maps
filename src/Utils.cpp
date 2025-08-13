@@ -7,6 +7,7 @@
 
 #include "Utils.h"
 #include <e32math.h>
+#include <aknglobalnote.h>
 
 TInt MathUtils::Digits(TInt aNum)
 	{
@@ -85,117 +86,157 @@ TRectEx::TRectEx(TInt aAx, TInt aAy, TInt aBx, TInt aBy)
 // StrUtils
 // todo: reduce code duplications
 
-TBool StrUtils::ContainsL(const TDesC& aStr, const TDesC& aSubstr, TBool aIgnoreCase)
+TBool StrUtils::Contains(const TDesC& aStr, const TDesC& aSubstr, TBool aIgnoreCase)
 	{
+	if (aStr.Length() < aSubstr.Length())
+		{
+		return EFalse;
+		}
+	
 	if (!aIgnoreCase)
 		{
 		return aStr.Find(aSubstr) != KErrNotFound;
 		}
 	else
-		{
-		RBuf strLower, substrLower;
-		
-		strLower.CreateL(aStr);
-		CleanupClosePushL(strLower);
-		
-		substrLower.CreateL(aSubstr);
-		CleanupClosePushL(substrLower);
-		
-		strLower.LowerCase();
-		substrLower.LowerCase();
-		TBool res = strLower.Find(substrLower) != KErrNotFound;
-		
-		CleanupStack::PopAndDestroy(2, &strLower);
-		
-		return res;
+		{		
+		for (TInt pos = 0; pos <= aStr.Length() - aSubstr.Length(); pos++)
+			{
+			TPtrC s = aStr.Mid(pos, aSubstr.Length());
+			if (StartsWith(s, aSubstr, aIgnoreCase))
+				{
+				return ETrue;
+				}
+			}
 		}
+		return EFalse;
 	}
 
-TBool StrUtils::ContainsL(const TDesC8& aStr, const TDesC8& aSubstr, TBool aIgnoreCase)
+TBool StrUtils::Contains(const TDesC8& aStr, const TDesC8& aSubstr, TBool aIgnoreCase)
 	{
+	if (aStr.Length() < aSubstr.Length())
+		{
+		return EFalse;
+		}
+	
 	if (!aIgnoreCase)
 		{
 		return aStr.Find(aSubstr) != KErrNotFound;
 		}
 	else
-		{
-		RBuf8 strLower, substrLower;
-		
-		strLower.CreateL(aStr);
-		CleanupClosePushL(strLower);
-		
-		substrLower.CreateL(aSubstr);
-		CleanupClosePushL(substrLower);
-		
-		strLower.LowerCase();
-		substrLower.LowerCase();
-		TBool res = strLower.Find(substrLower) != KErrNotFound;
-		
-		CleanupStack::PopAndDestroy(2, &strLower);
-		
-		return res;
+		{		
+		for (TInt pos = 0; pos <= aStr.Length() - aSubstr.Length(); pos++)
+			{
+			TPtrC8 s = aStr.Mid(pos, aSubstr.Length());
+			if (StartsWith(s, aSubstr, aIgnoreCase))
+				{
+				return ETrue;
+				}
+			}
 		}
+		return EFalse;
 	}
 
-TBool StrUtils::StartsWithL(const TDesC& aStr, const TDesC& aSubstr, TBool aIgnoreCase)
+TBool StrUtils::StartsWith(const TDesC& aStr, const TDesC& aSubstr, TBool aIgnoreCase)
 	{
-	if (!aIgnoreCase)
+	if (aStr.Length() < aSubstr.Length())
 		{
-		return aStr.Find(aSubstr) == 0;
+		return EFalse;
 		}
-	else
+	
+	for (TInt i = 0; i < aSubstr.Length(); i++)
 		{
-		RBuf strLower, substrLower;
+		TChar ch1, ch2;
+		ch1 = aStr[i];
+		ch2 = aSubstr[i];
+		if (aIgnoreCase)
+			{
+			ch1.LowerCase();
+			ch2.LowerCase();
+			}
 		
-		strLower.CreateL(aStr);
-		CleanupClosePushL(strLower);
-		
-		substrLower.CreateL(aSubstr);
-		CleanupClosePushL(substrLower);
-		
-		strLower.LowerCase();
-		substrLower.LowerCase();
-		TBool res = strLower.Find(substrLower) == 0;
-		
-		CleanupStack::PopAndDestroy(2, &strLower);
-		
-		return res;
+		if (ch1 != ch2)
+			{
+			return EFalse;
+			}
 		}
+	return ETrue;
 	}
 
-TBool StrUtils::StartsWithL(const TDesC8& aStr, const TDesC8& aSubstr, TBool aIgnoreCase)
+TBool StrUtils::StartsWith(const TDesC8& aStr, const TDesC8& aSubstr, TBool aIgnoreCase)
 	{
-	if (!aIgnoreCase)
+	if (aStr.Length() < aSubstr.Length())
 		{
-		return aStr.Find(aSubstr) == 0;
+		return EFalse;
 		}
-	else
+	
+	for (TInt i = 0; i < aSubstr.Length(); i++)
 		{
-		RBuf8 strLower, substrLower;
+		TChar ch1, ch2;
+		ch1 = aStr[i];
+		ch2 = aSubstr[i];
+		if (aIgnoreCase)
+			{
+			ch1.LowerCase();
+			ch2.LowerCase();
+			}
 		
-		strLower.CreateL(aStr);
-		CleanupClosePushL(strLower);
-		
-		substrLower.CreateL(aSubstr);
-		CleanupClosePushL(substrLower);
-		
-		strLower.LowerCase();
-		substrLower.LowerCase();
-		TBool res = strLower.Find(substrLower) == 0;
-		
-		CleanupStack::PopAndDestroy(2, &strLower);
-		
-		return res;
+		if (ch1 != ch2)
+			{
+			return EFalse;
+			}
 		}
+	return ETrue;
 	}
 
-/*TBool StrUtils::EndsWithL(const TDesC16& aStr, const TDesC16& aSubstr, TBool aIgnoreCase)
+/*TBool StrUtils::EndsWith(const TDesC16& aStr, const TDesC16& aSubstr, TBool aIgnoreCase)
 	{
 	//...
 	}
 	
-TBool StrUtils::EndsWithL(const TDesC8& aStr, const TDesC8& aSubstr, TBool aIgnoreCase)
+TBool StrUtils::EndsWith(const TDesC8& aStr, const TDesC8& aSubstr, TBool aIgnoreCase)
 	{
 	//...
 	}
 */
+
+
+// TCoordRect
+
+void TCoordRect::SetCoords(const TCoordinate &aTlCoord, const TCoordinate &aBrCoord)
+	{
+	iTlCoord = aTlCoord;
+	iBrCoord = aBrCoord;
+	}
+
+TBool TCoordRect::Contains(const TCoordRect &aCoordRect) const
+	{
+	return (aCoordRect.iTlCoord.Latitude() <= iTlCoord.Latitude())
+			&& (aCoordRect.iTlCoord.Longitude() >= iTlCoord.Longitude())
+			&& (aCoordRect.iBrCoord.Latitude() >= iBrCoord.Latitude())
+			&& (aCoordRect.iBrCoord.Longitude() <= iBrCoord.Longitude());
+	}
+
+bool operator == (const TCoordRect &aCoordRect1, const TCoordRect &aCoordRect2)
+	{
+	return (aCoordRect1.iTlCoord.Longitude() == aCoordRect2.iTlCoord.Longitude())
+			&& (aCoordRect1.iTlCoord.Latitude() == aCoordRect2.iTlCoord.Latitude())
+			&& (aCoordRect1.iBrCoord.Longitude() == aCoordRect2.iBrCoord.Longitude())
+			&& (aCoordRect1.iBrCoord.Latitude() == aCoordRect2.iBrCoord.Latitude());
+	}
+
+bool operator != (const TCoordRect &aCoordRect1, const TCoordRect &aCoordRect2)
+	{
+	return !(aCoordRect1 == aCoordRect2);
+	}
+
+
+// MiscUtils
+
+void MiscUtils::DbgMsgL(const TDesC &aMsg)
+	{
+	TPtrC ptr(aMsg);
+	CAknGlobalNote* globalNote = CAknGlobalNote::NewLC();
+	globalNote->ShowNoteL(EAknGlobalInformationNote, ptr);
+	CleanupStack::PopAndDestroy(globalNote);
+	}
+

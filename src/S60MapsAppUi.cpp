@@ -63,10 +63,14 @@ void CS60MapsAppUi::ConstructL()
 
 	// OpenStreetMap standard tile layer
 	// https://www.openstreetmap.org/
-	iAvailableTileProviders[0] = new (ELeave) TTileProvider(
+	_LIT(KOsmCopyrightShort, "OpenStreetMap");
+	_LIT(KOsmCopyright, "OpenStreetMap contributors");
+	_LIT(KOsmCopyrightUrl, "https://www.openstreetmap.org/copyright");
+	iAvailableTileProviders[EOpenStreetMapIdx] = new (ELeave) TTileProvider(
 			_L("osm"), _L("OpenStreetMap"),
 			_L8("http://tile.openstreetmap.org/{$z}/{$x}/{$y}.png"),
-			0, 19);
+			0, 19,
+			KOsmCopyrightShort, KOsmCopyright, KOsmCopyrightUrl);
 	
 	// OpenCycleMap
 	// https://wiki.openstreetmap.org/wiki/OpenCycleMap
@@ -80,10 +84,14 @@ void CS60MapsAppUi::ConstructL()
 		{
 		openCycleMapUrl.AppendFormat(KApiKeyArgFmt, &KThunderForestApiKey);
 		}
-	iAvailableTileProviders[1] = new (ELeave) TTileProvider(
+	_LIT(KThunderforestCopyrightShort, "OpenStreetMap & Thunderforest");
+	_LIT(KThunderforestCopyright, "map data: OpenStreetMap, map style: Thunderforest");
+	_LIT(KThunderforestCopyrightUrl, "https://www.thunderforest.com/");
+	iAvailableTileProviders[EOpenCycleMapIdx] = new (ELeave) TTileProvider(
 			_L("opencycle"), _L("OpenCycleMap"),
 			openCycleMapUrl,
-			0, 22);
+			0, 22,
+			KThunderforestCopyrightShort, KThunderforestCopyright, KThunderforestCopyrightUrl);
 	CleanupStack::PopAndDestroy(&openCycleMapUrl);
 	
 	// Transport Map
@@ -98,34 +106,46 @@ void CS60MapsAppUi::ConstructL()
 		{
 		transportMapUrl.AppendFormat(KApiKeyArgFmt, &KThunderForestApiKey);
 		}
-	iAvailableTileProviders[2] = new (ELeave) TTileProvider(
+	iAvailableTileProviders[ETransportMapIdx] = new (ELeave) TTileProvider(
 			_L("transport"), _L("Transport Map"),
 			transportMapUrl,
-			0, 22);
+			0, 22,
+			KThunderforestCopyrightShort, KThunderforestCopyright, KThunderforestCopyrightUrl);
 	CleanupStack::PopAndDestroy(&transportMapUrl);
 	
 	// Humanitarian Map
 	// https://wiki.openstreetmap.org/wiki/Humanitarian_map_style
 	// https://www.openstreetmap.org/?layers=H
-	iAvailableTileProviders[3] = new (ELeave) TTileProvider(
+	_LIT(KHumanCopyrightShort, "Humanitarian OpenStreetMap team");
+	_LIT(KHumanCopyright, "map data: OpenStreetName, map style: Humanitarian OpenStreetMap team");
+	_LIT(KHumanCopyrightUrl, "https://www.hotosm.org/");
+	iAvailableTileProviders[EHumanitarianMapIdx] = new (ELeave) TTileProvider(
 			_L("humanitarian"), _L("Humanitarian"),
 			_L8("https://a.tile.openstreetmap.fr/hot/{$z}/{$x}/{$y}.png"),
-			0, 20);
+			0, 20,
+			KHumanCopyrightShort, KHumanCopyright, KHumanCopyrightUrl);
 	
 	// OpenTopoMap
 	// https://wiki.openstreetmap.org/wiki/OpenTopoMap
 	// https://opentopomap.org/
-	iAvailableTileProviders[4] = new (ELeave) TTileProvider(
+	_LIT(KOpentopoCopyrightShort, "OpenTopoMap");
+	_LIT(KOpentopoCopyright, "map data: OpenStreetMap, map style: OpenTopoMap");
+	_LIT(KOpentopoCopyrightUrl, "https://opentopomap.org/");
+	iAvailableTileProviders[EOpenTopoMapIdx] = new (ELeave) TTileProvider(
 			_L("opentopomap"), _L("OpenTopoMap"),
 			_L8("https://tile.opentopomap.org/{$z}/{$x}/{$y}.png"),
-			0, /*17*/ 15);
+			0, /*17*/ 15,
+			KOpentopoCopyrightShort, KOpentopoCopyright, KOpentopoCopyrightUrl);
 	
 	// Esri World Imagery (Clarity) Beta
 	// https://wiki.openstreetmap.org/wiki/Esri
+	_LIT(KEsriCopyright, "Esri");
+	_LIT(KEsriCopyrightUrl, "http://www.esri.com/");
 	iAvailableTileProviders[5] = new (ELeave) TTileProvider(
 			_L("esri"), _L(/*"Esri World Imagery (Clarity) Beta"*/ "Esri (Clarity) Beta"),
 			_L8("http://clarity.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/MapServer/tile/{$z}/{$y}/{$x}"),
-			0, 22);
+			0, 22,
+			KEsriCopyright, KNullDesC, KEsriCopyrightUrl);
 	
 	iActiveTileProvider = iAvailableTileProviders[0]; // Use first
 	
@@ -162,14 +182,12 @@ void CS60MapsAppUi::ConstructL()
 	iSettingsView = CSettingsView::NewL();
 	AddViewL(iSettingsView);
 	
-	// Position requestor
-	_LIT(KPosRequestorName, "S60 Maps"); // ToDo: Move to global const
-	TRAPD(err, iPosRequestor = CPositionRequestor::NewL(this, KPosRequestorName));
-	if (err == KErrNone)
-		{
-		iPosRequestor->Start(); // Must be started after view created
-		}
-	else
+	// Test if positioning available (todo: remake, can be moved to something like CPositionRequestor::IsPositioningAvailable() )
+	CPositionRequestor* posReqTmp = NULL;
+	TRAPD(err, posReqTmp = CPositionRequestor::NewL(this, /*KPosRequestorName*/ KNullDesC));
+	iIsPositioningAvailable = err == KErrNone;
+	delete posReqTmp;
+	if (/*PositioningState() == EPositioningUnavailable*/ !IsPositioningAvailable())
 		{
 		// Message to user will be shown later after language will be readed from settings
 		WARNING(_L("Failed to create position requestor (error: %d), continue without GPS"), err);
@@ -185,7 +203,8 @@ void CS60MapsAppUi::ConstructL()
 	
 	// Make infinite backlight
 	iLight = CHWRMLight::NewL();
-	EnableInfiniteBacklight();
+	TRAP_IGNORE(EnableInfiniteBacklightL());	// sometimes on emulator iLight->ReserveLightL()
+												// leaves with KErrNotReady, just ignore any errors
 	//DEBUG(_L("light status=%d"), iLight->LightStatus(KLightTarget));
 	
 	// Prevent screensaver to be visible
@@ -383,6 +402,13 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 	DEBUG(_L("Settings reading started"));
 	
 	TRAP_IGNORE(aStream >> *iSettings);
+	
+	// Enable position requestor if turned on
+	if (IsPositioningAvailableAndEnabled())
+		{
+		EnablePositioningL();
+		}
+	
 	iMapView->MapControl()->Move(iSettings->GetLat(), iSettings->GetLon(), iSettings->GetZoom());
 	
 	// Tile provider
@@ -413,7 +439,7 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 	ChangeLanguageL(iSettings->iLanguage);
 	
 	// After localization loaded show translated message if positioning unavailable
-	if (!iPosRequestor)
+	if (!IsPositioningAvailable())
 		{
 		HBufC* msg = iEikonEnv->AllocReadResourceLC(R_POSITIONING_DISABLED);
 		//CAknWarningNote* note = new (ELeave) CAknWarningNote;
@@ -719,6 +745,31 @@ void CS60MapsAppUi::ChangeLanguageL(TLanguage aLang)
 	
 	// Update strings for scale bar layer
 	iMapView->MapControl()->HandleLanguageChangedL();
+	
+	// Update copyright strings
+	HBufC* osmContributors = iEikonEnv->AllocReadResourceLC(R_OSM_CONTRIBUTORS);
+	HBufC* mapData = iEikonEnv->AllocReadResourceLC(R_MAP_DATA);
+	HBufC* mapStyle = iEikonEnv->AllocReadResourceLC(R_MAP_STYLE);
+	TBuf<128> buff;
+	
+	AvailableTileProviders()[EOpenStreetMapIdx]->iCopyrightText = *osmContributors;
+	
+	_LIT(KCopyrightFmt, "%S: %S, %S: %S");
+	_LIT(KOsm, "OpenStreetMap");
+	_LIT(KThunderforest, "Thunderforest");
+	buff.Format(KCopyrightFmt, &*mapData, &KOsm, &*mapStyle, &KThunderforest);
+	AvailableTileProviders()[EOpenCycleMapIdx]->iCopyrightText = buff;
+	AvailableTileProviders()[ETransportMapIdx]->iCopyrightText = buff;
+	
+	_LIT(KHum, "Humanitarian OpenStreetMap team");
+	buff.Format(KCopyrightFmt, &*mapData, &KOsm, &*mapStyle, &KHum);
+	AvailableTileProviders()[EHumanitarianMapIdx]->iCopyrightText = buff;
+	
+	_LIT(KOpenTopo, "OpenTopoMap");
+	buff.Format(KCopyrightFmt, &*mapData, &KOsm, &*mapStyle, &KOpenTopo);
+	AvailableTileProviders()[EOpenTopoMapIdx]->iCopyrightText = buff;
+	
+	CleanupStack::PopAndDestroy(3, osmContributors);
 	}
 
 TBool CS60MapsAppUi::IsLanguageExists(TLanguage aLang)
@@ -802,8 +853,13 @@ void CS60MapsAppUi::HandleForegroundEventL(TBool aForeground)
 		}
 	}
 
-void CS60MapsAppUi::EnableInfiniteBacklight()
+void CS60MapsAppUi::EnableInfiniteBacklightL()
 	{
+	if (!iLight)
+		{
+		return;
+		}
+	
 	iLight->ReserveLightL(KLightTarget);
 	iLight->LightOnL(KLightTarget);
 	
@@ -812,6 +868,11 @@ void CS60MapsAppUi::EnableInfiniteBacklight()
 
 void CS60MapsAppUi::DisableInfiniteBacklight()
 	{
+	if (!iLight)
+		{
+		return;
+		}
+	
 	iLight->ReleaseLight(KLightTarget);
 	
 	DEBUG(_L("Infinite backlight disabled"));
@@ -819,6 +880,11 @@ void CS60MapsAppUi::DisableInfiniteBacklight()
 
 void CS60MapsAppUi::EnableScreenSaver()
 	{
+	if (!iResetInactivityTimer)
+		{
+		return;
+		}
+	
 	if (iResetInactivityTimer->IsActive())
 		{
 		iResetInactivityTimer->Cancel();
@@ -828,6 +894,11 @@ void CS60MapsAppUi::EnableScreenSaver()
 
 void CS60MapsAppUi::DisableScreenSaver()
 	{
+	if (!iResetInactivityTimer)
+		{
+		return;
+		}
+	
 	const TInt KMinScreenSaverTimeout = 5000000; // 5 seconds is minimal value on my phone
 												// ToDo: Is there system constant for this value?
 	TCallBack callback(ResetInactivityTimer, NULL);
@@ -868,6 +939,24 @@ void CS60MapsAppUi::HideStatusPaneAndShowMapControlL()
 	// Restore original pane title
 	titlePane->SetText(iOriginalPaneTitle);
 	iOriginalPaneTitle = NULL;
+	}
+
+void CS60MapsAppUi::EnablePositioningL()
+	{
+	if (iPosRequestor)
+		{ // Positioning already started
+		return;
+		}
+	
+	_LIT(KPosRequestorName, "S60 Maps"); // ToDo: Move to global const
+	iPosRequestor = CPositionRequestor::NewL(this, KPosRequestorName);
+	iPosRequestor->Start();
+	}
+
+void CS60MapsAppUi::DisablePositioning()
+	{
+	delete iPosRequestor;
+	iPosRequestor = NULL;
 	}
 
 // End of File

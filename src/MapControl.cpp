@@ -146,6 +146,13 @@ void CMapControl::ConstructL(const TRect& aRect, const TCoordinate &aInitialPosi
 	TInt r = screenDevice->/*GetNearestFontToMaxHeightInTwips*/ GetNearestFontInTwips(iDefaultFont, fontSpec);
 	User::LeaveIfError(r);
 	
+	// Prepare secondary (small) font
+	fontSpec = TFontSpec(KFontName, 8 * 12);
+	fontSpec.iTypeface.SetIsSerif(EFalse);
+	fontSpec.iFontStyle.SetStrokeWeight(EStrokeWeightNormal);
+	r = screenDevice->GetNearestFontInTwips(iSmallFont, fontSpec);
+	User::LeaveIfError(r);
+	
 	// Create layers
 	iLayers = RPointerArray<CMapLayerBase>(10);
 	iLayers.Append(CTiledMapLayer::NewL(this, aTileProvider));
@@ -211,6 +218,7 @@ CMapControl::~CMapControl()
 	delete iMovementRepeater;
 	iMovementRepeater = NULL;
 	
+	CCoeEnv::Static()->ScreenDevice()->ReleaseFont(iSmallFont);
 	CCoeEnv::Static()->ScreenDevice()->ReleaseFont(iDefaultFont);
 	}
 
@@ -731,6 +739,11 @@ void CMapControl::Bounds(TCoordinate &aTopLeftCoord, TCoordinate &aBottomRightCo
 	aBottomRightCoord = ScreenCoordsToGeoCoords(Rect().iBr - TPoint(1, 1));
 	}
 
+void CMapControl::Bounds(TCoordRect &aCoordRect) const
+	{
+	Bounds(aCoordRect.iTlCoord, aCoordRect.iBrCoord);
+	}
+
 void CMapControl::Bounds(TTile &aTopLeftTile, TTile &aBottomRightTile) const
 	{
 	TPoint topLeftProjection = ScreenCoordsToProjectionCoords(Rect().iTl);
@@ -899,6 +912,11 @@ void CMapControl::HandleLanguageChangedL()
 void CMapControl::ReloadVisibleAreaL()
 	{
 	static_cast<CTiledMapLayer*>(iLayers[ETiledMapLayerId])->ReloadVisibleAreaL();
+	}
+
+void CMapControl::NotifyLandmarksUpdated()
+	{
+	static_cast<CLandmarksLayer*>(iLayers[ELandmarksLayerId])->NotifyLandmarksUpdated();
 	}
 
 // End of File

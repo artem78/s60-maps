@@ -409,7 +409,7 @@ RESOURCE MENU_BAR r_landmarks_query_dialog_menubar
 		{
 		MENU_TITLE { menu_pane = R_AVKON_MENUPANE_SELECTION_LIST; } 
 		};
-	};
+	}
 
 // Location query dialog
 RESOURCE DIALOG r_location_query_dialog
@@ -485,6 +485,12 @@ RESOURCE TBUF r_confirm_landmark_deletion { buf=qtn_confirm_landmark_deletion; }
 RESOURCE TBUF r_settings_title { buf=qtn_settings; }
 RESOURCE TBUF r_search { buf=qtn_search; }
 RESOURCE TBUF r_search_results { buf=qtn_search_results; }
+RESOURCE TBUF r_data_licences { buf=qtn_data_licences; }
+RESOURCE TBUF r_layer_fmt { buf=qtn_layer_fmt; }
+RESOURCE TBUF r_search_api { buf=qtn_search_api; }
+RESOURCE TBUF r_osm_contributors { buf=qtn_osm_contributors; }
+RESOURCE TBUF r_map_data { buf=qtn_map_data; }
+RESOURCE TBUF r_map_style { buf=qtn_map_style; }
 
 // Language names
 RESOURCE TBUF r_lang_english_name	{ buf=qtn_lang_english_name; }
@@ -575,6 +581,13 @@ RESOURCE AVKON_SETTING_ITEM_LIST r_setting_item_list
 			setting_page_resource = r_use_disk_cache_setting_page;
 			associated_resource = r_popup_setting_use_disk_cache_texts;
 			name = qtn_use_disk_cache;
+			},
+		AVKON_SETTING_ITEM
+			{
+			identifier = ESettingPositioningEnabled;
+			setting_page_resource = r_use_positioning_setting_page;
+			associated_resource = r_popup_setting_use_positioning_texts;
+			name = qtn_positioning;
 			}
 		};
 	}
@@ -761,6 +774,32 @@ RESOURCE ARRAY r_use_disk_cache_texts
     }
 
 
+// Show positioning enabled setting
+
+RESOURCE AVKON_SETTING_PAGE r_use_positioning_setting_page
+    {   
+    number = 0;
+    label = qtn_positioning;
+    type = EAknCtPopupSettingList;
+    }
+
+RESOURCE AVKON_POPUP_SETTING_TEXTS r_popup_setting_use_positioning_texts
+    {
+    flags = 0;
+    setting_texts_resource = r_use_positioning_texts;
+    }
+
+RESOURCE ARRAY r_use_positioning_texts
+    {
+    items =
+        {
+        AVKON_ENUMERATED_TEXT { value=1; text = qtn_enabled; },
+        AVKON_ENUMERATED_TEXT { value=0; text = qtn_disabled; }
+        };
+    }
+
+
+
 // Search input dialog
 
 RESOURCE DIALOG r_search_input_query_dlg
@@ -829,7 +868,7 @@ RESOURCE MENU_BAR r_search_results_query_dialog_menubar
 		{
 		MENU_TITLE { menu_pane = R_AVKON_MENUPANE_SELECTION_LIST; } 
 		};
-	};
+	}
 
 
 

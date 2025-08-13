@@ -22,7 +22,6 @@
 #include <epos_cposlandmarksearch.h>
 #include <epos_cposlmareacriteria.h>
 #include "icons.mbg"
-#include "Utils.h"
 #include "LBSSatelliteExtended.h"
 
 CMapLayerBase::CMapLayerBase(/*const*/ CMapControl* aMapView) :
@@ -85,7 +84,7 @@ void CMapLayerDebugInfo::DrawInfoL(CWindowGc &aGc)
 			static_cast<const TPositionSatelliteInfoExtended*>(appUi->SatelliteInfo());
 	
 	TReal gdop = KNaN;
-	if (appUi->IsPositionRecieved() && satInfo)
+	if (appUi->PositioningState() == EPositionRecieved && satInfo)
 		{
 		gdop = satInfo->GeometricDoP();
 		}
@@ -205,6 +204,9 @@ void CTiledMapLayer::Draw(CWindowGc &aGc)
 		}
 	
 	tiles.Close();
+	
+	DrawCopyrightText(aGc);
+	
 	DEBUG(_L("End layer drawing"));
 	}
 
@@ -293,6 +295,48 @@ void CTiledMapLayer::ReloadVisibleAreaL()
 		}
 	
 	tiles.Close();
+	}
+
+void CTiledMapLayer::DrawCopyrightText(CWindowGc &aGc)
+	{
+	if (!iTileProvider->iCopyrightTextShort.Length())
+		{ // no copyright info provided
+		return;
+		}
+	
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
+	
+	RBuf copyrightText;
+	TInt r = copyrightText.Create(iTileProvider->iCopyrightTextShort.Length() + 10);
+	if (r == KErrNone)
+		{
+		copyrightText.Append('(');
+		copyrightText.Append('c' /*'C'*/);
+		copyrightText.Append(')');
+		copyrightText.Append(' ');
+		copyrightText.Append(iTileProvider->iCopyrightTextShort);
+		
+		const TInt KMargin = /*14*/ 8;
+		TRect textRect;
+		textRect = iMapView->Rect();
+		textRect.Shrink(KMargin, 0);
+		TInt textBaseline = textRect.Height() - KMargin;
+		//if (iTileProvider->iId == _L("esri"))
+		if (iTileProvider == appUi->AvailableTileProviders()[EEsriIdx])
+			{
+			aGc.SetPenColor(KRgbWhite);
+			}
+		else
+			{
+			aGc.SetPenColor(KRgbDarkGray);
+			}
+		
+		aGc.UseFont(iMapView->SmallFont());
+		aGc.DrawText(copyrightText, textRect, textBaseline, CGraphicsContext::ERight);
+		aGc.DiscardFont();
+		
+		copyrightText.Close();
+		}
 	}
 
 
@@ -663,13 +707,20 @@ void CScaleBarLayer::ReloadStringsFromResourceL()
 
 CLandmarksLayer::CLandmarksLayer(CMapControl* aMapView, CPosLandmarkDatabase* aLmDb):
 		CMapLayerBase(aMapView),
-		iLandmarksDb(aLmDb)
+		iLandmarksDb(aLmDb),
+		iReloadNeeded(EFalse)
 	{
 	}
 
 CLandmarksLayer::~CLandmarksLayer()
 	{
+	if (iCachedLandmarks)
+		{
+		iCachedLandmarks->ResetAndDestroy();
+		}
+	delete iCachedLandmarks;
 	ReleaseLandmarkResources();
+	
 	delete iIcon;
 	}
 
@@ -694,6 +745,8 @@ void CLandmarksLayer::ConstructL()
 	CS60MapsApplication* app = static_cast<CS60MapsApplication*>(appUi->Application());
 	
 	iIcon = app->LoadIconL(EMbmIconsStar, EMbmIconsStar_mask);
+	
+	iCachedArea.SetCoords(TCoordinate(0, 0), TCoordinate(0, 0));
 	}
 
 void CLandmarksLayer::Draw(CWindowGc &aGc)
@@ -710,24 +763,28 @@ void CLandmarksLayer::Draw(CWindowGc &aGc)
 		}
 	}
 
-CArrayPtr<CPosLandmark>* CLandmarksLayer::GetVisibleLandmarksL()
+void CLandmarksLayer::ReloadLandmarksListL()
 	{
 	const TInt KMaxVisibleLandmarksLimit = 100;
 	
-	CArrayPtr<CPosLandmark>* landmarks = NULL;
+	
+	if (iCachedLandmarks)
+		{
+		iCachedLandmarks->ResetAndDestroy();
+		}
+	delete iCachedLandmarks;
+	iCachedLandmarks = NULL;
 	
 	DEBUG(_L("Start landmarks queing"));
 	
 	CPosLandmarkSearch* landmarkSearch = CPosLandmarkSearch::NewL(*iLandmarksDb);
 	CleanupStack::PushL(landmarkSearch);
 	landmarkSearch->SetMaxNumOfMatches(KMaxVisibleLandmarksLimit); // Set display amount limit
-	TCoordinate topLeftCoord, bottomRightCoord;
-	iMapView->Bounds(topLeftCoord, bottomRightCoord);
 	CPosLmAreaCriteria* areaCriteria = CPosLmAreaCriteria::NewLC(
-			bottomRightCoord.Latitude(),
-			topLeftCoord.Latitude(),
-			topLeftCoord.Longitude(),
-			bottomRightCoord.Longitude());
+			iCachedArea.iBrCoord.Latitude(),
+			iCachedArea.iTlCoord.Latitude(),
+			iCachedArea.iTlCoord.Longitude(),
+			iCachedArea.iBrCoord.Longitude());
 	CPosLmOperation* landmarkOp = landmarkSearch->StartLandmarkSearchL(*areaCriteria, EFalse);
 	ExecuteAndDeleteLD(landmarkOp);
 	//   landmarkOp->NextStep(...)
@@ -745,34 +802,58 @@ CArrayPtr<CPosLandmark>* CLandmarksLayer::GetVisibleLandmarksL()
 		CPosLmOperation* landmarkOp2 = iLandmarksDb->PreparePartialLandmarksL(landmarkIds);
 		CleanupStack::PushL(landmarkOp2);
 		landmarkOp2->ExecuteL();
-		landmarks = iLandmarksDb->TakePreparedPartialLandmarksL(landmarkOp2);
+		iCachedLandmarks = iLandmarksDb->TakePreparedPartialLandmarksL(landmarkOp2);
 	
 		CleanupStack::PopAndDestroy(3, landmarkIter);
 		}
 		
 	CleanupStack::PopAndDestroy(2, landmarkSearch);
 	
-	DEBUG(_L("End landmarks queing (found %d items)"), landmarksCount);
+	iReloadNeeded = EFalse;
 	
-	return landmarks;
+	DEBUG(_L("End landmarks queing (found %d items)"), landmarksCount);
 	}
 
 void CLandmarksLayer::DrawL(CWindowGc &aGc)
 	{
-	CArrayPtr<CPosLandmark>* landmarks = GetVisibleLandmarksL();
+	TCoordRect viewCoordRect;
 	
-	if (landmarks && landmarks->Count())
-		{
-		DrawLandmarks(aGc, landmarks);
+	iMapView->Bounds(viewCoordRect);
+	if (iReloadNeeded || !iCachedArea.Contains(viewCoordRect))
+		{ // Update cached landmarks list only if view goes outside the cached area or force update triggered
+		TRect largeRect = iMapView->Rect();
+		const TInt KGrowDelta = KMapDefaultMoveStep * /*5*/ 10;
+		largeRect.Grow(KGrowDelta, KGrowDelta);
+		/*TInt KGrowDeltaX = iMapView->Rect().Width() / 2;
+		TInt KGrowDeltaY = iMapView->Rect().Height() / 2;
+		largeRect.Grow(KGrowDeltaX, KGrowDeltaY);*/
+		TCoordRect largeCoordRect;
+		// ToDo: check and fix coordinates going beyond bounds
+		largeCoordRect.iTlCoord = iMapView->ScreenCoordsToGeoCoords(largeRect.iTl);
+		largeCoordRect.iBrCoord = iMapView->ScreenCoordsToGeoCoords(largeRect.iBr);
+		iCachedArea = largeCoordRect;
 		
-		landmarks->ResetAndDestroy();
+		ReloadLandmarksListL();
+		
+		DEBUG(_L("Landmarks list updated"));
+		//MiscUtils::DbgMsgL(_L("Landmarks list updated"));
 		}
-	delete landmarks;
+	else
+		{
+		DEBUG(_L("Skip landmarks list update"));
+		}
+	
+	DrawLandmarks(aGc);
 	}
 
-void CLandmarksLayer::DrawLandmarks(CWindowGc &aGc,
-		const CArrayPtr<CPosLandmark>* aLandmarks)
+void CLandmarksLayer::DrawLandmarks(CWindowGc &aGc)
 	{
+	if ((not iCachedLandmarks) || (not iCachedLandmarks->Count()))
+		{
+		DEBUG(_L("No landmarks to draw"));
+		return;
+		}
+	
 	DEBUG(_L("Landmarks redrawing started"));
 	
 	//const TRgb KPenColor(59, 120, 162);
@@ -780,9 +861,9 @@ void CLandmarksLayer::DrawLandmarks(CWindowGc &aGc,
 	aGc.SetPenColor(KPenColor); // For drawing text
 	aGc.UseFont(iMapView->DefaultFont());
 	
-	for (TInt i = 0; i < aLandmarks->Count(); i++)
+	for (TInt i = 0; i < iCachedLandmarks->Count(); i++)
 		{	
-		CPosLandmark* landmark = /*aLandmarks[i]*/ aLandmarks->At(i);
+		CPosLandmark* landmark = /*iCachedLandmarks[i]*/ iCachedLandmarks->At(i);
 		
 		if (!landmark) continue;
 		
@@ -1383,6 +1464,7 @@ TInt CTileBitmapManager::GetTileBitmap(const TTile &aTile, CFbsBitmap* &aBitmap)
 		return KErrNotReady;
 	
 	aBitmap = item->Bitmap();
+	item->iLastAccessTime.HomeTime(); // update access time
 	return KErrNone;
 	}
 
@@ -1413,10 +1495,27 @@ void CTileBitmapManager::AddToLoading(const TTile &aTile, TBool aForce)
 	
 	if (iItems.Count() >= iLimit)
 		{
-		// Delete oldest item
-		DEBUG(_L("Delete old bitmap of %S from cache"), &iItems[0]->Tile().AsDes());
-		delete iItems[0];
-		iItems.Remove(0);
+		// Delete most rarely used item
+		TInt idx(0);
+		TTime minTime;
+		minTime.HomeTime();
+		for (TInt i = 0; i < iItems.Count(); i++)
+			{
+			if (iItems[i]->iLastAccessTime < minTime)
+				{
+				idx = i;
+				minTime = iItems[i]->iLastAccessTime;
+				}
+			}
+		
+#ifdef _DEBUG
+		TBuf<32> timeDes;
+		iItems[idx]->iLastAccessTime.FormatL(timeDes, _L("%H:%T:%S"));
+		DEBUG(_L("Delete most rarely used bitmap of %S from cache with idx=%d and last acess time=%S"),
+				&iItems[idx]->Tile().AsDes(), idx, &timeDes);
+#endif
+		delete iItems[idx];
+		iItems.Remove(idx);
 		}
 	
 	// Add new one
@@ -1469,7 +1568,10 @@ CTileBitmapManagerItem* CTileBitmapManager::Find(const TTile &aTile) const
 											// located at the end of array (newest)
 		{
 		if (iItems[idx]->Tile() == aTile)
+			{
+			//iItems[idx]->iLastAccessTime.HomeTime();
 			return iItems[idx];
+			}
 		}
 	
 	return NULL;
@@ -1477,8 +1579,6 @@ CTileBitmapManagerItem* CTileBitmapManager::Find(const TTile &aTile) const
 
 void CTileBitmapManager::StartDownloadTileL(const TTile &aTile)
 	{
-	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
-	
 	if (iIsOfflineMode)
 		return;
 	
@@ -1813,7 +1913,7 @@ CTileBitmapManagerItem::CTileBitmapManagerItem(const TTile &aTile) :
 
 void CTileBitmapManagerItem::ConstructL()
 	{
-	// Second phase construction is not used at the moment
+	iLastAccessTime.HomeTime();
 	}
 
 void CTileBitmapManagerItem::CreateBitmapIfNotExistL()
@@ -1832,13 +1932,25 @@ void CTileBitmapManagerItem::CreateBitmapIfNotExistL()
 // TTileProvider
 
 TTileProvider::TTileProvider(const TDesC& anId, const TDesC& aTitle,
-		const TDesC8& anUrlTemplate, TZoom aMinZoom, TZoom aMaxZoom)
+		const TDesC8& anUrlTemplate, TZoom aMinZoom, TZoom aMaxZoom,
+		const TDesC& aCopyrightTextShort, const TDesC& aCopyrightText,
+		const TDesC& aCopyrightUrl)
 	{
 	iId.Copy(anId);
 	iTitle.Copy(aTitle);
 	iTileUrlTemplate.Copy(anUrlTemplate);
 	iMinZoomLevel = aMinZoom;
 	iMaxZoomLevel = aMaxZoom;
+	iCopyrightTextShort = aCopyrightTextShort;
+	if (aCopyrightText.Length() == 0 && aCopyrightTextShort.Length() > 0)
+		{
+		iCopyrightText = aCopyrightTextShort;
+		}
+	else
+		{
+		iCopyrightText = aCopyrightText;
+		}
+	iCopyrightUrl = aCopyrightUrl;
 	}
 
 void TTileProvider::TileUrl(TDes8 &aUrl, const TTile &aTile)
