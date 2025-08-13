@@ -184,6 +184,7 @@ private:
 	TBool iIsCrosshairVisible;
 	CPeriodic* /*iUserInactivityTimer*/ iCrosshairAutoHideTimer;
 	CFont* iDefaultFont;
+	CFont* iSmallFont;
 	
 	void Move(const TPoint &aPoint, TBool savePos = ETrue); // Used by all another Move methods
 public:
@@ -244,6 +245,8 @@ public:
 	void ReloadVisibleAreaL();
 	inline const CFont* DefaultFont() const
 		{ return iDefaultFont; };
+	inline const CFont* SmallFont() const // for copyright string
+		{ return iSmallFont; };
 
 	};
 	

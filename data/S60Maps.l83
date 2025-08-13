@@ -80,3 +80,11 @@ CHARACTER_SET UTF8
 
 #define qtn_search "Search"
 #define qtn_search_results "Search results"
+
+// Added in version X.XX
+#define qtn_data_licences "Data licences"
+#define qtn_layer_fmt "\"%S\" layer"
+#define qtn_search_api "Search API"
+#define qtn_osm_contributors "OpenStreetMap contributors"
+#define qtn_map_data "map data"
+#define qtn_map_style "map style"

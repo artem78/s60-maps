@@ -205,6 +205,9 @@ void CTiledMapLayer::Draw(CWindowGc &aGc)
 		}
 	
 	tiles.Close();
+	
+	DrawCopyrightText(aGc);
+	
 	DEBUG(_L("End layer drawing"));
 	}
 
@@ -293,6 +296,48 @@ void CTiledMapLayer::ReloadVisibleAreaL()
 		}
 	
 	tiles.Close();
+	}
+
+void CTiledMapLayer::DrawCopyrightText(CWindowGc &aGc)
+	{
+	if (!iTileProvider->iCopyrightTextShort.Length())
+		{ // no copyright info provided
+		return;
+		}
+	
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
+	
+	RBuf copyrightText;
+	TInt r = copyrightText.Create(iTileProvider->iCopyrightTextShort.Length() + 10);
+	if (r == KErrNone)
+		{
+		copyrightText.Append('(');
+		copyrightText.Append('c' /*'C'*/);
+		copyrightText.Append(')');
+		copyrightText.Append(' ');
+		copyrightText.Append(iTileProvider->iCopyrightTextShort);
+		
+		const TInt KMargin = /*14*/ 8;
+		TRect textRect;
+		textRect = iMapView->Rect();
+		textRect.Shrink(KMargin, 0);
+		TInt textBaseline = textRect.Height() - KMargin;
+		//if (iTileProvider->iId == _L("esri"))
+		if (iTileProvider == appUi->AvailableTileProviders()[EEsriIdx])
+			{
+			aGc.SetPenColor(KRgbWhite);
+			}
+		else
+			{
+			aGc.SetPenColor(KRgbDarkGray);
+			}
+		
+		aGc.UseFont(iMapView->SmallFont());
+		aGc.DrawText(copyrightText, textRect, textBaseline, CGraphicsContext::ERight);
+		aGc.DiscardFont();
+		
+		copyrightText.Close();
+		}
 	}
 
 
@@ -1851,13 +1896,25 @@ void CTileBitmapManagerItem::CreateBitmapIfNotExistL()
 // TTileProvider
 
 TTileProvider::TTileProvider(const TDesC& anId, const TDesC& aTitle,
-		const TDesC8& anUrlTemplate, TZoom aMinZoom, TZoom aMaxZoom)
+		const TDesC8& anUrlTemplate, TZoom aMinZoom, TZoom aMaxZoom,
+		const TDesC& aCopyrightTextShort, const TDesC& aCopyrightText,
+		const TDesC& aCopyrightUrl)
 	{
 	iId.Copy(anId);
 	iTitle.Copy(aTitle);
 	iTileUrlTemplate.Copy(anUrlTemplate);
 	iMinZoomLevel = aMinZoom;
 	iMaxZoomLevel = aMaxZoom;
+	iCopyrightTextShort = aCopyrightTextShort;
+	if (aCopyrightText.Length() == 0 && aCopyrightTextShort.Length() > 0)
+		{
+		iCopyrightText = aCopyrightTextShort;
+		}
+	else
+		{
+		iCopyrightText = aCopyrightText;
+		}
+	iCopyrightUrl = aCopyrightUrl;
 	}
 
 void TTileProvider::TileUrl(TDes8 &aUrl, const TTile &aTile)

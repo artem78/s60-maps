@@ -485,6 +485,12 @@ RESOURCE TBUF r_confirm_landmark_deletion { buf=qtn_confirm_landmark_deletion; }
 RESOURCE TBUF r_settings_title { buf=qtn_settings; }
 RESOURCE TBUF r_search { buf=qtn_search; }
 RESOURCE TBUF r_search_results { buf=qtn_search_results; }
+RESOURCE TBUF r_data_licences { buf=qtn_data_licences; }
+RESOURCE TBUF r_layer_fmt { buf=qtn_layer_fmt; }
+RESOURCE TBUF r_search_api { buf=qtn_search_api; }
+RESOURCE TBUF r_osm_contributors { buf=qtn_osm_contributors; }
+RESOURCE TBUF r_map_data { buf=qtn_map_data; }
+RESOURCE TBUF r_map_style { buf=qtn_map_style; }
 
 // Language names
 RESOURCE TBUF r_lang_english_name	{ buf=qtn_lang_english_name; }
