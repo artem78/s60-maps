@@ -89,7 +89,7 @@ void CSettings::ExternalizeL(RWriteStream& aStream) const
 	aStream << iHttpsProxyUrl;
 	aStream << static_cast<TInt8>(iUseDiskCache);
 	
-	// Added in version X.XX
+	// Added in version 1.14
 	aStream << static_cast<TInt8>(iPositioningEnabled);
 	}
 
@@ -131,7 +131,7 @@ void CSettings::DoInternalizeL(RReadStream& aStream)
 	aStream >> int8Val;
 	iUseDiskCache = static_cast<TBool>(int8Val);
 	
-	// Added in version X.XX
+	// Added in version 1.14
 	aStream >> int8Val;
 	iPositioningEnabled = static_cast<TBool>(int8Val);
 	}
