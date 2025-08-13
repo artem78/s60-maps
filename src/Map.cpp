@@ -777,8 +777,11 @@ void CLandmarksLayer::DrawL(CWindowGc &aGc)
 	if (iReloadNeeded || !iCachedArea.Contains(viewCoordRect))
 		{ // Update cached landmarks list only if view goes outside the cached area or force update triggered
 		TRect largeRect = iMapView->Rect();
-		const TInt KGrowDelta = KMapDefaultMoveStep * 5;
+		const TInt KGrowDelta = KMapDefaultMoveStep * /*5*/ 10;
 		largeRect.Grow(KGrowDelta, KGrowDelta);
+		/*TInt KGrowDeltaX = iMapView->Rect().Width() / 2;
+		TInt KGrowDeltaY = iMapView->Rect().Height() / 2;
+		largeRect.Grow(KGrowDeltaX, KGrowDeltaY);*/
 		TCoordRect largeCoordRect;
 		// ToDo: check and fix coordinates going beyond bounds
 		largeCoordRect.iTlCoord = iMapView->ScreenCoordsToGeoCoords(largeRect.iTl);
