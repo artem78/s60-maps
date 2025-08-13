@@ -182,14 +182,12 @@ void CS60MapsAppUi::ConstructL()
 	iSettingsView = CSettingsView::NewL();
 	AddViewL(iSettingsView);
 	
-	// Position requestor
-	_LIT(KPosRequestorName, "S60 Maps"); // ToDo: Move to global const
-	TRAPD(err, iPosRequestor = CPositionRequestor::NewL(this, KPosRequestorName));
-	if (err == KErrNone)
-		{
-		iPosRequestor->Start(); // Must be started after view created
-		}
-	else
+	// Test if positioning available (todo: remake, can be moved to something like CPositionRequestor::IsPositioningAvailable() )
+	CPositionRequestor* posReqTmp = NULL;
+	TRAPD(err, posReqTmp = CPositionRequestor::NewL(this, /*KPosRequestorName*/ KNullDesC));
+	iIsPositioningAvailable = err == KErrNone;
+	delete posReqTmp;
+	if (/*PositioningState() == EPositioningUnavailable*/ !IsPositioningAvailable())
 		{
 		// Message to user will be shown later after language will be readed from settings
 		WARNING(_L("Failed to create position requestor (error: %d), continue without GPS"), err);
@@ -404,6 +402,13 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 	DEBUG(_L("Settings reading started"));
 	
 	TRAP_IGNORE(aStream >> *iSettings);
+	
+	// Enable position requestor if turned on
+	if (IsPositioningAvailableAndEnabled())
+		{
+		EnablePositioningL();
+		}
+	
 	iMapView->MapControl()->Move(iSettings->GetLat(), iSettings->GetLon(), iSettings->GetZoom());
 	
 	// Tile provider
@@ -434,7 +439,7 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 	ChangeLanguageL(iSettings->iLanguage);
 	
 	// After localization loaded show translated message if positioning unavailable
-	if (!iPosRequestor)
+	if (!IsPositioningAvailable())
 		{
 		HBufC* msg = iEikonEnv->AllocReadResourceLC(R_POSITIONING_DISABLED);
 		//CAknWarningNote* note = new (ELeave) CAknWarningNote;
@@ -934,6 +939,24 @@ void CS60MapsAppUi::HideStatusPaneAndShowMapControlL()
 	// Restore original pane title
 	titlePane->SetText(iOriginalPaneTitle);
 	iOriginalPaneTitle = NULL;
+	}
+
+void CS60MapsAppUi::EnablePositioningL()
+	{
+	if (iPosRequestor)
+		{ // Positioning already started
+		return;
+		}
+	
+	_LIT(KPosRequestorName, "S60 Maps"); // ToDo: Move to global const
+	iPosRequestor = CPositionRequestor::NewL(this, KPosRequestorName);
+	iPosRequestor->Start();
+	}
+
+void CS60MapsAppUi::DisablePositioning()
+	{
+	delete iPosRequestor;
+	iPosRequestor = NULL;
 	}
 
 // End of File
