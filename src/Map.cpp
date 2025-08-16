@@ -827,11 +827,9 @@ void CLandmarksLayer::DrawL(CWindowGc &aGc)
 		/*TInt KGrowDeltaX = iMapView->Rect().Width() / 2;
 		TInt KGrowDeltaY = iMapView->Rect().Height() / 2;
 		largeRect.Grow(KGrowDeltaX, KGrowDeltaY);*/
-		TCoordRect largeCoordRect;
 		// ToDo: check and fix coordinates going beyond bounds
-		largeCoordRect.iTlCoord = iMapView->ScreenCoordsToGeoCoords(largeRect.iTl);
-		largeCoordRect.iBrCoord = iMapView->ScreenCoordsToGeoCoords(largeRect.iBr);
-		iCachedArea = largeCoordRect;
+		iCachedArea.iTlCoord = iMapView->ScreenCoordsToGeoCoords(largeRect.iTl);
+		iCachedArea.iBrCoord = iMapView->ScreenCoordsToGeoCoords(largeRect.iBr);
 		
 		ReloadLandmarksListL();
 		
