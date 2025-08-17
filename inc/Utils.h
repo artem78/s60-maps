@@ -31,6 +31,13 @@ public:
 	 * @return	 KErrNone or KErrNotFound when error
 	 */
 	static TInt ParseInt(const TDesC& aDes, TInt& aResNum);
+	
+	/*
+	 * Returns power of two (2^aPower)
+	 *
+	 * @param	TInt - 0 <= aPower <= 20 (other values not yet implemented)
+	 */
+	static TInt Pow2(TInt aPower);
 	};
 
 

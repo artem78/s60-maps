@@ -13,10 +13,12 @@
 #include <e32base.h>
 #include <lbsposition.h>
 #include "Defs.h"
+#include "Utils.h"
 
 
 // Constants
 const TInt KTileSize = 256; // Standard tile height and width in pixels
+const TInt KMinProjectionCoordXY = 0;
 
 
 class TTile;
@@ -49,6 +51,8 @@ public:
 	static TCoordinate ProjectionPointToGeoCoords(const TPoint &aPoint, TZoom aZoom);
 	static TTile ProjectionPointToTile(const TPoint &aPoint, TZoom aZoom);
 	static TPoint TileToProjectionPoint(const TTile &aTile);
+	static inline TInt MaxProjectionCoordXY(TZoom aZoom)
+		{ return MathUtils::Pow2(aZoom) * KTileSize - 1; }
 	};
 
 class TTile

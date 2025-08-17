@@ -209,7 +209,6 @@ private:
 	void MoveLeft(	TUint aPixels = KMapDefaultMoveStep);
 	void MoveRight(	TUint aPixels = KMapDefaultMoveStep);
 	/*inline*/ TPoint ProjectionCoordsToScreenCoords(const TPoint &aPoint) const;
-	/*inline*/ TPoint ScreenCoordsToProjectionCoords(const TPoint &aPoint) const;
 	
 	void UpdateUserPosition();
 	inline TBool IsUserPositionVisible() // Note: Location marker size ignored (i.e. like a point)
@@ -249,6 +248,7 @@ public:
 	inline const CFont* SmallFont() const // for copyright string
 		{ return iSmallFont; };
 	void NotifyLandmarksUpdated();
+	/*inline*/ TPoint ScreenCoordsToProjectionCoords(const TPoint &aPoint) const;
 
 	};
 	

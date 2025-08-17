@@ -785,6 +785,9 @@ void CLandmarksLayer::ReloadLandmarksListL()
 			iCachedArea.iTlCoord.Latitude(),
 			iCachedArea.iTlCoord.Longitude(),
 			iCachedArea.iBrCoord.Longitude());
+	//TReal/*64*/ a,b,c,d;
+	//areaCriteria->GetSearchArea(a,b,c,d);
+	//DEBUG(_L("areaCriteria =   S Lat=%f    N Lat=%f   W Lon=%f   E Lon=%f"), a,b,c,d);
 	CPosLmOperation* landmarkOp = landmarkSearch->StartLandmarkSearchL(*areaCriteria, EFalse);
 	ExecuteAndDeleteLD(landmarkOp);
 	//   landmarkOp->NextStep(...)
@@ -827,9 +830,54 @@ void CLandmarksLayer::DrawL(CWindowGc &aGc)
 		/*TInt KGrowDeltaX = iMapView->Rect().Width() / 2;
 		TInt KGrowDeltaY = iMapView->Rect().Height() / 2;
 		largeRect.Grow(KGrowDeltaX, KGrowDeltaY);*/
-		// ToDo: check and fix coordinates going beyond bounds
 		iCachedArea.iTlCoord = iMapView->ScreenCoordsToGeoCoords(largeRect.iTl);
 		iCachedArea.iBrCoord = iMapView->ScreenCoordsToGeoCoords(largeRect.iBr);
+		
+		// Fixing coordinates when going beyond bounds
+		TPoint projTl, projBr;
+		projTl = iMapView->ScreenCoordsToProjectionCoords(largeRect.iTl);
+		projBr = iMapView->ScreenCoordsToProjectionCoords(largeRect.iBr);
+		//DEBUG(_L("projTl=%d,%d  projBr=%d,%d"), projTl.iX, projTl.iY, projBr.iX, projBr.iY);
+		TInt maxProjXY = MapMath::MaxProjectionCoordXY(iMapView->GetZoom());
+		if (projTl.iX < KMinProjectionCoordXY)
+			{
+			// w lon = -180
+			iCachedArea.iTlCoord.SetCoordinate(iCachedArea.iTlCoord.Latitude(), KMinLongitudeMapBound);
+			//DEBUG(_L("w lon overflow fixed"));
+			}
+		else if (projTl.iX > maxProjXY)
+			{
+			//w lon < 180
+			iCachedArea.iTlCoord.SetCoordinate(iCachedArea.iTlCoord.Latitude(), KMaxLongitudeMapBound - 0.0001);
+			//DEBUG(_L("w lon overflow fixed"));
+			}
+		if (projTl.iY < KMinProjectionCoordXY)
+			{
+			// n lat = +90 (85...)
+			iCachedArea.iTlCoord.SetCoordinate(KMaxLatitudeMapBound, iCachedArea.iTlCoord.Longitude());
+			//DEBUG(_L("n lat overflow fixed"));
+			}
+		if (projBr.iX > maxProjXY)
+			{
+			// e lon = 180
+			iCachedArea.iBrCoord.SetCoordinate(iCachedArea.iBrCoord.Latitude(), KMaxLongitudeMapBound - 0.0001);
+			//DEBUG(_L("e lon overflow fixed"));
+			}
+		if (projBr.iY > maxProjXY)
+			{
+			// s lon = -90 (85...)
+			iCachedArea.iBrCoord.SetCoordinate(KMinLatitudeMapBound, iCachedArea.iBrCoord.Longitude());
+			//DEBUG(_L("s lon overflow fixed"));
+			}
+		
+		//DEBUG(_L("iCachedArea =   S Lat=%f    N Lat=%f   W Lon=%f   E Lon=%f"), iCachedArea.iBrCoord.Latitude(),
+		//		iCachedArea.iTlCoord.Latitude() ,iCachedArea.iTlCoord.Longitude()
+		//		,iCachedArea.iBrCoord.Longitude());
+		//TBuf<128> dbgMsg;
+		///*dbgMsg.Format(_L("S Lat=%f    N Lat=%f   W Lon=%f   E Lon=%f"), iCachedArea.iBrCoord.Latitude(),
+		//		iCachedArea.iTlCoord.Latitude() ,iCachedArea.iTlCoord.Longitude()
+		//		,iCachedArea.iBrCoord.Longitude());*/
+		//MiscUtils::DbgMsgL(dbgMsg);
 		
 		ReloadLandmarksListL();
 		
