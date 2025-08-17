@@ -708,7 +708,8 @@ void CScaleBarLayer::ReloadStringsFromResourceL()
 CLandmarksLayer::CLandmarksLayer(CMapControl* aMapView, CPosLandmarkDatabase* aLmDb):
 		CMapLayerBase(aMapView),
 		iLandmarksDb(aLmDb),
-		iReloadNeeded(EFalse)
+		iReloadNeeded(EFalse),
+		iZoom(-1)
 	{
 	}
 
@@ -813,6 +814,7 @@ void CLandmarksLayer::ReloadLandmarksListL()
 	CleanupStack::PopAndDestroy(2, landmarkSearch);
 	
 	iReloadNeeded = EFalse;
+	iZoom = iMapView->GetZoom();
 	
 	DEBUG(_L("End landmarks queing (found %d items)"), landmarksCount);
 	}
@@ -822,8 +824,13 @@ void CLandmarksLayer::DrawL(CWindowGc &aGc)
 	TCoordRect viewCoordRect;
 	
 	iMapView->Bounds(viewCoordRect);
-	if (iReloadNeeded || !iCachedArea.Contains(viewCoordRect))
-		{ // Update cached landmarks list only if view goes outside the cached area or force update triggered
+	if (iReloadNeeded || !iCachedArea.Contains(viewCoordRect) || iMapView->GetZoom() > iZoom + 3)
+		{ /* Update cached landmarks list only when:
+				- view goes outside the cached area
+				- force update triggered
+				- zoomed in more then 3 levels */
+		
+		iZoom = iMapView->GetZoom();
 		TRect largeRect = iMapView->Rect();
 		const TInt KGrowDelta = KMapDefaultMoveStep * /*5*/ 10;
 		largeRect.Grow(KGrowDelta, KGrowDelta);
