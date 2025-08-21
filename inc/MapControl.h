@@ -229,7 +229,7 @@ public:
 	TPoint GeoCoordsToScreenCoords(const TCoordinate &aCoord) const;
 	TCoordinate ScreenCoordsToGeoCoords(const TPoint &aPoint) const;
 	void Bounds(TCoordinate &aTopLeftCoord, TCoordinate &aBottomRightCoord) const;
-	void Bounds(TCoordRect &aCoordRect) const;
+	void Bounds(TBounds &aCoordRect) const;
 	void Bounds(TTile &aTopLeftTile, TTile &aBottomRightTile) const;
 	
 	void SetUserPosition(const TCoordinateEx& aPos);

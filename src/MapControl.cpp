@@ -739,7 +739,7 @@ void CMapControl::Bounds(TCoordinate &aTopLeftCoord, TCoordinate &aBottomRightCo
 	aBottomRightCoord = ScreenCoordsToGeoCoords(Rect().iBr - TPoint(1, 1));
 	}
 
-void CMapControl::Bounds(TCoordRect &aCoordRect) const
+void CMapControl::Bounds(TBounds &aCoordRect) const
 	{
 	Bounds(aCoordRect.iTlCoord, aCoordRect.iBrCoord);
 	}
