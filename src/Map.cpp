@@ -321,18 +321,9 @@ void CTiledMapLayer::DrawCopyrightText(CWindowGc &aGc)
 		textRect = iMapView->Rect();
 		textRect.Shrink(KMargin, 0);
 		TInt textBaseline = textRect.Height() - KMargin;
-		//if (iTileProvider->iId == _L("esri"))
-		if (iTileProvider == appUi->AvailableTileProviders()[EEsriIdx])
-			{
-			aGc.SetPenColor(KRgbWhite);
-			}
-		else
-			{
-			aGc.SetPenColor(KRgbDarkGray);
-			}
-		
 		aGc.UseFont(iMapView->SmallFont());
-		aGc.DrawText(copyrightText, textRect, textBaseline, CGraphicsContext::ERight);
+		static_cast<CWindowGcEx*>(&aGc)->DrawOutlinedText(copyrightText, textRect, textBaseline,
+				CGraphicsContext::ERight);
 		aGc.DiscardFont();
 		
 		copyrightText.Close();
