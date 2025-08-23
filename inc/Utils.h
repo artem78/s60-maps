@@ -12,6 +12,7 @@
 #include <e32std.h>
 #include <e32base.h>
 #include <lbsposition.h>
+#include <w32std.h>
 
 // CLASS DECLARATION
 
@@ -91,6 +92,23 @@ class MiscUtils
 	{
 public:
 	static void DbgMsgL(const TDesC &aMsg);
+	};
+
+
+// Extended CWindowGc class
+class CWindowGcEx : public CWindowGc
+	{
+public:
+	//void DrawOutlinedText(const TDesC &aBuf,const TPoint &aPos);
+	
+	/*
+	 * Similar as DrawText(), but adds 1px outline around the text.
+	 * Note: this method doesn't use pen color from context,
+	 * set aTextColor instead (default is black).
+	 */
+	void DrawOutlinedText(const TDesC &aBuf,const TRect &aBox,TInt aBaselineOffset,
+			TTextAlign aHoriz=ELeft,TInt aLeftMrg=0, const TRgb &aTextColor = KRgbBlack,
+			const TRgb &aOutlineColor = KRgbWhite);
 	};
 
 #endif // UTILS_H

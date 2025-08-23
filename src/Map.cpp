@@ -647,19 +647,8 @@ void CScaleBarLayer::Draw(CWindowGc &aGc)
 	TInt baselineOffset = textRect.Height() /*- font->AscentInPixels()*/; 
 	aGc.UseFont(iMapView->DefaultFont());
 	//aGc.DrawText(text, startPoint);
-	aGc.SetPenColor(KRgbWhite);
-	textRect.Move(-1,-1);
-	aGc.DrawText(text, textRect, baselineOffset, CGraphicsContext::ECenter);
-	textRect.Move(+2,+2);
-	aGc.DrawText(text, textRect, baselineOffset, CGraphicsContext::ECenter);
-	textRect.Move(-2,0);
-	aGc.DrawText(text, textRect, baselineOffset, CGraphicsContext::ECenter);
-	textRect.Move(+2,-2);
-	aGc.DrawText(text, textRect, baselineOffset, CGraphicsContext::ECenter);
-	
-	aGc.SetPenColor(KRgbBlack);
-	textRect.Move(-1,+1);
-	aGc.DrawText(text, textRect, baselineOffset, CGraphicsContext::ECenter);
+	static_cast<CWindowGcEx*>(&aGc)->DrawOutlinedText(text, textRect, baselineOffset,
+			CGraphicsContext::ECenter);
 	aGc.DiscardFont();
 	}
 

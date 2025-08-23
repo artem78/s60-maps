@@ -275,3 +275,27 @@ void MiscUtils::DbgMsgL(const TDesC &aMsg)
 	CleanupStack::PopAndDestroy(globalNote);
 	}
 
+
+// CWindowGcEx
+
+void CWindowGcEx::DrawOutlinedText(const TDesC &aBuf,const TRect &aBox,TInt aBaselineOffset,
+			TTextAlign aHoriz,TInt aLeftMrg, const TRgb &aTextColor,
+			const TRgb &aOutlineColor)
+	{
+	// Draw outline
+	SetPenColor(aOutlineColor);
+	for (TInt dx = -1; dx <= 1; dx += /*1*/ 2)
+		{
+		for (TInt dy = -1; dy <= 1; dy += /*1*/ 2)
+			{
+			TRect outlineBox(aBox);
+			outlineBox.Move(dx, dy);
+			DrawText(aBuf, outlineBox, aBaselineOffset, aHoriz, aLeftMrg);
+			}
+		}
+	
+	// Draw text
+	SetPenColor(aTextColor);
+	DrawText(aBuf, aBox, aBaselineOffset, aHoriz, aLeftMrg);
+	}
+
