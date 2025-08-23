@@ -577,7 +577,7 @@ void CScaleBarLayer::Draw(CWindowGc &aGc)
 	
 	const TInt KBarLeftMargin    = 14;
 	const TInt KBarBottomMargin  = KBarLeftMargin;
-	const TInt KBarHeight        = 3;
+	const TInt KBarHeight        = 3 + 2;
 	const TInt KTextBottomMargin = 6;
 	
 	TInt barWidth;
@@ -591,6 +591,9 @@ void CScaleBarLayer::Draw(CWindowGc &aGc)
 	barEndPoint.iX += barWidth;
 	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
 	aGc.SetBrushColor(KRgbBlack);
+	aGc.SetPenStyle(CGraphicsContext::ESolidPen);
+	aGc.SetPenSize(TSize(1, 1));
+	aGc.SetPenColor(KRgbWhite);
 	aGc.DrawRect(TRect(barStartPoint, barEndPoint));
 	aGc.Reset();
 	
@@ -644,6 +647,18 @@ void CScaleBarLayer::Draw(CWindowGc &aGc)
 	TInt baselineOffset = textRect.Height() /*- font->AscentInPixels()*/; 
 	aGc.UseFont(iMapView->DefaultFont());
 	//aGc.DrawText(text, startPoint);
+	aGc.SetPenColor(KRgbWhite);
+	textRect.Move(-1,-1);
+	aGc.DrawText(text, textRect, baselineOffset, CGraphicsContext::ECenter);
+	textRect.Move(+2,+2);
+	aGc.DrawText(text, textRect, baselineOffset, CGraphicsContext::ECenter);
+	textRect.Move(-2,0);
+	aGc.DrawText(text, textRect, baselineOffset, CGraphicsContext::ECenter);
+	textRect.Move(+2,-2);
+	aGc.DrawText(text, textRect, baselineOffset, CGraphicsContext::ECenter);
+	
+	aGc.SetPenColor(KRgbBlack);
+	textRect.Move(-1,+1);
 	aGc.DrawText(text, textRect, baselineOffset, CGraphicsContext::ECenter);
 	aGc.DiscardFont();
 	}
