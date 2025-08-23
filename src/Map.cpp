@@ -983,21 +983,32 @@ void CCrosshairLayer::Draw(CWindowGc &aGc)
 	const TInt KLineHalfLength = 10; // in px
 	TPoint center = iMapView->Rect().Center();
 	
+	TPoint start1 = center;
+	start1.iX -= (KLineHalfLength + 1);
+	TPoint end1 = center;
+	end1.iX += KLineHalfLength + 2;
+	
+	TPoint start2 = center;
+	start2.iY -= (KLineHalfLength + 1);
+	TPoint end2 = center;
+	end2.iY += KLineHalfLength + 2;
+	
+	TRect rect1(start1 - TPoint(1, 1), end1 + TPoint(1, 2));
+	TRect rect2(start2 - TPoint(1, 1), end2 + TPoint(2, 1));
+	
+	// Draw white outline
+	aGc.SetPenStyle(CGraphicsContext::ENullPen);
+	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
+	aGc.SetBrushColor(KRgbWhite);
+	aGc.DrawRect(rect1);
+	aGc.DrawRect(rect2);
+	
+	// Draw main crosshair lines
 	aGc.SetPenColor(KRgbBlack);
 	aGc.SetPenSize(TSize(1, 1));
 	aGc.SetPenStyle(CGraphicsContext::ESolidPen);
 	aGc.SetBrushStyle(CGraphicsContext::ENullBrush);
-	
-	TPoint start1 = center;
-	start1.iX += KLineHalfLength;
-	TPoint end1 = center;
-	end1.iX -= (KLineHalfLength + 1);
 	aGc.DrawLine(start1, end1);
-	
-	TPoint start2 = center;
-	start2.iY += KLineHalfLength;
-	TPoint end2 = center;
-	end2.iY -= (KLineHalfLength + 1);
 	aGc.DrawLine(start2, end2);
 	}
 
