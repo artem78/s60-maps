@@ -283,14 +283,21 @@ CWindowGcEx::CWindowGcEx(CWsScreenDevice *aDevice)
 	{};
 
 void CWindowGcEx::DrawOutlinedText(const TDesC &aBuf,const TPoint &aPos,
-		const TRgb &aTextColor, const TRgb &aOutlineColor)
+		const TRgb &aTextColor, const TRgb &aOutlineColor, TBool aHighQuality)
 	{
+	TInt increment = aHighQuality ? 1 : 2;
+	
 	// Draw outline
 	SetPenColor(aOutlineColor);
-	for (TInt dx = -1; dx <= 1; dx += /*1*/ 2)
+	for (TInt dx = -1; dx <= 1; dx += increment)
 		{
-		for (TInt dy = -1; dy <= 1; dy += /*1*/ 2)
+		for (TInt dy = -1; dy <= 1; dy += increment)
 			{
+			if (dx == 0 && dy == 0)
+				{
+				continue;
+				}
+			
 			TPoint outlinePoint(aPos);
 			outlinePoint += TPoint(dx, dy);
 			DrawText(aBuf, outlinePoint);
@@ -304,14 +311,21 @@ void CWindowGcEx::DrawOutlinedText(const TDesC &aBuf,const TPoint &aPos,
 
 void CWindowGcEx::DrawOutlinedText(const TDesC &aBuf,const TRect &aBox,TInt aBaselineOffset,
 			TTextAlign aHoriz,TInt aLeftMrg, const TRgb &aTextColor,
-			const TRgb &aOutlineColor)
+			const TRgb &aOutlineColor, TBool aHighQuality)
 	{
+	TInt increment = aHighQuality ? 1 : 2;
+	
 	// Draw outline
 	SetPenColor(aOutlineColor);
-	for (TInt dx = -1; dx <= 1; dx += /*1*/ 2)
+	for (TInt dx = -1; dx <= 1; dx += increment)
 		{
-		for (TInt dy = -1; dy <= 1; dy += /*1*/ 2)
+		for (TInt dy = -1; dy <= 1; dy += increment)
 			{
+			if (dx == 0 && dy == 0)
+				{
+				continue;
+				}
+			
 			TRect outlineBox(aBox);
 			outlineBox.Move(dx, dy);
 			DrawText(aBuf, outlineBox, aBaselineOffset, aHoriz, aLeftMrg);

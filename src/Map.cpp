@@ -323,7 +323,7 @@ void CTiledMapLayer::DrawCopyrightText(CWindowGc &aGc)
 		TInt textBaseline = textRect.Height() - KMargin;
 		aGc.UseFont(iMapView->SmallFont());
 		static_cast<CWindowGcEx*>(&aGc)->DrawOutlinedText(copyrightText, textRect, textBaseline,
-				CGraphicsContext::ERight);
+				CGraphicsContext::ERight, 0, KRgbBlack, KRgbWhite, ETrue);
 		aGc.DiscardFont();
 		
 		copyrightText.Close();
