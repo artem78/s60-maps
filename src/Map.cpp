@@ -430,7 +430,14 @@ void CUserPositionLayer::DrawDirectionMarkL(CWindowGc &aGc, const TPoint &aScree
 	for (TInt i = 0; i < points->Count(); i++)
 		points->At(i) += aScreenPos;
 	
-	// Drawing
+	// Draw white outline
+	aGc.SetBrushStyle(CGraphicsContext::ENullBrush);
+	aGc.SetPenStyle(CGraphicsContext::ESolidPen);
+	aGc.SetPenSize(TSize(3, 3));
+	aGc.SetPenColor(KRgbWhite);
+	aGc.DrawPolygon(points);
+	
+	// Draw arrow
 	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
 	aGc.SetBrushColor(KRgbRed);
 	aGc.SetPenStyle(CGraphicsContext::ESolidPen);
