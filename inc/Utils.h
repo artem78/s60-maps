@@ -99,6 +99,8 @@ public:
 class CWindowGcEx : public CWindowGc
 	{
 public:
+	// Constructor
+	CWindowGcEx(CWsScreenDevice *aDevice);
 	
 	/*
 	 * Similar as DrawText(), but adds 1px outline around the text.

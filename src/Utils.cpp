@@ -278,6 +278,10 @@ void MiscUtils::DbgMsgL(const TDesC &aMsg)
 
 // CWindowGcEx
 
+CWindowGcEx::CWindowGcEx(CWsScreenDevice *aDevice)
+		: CWindowGc(aDevice)
+	{};
+
 void CWindowGcEx::DrawOutlinedText(const TDesC &aBuf,const TPoint &aPos,
 		const TRgb &aTextColor, const TRgb &aOutlineColor)
 	{
