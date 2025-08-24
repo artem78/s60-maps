@@ -99,7 +99,15 @@ public:
 class CWindowGcEx : public CWindowGc
 	{
 public:
-	//void DrawOutlinedText(const TDesC &aBuf,const TPoint &aPos);
+	
+	/*
+	 * Similar as DrawText(), but adds 1px outline around the text.
+	 * Note: this method doesn't use pen color from context,
+	 * set aTextColor instead (default is black).
+	 */
+	void DrawOutlinedText(const TDesC &aBuf,const TPoint &aPos,
+			const TRgb &aTextColor = KRgbBlack,
+			const TRgb &aOutlineColor = KRgbWhite);
 	
 	/*
 	 * Similar as DrawText(), but adds 1px outline around the text.

@@ -905,8 +905,8 @@ void CLandmarksLayer::DrawLandmarks(CWindowGc &aGc)
 	DEBUG(_L("Landmarks redrawing started"));
 	
 	//const TRgb KPenColor(59, 120, 162);
-	const TRgb KPenColor(21, 63, 92);
-	aGc.SetPenColor(KPenColor); // For drawing text
+	/*const TRgb KPenColor(21, 63, 92);
+	aGc.SetPenColor(KPenColor); // For drawing text*/
 	aGc.UseFont(iMapView->DefaultFont());
 	
 	for (TInt i = 0; i < iCachedLandmarks->Count(); i++)
@@ -962,7 +962,8 @@ void CLandmarksLayer::DrawLandmark(CWindowGc &aGc,
 		TPoint labelPoint(landmarkPoint);
 		labelPoint.iX += iconSize.iWidth / 2 + KLabelMargin;
 		labelPoint.iY += /*iMapView->DefaultFont()->HeightInPixels()*/ iMapView->DefaultFont()->AscentInPixels() / 2;
-		aGc.DrawText(landmarkName, labelPoint);
+		const TRgb KTextColor(21, 63, 92);
+		static_cast<CWindowGcEx*>(&aGc)->DrawOutlinedText(landmarkName, labelPoint, KTextColor);
 		}
 	}
 
