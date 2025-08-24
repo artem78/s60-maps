@@ -1112,7 +1112,8 @@ void CSignalIndicatorLayer::Draw(CWindowGc &aGc)
 			TInt baselineOffset = static_cast<TInt>(tmp);
 			
 			aGc.UseFont(font);
-			aGc.DrawText(buff, textArea, baselineOffset, CGraphicsContext::ERight);
+			static_cast<CWindowGcEx*>(&aGc)->DrawOutlinedText(buff, textArea, baselineOffset,
+					CGraphicsContext::ERight);
 			aGc.DiscardFont();
 			
 			DrawBarsV1(aGc, signalStrength);
@@ -1145,21 +1146,23 @@ void CSignalIndicatorLayer::DrawBarsV1(CWindowGc &aGc, TSignalStrength aSignalSt
 	aGc.SetPenStyle(CGraphicsContext::ESolidPen);
 	aGc.SetPenSize(TSize(KBarBorderWidth, KBarBorderWidth));
 	
+	TRgb brushColor, penColor;
+	
 	// Set color for active bars
 	switch (aSignalStrength)
 		{
 		case ESignalVeryLow:
 			{
-			aGc.SetBrushColor(TRgb(192,0,0));
-			aGc.SetPenColor(TRgb(58,0,0));
+			brushColor = TRgb(192,0,0);
+			penColor = TRgb(58,0,0);
 			break;
 			}
 			
 		case ESignalLow:
 		case ESignalMedium:
 			{
-			aGc.SetBrushColor(TRgb(251,193,0));
-			aGc.SetPenColor(TRgb(75,58,0));
+			brushColor = TRgb(251,193,0);
+			penColor = TRgb(75,58,0);
 			break;
 			}
 			
@@ -1167,8 +1170,8 @@ void CSignalIndicatorLayer::DrawBarsV1(CWindowGc &aGc, TSignalStrength aSignalSt
 		case ESignalVeryGood:
 		case ESignalHigh:
 			{
-			aGc.SetBrushColor(TRgb(144,209,75));
-			aGc.SetPenColor(TRgb(43,63,22));
+			brushColor = TRgb(144,209,75);
+			penColor = TRgb(43,63,22);
 			break;
 			}
 		}
@@ -1180,10 +1183,20 @@ void CSignalIndicatorLayer::DrawBarsV1(CWindowGc &aGc, TSignalStrength aSignalSt
 		{
 		if (i == aSignalStrength + 1)
 			{ // Change color for inactive bars
-			aGc.SetBrushColor(KRgbWhite);
-			aGc.SetPenColor(KRgbGray);
+			brushColor = KRgbWhite;
+			penColor = KRgbGray;
 			}
 		
+		// Draw white outline
+		TRect outlineRect(barRect);
+		outlineRect.Grow(1, 1);
+		aGc.SetBrushColor(KRgbWhite);
+		aGc.SetPenColor(KRgbWhite);
+		aGc.DrawRect(outlineRect);
+		
+		// Draw bar itself
+		aGc.SetBrushColor(brushColor);
+		aGc.SetPenColor(penColor);
 		aGc.DrawRect(barRect);
 		barRect.SetHeight(barRect.Height() + KBarHeightIncremement);
 		barRect.Move(KBarWidth + KBarsSpacing, -KBarHeightIncremement);
@@ -1198,7 +1211,7 @@ TRect CSignalIndicatorLayer::DrawBarsV2(CWindowGc &aGc, const TPoint &aTopRight,
 	const TRgb KUnusedSatBorderColor = /*TRgb(20, 20, 20)*/ KRgbGray;
 	const TRgb KUsedSatColor = TRgb(144, 209, 75);
 	const TRgb KUsedSatBorderColor = TRgb(43, 63, 22);
-	TRgb backgroundColor = KUnusedSatBorderColor;
+	TRgb backgroundColor = KUnusedSatBorderColor /*KRgbDarkGray*/;
 	backgroundColor.SetAlpha(150);
 
 	aGc.SetPenSize(TSize(KBarBorderWidth, KBarBorderWidth));
@@ -1214,12 +1227,15 @@ TRect CSignalIndicatorLayer::DrawBarsV2(CWindowGc &aGc, const TPoint &aTopRight,
 			signalStrength = SignalStrengthToReal(satData.SignalStrength());
 			DEBUG(_L("sat=%d signal=%d signal real=%.2f"), i, satData.SignalStrength(), signalStrength);
 			}
-
-		// Draw background
-		aGc.SetPenStyle(CGraphicsContext::ENullPen);
+		
+		// Draw white outline and background
+		TRect outlineRect(barMaxRect);
+		outlineRect.Grow(1, 1);
+		aGc.SetPenStyle(CGraphicsContext::ESolidPen);
+		aGc.SetPenColor(KRgbWhite);
 		aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
 		aGc.SetBrushColor(backgroundColor);
-		aGc.DrawRect(barMaxRect);
+		aGc.DrawRect(outlineRect);
 		
 		// Draw fill
 		aGc.SetPenStyle(CGraphicsContext::ENullPen);
