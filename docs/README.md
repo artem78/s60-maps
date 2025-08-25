@@ -104,7 +104,7 @@ After patch installed you need to **disable** "HTTPS proxy" option in s60maps se
 
 ### (2) Use https proxy
 
-This solution is easier and used by default. All http**S** requests pass via http proxy server. Make sure option "HTTPS proxy" is **enabled** in s60maps settings.
+This solution is easier and used by default. All http**S** requests pass via http proxy server. But this may slow down them. For enabling make sure option "HTTPS proxy" is **enabled** in s60maps settings.
 
 ## How to build
 
@@ -139,5 +139,6 @@ This is Open Source software licensed under [GNU GPL v3.0](/LICENSE.txt)
 - [GPS Track recorder for Symbian OS](https://github.com/artem78/s60-gps-tracker#readme)
 - [Accuracy of GNSS data](https://wiki.openstreetmap.org/wiki/Accuracy_of_GNSS_data)
 - [MahoMaps - Yandex.Maps client for Symbian OS](https://github.com/mahomaps/mm-v1)
+
 
 
