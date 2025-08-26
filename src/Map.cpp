@@ -717,6 +717,7 @@ CLandmarksLayer::CLandmarksLayer(CMapControl* aMapView, CPosLandmarkDatabase* aL
 
 CLandmarksLayer::~CLandmarksLayer()
 	{
+	delete iNameRectArray;
 	if (iCachedLandmarks)
 		{
 		iCachedLandmarks->ResetAndDestroy();
@@ -750,6 +751,8 @@ void CLandmarksLayer::ConstructL()
 	iIcon = app->LoadIconL(EMbmIconsStar, EMbmIconsStar_mask);
 	
 	iCachedArea.SetCoords(TCoordinate(0, 0), TCoordinate(0, 0));
+	
+	iNameRectArray = new (ELeave) CArrayFixSeg<TRect>(20);
 	}
 
 void CLandmarksLayer::Draw(CWindowGc &aGc)
@@ -916,6 +919,7 @@ void CLandmarksLayer::DrawLandmarks(CWindowGc &aGc)
 	aGc.SetPenColor(KPenColor); // For drawing text*/
 	aGc.UseFont(iMapView->DefaultFont());
 	
+	iNameRectArray->Reset();
 	for (TInt i = 0; i < iCachedLandmarks->Count(); i++)
 		{	
 		CPosLandmark* landmark = /*iCachedLandmarks[i]*/ iCachedLandmarks->At(i);
@@ -924,13 +928,14 @@ void CLandmarksLayer::DrawLandmarks(CWindowGc &aGc)
 		
 		DrawLandmark(aGc, landmark);
 		}
+	DEBUG(_L("Visible landmark names: %d / %d"), iNameRectArray->Count(), iCachedLandmarks->Count());
 	
 	aGc.DiscardFont();
 	
 	DEBUG(_L("Landmarks redrawing ended"));	
 	}
 
-void CLandmarksLayer::DrawLandmark(CWindowGc &aGc,
+void CLandmarksLayer::DrawLandmark/*L*/(CWindowGc &aGc,
 		const CPosLandmark* aLandmark)
 	{
 	// Get landmark position and name
@@ -970,7 +975,27 @@ void CLandmarksLayer::DrawLandmark(CWindowGc &aGc,
 		labelPoint.iX += iconSize.iWidth / 2 + KLabelMargin;
 		labelPoint.iY += /*iMapView->DefaultFont()->HeightInPixels()*/ iMapView->DefaultFont()->AscentInPixels() / 2;
 		const TRgb KTextColor(21, 63, 92);
-		static_cast<CWindowGcEx*>(&aGc)->DrawOutlinedText(landmarkName, labelPoint, KTextColor);
+		
+		TRect nameRect;
+		nameRect.SetWidth(iMapView->DefaultFont()->TextWidthInPixels(landmarkName));
+		nameRect.SetHeight(iMapView->DefaultFont()->HeightInPixels());
+		nameRect.Move(labelPoint);
+		
+		TBool visible = ETrue;
+		for (TInt i = 0; i < iNameRectArray->Count(); i++)
+			{
+			if ((*iNameRectArray)[i].Intersects(nameRect))
+				{
+				visible = EFalse;
+				break;
+				}
+			}
+		
+		if (visible)
+			{
+			static_cast<CWindowGcEx*>(&aGc)->DrawOutlinedText(landmarkName, labelPoint, KTextColor);
+			iNameRectArray->AppendL(nameRect);
+			}
 		}
 	}
 
