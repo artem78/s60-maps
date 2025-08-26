@@ -214,7 +214,8 @@ private:
 	void ReloadLandmarksListL(); // ToDo: Is moving to another class needed?
 	void DrawL(CWindowGc &aGc);
 	void DrawLandmarks(CWindowGc &aGc);
-	void DrawLandmark/*L*/(CWindowGc &aGc, const CPosLandmark* aLandmark);
+	void DrawLandmarkIcon(CWindowGc &aGc, const CPosLandmark* aLandmark);
+	void DrawLandmarkName/*L*/(CWindowGc &aGc, const CPosLandmark* aLandmark);
 	
 public:
 	inline void NotifyLandmarksUpdated() { iReloadNeeded = ETrue; };

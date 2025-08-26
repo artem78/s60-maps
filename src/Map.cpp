@@ -914,6 +914,16 @@ void CLandmarksLayer::DrawLandmarks(CWindowGc &aGc)
 	
 	DEBUG(_L("Landmarks redrawing started"));
 	
+	// Draw landmark icons
+	for (TInt i = iCachedLandmarks->Count() - 1; i >= 0; i--)
+		{// reverse loop needed to proper display order
+		CPosLandmark* landmark = (*iCachedLandmarks)[i];
+		if (!landmark) continue;
+		DrawLandmarkIcon(aGc, landmark);
+		}
+	
+	// Draw landmark names (they will be always above icons)
+	
 	//const TRgb KPenColor(59, 120, 162);
 	/*const TRgb KPenColor(21, 63, 92);
 	aGc.SetPenColor(KPenColor); // For drawing text*/
@@ -926,7 +936,7 @@ void CLandmarksLayer::DrawLandmarks(CWindowGc &aGc)
 		
 		if (!landmark) continue;
 		
-		DrawLandmark(aGc, landmark);
+		DrawLandmarkName(aGc, landmark);
 		}
 	DEBUG(_L("Visible landmark names: %d / %d"), iNameRectArray->Count(), iCachedLandmarks->Count());
 	
@@ -935,8 +945,30 @@ void CLandmarksLayer::DrawLandmarks(CWindowGc &aGc)
 	DEBUG(_L("Landmarks redrawing ended"));	
 	}
 
-void CLandmarksLayer::DrawLandmark/*L*/(CWindowGc &aGc,
-		const CPosLandmark* aLandmark)
+
+void CLandmarksLayer::DrawLandmarkIcon(CWindowGc &aGc, const CPosLandmark* aLandmark)
+	{
+	TLocality landmarkPos;
+	if (aLandmark->GetPosition(landmarkPos) != KErrNone)
+		{
+		landmarkPos.SetCoordinate(KNaN, KNaN);
+		}
+	
+	//DEBUG(_L("Drawing landmark icon: lat=%f lon=%f"), landmarkPos.Latitude(),
+	//		landmarkPos.Longitude());
+	
+	
+	TPoint landmarkPoint = iMapView->GeoCoordsToScreenCoords(landmarkPos);
+	
+	// Draw landmark icon
+	TSize iconSize = iIcon->Bitmap()->SizeInPixels();
+	TRect dstRect(landmarkPoint, TSize(0, 0));
+	dstRect.Grow(iconSize.iWidth / 2, iconSize.iHeight / 2);
+	TRect srcRect(TPoint(0, 0), iconSize);
+	aGc.DrawBitmapMasked(dstRect, iIcon->Bitmap(), srcRect, iIcon->Mask(), 0);
+	}
+
+void CLandmarksLayer::DrawLandmarkName/*L*/(CWindowGc &aGc, const CPosLandmark* aLandmark)
 	{
 	// Get landmark position and name
 	TPtrC landmarkName;
@@ -951,20 +983,11 @@ void CLandmarksLayer::DrawLandmark/*L*/(CWindowGc &aGc,
 		landmarkPos.SetCoordinate(KNaN, KNaN);
 		}
 	
-	DEBUG(_L("Drawing landmark: lat=%f lon=%f name=%S"), landmarkPos.Latitude(),
-			landmarkPos.Longitude(), &landmarkName);
+	//DEBUG(_L("Drawing landmark name: lat=%f lon=%f name=%S"), landmarkPos.Latitude(),
+	//		landmarkPos.Longitude(), &landmarkName);
 	
 	
 	TPoint landmarkPoint = iMapView->GeoCoordsToScreenCoords(landmarkPos);
-	
-	// Draw landmark icon
-	TSize iconSize = iIcon->Bitmap()->SizeInPixels();
-	{
-		TRect dstRect(landmarkPoint, TSize(0, 0));
-		dstRect.Grow(iconSize.iWidth / 2, iconSize.iHeight / 2);
-		TRect srcRect(TPoint(0, 0), iconSize);
-		aGc.DrawBitmapMasked(dstRect, iIcon->Bitmap(), srcRect, iIcon->Mask(), 0);
-	}
 	
 	
 	// Draw landmark name
@@ -972,6 +995,7 @@ void CLandmarksLayer::DrawLandmark/*L*/(CWindowGc &aGc,
 		{
 		const TInt KLabelMargin = 5;
 		TPoint labelPoint(landmarkPoint);
+		TSize iconSize = iIcon->Bitmap()->SizeInPixels();
 		labelPoint.iX += iconSize.iWidth / 2 + KLabelMargin;
 		labelPoint.iY += /*iMapView->DefaultFont()->HeightInPixels()*/ iMapView->DefaultFont()->AscentInPixels() / 2;
 		const TRgb KTextColor(21, 63, 92);
@@ -994,7 +1018,7 @@ void CLandmarksLayer::DrawLandmark/*L*/(CWindowGc &aGc,
 		if (visible)
 			{
 			static_cast<CWindowGcEx*>(&aGc)->DrawOutlinedText(landmarkName, labelPoint, KTextColor);
-			iNameRectArray->AppendL(nameRect);
+			iNameRectArray->AppendL(nameRect); // fixme: leaving function call in non-leaving function
 			}
 		}
 	}
