@@ -914,6 +914,9 @@ void CLandmarksLayer::DrawLandmarks(CWindowGc &aGc)
 	DEBUG(_L("Landmarks redrawing started"));
 	
 	// Draw landmark icons
+#ifdef __WINSCW__
+	iVisibleIconsCount = 0;
+#endif
 	for (TInt i = iCachedLandmarks->Count() - 1; i >= 0; i--)
 		{// reverse loop needed to proper display order
 		CPosLandmark* landmark = (*iCachedLandmarks)[i];
@@ -945,7 +948,11 @@ void CLandmarksLayer::DrawLandmarks(CWindowGc &aGc)
 		
 		DrawLandmarkName(aGc, landmark);
 		}
-	DEBUG(_L("Visible landmark names: %d / %d"), iNameRegion.Count(), iCachedLandmarks->Count());
+	//DEBUG(_L("Visible landmark names: %d / %d"), iNameRegion.Count(), iCachedLandmarks->Count());
+#ifdef __WINSCW__
+	DEBUG(_L("Visible landmark icons: %d, visible names: %d, total cached landmarks: %d"),
+			iVisibleIconsCount, iNameRegion.Count(), iCachedLandmarks->Count());
+#endif
 	
 	aGc.DiscardFont();
 	
@@ -971,8 +978,14 @@ void CLandmarksLayer::DrawLandmarkIcon(CWindowGc &aGc, const CPosLandmark* aLand
 	TSize iconSize = iIcon->Bitmap()->SizeInPixels();
 	TRect dstRect(landmarkPoint, TSize(0, 0));
 	dstRect.Grow(iconSize.iWidth / 2, iconSize.iHeight / 2);
-	TRect srcRect(TPoint(0, 0), iconSize);
-	aGc.DrawBitmapMasked(dstRect, iIcon->Bitmap(), srcRect, iIcon->Mask(), 0);
+	if (iMapView->Rect().Intersects(dstRect))
+		{
+		TRect srcRect(TPoint(0, 0), iconSize);
+		aGc.DrawBitmapMasked(dstRect, iIcon->Bitmap(), srcRect, iIcon->Mask(), 0);
+#ifdef __WINSCW__
+		iVisibleIconsCount++;
+#endif
+		}
 	}
 
 void CLandmarksLayer::DrawLandmarkName(CWindowGc &aGc, const CPosLandmark* aLandmark)
@@ -1012,9 +1025,9 @@ void CLandmarksLayer::DrawLandmarkName(CWindowGc &aGc, const CPosLandmark* aLand
 		nameRect.SetHeight(iMapView->DefaultFont()->HeightInPixels());
 		nameRect.Move(labelPoint);
 		
-		
-		if (!iNameRegion.Intersects(nameRect))
-			{ // Draw landmark name if it doesn't overllap any of previous drawned names
+		if (iMapView->Rect().Intersects(nameRect) && !iNameRegion.Intersects(nameRect))
+			{ /* Draw landmark name only if it on visible part of the control
+				 and it doesn't overllap any of previous drawned names */
 			static_cast<CWindowGcEx*>(&aGc)->DrawOutlinedText(landmarkName, labelPoint, KTextColor);
 			iNameRegion.AddRect(nameRect);
 			}

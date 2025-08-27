@@ -210,6 +210,10 @@ private:
 	TBool iReloadNeeded; // Used for indication if landmarks may be changed outside (for ex. created/deleted/renamed)
 	TZoom iZoom;
 	/*RRegion*/ RRegionBuf<20> iNameRegion;
+#ifdef __WINSCW__
+	// For debug only
+	TInt iVisibleIconsCount;
+#endif
 	
 	void ReloadLandmarksListL(); // ToDo: Is moving to another class needed?
 	void DrawL(CWindowGc &aGc);
