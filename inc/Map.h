@@ -205,15 +205,21 @@ private:
 	CPosLandmarkDatabase* iLandmarksDb; // Not owned
 	CAknIcon* iIcon;
 	
-	TCoordRect iCachedArea; // Area for which landmarks are loaded
+	TBounds iCachedArea; // Area for which landmarks are loaded
 	CArrayPtr<CPosLandmark>* iCachedLandmarks; // May be NULL if no landmarks
 	TBool iReloadNeeded; // Used for indication if landmarks may be changed outside (for ex. created/deleted/renamed)
 	TZoom iZoom;
+	/*RRegion*/ RRegionBuf<20> iNameRegion;
+#ifdef __WINSCW__
+	// For debug only
+	TInt iVisibleIconsCount;
+#endif
 	
 	void ReloadLandmarksListL(); // ToDo: Is moving to another class needed?
 	void DrawL(CWindowGc &aGc);
 	void DrawLandmarks(CWindowGc &aGc);
-	void DrawLandmark(CWindowGc &aGc, const CPosLandmark* aLandmark);
+	void DrawLandmarkIcon(CWindowGc &aGc, const CPosLandmark* aLandmark);
+	void DrawLandmarkName(CWindowGc &aGc, const CPosLandmark* aLandmark);
 	
 public:
 	inline void NotifyLandmarksUpdated() { iReloadNeeded = ETrue; };

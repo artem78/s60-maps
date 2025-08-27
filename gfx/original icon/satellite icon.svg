@@ -7,8 +7,11 @@
    viewBox="0 0 26.458333 26.458334"
    version="1.1"
    id="svg5"
-   inkscape:version="1.1.2 (b8e25be833, 2022-02-05)"
+   inkscape:version="1.4.2 (1:1.4.2+202505120738+ebf0e940d0)"
    sodipodi:docname="satellite icon.svg"
+   inkscape:export-filename="satellite icon.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -16,29 +19,36 @@
    xmlns:svg="http://www.w3.org/2000/svg">
   <sodipodi:namedview
      id="namedview7"
-     pagecolor="#ffffff"
+     pagecolor="#eeeeee"
      bordercolor="#666666"
      borderopacity="1.0"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
-     inkscape:pagecheckerboard="0"
+     inkscape:pagecheckerboard="true"
      inkscape:document-units="px"
      showgrid="true"
      units="px"
      width="100px"
      inkscape:snap-global="false"
-     inkscape:zoom="5.5332892"
-     inkscape:cx="32.620742"
-     inkscape:cy="28.735169"
-     inkscape:window-width="1024"
-     inkscape:window-height="716"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
+     inkscape:zoom="8"
+     inkscape:cx="44.1875"
+     inkscape:cy="33.9375"
+     inkscape:window-width="1440"
+     inkscape:window-height="849"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer1">
+     inkscape:current-layer="layer1"
+     inkscape:showpageshadow="2"
+     inkscape:deskcolor="#d1d1d1">
     <inkscape:grid
        type="xygrid"
-       id="grid3547" />
+       id="grid3547"
+       originx="0"
+       originy="0"
+       spacingy="1"
+       spacingx="1"
+       units="px" />
   </sodipodi:namedview>
   <defs
      id="defs2">
@@ -103,6 +113,10 @@
        id="g3765"
        style="stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
        transform="translate(0.3978085,1.4946183)">
+      <path
+         id="rect1113-9"
+         style="fill:#9dce8c;fill-opacity:1;stroke:#ffffff;stroke-width:0.97895834;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="M 19.723961 0.025702348 A 1.2762991 1.2762991 0 0 0 20.362165 1.1310612 A 1.2762991 1.2762991 0 0 0 21.638056 1.1310612 A 1.2762991 1.2762991 0 0 0 22.27626 0.025702348 L 21.000369 0.025702348 L 19.723961 0.025702348 z M 20.450531 1.9987085 L 20.450531 4.4218165 L 21.549689 4.4218165 L 21.549689 1.9987085 L 20.450531 1.9987085 z M 17.75974 2.3785303 L 17.75974 3.8182357 L 19.760134 3.8182357 L 19.760134 2.3785303 L 17.75974 2.3785303 z M 22.240086 2.3785303 L 22.240086 3.8182357 L 24.240481 3.8182357 L 24.240481 2.3785303 L 22.240086 2.3785303 z " />
       <rect
          style="fill:#aeb6c9;fill-opacity:1;stroke:#4a5878;stroke-width:0.29127;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.996078"
          id="rect1113"
@@ -118,7 +132,7 @@
          width="100%"
          height="100%"
          transform="translate(4.4800991)"
-         style="fill:#ce8c8c;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.996078" />
+         style="fill:#ce8c8c;fill-opacity:1;stroke:none;stroke-width:0.26458333;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.996078" />
       <rect
          style="fill:url(#linearGradient3832);fill-opacity:1;stroke:#585858;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          id="rect3465"
@@ -147,7 +161,7 @@
        transform="matrix(-0.59691713,-0.59691713,0.59691713,-0.59691713,14.491461,21.153838)"
        width="100%"
        height="100%"
-       inkscape:export-filename="..\satellite.png"
+       inkscape:export-filename="satellite.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96" />
   </g>

@@ -12,6 +12,7 @@
 #include <e32std.h>
 #include <e32base.h>
 #include <lbsposition.h>
+#include <w32std.h>
 
 // CLASS DECLARATION
 
@@ -91,6 +92,62 @@ class MiscUtils
 	{
 public:
 	static void DbgMsgL(const TDesC &aMsg);
+	};
+
+
+// Extended CWindowGc class
+class CWindowGcEx : public CWindowGc
+	{
+public:
+	// Constructor
+	CWindowGcEx(CWsScreenDevice *aDevice);
+	
+	/*
+	 * Similar as DrawText(), but adds 1px outline around the text.
+	 * Note: this method doesn't use pen color from context,
+	 * set aTextColor instead (default is black).
+	 * 
+	 * @param	aHighQuality -
+	 * 			ETrue - better quality for outline, but more draw operations needed (1+8 ops.)
+	 * 			EFalse - faster, but may be less accurate (especially with thin font) (1+4 ops.)
+	 * 			Preview: https://ibb.co/C5mdkLLJ
+	 */
+	void DrawOutlinedText(const TDesC &aBuf,const TPoint &aPos,
+			const TRgb &aTextColor = KRgbBlack,
+			const TRgb &aOutlineColor = KRgbWhite,
+			TBool aHighQuality = EFalse);
+	
+	/*
+	 * Similar as DrawText(), but adds 1px outline around the text.
+	 * Note: this method doesn't use pen color from context,
+	 * set aTextColor instead (default is black).
+	 * 
+	 * @param	aHighQuality -
+	 * 			ETrue - better quality for outline, but more draw operations needed (1+8 ops.)
+	 * 			EFalse - faster, but may be less accurate (especially with thin font) (1+4 ops.)
+	 * 			Preview: https://ibb.co/C5mdkLLJ
+	 */
+	void DrawOutlinedText(const TDesC &aBuf,const TRect &aBox,TInt aBaselineOffset,
+			TTextAlign aHoriz=ELeft,TInt aLeftMrg=0, const TRgb &aTextColor = KRgbBlack,
+			const TRgb &aOutlineColor = KRgbWhite,
+			TBool aHighQuality = EFalse);
+	};
+
+
+// Holds bounding box defined with top-left and bottom-right TCoordinate
+class /*TCoordRect*/ /*TBoundingRect*/ TBounds
+	{
+public:
+	TCoordinate iTlCoord, iBrCoord;
+	
+	void SetCoords(const TCoordinate &aTlCoord, const TCoordinate &aBrCoord);
+	void SetCoords(TReal64 &aLat1, TReal64 &aLon1, TReal64 &aLat2, TReal64 &aLon2);
+	
+	// Returns ETrue if given rect completely located inside this rect
+	TBool Contains(const TBounds &aCoordRect) const;
+	
+    friend bool operator == (const TBounds &aCoordRect1, const TBounds &aCoordRect2);
+    friend bool operator != (const TBounds &aCoordRect1, const TBounds &aCoordRect2);
 	};
 
 #endif // UTILS_H

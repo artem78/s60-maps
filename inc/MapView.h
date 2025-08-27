@@ -48,6 +48,12 @@ private:
 	void DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane);
 	
 	
+	// From MSearchObserver
+private:
+	void OnSearchFinished(const TSearchResultItem &aResultData);
+	/*void OnSearchFailed();*/
+	
+	
 	// Custom properties and methods
 public:
 	// Getters/setters
@@ -82,7 +88,7 @@ private:
 	
 	// Others
 	CSearch* iSearch;
-	void OnSearchFinished(TBool aSuccess, const TCoordinate &aCoord);
+
 	};
 
 #endif /* __MAPVIEW_H_ */

@@ -235,15 +235,21 @@ TBool StrUtils::EndsWith(const TDesC8& aStr, const TDesC8& aSubstr, TBool aIgnor
 */
 
 
-// TCoordRect
+// TBounds
 
-void TCoordRect::SetCoords(const TCoordinate &aTlCoord, const TCoordinate &aBrCoord)
+void TBounds::SetCoords(const TCoordinate &aTlCoord, const TCoordinate &aBrCoord)
 	{
 	iTlCoord = aTlCoord;
 	iBrCoord = aBrCoord;
 	}
 
-TBool TCoordRect::Contains(const TCoordRect &aCoordRect) const
+void TBounds::SetCoords(TReal64 &aLat1, TReal64 &aLon1, TReal64 &aLat2, TReal64 &aLon2)
+	{
+	iTlCoord.SetCoordinate(Max(aLat1, aLat2), Min(aLon1, aLon2));
+	iBrCoord.SetCoordinate(Min(aLat1, aLat2), Max(aLon1, aLon2));
+	}
+
+TBool TBounds::Contains(const TBounds &aCoordRect) const
 	{
 	return (aCoordRect.iTlCoord.Latitude() <= iTlCoord.Latitude())
 			&& (aCoordRect.iTlCoord.Longitude() >= iTlCoord.Longitude())
@@ -251,7 +257,7 @@ TBool TCoordRect::Contains(const TCoordRect &aCoordRect) const
 			&& (aCoordRect.iBrCoord.Longitude() <= iBrCoord.Longitude());
 	}
 
-bool operator == (const TCoordRect &aCoordRect1, const TCoordRect &aCoordRect2)
+bool operator == (const TBounds &aCoordRect1, const TBounds &aCoordRect2)
 	{
 	return (aCoordRect1.iTlCoord.Longitude() == aCoordRect2.iTlCoord.Longitude())
 			&& (aCoordRect1.iTlCoord.Latitude() == aCoordRect2.iTlCoord.Latitude())
@@ -259,7 +265,8 @@ bool operator == (const TCoordRect &aCoordRect1, const TCoordRect &aCoordRect2)
 			&& (aCoordRect1.iBrCoord.Latitude() == aCoordRect2.iBrCoord.Latitude());
 	}
 
-bool operator != (const TCoordRect &aCoordRect1, const TCoordRect &aCoordRect2)
+
+bool operator != (const TBounds &aCoordRect1, const TBounds &aCoordRect2)
 	{
 	return !(aCoordRect1 == aCoordRect2);
 	}
@@ -275,3 +282,64 @@ void MiscUtils::DbgMsgL(const TDesC &aMsg)
 	CleanupStack::PopAndDestroy(globalNote);
 	}
 
+
+// CWindowGcEx
+
+CWindowGcEx::CWindowGcEx(CWsScreenDevice *aDevice)
+		: CWindowGc(aDevice)
+	{};
+
+void CWindowGcEx::DrawOutlinedText(const TDesC &aBuf,const TPoint &aPos,
+		const TRgb &aTextColor, const TRgb &aOutlineColor, TBool aHighQuality)
+	{
+	TInt increment = aHighQuality ? 1 : 2;
+	
+	// Draw outline
+	SetPenColor(aOutlineColor);
+	for (TInt dx = -1; dx <= 1; dx += increment)
+		{
+		for (TInt dy = -1; dy <= 1; dy += increment)
+			{
+			if (dx == 0 && dy == 0)
+				{
+				continue;
+				}
+			
+			TPoint outlinePoint(aPos);
+			outlinePoint += TPoint(dx, dy);
+			DrawText(aBuf, outlinePoint);
+			}
+		}
+	
+	// Draw text
+	SetPenColor(aTextColor);
+	DrawText(aBuf, aPos);
+	}
+
+void CWindowGcEx::DrawOutlinedText(const TDesC &aBuf,const TRect &aBox,TInt aBaselineOffset,
+			TTextAlign aHoriz,TInt aLeftMrg, const TRgb &aTextColor,
+			const TRgb &aOutlineColor, TBool aHighQuality)
+	{
+	TInt increment = aHighQuality ? 1 : 2;
+	
+	// Draw outline
+	SetPenColor(aOutlineColor);
+	for (TInt dx = -1; dx <= 1; dx += increment)
+		{
+		for (TInt dy = -1; dy <= 1; dy += increment)
+			{
+			if (dx == 0 && dy == 0)
+				{
+				continue;
+				}
+			
+			TRect outlineBox(aBox);
+			outlineBox.Move(dx, dy);
+			DrawText(aBuf, outlineBox, aBaselineOffset, aHoriz, aLeftMrg);
+			}
+		}
+	
+	// Draw text
+	SetPenColor(aTextColor);
+	DrawText(aBuf, aBox, aBaselineOffset, aHoriz, aLeftMrg);
+	}

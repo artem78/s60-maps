@@ -321,18 +321,9 @@ void CTiledMapLayer::DrawCopyrightText(CWindowGc &aGc)
 		textRect = iMapView->Rect();
 		textRect.Shrink(KMargin, 0);
 		TInt textBaseline = textRect.Height() - KMargin;
-		//if (iTileProvider->iId == _L("esri"))
-		if (iTileProvider == appUi->AvailableTileProviders()[EEsriIdx])
-			{
-			aGc.SetPenColor(KRgbWhite);
-			}
-		else
-			{
-			aGc.SetPenColor(KRgbDarkGray);
-			}
-		
 		aGc.UseFont(iMapView->SmallFont());
-		aGc.DrawText(copyrightText, textRect, textBaseline, CGraphicsContext::ERight);
+		static_cast<CWindowGcEx*>(&aGc)->DrawOutlinedText(copyrightText, textRect, textBaseline,
+				CGraphicsContext::ERight, 0, KRgbBlack, KRgbWhite, ETrue);
 		aGc.DiscardFont();
 		
 		copyrightText.Close();
@@ -439,7 +430,14 @@ void CUserPositionLayer::DrawDirectionMarkL(CWindowGc &aGc, const TPoint &aScree
 	for (TInt i = 0; i < points->Count(); i++)
 		points->At(i) += aScreenPos;
 	
-	// Drawing
+	// Draw white outline
+	aGc.SetBrushStyle(CGraphicsContext::ENullBrush);
+	aGc.SetPenStyle(CGraphicsContext::ESolidPen);
+	aGc.SetPenSize(TSize(3, 3));
+	aGc.SetPenColor(KRgbWhite);
+	aGc.DrawPolygon(points);
+	
+	// Draw arrow
 	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
 	aGc.SetBrushColor(KRgbRed);
 	aGc.SetPenStyle(CGraphicsContext::ESolidPen);
@@ -577,7 +575,7 @@ void CScaleBarLayer::Draw(CWindowGc &aGc)
 	
 	const TInt KBarLeftMargin    = 14;
 	const TInt KBarBottomMargin  = KBarLeftMargin;
-	const TInt KBarHeight        = 3;
+	const TInt KBarHeight        = 3 + 2;
 	const TInt KTextBottomMargin = 6;
 	
 	TInt barWidth;
@@ -591,6 +589,9 @@ void CScaleBarLayer::Draw(CWindowGc &aGc)
 	barEndPoint.iX += barWidth;
 	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
 	aGc.SetBrushColor(KRgbBlack);
+	aGc.SetPenStyle(CGraphicsContext::ESolidPen);
+	aGc.SetPenSize(TSize(1, 1));
+	aGc.SetPenColor(KRgbWhite);
 	aGc.DrawRect(TRect(barStartPoint, barEndPoint));
 	aGc.Reset();
 	
@@ -644,7 +645,8 @@ void CScaleBarLayer::Draw(CWindowGc &aGc)
 	TInt baselineOffset = textRect.Height() /*- font->AscentInPixels()*/; 
 	aGc.UseFont(iMapView->DefaultFont());
 	//aGc.DrawText(text, startPoint);
-	aGc.DrawText(text, textRect, baselineOffset, CGraphicsContext::ECenter);
+	static_cast<CWindowGcEx*>(&aGc)->DrawOutlinedText(text, textRect, baselineOffset,
+			CGraphicsContext::ECenter);
 	aGc.DiscardFont();
 	}
 
@@ -715,6 +717,8 @@ CLandmarksLayer::CLandmarksLayer(CMapControl* aMapView, CPosLandmarkDatabase* aL
 
 CLandmarksLayer::~CLandmarksLayer()
 	{
+	iNameRegion.Close();
+	//iNameRegion.Destroy();
 	if (iCachedLandmarks)
 		{
 		iCachedLandmarks->ResetAndDestroy();
@@ -821,7 +825,7 @@ void CLandmarksLayer::ReloadLandmarksListL()
 
 void CLandmarksLayer::DrawL(CWindowGc &aGc)
 	{
-	TCoordRect viewCoordRect;
+	TBounds viewCoordRect;
 	
 	iMapView->Bounds(viewCoordRect);
 	if (iReloadNeeded || !iCachedArea.Contains(viewCoordRect) || iMapView->GetZoom() > iZoom + 3)
@@ -909,27 +913,82 @@ void CLandmarksLayer::DrawLandmarks(CWindowGc &aGc)
 	
 	DEBUG(_L("Landmarks redrawing started"));
 	
+	// Draw landmark icons
+#ifdef __WINSCW__
+	iVisibleIconsCount = 0;
+#endif
+	for (TInt i = iCachedLandmarks->Count() - 1; i >= 0; i--)
+		{// reverse loop needed to proper display order
+		CPosLandmark* landmark = (*iCachedLandmarks)[i];
+		if (!landmark) continue;
+		DrawLandmarkIcon(aGc, landmark);
+		}
+	
+	// Draw landmark names (they will be always above icons)
+	
 	//const TRgb KPenColor(59, 120, 162);
-	const TRgb KPenColor(21, 63, 92);
-	aGc.SetPenColor(KPenColor); // For drawing text
+	/*const TRgb KPenColor(21, 63, 92);
+	aGc.SetPenColor(KPenColor); // For drawing text*/
 	aGc.UseFont(iMapView->DefaultFont());
 	
+	iNameRegion.Clear();
 	for (TInt i = 0; i < iCachedLandmarks->Count(); i++)
-		{	
+		{
+		if (iNameRegion.CheckError())
+			{
+			/* Skip futher landmark names processiong if any error in iNameRegion
+			 * (for example: internal buffer overflow)
+			 * */
+			break;
+			}
+		
 		CPosLandmark* landmark = /*iCachedLandmarks[i]*/ iCachedLandmarks->At(i);
 		
 		if (!landmark) continue;
 		
-		DrawLandmark(aGc, landmark);
+		DrawLandmarkName(aGc, landmark);
 		}
+	//DEBUG(_L("Visible landmark names: %d / %d"), iNameRegion.Count(), iCachedLandmarks->Count());
+#ifdef __WINSCW__
+	DEBUG(_L("Visible landmark icons: %d, visible names: %d, total cached landmarks: %d"),
+			iVisibleIconsCount, iNameRegion.Count(), iCachedLandmarks->Count());
+#endif
 	
 	aGc.DiscardFont();
 	
 	DEBUG(_L("Landmarks redrawing ended"));	
 	}
 
-void CLandmarksLayer::DrawLandmark(CWindowGc &aGc,
-		const CPosLandmark* aLandmark)
+
+void CLandmarksLayer::DrawLandmarkIcon(CWindowGc &aGc, const CPosLandmark* aLandmark)
+	{
+	TLocality landmarkPos;
+	if (aLandmark->GetPosition(landmarkPos) != KErrNone)
+		{
+		landmarkPos.SetCoordinate(KNaN, KNaN);
+		}
+	
+	//DEBUG(_L("Drawing landmark icon: lat=%f lon=%f"), landmarkPos.Latitude(),
+	//		landmarkPos.Longitude());
+	
+	
+	TPoint landmarkPoint = iMapView->GeoCoordsToScreenCoords(landmarkPos);
+	
+	// Draw landmark icon
+	TSize iconSize = iIcon->Bitmap()->SizeInPixels();
+	TRect dstRect(landmarkPoint, TSize(0, 0));
+	dstRect.Grow(iconSize.iWidth / 2, iconSize.iHeight / 2);
+	if (iMapView->Rect().Intersects(dstRect))
+		{
+		TRect srcRect(TPoint(0, 0), iconSize);
+		aGc.DrawBitmapMasked(dstRect, iIcon->Bitmap(), srcRect, iIcon->Mask(), 0);
+#ifdef __WINSCW__
+		iVisibleIconsCount++;
+#endif
+		}
+	}
+
+void CLandmarksLayer::DrawLandmarkName(CWindowGc &aGc, const CPosLandmark* aLandmark)
 	{
 	// Get landmark position and name
 	TPtrC landmarkName;
@@ -944,20 +1003,11 @@ void CLandmarksLayer::DrawLandmark(CWindowGc &aGc,
 		landmarkPos.SetCoordinate(KNaN, KNaN);
 		}
 	
-	DEBUG(_L("Drawing landmark: lat=%f lon=%f name=%S"), landmarkPos.Latitude(),
-			landmarkPos.Longitude(), &landmarkName);
+	//DEBUG(_L("Drawing landmark name: lat=%f lon=%f name=%S"), landmarkPos.Latitude(),
+	//		landmarkPos.Longitude(), &landmarkName);
 	
 	
 	TPoint landmarkPoint = iMapView->GeoCoordsToScreenCoords(landmarkPos);
-	
-	// Draw landmark icon
-	TSize iconSize = iIcon->Bitmap()->SizeInPixels();
-	{
-		TRect dstRect(landmarkPoint, TSize(0, 0));
-		dstRect.Grow(iconSize.iWidth / 2, iconSize.iHeight / 2);
-		TRect srcRect(TPoint(0, 0), iconSize);
-		aGc.DrawBitmapMasked(dstRect, iIcon->Bitmap(), srcRect, iIcon->Mask(), 0);
-	}
 	
 	
 	// Draw landmark name
@@ -965,9 +1015,22 @@ void CLandmarksLayer::DrawLandmark(CWindowGc &aGc,
 		{
 		const TInt KLabelMargin = 5;
 		TPoint labelPoint(landmarkPoint);
+		TSize iconSize = iIcon->Bitmap()->SizeInPixels();
 		labelPoint.iX += iconSize.iWidth / 2 + KLabelMargin;
 		labelPoint.iY += /*iMapView->DefaultFont()->HeightInPixels()*/ iMapView->DefaultFont()->AscentInPixels() / 2;
-		aGc.DrawText(landmarkName, labelPoint);
+		const TRgb KTextColor(21, 63, 92);
+		
+		TRect nameRect;
+		nameRect.SetWidth(iMapView->DefaultFont()->TextWidthInPixels(landmarkName));
+		nameRect.SetHeight(iMapView->DefaultFont()->HeightInPixels());
+		nameRect.Move(labelPoint);
+		
+		if (iMapView->Rect().Intersects(nameRect) && !iNameRegion.Intersects(nameRect))
+			{ /* Draw landmark name only if it on visible part of the control
+				 and it doesn't overllap any of previous drawned names */
+			static_cast<CWindowGcEx*>(&aGc)->DrawOutlinedText(landmarkName, labelPoint, KTextColor);
+			iNameRegion.AddRect(nameRect);
+			}
 		}
 	}
 
@@ -983,21 +1046,32 @@ void CCrosshairLayer::Draw(CWindowGc &aGc)
 	const TInt KLineHalfLength = 10; // in px
 	TPoint center = iMapView->Rect().Center();
 	
+	TPoint start1 = center;
+	start1.iX -= (KLineHalfLength + 1);
+	TPoint end1 = center;
+	end1.iX += KLineHalfLength + 2;
+	
+	TPoint start2 = center;
+	start2.iY -= (KLineHalfLength + 1);
+	TPoint end2 = center;
+	end2.iY += KLineHalfLength + 2;
+	
+	TRect rect1(start1 - TPoint(1, 1), end1 + TPoint(1, 2));
+	TRect rect2(start2 - TPoint(1, 1), end2 + TPoint(2, 1));
+	
+	// Draw white outline
+	aGc.SetPenStyle(CGraphicsContext::ENullPen);
+	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
+	aGc.SetBrushColor(KRgbWhite);
+	aGc.DrawRect(rect1);
+	aGc.DrawRect(rect2);
+	
+	// Draw main crosshair lines
 	aGc.SetPenColor(KRgbBlack);
 	aGc.SetPenSize(TSize(1, 1));
 	aGc.SetPenStyle(CGraphicsContext::ESolidPen);
 	aGc.SetBrushStyle(CGraphicsContext::ENullBrush);
-	
-	TPoint start1 = center;
-	start1.iX += KLineHalfLength;
-	TPoint end1 = center;
-	end1.iX -= (KLineHalfLength + 1);
 	aGc.DrawLine(start1, end1);
-	
-	TPoint start2 = center;
-	start2.iY += KLineHalfLength;
-	TPoint end2 = center;
-	end2.iY -= (KLineHalfLength + 1);
 	aGc.DrawLine(start2, end2);
 	}
 
@@ -1105,7 +1179,8 @@ void CSignalIndicatorLayer::Draw(CWindowGc &aGc)
 			TInt baselineOffset = static_cast<TInt>(tmp);
 			
 			aGc.UseFont(font);
-			aGc.DrawText(buff, textArea, baselineOffset, CGraphicsContext::ERight);
+			static_cast<CWindowGcEx*>(&aGc)->DrawOutlinedText(buff, textArea, baselineOffset,
+					CGraphicsContext::ERight);
 			aGc.DiscardFont();
 			
 			DrawBarsV1(aGc, signalStrength);
@@ -1138,21 +1213,23 @@ void CSignalIndicatorLayer::DrawBarsV1(CWindowGc &aGc, TSignalStrength aSignalSt
 	aGc.SetPenStyle(CGraphicsContext::ESolidPen);
 	aGc.SetPenSize(TSize(KBarBorderWidth, KBarBorderWidth));
 	
+	TRgb brushColor, penColor;
+	
 	// Set color for active bars
 	switch (aSignalStrength)
 		{
 		case ESignalVeryLow:
 			{
-			aGc.SetBrushColor(TRgb(192,0,0));
-			aGc.SetPenColor(TRgb(58,0,0));
+			brushColor = TRgb(192,0,0);
+			penColor = TRgb(58,0,0);
 			break;
 			}
 			
 		case ESignalLow:
 		case ESignalMedium:
 			{
-			aGc.SetBrushColor(TRgb(251,193,0));
-			aGc.SetPenColor(TRgb(75,58,0));
+			brushColor = TRgb(251,193,0);
+			penColor = TRgb(75,58,0);
 			break;
 			}
 			
@@ -1160,8 +1237,8 @@ void CSignalIndicatorLayer::DrawBarsV1(CWindowGc &aGc, TSignalStrength aSignalSt
 		case ESignalVeryGood:
 		case ESignalHigh:
 			{
-			aGc.SetBrushColor(TRgb(144,209,75));
-			aGc.SetPenColor(TRgb(43,63,22));
+			brushColor = TRgb(144,209,75);
+			penColor = TRgb(43,63,22);
 			break;
 			}
 		}
@@ -1173,10 +1250,20 @@ void CSignalIndicatorLayer::DrawBarsV1(CWindowGc &aGc, TSignalStrength aSignalSt
 		{
 		if (i == aSignalStrength + 1)
 			{ // Change color for inactive bars
-			aGc.SetBrushColor(KRgbWhite);
-			aGc.SetPenColor(KRgbGray);
+			brushColor = KRgbWhite;
+			penColor = KRgbGray;
 			}
 		
+		// Draw white outline
+		TRect outlineRect(barRect);
+		outlineRect.Grow(1, 1);
+		aGc.SetBrushColor(KRgbWhite);
+		aGc.SetPenColor(KRgbWhite);
+		aGc.DrawRect(outlineRect);
+		
+		// Draw bar itself
+		aGc.SetBrushColor(brushColor);
+		aGc.SetPenColor(penColor);
 		aGc.DrawRect(barRect);
 		barRect.SetHeight(barRect.Height() + KBarHeightIncremement);
 		barRect.Move(KBarWidth + KBarsSpacing, -KBarHeightIncremement);
@@ -1191,7 +1278,7 @@ TRect CSignalIndicatorLayer::DrawBarsV2(CWindowGc &aGc, const TPoint &aTopRight,
 	const TRgb KUnusedSatBorderColor = /*TRgb(20, 20, 20)*/ KRgbGray;
 	const TRgb KUsedSatColor = TRgb(144, 209, 75);
 	const TRgb KUsedSatBorderColor = TRgb(43, 63, 22);
-	TRgb backgroundColor = KUnusedSatBorderColor;
+	TRgb backgroundColor = KUnusedSatBorderColor /*KRgbDarkGray*/;
 	backgroundColor.SetAlpha(150);
 
 	aGc.SetPenSize(TSize(KBarBorderWidth, KBarBorderWidth));
@@ -1207,12 +1294,15 @@ TRect CSignalIndicatorLayer::DrawBarsV2(CWindowGc &aGc, const TPoint &aTopRight,
 			signalStrength = SignalStrengthToReal(satData.SignalStrength());
 			DEBUG(_L("sat=%d signal=%d signal real=%.2f"), i, satData.SignalStrength(), signalStrength);
 			}
-
-		// Draw background
-		aGc.SetPenStyle(CGraphicsContext::ENullPen);
+		
+		// Draw white outline and background
+		TRect outlineRect(barMaxRect);
+		outlineRect.Grow(1, 1);
+		aGc.SetPenStyle(CGraphicsContext::ESolidPen);
+		aGc.SetPenColor(KRgbWhite);
 		aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
 		aGc.SetBrushColor(backgroundColor);
-		aGc.DrawRect(barMaxRect);
+		aGc.DrawRect(outlineRect);
 		
 		// Draw fill
 		aGc.SetPenStyle(CGraphicsContext::ENullPen);
