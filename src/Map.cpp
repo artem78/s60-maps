@@ -825,7 +825,7 @@ void CLandmarksLayer::ReloadLandmarksListL()
 
 void CLandmarksLayer::DrawL(CWindowGc &aGc)
 	{
-	TCoordRect viewCoordRect;
+	TBounds viewCoordRect;
 	
 	iMapView->Bounds(viewCoordRect);
 	if (iReloadNeeded || !iCachedArea.Contains(viewCoordRect) || iMapView->GetZoom() > iZoom + 3)

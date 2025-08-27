@@ -90,3 +90,7 @@ CHARACTER_SET UTF8
 #define qtn_map_data "map data"
 #define qtn_map_style "map style"
 #define qtn_positioning "Positioning"
+
+// Added in version X.XX
+
+#define qtn_no_results "No results!"

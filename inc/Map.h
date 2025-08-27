@@ -205,7 +205,7 @@ private:
 	CPosLandmarkDatabase* iLandmarksDb; // Not owned
 	CAknIcon* iIcon;
 	
-	TCoordRect iCachedArea; // Area for which landmarks are loaded
+	TBounds iCachedArea; // Area for which landmarks are loaded
 	CArrayPtr<CPosLandmark>* iCachedLandmarks; // May be NULL if no landmarks
 	TBool iReloadNeeded; // Used for indication if landmarks may be changed outside (for ex. created/deleted/renamed)
 	TZoom iZoom;

@@ -14,4 +14,4 @@
 	url = git@github.com:artem78/s60-http-client.git
 [submodule "modules/s-json"]
 	path = modules/s-json
-	url = https://github.com/luisjavierchico/s-json.git
+	url = git@github.com:artem78/s-json.git

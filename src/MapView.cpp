@@ -691,13 +691,11 @@ void CMapView::HandleSearchL()
 	DEBUG(_L("end"));
 	}
 
-void CMapView::OnSearchFinished(TBool aSuccess, const TCoordinate &aCoord)
+void CMapView::OnSearchFinished(const TSearchResultItem &aResultData)
 	{
-	if (aSuccess)
-		{
-		MapControl()->SetFollowUser(EFalse);
-		MapControl()->MoveAndZoomIn(aCoord);
-		}
+	MapControl()->SetFollowUser(EFalse);
+	TZoom prefferedZoom = MapControl()->PreferredZoomForBounds(aResultData.iBounds);
+	MapControl()->Move(aResultData.iCoord, prefferedZoom);
 	
 	//delete iSearch;
 	//iSearch = NULL;

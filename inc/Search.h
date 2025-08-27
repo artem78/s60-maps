@@ -17,10 +17,14 @@
 #include <lbsposition.h>
 #include "HTTPClient2.h"
 #include <badesca.h>
+#include "Utils.h"
 
 
 
 class MSearchObserver;
+class TSearchResultItem;
+class CJsonParser;
+
 
 // CLASS DECLARATION
 
@@ -74,27 +78,39 @@ private:
 	
 private:
 	TBuf<128> iQuery;
-	TCoordinate iCoord;
 	CHTTPClient2* iHttpClient;
 	HBufC8* iResponseBuff;
 	MSearchObserver* iObserver;
 	
 	TBool RunQueryDialogL();
 	/*TBool*/ void RunResultsDialogL();
-	void ParseApiResponseL(CDesCArray* aNamesArr, CArrayFix<TCoordinate>* aCoordsArr);
+	void ParseApiResponseL(CArrayFix<TSearchResultItem>* aResultsArr);
 	void RunApiReqestL();
+	static void ParseJsonValueL(CJsonParser* aParser, const TDesC &aParam, TDes &aVal);
+	static void ParseJsonValueL(CJsonParser* aParser, const TDesC &aParam, TReal64 &aVal);
 	
 public:
 	TBool RunL();
 
 	};
 
+
 class MSearchObserver
 	{
 protected:
-	virtual void OnSearchFinished(TBool aSuccess, const TCoordinate &aCoord) = 0;
+	virtual void OnSearchFinished(const TSearchResultItem &aResultData) = 0;
+	virtual void OnSearchFailed(/*TInt aError*/);
 	
 	friend class CSearch;
+	};
+
+
+class TSearchResultItem
+	{
+public:
+	TBuf<256> iName;
+	TCoordinate iCoord;
+	TBounds iBounds;
 	};
 
 #endif // SEARCH_H

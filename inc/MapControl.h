@@ -18,6 +18,7 @@
 #include "Map.h"
 #include "Defs.h"
 #include <s32strm.h>
+#include "Utils.h"
 
 // Constants
 const TUint KMapDefaultMoveStep = 20; // In pixels
@@ -228,7 +229,7 @@ public:
 	TPoint GeoCoordsToScreenCoords(const TCoordinate &aCoord) const;
 	TCoordinate ScreenCoordsToGeoCoords(const TPoint &aPoint) const;
 	void Bounds(TCoordinate &aTopLeftCoord, TCoordinate &aBottomRightCoord) const;
-	void Bounds(TCoordRect &aCoordRect) const;
+	void Bounds(TBounds &aCoordRect) const;
 	void Bounds(TTile &aTopLeftTile, TTile &aBottomRightTile) const;
 	
 	void SetUserPosition(const TCoordinateEx& aPos);
@@ -249,6 +250,7 @@ public:
 		{ return iSmallFont; };
 	void NotifyLandmarksUpdated();
 	/*inline*/ TPoint ScreenCoordsToProjectionCoords(const TPoint &aPoint) const;
+	TZoom PreferredZoomForBounds(const TBounds &aBounds) const;
 
 	};
 	
