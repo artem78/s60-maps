@@ -233,7 +233,8 @@ void CSearch::ParseJsonValueL(CJsonParser* aParser, const TDesC &aParam, TDes &a
 void CSearch::ParseJsonValueL(CJsonParser* aParser, const TDesC &aParam, TReal64 &aVal)
 	{
 	TLex lex;
-	TBuf<32> buff = KNullDesC;
+	TBuf<32> buff /*= KNullDesC*/;
+	buff.Zero();
 	aVal = KNaN;
 	
 	if (!aParser->GetParameterValue(aParam, &buff))
