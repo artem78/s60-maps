@@ -209,13 +209,13 @@ private:
 	CArrayPtr<CPosLandmark>* iCachedLandmarks; // May be NULL if no landmarks
 	TBool iReloadNeeded; // Used for indication if landmarks may be changed outside (for ex. created/deleted/renamed)
 	TZoom iZoom;
-	CArrayFixSeg<TRect>* iNameRectArray;
+	/*RRegion*/ RRegionBuf<20> iNameRegion;
 	
 	void ReloadLandmarksListL(); // ToDo: Is moving to another class needed?
 	void DrawL(CWindowGc &aGc);
 	void DrawLandmarks(CWindowGc &aGc);
 	void DrawLandmarkIcon(CWindowGc &aGc, const CPosLandmark* aLandmark);
-	void DrawLandmarkName/*L*/(CWindowGc &aGc, const CPosLandmark* aLandmark);
+	void DrawLandmarkName(CWindowGc &aGc, const CPosLandmark* aLandmark);
 	
 public:
 	inline void NotifyLandmarksUpdated() { iReloadNeeded = ETrue; };

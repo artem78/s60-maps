@@ -717,7 +717,8 @@ CLandmarksLayer::CLandmarksLayer(CMapControl* aMapView, CPosLandmarkDatabase* aL
 
 CLandmarksLayer::~CLandmarksLayer()
 	{
-	delete iNameRectArray;
+	iNameRegion.Close();
+	//iNameRegion.Destroy();
 	if (iCachedLandmarks)
 		{
 		iCachedLandmarks->ResetAndDestroy();
@@ -751,8 +752,6 @@ void CLandmarksLayer::ConstructL()
 	iIcon = app->LoadIconL(EMbmIconsStar, EMbmIconsStar_mask);
 	
 	iCachedArea.SetCoords(TCoordinate(0, 0), TCoordinate(0, 0));
-	
-	iNameRectArray = new (ELeave) CArrayFixSeg<TRect>(20);
 	}
 
 void CLandmarksLayer::Draw(CWindowGc &aGc)
@@ -929,16 +928,24 @@ void CLandmarksLayer::DrawLandmarks(CWindowGc &aGc)
 	aGc.SetPenColor(KPenColor); // For drawing text*/
 	aGc.UseFont(iMapView->DefaultFont());
 	
-	iNameRectArray->Reset();
+	iNameRegion.Clear();
 	for (TInt i = 0; i < iCachedLandmarks->Count(); i++)
-		{	
+		{
+		if (iNameRegion.CheckError())
+			{
+			/* Skip futher landmark names processiong if any error in iNameRegion
+			 * (for example: internal buffer overflow)
+			 * */
+			break;
+			}
+		
 		CPosLandmark* landmark = /*iCachedLandmarks[i]*/ iCachedLandmarks->At(i);
 		
 		if (!landmark) continue;
 		
 		DrawLandmarkName(aGc, landmark);
 		}
-	DEBUG(_L("Visible landmark names: %d / %d"), iNameRectArray->Count(), iCachedLandmarks->Count());
+	DEBUG(_L("Visible landmark names: %d / %d"), iNameRegion.Count(), iCachedLandmarks->Count());
 	
 	aGc.DiscardFont();
 	
@@ -968,7 +975,7 @@ void CLandmarksLayer::DrawLandmarkIcon(CWindowGc &aGc, const CPosLandmark* aLand
 	aGc.DrawBitmapMasked(dstRect, iIcon->Bitmap(), srcRect, iIcon->Mask(), 0);
 	}
 
-void CLandmarksLayer::DrawLandmarkName/*L*/(CWindowGc &aGc, const CPosLandmark* aLandmark)
+void CLandmarksLayer::DrawLandmarkName(CWindowGc &aGc, const CPosLandmark* aLandmark)
 	{
 	// Get landmark position and name
 	TPtrC landmarkName;
@@ -1005,20 +1012,11 @@ void CLandmarksLayer::DrawLandmarkName/*L*/(CWindowGc &aGc, const CPosLandmark* 
 		nameRect.SetHeight(iMapView->DefaultFont()->HeightInPixels());
 		nameRect.Move(labelPoint);
 		
-		TBool visible = ETrue;
-		for (TInt i = 0; i < iNameRectArray->Count(); i++)
-			{
-			if ((*iNameRectArray)[i].Intersects(nameRect))
-				{
-				visible = EFalse;
-				break;
-				}
-			}
 		
-		if (visible)
-			{
+		if (!iNameRegion.Intersects(nameRect))
+			{ // Draw landmark name if it doesn't overllap any of previous drawned names
 			static_cast<CWindowGcEx*>(&aGc)->DrawOutlinedText(landmarkName, labelPoint, KTextColor);
-			iNameRectArray->AppendL(nameRect); // fixme: leaving function call in non-leaving function
+			iNameRegion.AddRect(nameRect);
 			}
 		}
 	}
