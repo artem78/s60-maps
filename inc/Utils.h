@@ -36,7 +36,7 @@ public:
 	/*
 	 * Returns power of two (2^aPower)
 	 *
-	 * @param	TInt - 0 <= aPower <= 20 (other values not yet implemented)
+	 * @param	TInt - 0 <= aPower <= 30 (greater values will raise panic due to TInt result overflow)
 	 */
 	static TInt Pow2(TInt aPower);
 	};

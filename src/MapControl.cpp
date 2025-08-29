@@ -496,9 +496,7 @@ void CMapControl::Move(const TPoint &aPoint, TBool aSavePos)
 			iCenterPosition = MapMath::ProjectionPointToGeoCoords(center, iZoom); // Store new position
 			}
 		
-		TReal tmp;
-		Math::Pow(tmp, 2, iZoom);
-		TInt maxXY = KTileSize * (int) tmp - 1;
+		TInt maxXY = MapMath::MaxProjectionCoordXY(iZoom);
 		//TRect mapRect;
 		//mapRect.SetSize(TSize(maxXY, maxXY));
 		

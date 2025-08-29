@@ -31,8 +31,7 @@ void MapMath::PixelsToMeters(const TReal64 &aLatitude, TZoom aZoom, TUint aPixel
 	//TReal p;
 	//Math::Pow(p, 2, aZoom + 8);
 	//TInt p = 2 ** (aZoom + 8);
-	TReal p;
-	Math::Pow(p, 2, aZoom + 8);
+	TInt p = MathUtils::Pow2(aZoom + 8);
 	aHorizontalDistance = aPixels * KEquatorLength * c / p;
 	aVerticalDistance = (Abs(KMinLatitudeMapBound) + Abs(KMinLatitudeMapBound)) /*~170deg*/
 			* KDegToRad * KEarthRadiusMinor / p * aPixels; 
@@ -53,8 +52,7 @@ void MapMath::MetersToPixels(const TReal64 &aLatitude, TZoom aZoom, TReal32 aDis
 	{
 	TReal c;
 	Math::Cos(c, aLatitude * KDegToRad);
-	TReal p;
-	Math::Pow(p, 2, aZoom + 8);
+	TInt p = MathUtils::Pow2(aZoom + 8);
 	TReal horPixels, vertPixels;
 	horPixels  = aDistance * p / (KEquatorLength * c);
 	vertPixels = aDistance / ((Abs(KMinLatitudeMapBound) + Abs(KMinLatitudeMapBound)) /*~170deg*/
@@ -95,9 +93,7 @@ TPoint MapMath::GeoCoordsToProjectionPoint(const TCoordinate &aCoord, TZoom aZoo
 	TReal l;
 	Math::Ln(l, t + 1.0 / c);
 	
-	TReal p;
-	Math::Pow(p, 2, aZoom);
-	TReal y = (1.0 - l / KPi) / 2 * /*2 ** aZoom*/ p;
+	TReal y = (1.0 - l / KPi) / 2 * MathUtils::Pow2(aZoom);
 	
 	Math::Round(x, x * KTileSize, 0);
 	Math::Round(y, y * KTileSize, 0);
