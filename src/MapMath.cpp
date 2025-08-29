@@ -127,13 +127,13 @@ TCoordinate MapMath::TileToGeoCoords(const TTileReal &aTile, TZoom aZoom)
 	return coord;	
 	}
 
-TCoordinate MapMath::TileToGeoCoords(const TTile &aTile, TZoom aZoom)
+TCoordinate MapMath::TileToGeoCoords(const TTile &aTile)
 	{
 	TTileReal tileReal;
 	tileReal.iX = aTile.iX;
 	tileReal.iY = aTile.iY;
 	tileReal.iZ = aTile.iZ;
-	return TileToGeoCoords(tileReal, aZoom);
+	return TileToGeoCoords(tileReal, aTile.iZ);
 	}
 
 TPoint MapMath::GeoCoordsToProjectionPoint(const TCoordinate &aCoord, TZoom aZoom)

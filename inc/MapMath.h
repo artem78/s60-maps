@@ -46,7 +46,7 @@ public:
 	static void MetersToPixels(const TReal64 &aLatitude, TZoom aZoom, TReal32 aDistance,
 			/*TUint*/ TInt &aHorizontalPixels, /*TUint*/ TInt &aVerticalPixels);
 	static TTile GeoCoordsToTile(const TCoordinate &aCoord, TZoom aZoom);
-	static TCoordinate TileToGeoCoords(const TTile &aTile, TZoom aZoom);
+	static TCoordinate TileToGeoCoords(const TTile &aTile);
 	static TPoint GeoCoordsToProjectionPoint(const TCoordinate &aCoord, TZoom aZoom);
 	static TCoordinate ProjectionPointToGeoCoords(const TPoint &aPoint, TZoom aZoom);
 	static TTile ProjectionPointToTile(const TPoint &aPoint, TZoom aZoom);

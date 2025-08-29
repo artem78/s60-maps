@@ -231,7 +231,7 @@ void CTiledMapLayer::VisibleTiles(RArray<TTile> &aTiles)
 
 void CTiledMapLayer::DrawTile(CWindowGc &aGc, const TTile &aTile, const CFbsBitmap *aBitmap)
 	{
-	TCoordinate coord = MapMath::TileToGeoCoords(aTile, iMapView->GetZoom());
+	TCoordinate coord = MapMath::TileToGeoCoords(aTile);
 	TPoint point = iMapView->GeoCoordsToScreenCoords(coord);
 	TRect destRect;
 	destRect.iTl = point;
@@ -507,7 +507,7 @@ void CTileBorderAndXYZLayer::VisibleTiles(RArray<TTile> &aTiles)
 void CTileBorderAndXYZLayer::DrawTile(CWindowGc &aGc, const TTile &aTile)
 	{
 	// Calculate tile position
-	TCoordinate coord = MapMath::TileToGeoCoords(aTile, iMapView->GetZoom());
+	TCoordinate coord = MapMath::TileToGeoCoords(aTile);
 	TPoint point = iMapView->GeoCoordsToScreenCoords(coord);
 	TRect rect(TSize(KTileSize, KTileSize));
 	rect.Move(point);
