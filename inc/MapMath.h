@@ -24,20 +24,7 @@ const TInt KMinProjectionCoordXY = 0;
 class TTile;
 
 class MapMath
-	{
-private:
-	class TTileReal
-		{
-	public:
-		TReal iX;
-		TReal iY;
-		TZoom iZ;
-		};
-
-	
-	static TTileReal GeoCoordsToTileReal(const TCoordinate &aCoord, TZoom aZoom);
-	static TCoordinate TileToGeoCoords(const TTileReal &aTile, TZoom aZoom);
-	
+	{	
 public:
 	static void PixelsToMeters(const TReal64 &aLatitude, TZoom aZoom, TUint aPixels /*= 1*/,
 			TReal32 &aHorizontalDistance, TReal32 &aVerticalDistance);
