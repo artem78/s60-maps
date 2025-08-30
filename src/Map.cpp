@@ -998,6 +998,17 @@ void CLandmarksLayer::DrawLandmarkName(CWindowGc &aGc, const CPosLandmark* aLand
 		return; // no coordinates
 		}
 	
+	// Trim landmark name if so long
+	const TInt KMaxLandmarkNameLength = 32;
+	TBuf<KMaxLandmarkNameLength> landmarkNameTrimmed;
+	if (landmarkName.Length() > KMaxLandmarkNameLength)
+		{
+		_LIT(KElipsisStr, "...");
+		landmarkNameTrimmed = landmarkName.Left(landmarkNameTrimmed.MaxLength() - KElipsisStr().Length());
+		landmarkNameTrimmed += KElipsisStr;
+		landmarkName.Set(landmarkNameTrimmed);
+		}
+	
 	// Calculate label position on the screen
 	const TInt KLabelMargin = 5;
 	TPoint landmarkPoint = iMapView->GeoCoordsToScreenCoords(landmarkPos);
