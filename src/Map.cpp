@@ -1019,7 +1019,8 @@ void CLandmarksLayer::DrawLandmarkName(CWindowGc &aGc, const CPosLandmark* aLand
 		}
 	}
 
-// CLandmarksLayer
+
+// CCrosshairLayer
 
 CCrosshairLayer::CCrosshairLayer(CMapControl* aMapView) :
 		CMapLayerBase(aMapView)
