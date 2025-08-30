@@ -292,6 +292,11 @@ CWindowGcEx::CWindowGcEx(CWsScreenDevice *aDevice)
 void CWindowGcEx::DrawOutlinedText(const TDesC &aBuf,const TPoint &aPos,
 		const TRgb &aTextColor, const TRgb &aOutlineColor, TBool aHighQuality)
 	{
+	if (!aBuf.Length())
+		{
+		return; // nothing to draw
+		}
+	
 	TInt increment = aHighQuality ? 1 : 2;
 	
 	// Draw outline
@@ -320,6 +325,11 @@ void CWindowGcEx::DrawOutlinedText(const TDesC &aBuf,const TRect &aBox,TInt aBas
 			TTextAlign aHoriz,TInt aLeftMrg, const TRgb &aTextColor,
 			const TRgb &aOutlineColor, TBool aHighQuality)
 	{
+	if (!aBuf.Length())
+		{
+		return; // nothing to draw
+		}
+	
 	TInt increment = aHighQuality ? 1 : 2;
 	
 	// Draw outline

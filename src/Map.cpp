@@ -905,7 +905,7 @@ void CLandmarksLayer::DrawL(CWindowGc &aGc)
 
 void CLandmarksLayer::DrawLandmarks(CWindowGc &aGc)
 	{
-	if ((not iCachedLandmarks) || (not iCachedLandmarks->Count()))
+	if (!iCachedLandmarks || !iCachedLandmarks->Count())
 		{
 		DEBUG(_L("No landmarks to draw"));
 		return;
@@ -942,13 +942,11 @@ void CLandmarksLayer::DrawLandmarks(CWindowGc &aGc)
 			break;
 			}
 		
-		CPosLandmark* landmark = /*iCachedLandmarks[i]*/ iCachedLandmarks->At(i);
-		
+		CPosLandmark* landmark = (*iCachedLandmarks)[i];
 		if (!landmark) continue;
-		
 		DrawLandmarkName(aGc, landmark);
 		}
-	//DEBUG(_L("Visible landmark names: %d / %d"), iNameRegion.Count(), iCachedLandmarks->Count());
+
 #ifdef __WINSCW__
 	DEBUG(_L("Visible landmark icons: %d, visible names: %d, total cached landmarks: %d"),
 			iVisibleIconsCount, iNameRegion.Count(), iCachedLandmarks->Count());
@@ -962,24 +960,21 @@ void CLandmarksLayer::DrawLandmarks(CWindowGc &aGc)
 
 void CLandmarksLayer::DrawLandmarkIcon(CWindowGc &aGc, const CPosLandmark* aLandmark)
 	{
+	// Get landmark coordinates
 	TLocality landmarkPos;
 	if (aLandmark->GetPosition(landmarkPos) != KErrNone)
 		{
-		landmarkPos.SetCoordinate(KNaN, KNaN);
+		return; // no coordinates
 		}
 	
-	//DEBUG(_L("Drawing landmark icon: lat=%f lon=%f"), landmarkPos.Latitude(),
-	//		landmarkPos.Longitude());
-	
-	
-	TPoint landmarkPoint = iMapView->GeoCoordsToScreenCoords(landmarkPos);
-	
-	// Draw landmark icon
+	// Calculate icon position on the screen
 	TSize iconSize = iIcon->Bitmap()->SizeInPixels();
+	TPoint landmarkPoint = iMapView->GeoCoordsToScreenCoords(landmarkPos);
 	TRect dstRect(landmarkPoint, TSize(0, 0));
 	dstRect.Grow(iconSize.iWidth / 2, iconSize.iHeight / 2);
+	
 	if (iMapView->Rect().Intersects(dstRect))
-		{
+		{ // Draw landmark icon only if it intersects with control
 		TRect srcRect(TPoint(0, 0), iconSize);
 		aGc.DrawBitmapMasked(dstRect, iIcon->Bitmap(), srcRect, iIcon->Mask(), 0);
 #ifdef __WINSCW__
@@ -990,47 +985,37 @@ void CLandmarksLayer::DrawLandmarkIcon(CWindowGc &aGc, const CPosLandmark* aLand
 
 void CLandmarksLayer::DrawLandmarkName(CWindowGc &aGc, const CPosLandmark* aLandmark)
 	{
-	// Get landmark position and name
+	// Get landmark coordinates and name
 	TPtrC landmarkName;
-	if (aLandmark->GetLandmarkName(landmarkName) != KErrNone)
+	if (aLandmark->GetLandmarkName(landmarkName) != KErrNone || !landmarkName.Length())
 		{
-		landmarkName.Set(KNullDesC);
+		return; // empty name
 		}
 	
 	TLocality landmarkPos;
 	if (aLandmark->GetPosition(landmarkPos) != KErrNone)
 		{
-		landmarkPos.SetCoordinate(KNaN, KNaN);
+		return; // no coordinates
 		}
 	
-	//DEBUG(_L("Drawing landmark name: lat=%f lon=%f name=%S"), landmarkPos.Latitude(),
-	//		landmarkPos.Longitude(), &landmarkName);
-	
-	
+	// Calculate label position on the screen
+	const TInt KLabelMargin = 5;
 	TPoint landmarkPoint = iMapView->GeoCoordsToScreenCoords(landmarkPos);
+	TPoint labelPoint(landmarkPoint);
+	TSize iconSize = iIcon->Bitmap()->SizeInPixels();
+	labelPoint.iX += iconSize.iWidth / 2 + KLabelMargin;
+	labelPoint.iY += /*iMapView->DefaultFont()->HeightInPixels()*/ iMapView->DefaultFont()->AscentInPixels() / 2;
+	TRect nameRect;
+	nameRect.SetWidth(iMapView->DefaultFont()->TextWidthInPixels(landmarkName));
+	nameRect.SetHeight(iMapView->DefaultFont()->HeightInPixels());
+	nameRect.Move(labelPoint);
 	
-	
-	// Draw landmark name
-	if (landmarkName.Length())
-		{
-		const TInt KLabelMargin = 5;
-		TPoint labelPoint(landmarkPoint);
-		TSize iconSize = iIcon->Bitmap()->SizeInPixels();
-		labelPoint.iX += iconSize.iWidth / 2 + KLabelMargin;
-		labelPoint.iY += /*iMapView->DefaultFont()->HeightInPixels()*/ iMapView->DefaultFont()->AscentInPixels() / 2;
+	if (iMapView->Rect().Intersects(nameRect) && !iNameRegion.Intersects(nameRect))
+		{ /* Draw landmark name only if it on visible part of the control
+			 and it doesn't overllap any of previous drawned names */
 		const TRgb KTextColor(21, 63, 92);
-		
-		TRect nameRect;
-		nameRect.SetWidth(iMapView->DefaultFont()->TextWidthInPixels(landmarkName));
-		nameRect.SetHeight(iMapView->DefaultFont()->HeightInPixels());
-		nameRect.Move(labelPoint);
-		
-		if (iMapView->Rect().Intersects(nameRect) && !iNameRegion.Intersects(nameRect))
-			{ /* Draw landmark name only if it on visible part of the control
-				 and it doesn't overllap any of previous drawned names */
-			static_cast<CWindowGcEx*>(&aGc)->DrawOutlinedText(landmarkName, labelPoint, KTextColor);
-			iNameRegion.AddRect(nameRect);
-			}
+		static_cast<CWindowGcEx*>(&aGc)->DrawOutlinedText(landmarkName, labelPoint, KTextColor);
+		iNameRegion.AddRect(nameRect);
 		}
 	}
 
