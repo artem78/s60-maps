@@ -28,6 +28,7 @@
 #include <epos_cposlandmarkdatabase.h> // For CPosLandmarkDatabase
 #include <lbssatellite.h>
 #include <hwrmlight.h> // For CHWRMLight
+#include <es_sock.h>
 
 
 enum TTileProviderIdx {
@@ -242,6 +243,12 @@ public:
 
 	void EnablePositioningL();
 	void DisablePositioning();
+	
+	RSocketServ iSockServ;
+	RConnection iConn;
+	
+	TBool IsNetworkConnected();
+	void StartNetworkConnectionL();
 	
 	};
 

@@ -59,6 +59,10 @@ void CS60MapsAppUi::ConstructL()
 	
 	_LIT8(KApiKeyArgFmt, "?apikey=%S");
 	
+	User::LeaveIfError(iSockServ.Connect());
+	User::LeaveIfError(iConn.Open(iSockServ));
+	//User::LeaveIfError(iConn.Start()); //will be called later on first request
+	
 	// Set several predefined available tiles providers
 
 	// OpenStreetMap standard tile layer
@@ -254,6 +258,9 @@ CS60MapsAppUi::~CS60MapsAppUi()
 	
 	//delete iAvailableTileProviders;
 	iAvailableTileProviders.DeleteAll();
+	
+	iConn.Close();
+	iSockServ.Close();
 	
 	delete iSettings;
 	
@@ -957,6 +964,18 @@ void CS60MapsAppUi::DisablePositioning()
 	{
 	delete iPosRequestor;
 	iPosRequestor = NULL;
+	}
+
+TBool CS60MapsAppUi::IsNetworkConnected()
+	{
+	TUint cnt = 0;
+	TInt r = iConn.EnumerateConnections(cnt);
+	return (r == KErrNone && cnt > 0);
+	}
+
+void CS60MapsAppUi::StartNetworkConnectionL()
+	{
+	User::LeaveIfError(iConn.Start());
 	}
 
 // End of File

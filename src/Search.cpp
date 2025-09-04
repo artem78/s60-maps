@@ -51,7 +51,8 @@ CSearch* CSearch::NewL(MSearchObserver* aObserver)
 
 void CSearch::ConstructL()
 	{
-	iHttpClient = CHTTPClient2::NewL(this);
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
+	iHttpClient = CHTTPClient2::NewL(this,appUi->iSockServ, appUi->iConn);
 	
 	DEBUG(_L("Constructor"));
 	}

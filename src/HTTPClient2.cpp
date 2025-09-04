@@ -17,7 +17,7 @@ CHTTPClient2::CHTTPClient2(MHTTPClientObserver* aObserver)
 		: CHTTPClient(aObserver)
 	{}
 
-void CHTTPClient2::ConstructL()
+void CHTTPClient2::ConstructL(RSocketServ &aSockServ, RConnection &aConn)
 	{
 	// Run parent method
 	CHTTPClient::ConstructL();
@@ -34,26 +34,43 @@ void CHTTPClient2::ConstructL()
 	userAgent.Append(KDebugStr);
 #endif
 	SetUserAgentL(userAgent);
+	
+	//Connection
+    RStringPool strPool = iSession.StringPool();
+    RHTTPConnectionInfo connInfo = iSession.ConnectionInfo();
+    connInfo.SetPropertyL(strPool.StringF(HTTP::EHttpSocketServ,
+        RHTTPSession::GetTable()), THTTPHdrVal(aSockServ.Handle()));
+    TInt connPtr = reinterpret_cast<TInt>(&aConn);
+    connInfo.SetPropertyL(strPool.StringF(HTTP::EHttpSocketConnection,
+        RHTTPSession::GetTable()), THTTPHdrVal(connPtr));
 	}
 
-CHTTPClient2* CHTTPClient2::NewLC(MHTTPClientObserver* aObserver)
+CHTTPClient2* CHTTPClient2::NewLC(MHTTPClientObserver* aObserver,
+		RSocketServ &aSockServ, RConnection &aConn)
 	{
 	CHTTPClient2* self = new (ELeave) CHTTPClient2(aObserver);
 	CleanupStack::PushL(self);
-	self->ConstructL();
+	self->ConstructL(aSockServ,aConn);
 	return self;
 	}
 
-CHTTPClient2* CHTTPClient2::NewL(MHTTPClientObserver* aObserver)
+CHTTPClient2* CHTTPClient2::NewL(MHTTPClientObserver* aObserver,
+		RSocketServ &aSockServ, RConnection &aConn)
 	{
-	CHTTPClient2* self = CHTTPClient2::NewLC(aObserver);
+	CHTTPClient2* self = CHTTPClient2::NewLC(aObserver, aSockServ, aConn);
 	CleanupStack::Pop(); // self;
 	return self;
 	}
 
 void CHTTPClient2::SendRequestL(THTTPMethod aMethod, const TDesC8 &aUrl)
 	{
-	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());	
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
+	if (!appUi->IsNetworkConnected())
+		{	
+		appUi->StartNetworkConnectionL();
+		}
+	
+		
 	_LIT8(KHttpsUrlStart, "https://");
 	if (appUi->Settings()->iUseHttpsProxy && StrUtils::StartsWith(aUrl, KHttpsUrlStart, ETrue))
 		{
