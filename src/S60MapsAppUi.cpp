@@ -968,14 +968,16 @@ void CS60MapsAppUi::DisablePositioning()
 
 TBool CS60MapsAppUi::IsNetworkConnected()
 	{
-	TUint cnt = 0;
+	/*TUint cnt = 0;
 	TInt r = iConn.EnumerateConnections(cnt);
-	return (r == KErrNone && cnt > 0);
+	return (r == KErrNone && cnt > 0);*/
+	return iIsNetworkConnected;
 	}
 
 void CS60MapsAppUi::StartNetworkConnectionL()
 	{
 	User::LeaveIfError(iConn.Start());
+	iIsNetworkConnected = ETrue;
 	}
 
 // End of File

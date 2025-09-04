@@ -190,6 +190,7 @@ private:
 	CPeriodic* iResetInactivityTimer;
 	HBufC* iOriginalPaneTitle;
 	TBool iIsPositioningAvailable;
+	TBool iIsNetworkConnected;
 	
 	//static TInt UpdateTilesClearingProgress(TAny* aSelfPtr);
 	
