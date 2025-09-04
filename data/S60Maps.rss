@@ -492,6 +492,7 @@ RESOURCE TBUF r_osm_contributors { buf=qtn_osm_contributors; }
 RESOURCE TBUF r_map_data { buf=qtn_map_data; }
 RESOURCE TBUF r_map_style { buf=qtn_map_style; }
 RESOURCE TBUF r_no_results { buf=qtn_no_results; }
+RESOURCE TBUF r_search_failed_fmt { buf=qtn_search_failed_fmt; }
 
 // Language names
 RESOURCE TBUF r_lang_english_name	{ buf=qtn_lang_english_name; }

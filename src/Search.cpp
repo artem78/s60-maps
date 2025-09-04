@@ -104,7 +104,7 @@ void CSearch::RunResultsDialogL()
 			dlg->ExecuteLD(*msg);
 			CleanupStack::PopAndDestroy(msg);
 			
-			iObserver->OnSearchFailed();
+			//iObserver->OnSearchFailed();
 			
 			break;
 			}
@@ -146,7 +146,7 @@ void CSearch::RunResultsDialogL()
 				}
 			else
 				{
-				iObserver->OnSearchFailed();
+				//iObserver->OnSearchFailed();
 				}
 			
 			break;
@@ -293,12 +293,12 @@ void CSearch::OnHTTPResponse(const RHTTPTransaction /*aTransaction*/)
 	
 	}
 
-void CSearch::OnHTTPError(TInt /*aError*/, const RHTTPTransaction /*aTransaction*/)
+void CSearch::OnHTTPError(TInt aError, const RHTTPTransaction /*aTransaction*/)
 	{
 	delete iResponseBuff;
 	iResponseBuff = NULL;
 	
-	iObserver->OnSearchFailed(/*aError*/);
+	iObserver->OnSearchFailedL(aError);
 	}
 
 void CSearch::OnHTTPHeadersRecieved(const RHTTPTransaction /*aTransaction*/)
@@ -306,7 +306,11 @@ void CSearch::OnHTTPHeadersRecieved(const RHTTPTransaction /*aTransaction*/)
 
 	}
 
-void MSearchObserver::OnSearchFailed(/*TInt aError*/)
+void MSearchObserver::OnSearchFailedL(TInt aError)
 	{
-	
+	HBufC* msgFmt = /*iEikonEnv*/CEikonEnv::Static()->AllocReadResourceLC(R_SEARCH_FAILED_FMT);
+	TBuf<32> msg;
+	msg.Format(*msgFmt, aError);
+	CEikonEnv::Static()->AlertWin(msg);
+	CleanupStack::PopAndDestroy(msgFmt);
 	}
