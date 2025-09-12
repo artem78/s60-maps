@@ -13,7 +13,7 @@ CHARACTER_SET UTF8
 //#define qtn_help "Help"
 #define qtn_about "Про програму"
 #define qtn_exit "Вийти"
-#define qtn_tile_providers_title "Мапи"
+#define qtn_tile_providers_title "Мапи"	// todo: update!
 #define qtn_service_title "Сервіс"
 #define qtn_tiles_cache_stats "Статистика кешу"
 #define qtn_reset_tiles_cache "Очистити кеш мап"

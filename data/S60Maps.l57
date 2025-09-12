@@ -14,7 +14,7 @@ CHARACTER_SET UTF8
 //#define qtn_help "עזרה"
 #define qtn_about "אודות"
 #define qtn_exit "יציאה"
-#define qtn_tile_providers_title "מפות"
+#define qtn_tile_providers_title "מפות"	// todo: update!
 #define qtn_service_title "כלים"
 #define qtn_tiles_cache_stats "סטטיסטיקות מטמון מפה"
 #define qtn_reset_tiles_cache "נקה מטמון מפה"
