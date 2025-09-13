@@ -100,3 +100,5 @@ CHARACTER_SET UTF8
 // Added in version X.XX
 
 #define qtn_no_results "No results!"
+#define qtn_create_landmark_dlg_title "New landmark"
+#define qtn_edit_landmark_dlg_title "Rename landmark"
