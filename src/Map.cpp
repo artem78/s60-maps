@@ -1882,7 +1882,7 @@ void CTileBitmapManager::OnHTTPError(TInt aError,
 	iState = /*TProcessingState::*/EIdle;
 	
 	
-	if (aError == KErrCancel)
+	if (aError == KErrCancel || aError == KErrNotReady)
 		{
 		// If access point not provided switch to offline mode
 		

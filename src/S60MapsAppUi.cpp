@@ -977,7 +977,7 @@ TBool CS60MapsAppUi::IsNetworkConnected()
 void CS60MapsAppUi::StartNetworkConnection()
 	{
 	//User::LeaveIfError(iConn.Start());
-	if (iConn.Start())
+	if (iConn.Start() == KErrNone)
 		{
 		iIsNetworkConnected = ETrue;
 		}
