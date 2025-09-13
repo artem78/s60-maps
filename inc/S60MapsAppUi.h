@@ -249,7 +249,7 @@ public:
 	RConnection iConn;
 	
 	TBool IsNetworkConnected();
-	void StartNetworkConnectionL();
+	void StartNetworkConnection();
 	
 	};
 

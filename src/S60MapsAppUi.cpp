@@ -974,10 +974,17 @@ TBool CS60MapsAppUi::IsNetworkConnected()
 	return iIsNetworkConnected;
 	}
 
-void CS60MapsAppUi::StartNetworkConnectionL()
+void CS60MapsAppUi::StartNetworkConnection()
 	{
-	User::LeaveIfError(iConn.Start());
-	iIsNetworkConnected = ETrue;
+	//User::LeaveIfError(iConn.Start());
+	if (iConn.Start())
+		{
+		iIsNetworkConnected = ETrue;
+		}
+	/*else
+		{
+		iIsOfflineMode = ETrue;
+		}*/
 	}
 
 // End of File

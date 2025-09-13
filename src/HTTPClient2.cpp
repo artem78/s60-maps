@@ -67,7 +67,7 @@ void CHTTPClient2::SendRequestL(THTTPMethod aMethod, const TDesC8 &aUrl)
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
 	if (!appUi->IsNetworkConnected())
 		{	
-		appUi->StartNetworkConnectionL();
+		appUi->StartNetworkConnection();
 		}
 	
 		
