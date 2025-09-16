@@ -307,11 +307,13 @@ void CSearch::OnHTTPHeadersRecieved(const RHTTPTransaction /*aTransaction*/)
 
 	}
 
-void MSearchObserver::OnSearchFailedL(TInt aError)
+void MSearchObserver::OnSearchFailedL(TInt aErrCode)
 	{
+	TBuf<32> errStr;
+	MiscUtils::ErrorToDes(aErrCode, errStr);
 	HBufC* msgFmt = /*iEikonEnv*/CEikonEnv::Static()->AllocReadResourceLC(R_SEARCH_FAILED_FMT);
-	TBuf<32> msg;
-	msg.Format(*msgFmt, aError);
+	TBuf</*32*/64> msg;
+	msg.Format(*msgFmt, &errStr);
 	CEikonEnv::Static()->AlertWin(msg);
 	CleanupStack::PopAndDestroy(msgFmt);
 	}

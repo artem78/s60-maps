@@ -282,6 +282,377 @@ void MiscUtils::DbgMsgL(const TDesC &aMsg)
 	CleanupStack::PopAndDestroy(globalNote);
 	}
 
+void MiscUtils::ErrorToDes(TInt aErrCode, TDes &aText)
+	{
+	/* Just parsed from e32err.r with https://regex101.com/r/XMYthY/1
+	   and https://onecompiler.com/python/43wvdc6jf
+	   
+	   todo: improve error descriptions
+	   todo: replace switch/case to:
+			1) strings in resource file
+			2) or constant array of strings and get string by index from it */
+	
+	switch (aErrCode)
+		{
+		case KErrNone: // 0
+			{
+			_LIT(KText, "No error");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrNotFound: // -1
+			{
+			_LIT(KText, "NotFound");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrGeneral: // -2
+			{
+			_LIT(KText, "General");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrCancel: // -3
+			{
+			_LIT(KText, "Cancel");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrNoMemory: // -4
+			{
+			_LIT(KText, "NoMemory");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrNotSupported: // -5
+			{
+			_LIT(KText, "NotSupported");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrArgument: // -6
+			{
+			_LIT(KText, "Argument");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrTotalLossOfPrecision: // -7
+			{
+			_LIT(KText, "TotalLossOfPrecision");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrBadHandle: // -8
+			{
+			_LIT(KText, "BadHandle");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrOverflow: // -9
+			{
+			_LIT(KText, "Overflow");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrUnderflow: // -10
+			{
+			_LIT(KText, "Underflow");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrAlreadyExists: // -11
+			{
+			_LIT(KText, "AlreadyExists");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrPathNotFound: // -12
+			{
+			_LIT(KText, "PathNotFound");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrDied: // -13
+			{
+			_LIT(KText, "Died");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrInUse: // -14
+			{
+			_LIT(KText, "InUse");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrServerTerminated: // -15
+			{
+			_LIT(KText, "ServerTerminated");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrServerBusy: // -16
+			{
+			_LIT(KText, "ServerBusy");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrCompletion: // -17
+			{
+			_LIT(KText, "Completion");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrNotReady: // -18
+			{
+			_LIT(KText, "NotReady");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrUnknown: // -19
+			{
+			_LIT(KText, "Unknown");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrCorrupt: // -20
+			{
+			_LIT(KText, "Corrupt");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrAccessDenied: // -21
+			{
+			_LIT(KText, "AccessDenied");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrLocked: // -22
+			{
+			_LIT(KText, "Locked");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrWrite: // -23
+			{
+			_LIT(KText, "Write");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrDisMounted: // -24
+			{
+			_LIT(KText, "DisMounted");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrEof: // -25
+			{
+			_LIT(KText, "Eof");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrDiskFull: // -26
+			{
+			_LIT(KText, "DiskFull");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrBadDriver: // -27
+			{
+			_LIT(KText, "BadDriver");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrBadName: // -28
+			{
+			_LIT(KText, "BadName");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrCommsLineFail: // -29
+			{
+			_LIT(KText, "CommsLineFail");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrCommsFrame: // -30
+			{
+			_LIT(KText, "CommsFrame");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrCommsOverrun: // -31
+			{
+			_LIT(KText, "CommsOverrun");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrCommsParity: // -32
+			{
+			_LIT(KText, "CommsParity");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrTimedOut: // -33
+			{
+			_LIT(KText, "TimedOut");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrCouldNotConnect: // -34
+			{
+			_LIT(KText, "CouldNotConnect");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrCouldNotDisconnect: // -35
+			{
+			_LIT(KText, "CouldNotDisconnect");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrDisconnected: // -36
+			{
+			_LIT(KText, "Disconnected");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrBadLibraryEntryPoint: // -37
+			{
+			_LIT(KText, "BadLibraryEntryPoint");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrBadDescriptor: // -38
+			{
+			_LIT(KText, "BadDescriptor");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrAbort: // -39
+			{
+			_LIT(KText, "Abort");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrTooBig: // -40
+			{
+			_LIT(KText, "TooBig");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrDivideByZero: // -41
+			{
+			_LIT(KText, "DivideByZero");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrBadPower: // -42
+			{
+			_LIT(KText, "BadPower");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrDirFull: // -43
+			{
+			_LIT(KText, "DirFull");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrHardwareNotAvailable: // -44
+			{
+			_LIT(KText, "HardwareNotAvailable");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrSessionClosed: // -45
+			{
+			_LIT(KText, "SessionClosed");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrPermissionDenied: // -46
+			{
+			_LIT(KText, "PermissionDenied");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrExtensionNotSupported: // -47
+			{
+			_LIT(KText, "ExtensionNotSupported");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrCommsBreak: // -48
+			{
+			_LIT(KText, "CommsBreak");
+			aText.Copy(KText);
+			break;
+			}
+
+		case /*KErrNoSecureTime*/ -49: // Added in s60v5 SDK
+			{
+			_LIT(KText, "NoSecureTime");
+			aText.Copy(KText);
+			break;
+			}
+
+		default:
+			{
+			_LIT(KFmt, "Error number %d");
+			aText.Format(KFmt, aErrCode);
+			break;
+			}
+		}
+	}
+
 
 // CWindowGcEx
 

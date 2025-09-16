@@ -92,6 +92,13 @@ class MiscUtils
 	{
 public:
 	static void DbgMsgL(const TDesC &aMsg);
+	
+	/* 
+	 * Converts given error code to string representation (KErrNotFound => "Not found",
+	 * KErrNoError => "No error" and etc.). For unknown codes returns "Error number -XXX".
+	 * Defined error names up to KErrNoSecureTime (-49). 
+	 */
+	static void ErrorToDes(TInt aErrCode, TDes &aText);
 	};
 
 

@@ -100,4 +100,4 @@ CHARACTER_SET UTF8
 // Added in version X.XX
 
 #define qtn_no_results "No results!"
-#define qtn_search_failed_fmt "Search failed! (%d)"
+#define qtn_search_failed_fmt "Search failed! (%S)"
