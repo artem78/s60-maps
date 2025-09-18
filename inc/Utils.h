@@ -13,6 +13,8 @@
 #include <e32base.h>
 #include <lbsposition.h>
 #include <w32std.h>
+#include <eikenv.h>
+#include <eikinfo.h>
 
 // CLASS DECLARATION
 
@@ -91,7 +93,10 @@ public:
 class MiscUtils
 	{
 public:
-	static void DbgMsgL(const TDesC &aMsg);
+	inline static void DbgMsg(const TDesC &aMsg)
+		{
+			CEikonEnv::Static()->InfoMsg(aMsg);
+		};
 	};
 
 

@@ -888,12 +888,12 @@ void CLandmarksLayer::DrawL(CWindowGc &aGc)
 		///*dbgMsg.Format(_L("S Lat=%f    N Lat=%f   W Lon=%f   E Lon=%f"), iCachedArea.iBrCoord.Latitude(),
 		//		iCachedArea.iTlCoord.Latitude() ,iCachedArea.iTlCoord.Longitude()
 		//		,iCachedArea.iBrCoord.Longitude());*/
-		//MiscUtils::DbgMsgL(dbgMsg);
+		//MiscUtils::DbgMsg(dbgMsg);
 		
 		ReloadLandmarksListL();
 		
 		DEBUG(_L("Landmarks list updated"));
-		//MiscUtils::DbgMsgL(_L("Landmarks list updated"));
+		//MiscUtils::DbgMsg(_L("Landmarks list updated"));
 		}
 	else
 		{

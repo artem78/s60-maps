@@ -272,17 +272,6 @@ bool operator != (const TBounds &aCoordRect1, const TBounds &aCoordRect2)
 	}
 
 
-// MiscUtils
-
-void MiscUtils::DbgMsgL(const TDesC &aMsg)
-	{
-	TPtrC ptr(aMsg);
-	CAknGlobalNote* globalNote = CAknGlobalNote::NewLC();
-	globalNote->ShowNoteL(EAknGlobalInformationNote, ptr);
-	CleanupStack::PopAndDestroy(globalNote);
-	}
-
-
 // CWindowGcEx
 
 CWindowGcEx::CWindowGcEx(CWsScreenDevice *aDevice)
