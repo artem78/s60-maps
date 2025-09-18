@@ -309,10 +309,10 @@ void CSearch::OnHTTPHeadersRecieved(const RHTTPTransaction /*aTransaction*/)
 
 void MSearchObserver::OnSearchFailedL(TInt aErrCode)
 	{
-	TBuf<32> errStr;
+	TBuf<KMaxErrorNameLength> errStr;
 	MiscUtils::ErrorToDes(aErrCode, errStr);
 	HBufC* msgFmt = /*iEikonEnv*/CEikonEnv::Static()->AllocReadResourceLC(R_SEARCH_FAILED_FMT);
-	TBuf</*32*/64> msg;
+	TBuf<32 + KMaxErrorNameLength> msg;
 	msg.Format(*msgFmt, &errStr);
 	CEikonEnv::Static()->AlertWin(msg);
 	CleanupStack::PopAndDestroy(msgFmt);

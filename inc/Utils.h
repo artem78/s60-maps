@@ -14,6 +14,10 @@
 #include <lbsposition.h>
 #include <w32std.h>
 
+// Constants
+
+const TInt KMaxErrorNameLength = 32;
+
 // CLASS DECLARATION
 
 class MathUtils
@@ -99,7 +103,7 @@ public:
 	 * Defined error names up to KErrNoSecureTime (-49).
 	 * 
 	 * @param	aErrCode - error code
-	 * @param	aText - output descriptor (min. 32 chars should be enough)
+	 * @param	aText - output descriptor (KMaxErrorNameLength chars should be enough)
 	 *  
 	 */
 	static void ErrorToDes(TInt aErrCode, TDes &aText);
