@@ -96,7 +96,11 @@ public:
 	/* 
 	 * Converts given error code to string representation (KErrNotFound => "Not found",
 	 * KErrNoError => "No error" and etc.). For unknown codes returns "Error number -XXX".
-	 * Defined error names up to KErrNoSecureTime (-49). 
+	 * Defined error names up to KErrNoSecureTime (-49).
+	 * 
+	 * @param	aErrCode - error code
+	 * @param	aText - output descriptor (min. 32 chars should be enough)
+	 *  
 	 */
 	static void ErrorToDes(TInt aErrCode, TDes &aText);
 	};
