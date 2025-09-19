@@ -91,6 +91,10 @@ void CSettings::ExternalizeL(RWriteStream& aStream) const
 	
 	// Added in version 1.14
 	aStream << static_cast<TInt8>(iPositioningEnabled);
+	
+	// Added in version X.XX
+	aStream << iTotalBytesRecieved;
+	aStream << iTotalBytesSend;
 	}
 
 // Load settings from file
@@ -134,6 +138,10 @@ void CSettings::DoInternalizeL(RReadStream& aStream)
 	// Added in version 1.14
 	aStream >> int8Val;
 	iPositioningEnabled = static_cast<TBool>(int8Val);
+	
+	// Added in version X.XX
+	aStream >> iTotalBytesRecieved;
+	aStream >> iTotalBytesSend;
 	}
 
 void CSettings::InternalizeL(RReadStream& aStream)

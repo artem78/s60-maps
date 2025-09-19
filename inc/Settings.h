@@ -19,6 +19,10 @@
 #include <s32strm.h>
 #include "Map.h"
 
+// Types
+
+typedef TUint32/*64*/ TBytesCount;
+
 // CLASS DECLARATION
 
 /**
@@ -84,6 +88,8 @@ public:
 	TBuf/*8*/<0x100> iHttpsProxyUrl;
 	TBool iUseDiskCache;
 	TBool iPositioningEnabled;
+	TBytesCount iTotalBytesRecieved;
+	TBytesCount iTotalBytesSend;
 	
 public:
 	CSettings();

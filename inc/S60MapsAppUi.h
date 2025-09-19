@@ -251,6 +251,18 @@ public:
 	TBool IsNetworkConnected();
 	void StartNetworkConnection();
 	
+	inline TBytesCount SessionBytesSend() const
+		{ return Math::Random()/100; };
+	
+	inline TBytesCount SessionBytesRecieved() const
+		{ return Math::Random()/100; };
+	
+	inline TBytesCount TotalBytesSend() const
+		{ return iSettings->iTotalBytesSend + SessionBytesSend(); };
+	
+	inline TBytesCount TotalBytesRecieved() const
+		{ return iSettings->iTotalBytesRecieved + SessionBytesRecieved(); };
+	
 	};
 
 #endif // __S60MAPSAPPUI_h__

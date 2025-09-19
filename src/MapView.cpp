@@ -707,29 +707,21 @@ void CMapView::OnSearchFinished(const TSearchResultItem &aResultData)
 
 void CMapView::HandleTrafficCounterL()
 	{
-	////////////////////////////////////////
-	TUint32/*64*/ sendBytes = Math::Random()/100;
-	TUint32 recievedBytes = Math::Random()/100;
-	TUint32 sendTotalBytes = Math::Random()/100;
-	TUint32 recievedTotalBytes = Math::Random()/100;
-	///////////////////////////////
-
-	
-//	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(AppUi());
-	
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(AppUi());
+		
 	HBufC* title = iEikonEnv->AllocReadResourceLC(R_TRAFFIC_COUNTER);
 	HBufC* msgFmt = iEikonEnv->AllocReadResourceLC(R_TRAFFIC_COUNTER_DLG_MSG_FMT);
 	
-	TBuf<16> sendStr, recievedStr, sendTotalStr, recievedTotalStr;
-	FileUtils::FileSizeToReadableString(sendBytes,			sendStr);
-	FileUtils::FileSizeToReadableString(recievedBytes,		recievedStr);
-	FileUtils::FileSizeToReadableString(sendTotalBytes,		sendTotalStr);
-	FileUtils::FileSizeToReadableString(recievedTotalBytes,	recievedTotalStr);
+	TBuf<16> sessSendStr, sessRecievedStr, totalSendStr, totalRecievedStr;
+	FileUtils::FileSizeToReadableString(appUi->SessionBytesSend(),		sessSendStr);
+	FileUtils::FileSizeToReadableString(appUi->SessionBytesRecieved(),	sessRecievedStr);
+	FileUtils::FileSizeToReadableString(appUi->TotalBytesSend(),		totalSendStr);
+	FileUtils::FileSizeToReadableString(appUi->TotalBytesRecieved(),	totalRecievedStr);
 	
 	RBuf msg;
 	msg.CreateL(512);
 	msg.CleanupClosePushL();
-	msg.Format(*msgFmt, &recievedStr, &sendStr, &recievedTotalStr, &sendTotalStr);
+	msg.Format(*msgFmt, &sessRecievedStr, &sessSendStr, &totalRecievedStr, &totalSendStr);
 	
 	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
 	CleanupStack::PushL(dlg);

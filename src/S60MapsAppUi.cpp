@@ -396,7 +396,9 @@ void CS60MapsAppUi::ExternalizeL(RWriteStream& aStream) const
 	iSettings->SetLat(coord.Latitude());
 	iSettings->SetLon(coord.Longitude());
 	iSettings->SetZoom(iMapView->MapControl()->GetZoom());
-	iSettings->SetTileProviderId(iActiveTileProvider->iId);	
+	iSettings->SetTileProviderId(iActiveTileProvider->iId);
+	iSettings->iTotalBytesRecieved = TotalBytesRecieved();
+	iSettings->iTotalBytesSend = TotalBytesSend();
 	
 	// And save
 	aStream << *iSettings;
