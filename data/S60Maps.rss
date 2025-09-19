@@ -232,6 +232,11 @@ RESOURCE MENU_PANE r_submenu_service
 			{
 			command = EResetTilesCache;
 			txt = qtn_reset_tiles_cache;
+			},		
+		MENU_ITEM
+			{
+			command = ETrafficCounter;
+			txt = qtn_traffic_counter;
 			}
 		};
 	}
@@ -493,6 +498,8 @@ RESOURCE TBUF r_map_data { buf=qtn_map_data; }
 RESOURCE TBUF r_map_style { buf=qtn_map_style; }
 RESOURCE TBUF r_no_results { buf=qtn_no_results; }
 RESOURCE TBUF r_search_failed_fmt { buf=qtn_search_failed_fmt; }
+RESOURCE TBUF r_traffic_counter { buf=qtn_traffic_counter; }
+RESOURCE TBUF r_traffic_counter_dlg_msg_fmt { buf=qtn_traffic_counter_dlg_msg_fmt; }
 
 // Language names
 RESOURCE TBUF r_lang_english_name	{ buf=qtn_lang_english_name; }

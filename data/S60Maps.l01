@@ -97,3 +97,5 @@
 
 #define qtn_no_results "No results!"
 #define qtn_search_failed_fmt "Search failed! (%d)"
+#define qtn_traffic_counter "Traffic counter"
+#define qtn_traffic_counter_dlg_msg_fmt "Session:\n   recieved %S\n   send %S\n\nTotal:\n   recieved %S\n   send %S"

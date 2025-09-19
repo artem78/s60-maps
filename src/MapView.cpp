@@ -182,6 +182,10 @@ void CMapView::HandleCommandL(TInt aCommand)
 			HandleSearchL();
 			break;
 			
+		case ETrafficCounter:
+			HandleTrafficCounterL();
+			break;
+			
 		default:
 			// Let the AppUi handle unknown for view commands
 			AppUi()->HandleCommandL(aCommand);
@@ -699,4 +703,41 @@ void CMapView::OnSearchFinished(const TSearchResultItem &aResultData)
 	
 	//delete iSearch;
 	//iSearch = NULL;
+	}
+
+void CMapView::HandleTrafficCounterL()
+	{
+	////////////////////////////////////////
+	TUint32/*64*/ sendBytes = Math::Random()/100;
+	TUint32 recievedBytes = Math::Random()/100;
+	TUint32 sendTotalBytes = Math::Random()/100;
+	TUint32 recievedTotalBytes = Math::Random()/100;
+	///////////////////////////////
+
+	
+//	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(AppUi());
+	
+	HBufC* title = iEikonEnv->AllocReadResourceLC(R_TRAFFIC_COUNTER);
+	HBufC* msgFmt = iEikonEnv->AllocReadResourceLC(R_TRAFFIC_COUNTER_DLG_MSG_FMT);
+	
+	TBuf<16> sendStr, recievedStr, sendTotalStr, recievedTotalStr;
+	FileUtils::FileSizeToReadableString(sendBytes,			sendStr);
+	FileUtils::FileSizeToReadableString(recievedBytes,		recievedStr);
+	FileUtils::FileSizeToReadableString(sendTotalBytes,		sendTotalStr);
+	FileUtils::FileSizeToReadableString(recievedTotalBytes,	recievedTotalStr);
+	
+	RBuf msg;
+	msg.CreateL(512);
+	msg.CleanupClosePushL();
+	msg.Format(*msgFmt, &recievedStr, &sendStr, &recievedTotalStr, &sendTotalStr);
+	
+	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
+	CleanupStack::PushL(dlg);
+	dlg->PrepareLC(R_QUERY_DIALOG);
+	dlg->QueryHeading()->SetTextL(*title);
+	dlg->SetMessageTextL(msg);
+	CleanupStack::Pop(dlg);
+	dlg->RunLD();
+	
+	CleanupStack::PopAndDestroy(3, title);
 	}

@@ -85,6 +85,7 @@ private:
 	void HandleSettingsL();
 	void HandleReloadVisibleAreaL();
 	void HandleSearchL();
+	void HandleTrafficCounterL();
 	
 	// Others
 	CSearch* iSearch;
