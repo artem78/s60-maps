@@ -91,8 +91,11 @@ CHARACTER_SET UTF8
 #define qtn_map_style "map style"
 #define qtn_positioning "Positioning"
 
-// Added in version X.XX
+// Added in version 1.15
 
 #define qtn_no_results "No results!"
+
+// Added in version X.XX
+
 #define qtn_create_landmark_dlg_title "New landmark"
 #define qtn_edit_landmark_dlg_title "Rename landmark"

@@ -94,8 +94,11 @@ CHARACTER_SET UTF8
 #define qtn_map_style "стиль карты"
 #define qtn_positioning "Определять местоположение"
 
-// Added in version X.XX
+// Added in version 1.15
 
 #define qtn_no_results "Ничего не найдено!"
+
+// Added in version X.XX
+
 #define qtn_create_landmark_dlg_title "Новый ориентир"
 #define qtn_edit_landmark_dlg_title "Переименование ориентира"
