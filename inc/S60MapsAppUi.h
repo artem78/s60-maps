@@ -251,11 +251,8 @@ public:
 	TBool IsNetworkConnected();
 	void StartNetworkConnection();
 	
-	inline TBytesCount SessionBytesSend() const
-		{ return Math::Random()/100; };
-	
-	inline TBytesCount SessionBytesRecieved() const
-		{ return Math::Random()/100; };
+	inline TBytesCount SessionBytesSend() const;		// fixme: on EMULATOR always return 0!
+	inline TBytesCount SessionBytesRecieved() const;	// fixme: on EMULATOR always return 0!
 	
 	inline TBytesCount TotalBytesSend() const
 		{ return iSettings->iTotalBytesSend + SessionBytesSend(); };

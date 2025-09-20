@@ -989,4 +989,60 @@ void CS60MapsAppUi::StartNetworkConnection()
 		}*/
 	}
 
+TBytesCount CS60MapsAppUi::SessionBytesSend() const
+	{
+	TUint sendBytes(0);
+	TUint recievedBytes(0);
+	TPckg<TUint> sendBytesPckg(sendBytes/* 0*/);
+	TPckg<TUint> recievedBytesPckg(recievedBytes/* 0*/);
+	TRequestStatus status;
+	
+	//RConnection *conn;
+	//conn = &(const_cast<*CS60MapsAppUi>(this))->iConn;
+	/*const RConnection conn(iConn);
+	conn.DataTransferredRequest(sendBytesPckg, recievedBytesPckg, status);*/
+	
+	/*const_cast<const RConnection>(iConn)*//*iConn.	 */
+	/*(*conn).*/  
+	
+	(const_cast<CS60MapsAppUi*>(this))->iConn.DataTransferredRequest(sendBytesPckg, recievedBytesPckg, status);
+	User::WaitForRequest(status);
+	if (status.Int() == KErrNone)
+		{
+		return sendBytes /*sendBytesPckg()*/;
+		}
+	else // error
+		{
+		return 0;
+		}
+	};
+
+TBytesCount CS60MapsAppUi::SessionBytesRecieved() const
+	{
+	TUint sendBytes(0);
+	TUint recievedBytes(0);
+	TPckg<TUint> sendBytesPckg(sendBytes/* 0*/);
+	TPckg<TUint> recievedBytesPckg(recievedBytes/* 0*/);
+	TRequestStatus status;
+	
+	//RConnection *conn;
+	//conn = &(const_cast<*CS60MapsAppUi>(this))->iConn;
+	/*const RConnection conn(iConn);
+	conn.DataTransferredRequest(sendBytesPckg, recievedBytesPckg, status);*/
+	
+	/*const_cast<const RConnection>(iConn)*//*iConn.	 */
+	/*(*conn).*/  
+	
+	(const_cast<CS60MapsAppUi*>(this))->iConn.DataTransferredRequest(sendBytesPckg, recievedBytesPckg, status);
+	User::WaitForRequest(status);
+	if (status.Int() == KErrNone)
+		{
+		return recievedBytes /*sendBytesPckg()*/;
+		}
+	else // error
+		{
+		return 0;
+		}
+	};
+
 // End of File
