@@ -21,6 +21,7 @@ const TReal64 KDefaultLon = 9.0;
 const TZoom KDefaultZoom = 3;
 _LIT(KDefaultTileProviderId, "osm");
 _LIT/*8*/(KDefaultHttpsProxyUrl, "http://s60maps.publicvm.com:8088/proxy?url=");
+const TInt KSkippedBytesAfterV1_14 = 100;
 
 
 CSettings::CSettings() :
@@ -93,6 +94,7 @@ void CSettings::ExternalizeL(RWriteStream& aStream) const
 	aStream << static_cast<TInt8>(iPositioningEnabled);
 	
 	// Added in version X.XX
+	MiscUtils::WriteZeroesToStreamL(aStream, KSkippedBytesAfterV1_14); // Skip 100 bytes
 	aStream << iTotalBytesRecieved;
 	aStream << iTotalBytesSent;
 	}
@@ -140,6 +142,10 @@ void CSettings::DoInternalizeL(RReadStream& aStream)
 	iPositioningEnabled = static_cast<TBool>(int8Val);
 	
 	// Added in version X.XX
+	aStream.ReadL(KSkippedBytesAfterV1_14);	/* Skip 100 bytes for correct reading of
+											config file created with previous version
+											of program (otherwise mess will be read
+											instead of setup zeroes by default) */
 	aStream >> iTotalBytesRecieved;
 	aStream >> iTotalBytesSent;
 	}

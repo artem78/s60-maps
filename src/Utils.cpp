@@ -282,6 +282,17 @@ void MiscUtils::DbgMsgL(const TDesC &aMsg)
 	CleanupStack::PopAndDestroy(globalNote);
 	}
 
+void MiscUtils::WriteZeroesToStreamL(RWriteStream &aStream, TInt aLength)
+	{
+	RBuf8 tmp;
+	tmp.CreateMaxL(aLength);
+	tmp.CleanupClosePushL();
+	tmp.FillZ();
+	//aStream.WriteL(tmp); // ! wrong !
+	aStream.WriteL(tmp.Ptr(), tmp.Length());
+	CleanupStack::PopAndDestroy(&tmp);
+	}
+
 
 // CWindowGcEx
 

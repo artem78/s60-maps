@@ -92,6 +92,14 @@ class MiscUtils
 	{
 public:
 	static void DbgMsgL(const TDesC &aMsg);
+	
+	/*
+	 * Writes NULL bytes to given stream
+	 * 
+	 * @param	aStream - Stream for write
+	 * @param	aLength - Length (in bytes)
+	 */
+	static void WriteZeroesToStreamL(RWriteStream &aStream, TInt aLength=1);
 	};
 
 
