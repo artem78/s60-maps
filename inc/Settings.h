@@ -89,7 +89,7 @@ public:
 	TBool iUseDiskCache;
 	TBool iPositioningEnabled;
 	TBytesCount iTotalBytesRecieved;
-	TBytesCount iTotalBytesSend;
+	TBytesCount iTotalBytesSent;
 	
 public:
 	CSettings();

@@ -712,16 +712,16 @@ void CMapView::HandleTrafficCounterL()
 	HBufC* title = iEikonEnv->AllocReadResourceLC(R_TRAFFIC_COUNTER);
 	HBufC* msgFmt = iEikonEnv->AllocReadResourceLC(R_TRAFFIC_COUNTER_DLG_MSG_FMT);
 	
-	TBuf<16> sessSendStr, sessRecievedStr, totalSendStr, totalRecievedStr;
-	FileUtils::FileSizeToReadableString(appUi->SessionBytesSend(),		sessSendStr);
+	TBuf<16> sessSentStr, sessRecievedStr, totalSentStr, totalRecievedStr;
+	FileUtils::FileSizeToReadableString(appUi->SessionBytesSent(),		sessSentStr);
 	FileUtils::FileSizeToReadableString(appUi->SessionBytesRecieved(),	sessRecievedStr);
-	FileUtils::FileSizeToReadableString(appUi->TotalBytesSend(),		totalSendStr);
+	FileUtils::FileSizeToReadableString(appUi->TotalBytesSent(),		totalSentStr);
 	FileUtils::FileSizeToReadableString(appUi->TotalBytesRecieved(),	totalRecievedStr);
 	
 	RBuf msg;
 	msg.CreateL(512);
 	msg.CleanupClosePushL();
-	msg.Format(*msgFmt, &sessRecievedStr, &sessSendStr, &totalRecievedStr, &totalSendStr);
+	msg.Format(*msgFmt, &sessRecievedStr, &sessSentStr, &totalRecievedStr, &totalSentStr);
 	
 	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
 	CleanupStack::PushL(dlg);

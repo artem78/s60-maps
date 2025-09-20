@@ -94,7 +94,7 @@ void CSettings::ExternalizeL(RWriteStream& aStream) const
 	
 	// Added in version X.XX
 	aStream << iTotalBytesRecieved;
-	aStream << iTotalBytesSend;
+	aStream << iTotalBytesSent;
 	}
 
 // Load settings from file
@@ -141,7 +141,7 @@ void CSettings::DoInternalizeL(RReadStream& aStream)
 	
 	// Added in version X.XX
 	aStream >> iTotalBytesRecieved;
-	aStream >> iTotalBytesSend;
+	aStream >> iTotalBytesSent;
 	}
 
 void CSettings::InternalizeL(RReadStream& aStream)

@@ -398,7 +398,7 @@ void CS60MapsAppUi::ExternalizeL(RWriteStream& aStream) const
 	iSettings->SetZoom(iMapView->MapControl()->GetZoom());
 	iSettings->SetTileProviderId(iActiveTileProvider->iId);
 	iSettings->iTotalBytesRecieved = TotalBytesRecieved();
-	iSettings->iTotalBytesSend = TotalBytesSend();
+	iSettings->iTotalBytesSent = TotalBytesSent();
 	
 	// And save
 	aStream << *iSettings;
@@ -989,27 +989,27 @@ void CS60MapsAppUi::StartNetworkConnection()
 		}*/
 	}
 
-TBytesCount CS60MapsAppUi::SessionBytesSend() const
+TBytesCount CS60MapsAppUi::SessionBytesSent() const
 	{
-	TUint sendBytes(0);
+	TUint sentBytes(0);
 	TUint recievedBytes(0);
-	TPckg<TUint> sendBytesPckg(sendBytes/* 0*/);
+	TPckg<TUint> sentBytesPckg(sentBytes/* 0*/);
 	TPckg<TUint> recievedBytesPckg(recievedBytes/* 0*/);
 	TRequestStatus status;
 	
 	//RConnection *conn;
 	//conn = &(const_cast<*CS60MapsAppUi>(this))->iConn;
 	/*const RConnection conn(iConn);
-	conn.DataTransferredRequest(sendBytesPckg, recievedBytesPckg, status);*/
+	conn.DataTransferredRequest(sentBytesPckg, recievedBytesPckg, status);*/
 	
 	/*const_cast<const RConnection>(iConn)*//*iConn.	 */
 	/*(*conn).*/  
 	
-	(const_cast<CS60MapsAppUi*>(this))->iConn.DataTransferredRequest(sendBytesPckg, recievedBytesPckg, status);
+	(const_cast<CS60MapsAppUi*>(this))->iConn.DataTransferredRequest(sentBytesPckg, recievedBytesPckg, status);
 	User::WaitForRequest(status);
 	if (status.Int() == KErrNone)
 		{
-		return sendBytes /*sendBytesPckg()*/;
+		return sentBytes /*sentBytesPckg()*/;
 		}
 	else // error
 		{
@@ -1019,25 +1019,25 @@ TBytesCount CS60MapsAppUi::SessionBytesSend() const
 
 TBytesCount CS60MapsAppUi::SessionBytesRecieved() const
 	{
-	TUint sendBytes(0);
+	TUint sentBytes(0);
 	TUint recievedBytes(0);
-	TPckg<TUint> sendBytesPckg(sendBytes/* 0*/);
+	TPckg<TUint> sentBytesPckg(sentBytes/* 0*/);
 	TPckg<TUint> recievedBytesPckg(recievedBytes/* 0*/);
 	TRequestStatus status;
 	
 	//RConnection *conn;
 	//conn = &(const_cast<*CS60MapsAppUi>(this))->iConn;
 	/*const RConnection conn(iConn);
-	conn.DataTransferredRequest(sendBytesPckg, recievedBytesPckg, status);*/
+	conn.DataTransferredRequest(sentBytesPckg, recievedBytesPckg, status);*/
 	
 	/*const_cast<const RConnection>(iConn)*//*iConn.	 */
 	/*(*conn).*/  
 	
-	(const_cast<CS60MapsAppUi*>(this))->iConn.DataTransferredRequest(sendBytesPckg, recievedBytesPckg, status);
+	(const_cast<CS60MapsAppUi*>(this))->iConn.DataTransferredRequest(sentBytesPckg, recievedBytesPckg, status);
 	User::WaitForRequest(status);
 	if (status.Int() == KErrNone)
 		{
-		return recievedBytes /*sendBytesPckg()*/;
+		return recievedBytes /*sentBytesPckg()*/;
 		}
 	else // error
 		{
