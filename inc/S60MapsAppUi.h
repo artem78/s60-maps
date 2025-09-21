@@ -251,14 +251,13 @@ public:
 	TBool IsNetworkConnected();
 	void StartNetworkConnection();
 	
-	inline TBytesCount SessionBytesSent() const;		// fixme: on EMULATOR always return 0!
-	inline TBytesCount SessionBytesRecieved() const;	// fixme: on EMULATOR always return 0!
+	//TBytesCount SessionBytesSent() const;
+	//TBytesCount SessionBytesRecieved() const;
+	//TBytesCount TotalBytesSent() const;
+	//TBytesCount TotalBytesRecieved() const;
 	
-	inline TBytesCount TotalBytesSent() const
-		{ return iSettings->iTotalBytesSent + SessionBytesSent(); };
-	
-	inline TBytesCount TotalBytesRecieved() const
-		{ return iSettings->iTotalBytesRecieved + SessionBytesRecieved(); };
+	TInt GetSessionBytesTransferred(TBytesCount &aBytesRecieved, TBytesCount &aBytesSent) const; // fixme: on EMULATOR always aBytesRecieved = aBytesSent = 0!
+	TInt GetTotalBytesTransferred(TBytesCount &aBytesRecieved, TBytesCount &aBytesSent) const;
 	
 	};
 

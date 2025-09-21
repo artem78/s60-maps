@@ -391,14 +391,18 @@ void CS60MapsAppUi::ExternalizeL(RWriteStream& aStream) const
 	{
 	DEBUG(_L("Settings saving started"));
 	
+	TBytesCount totalBytesRecieved(0);
+	TBytesCount totalBytesSent(0);
+	GetTotalBytesTransferred(totalBytesRecieved, totalBytesSent);
+	
 	// Update settings
 	TCoordinate coord = iMapView->MapControl()->GetCenterCoordinate();
 	iSettings->SetLat(coord.Latitude());
 	iSettings->SetLon(coord.Longitude());
 	iSettings->SetZoom(iMapView->MapControl()->GetZoom());
 	iSettings->SetTileProviderId(iActiveTileProvider->iId);
-	iSettings->iTotalBytesRecieved = TotalBytesRecieved();
-	iSettings->iTotalBytesSent = TotalBytesSent();
+	iSettings->iTotalBytesRecieved = totalBytesRecieved;
+	iSettings->iTotalBytesSent = totalBytesSent;
 	
 	// And save
 	aStream << *iSettings;
@@ -989,60 +993,38 @@ void CS60MapsAppUi::StartNetworkConnection()
 		}*/
 	}
 
-TBytesCount CS60MapsAppUi::SessionBytesSent() const
+TInt CS60MapsAppUi::GetSessionBytesTransferred(TBytesCount &aBytesRecieved, TBytesCount &aBytesSent) const
 	{
-	TUint sentBytes(0);
-	TUint recievedBytes(0);
-	TPckg<TUint> sentBytesPckg(sentBytes/* 0*/);
-	TPckg<TUint> recievedBytesPckg(recievedBytes/* 0*/);
+	// fixme: also takes into account traffic from other applications via the same connection
+	
+	TPckg<TUint> sentBytesPckg(aBytesSent);
+	TPckg<TUint> recievedBytesPckg(aBytesRecieved);
 	TRequestStatus status;
-	
-	//RConnection *conn;
-	//conn = &(const_cast<*CS60MapsAppUi>(this))->iConn;
-	/*const RConnection conn(iConn);
-	conn.DataTransferredRequest(sentBytesPckg, recievedBytesPckg, status);*/
-	
-	/*const_cast<const RConnection>(iConn)*//*iConn.	 */
-	/*(*conn).*/  
 	
 	(const_cast<CS60MapsAppUi*>(this))->iConn.DataTransferredRequest(sentBytesPckg, recievedBytesPckg, status);
 	User::WaitForRequest(status);
-	if (status.Int() == KErrNone)
+	if (status.Int() != KErrNone)
 		{
-		return sentBytes /*sentBytesPckg()*/;
+		aBytesRecieved = 0;
+		aBytesSent = 0;
 		}
-	else // error
-		{
-		return 0;
-		}
-	};
+	return status.Int();
+	}
 
-TBytesCount CS60MapsAppUi::SessionBytesRecieved() const
+TInt CS60MapsAppUi::GetTotalBytesTransferred(TBytesCount &aBytesRecieved, TBytesCount &aBytesSent) const
 	{
-	TUint sentBytes(0);
-	TUint recievedBytes(0);
-	TPckg<TUint> sentBytesPckg(sentBytes/* 0*/);
-	TPckg<TUint> recievedBytesPckg(recievedBytes/* 0*/);
-	TRequestStatus status;
-	
-	//RConnection *conn;
-	//conn = &(const_cast<*CS60MapsAppUi>(this))->iConn;
-	/*const RConnection conn(iConn);
-	conn.DataTransferredRequest(sentBytesPckg, recievedBytesPckg, status);*/
-	
-	/*const_cast<const RConnection>(iConn)*//*iConn.	 */
-	/*(*conn).*/  
-	
-	(const_cast<CS60MapsAppUi*>(this))->iConn.DataTransferredRequest(sentBytesPckg, recievedBytesPckg, status);
-	User::WaitForRequest(status);
-	if (status.Int() == KErrNone)
+	TInt r = GetSessionBytesTransferred(aBytesRecieved, aBytesSent);
+	if (r == KErrNone)
 		{
-		return recievedBytes /*sentBytesPckg()*/;
+		aBytesRecieved += iSettings->iTotalBytesRecieved;
+		aBytesRecieved += iSettings->iTotalBytesSent;
 		}
 	else // error
 		{
-		return 0;
+		aBytesRecieved	= /*0*/ iSettings->iTotalBytesRecieved;
+		aBytesSent		= /*0*/ iSettings->iTotalBytesSent;
 		}
-	};
+	return r;
+	}
 
 // End of File

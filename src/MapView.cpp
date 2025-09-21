@@ -712,11 +712,17 @@ void CMapView::HandleTrafficCounterL()
 	HBufC* title = iEikonEnv->AllocReadResourceLC(R_TRAFFIC_COUNTER);
 	HBufC* msgFmt = iEikonEnv->AllocReadResourceLC(R_TRAFFIC_COUNTER_DLG_MSG_FMT);
 	
+	TBytesCount sessionBytesRecieved(0);
+	TBytesCount sessionBytesSent(0);
+	TBytesCount totalBytesRecieved(0);
+	TBytesCount totalBytesSent(0);
+	appUi->GetSessionBytesTransferred(sessionBytesRecieved, sessionBytesSent);
+	appUi->GetTotalBytesTransferred(totalBytesRecieved, totalBytesSent);
 	TBuf<16> sessSentStr, sessRecievedStr, totalSentStr, totalRecievedStr;
-	FileUtils::FileSizeToReadableString(appUi->SessionBytesSent(),		sessSentStr);
-	FileUtils::FileSizeToReadableString(appUi->SessionBytesRecieved(),	sessRecievedStr);
-	FileUtils::FileSizeToReadableString(appUi->TotalBytesSent(),		totalSentStr);
-	FileUtils::FileSizeToReadableString(appUi->TotalBytesRecieved(),	totalRecievedStr);
+	FileUtils::FileSizeToReadableString(sessionBytesSent,		sessSentStr);
+	FileUtils::FileSizeToReadableString(sessionBytesRecieved,	sessRecievedStr);
+	FileUtils::FileSizeToReadableString(totalBytesSent,		totalSentStr);
+	FileUtils::FileSizeToReadableString(totalBytesRecieved,	totalRecievedStr);
 	
 	RBuf msg;
 	msg.CreateL(512);
