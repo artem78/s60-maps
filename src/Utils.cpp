@@ -282,6 +282,387 @@ bool operator != (const TBounds &aCoordRect1, const TBounds &aCoordRect2)
 	}
 
 
+// MiscUtils
+
+void MiscUtils::DbgMsgL(const TDesC &aMsg)
+	{
+	TPtrC ptr(aMsg);
+	CAknGlobalNote* globalNote = CAknGlobalNote::NewLC();
+	globalNote->ShowNoteL(EAknGlobalInformationNote, ptr);
+	CleanupStack::PopAndDestroy(globalNote);
+	}
+
+void MiscUtils::ErrorToDes(TInt aErrCode, TDes &aText)
+	{
+	/* Just parsed from e32err.r with https://regex101.com/r/XMYthY/1
+	   and https://onecompiler.com/python/43wvdc6jf
+	   
+	   todo: replace switch/case to:
+			1) strings in resource file
+			2) or constant array of strings and get string by index from it */
+	
+	switch (aErrCode)
+		{
+		case KErrNone: // 0
+			{
+			_LIT(KText, "No error");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrNotFound: // -1
+			{
+			_LIT(KText, "Not found");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrGeneral: // -2
+			{
+			_LIT(KText, "General error");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrCancel: // -3
+			{
+			_LIT(KText, "Cancelled");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrNoMemory: // -4
+			{
+			_LIT(KText, "Not enough memory");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrNotSupported: // -5
+			{
+			_LIT(KText, "Not supported");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrArgument: // -6
+			{
+			_LIT(KText, "Argument out of range");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrTotalLossOfPrecision: // -7
+			{
+			_LIT(KText, "Loss of precision");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrBadHandle: // -8
+			{
+			_LIT(KText, "Invalid handle");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrOverflow: // -9
+			{
+			_LIT(KText, "Overflow");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrUnderflow: // -10
+			{
+			_LIT(KText, "Underflow");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrAlreadyExists: // -11
+			{
+			_LIT(KText, "Already exists");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrPathNotFound: // -12
+			{
+			_LIT(KText, "Path not found");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrDied: // -13
+			{
+			_LIT(KText, "Handle refers to died thread");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrInUse: // -14
+			{
+			_LIT(KText, "Already in use");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrServerTerminated: // -15
+			{
+			_LIT(KText, "Server terminated");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrServerBusy: // -16
+			{
+			_LIT(KText, "Server busy");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrCompletion: // -17
+			{
+			_LIT(KText, "Completion");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrNotReady: // -18
+			{
+			_LIT(KText, "Not ready");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrUnknown: // -19
+			{
+			_LIT(KText, "Unknown device type");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrCorrupt: // -20
+			{
+			_LIT(KText, "Corrupted");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrAccessDenied: // -21
+			{
+			_LIT(KText, "Access denied");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrLocked: // -22
+			{
+			_LIT(KText, "Locked");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrWrite: // -23
+			{
+			_LIT(KText, "Write error");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrDisMounted: // -24
+			{
+			_LIT(KText, "Volume dismounted");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrEof: // -25
+			{
+			_LIT(KText, "End of file");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrDiskFull: // -26
+			{
+			_LIT(KText, "Disk full");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrBadDriver: // -27
+			{
+			_LIT(KText, "Bad driver");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrBadName: // -28
+			{
+			_LIT(KText, "Bad name");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrCommsLineFail: // -29
+			{
+			_LIT(KText, "Communication line failed");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrCommsFrame: // -30
+			{
+			_LIT(KText, "Communication frame error");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrCommsOverrun: // -31
+			{
+			_LIT(KText, "Communication overrun");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrCommsParity: // -32
+			{
+			_LIT(KText, "Communication parity error");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrTimedOut: // -33
+			{
+			_LIT(KText, "Timed out");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrCouldNotConnect: // -34
+			{
+			_LIT(KText, "Could not connect");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrCouldNotDisconnect: // -35
+			{
+			_LIT(KText, "Could not disconnect");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrDisconnected: // -36
+			{
+			_LIT(KText, "Disconnected");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrBadLibraryEntryPoint: // -37
+			{
+			_LIT(KText, "Bad library entry point");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrBadDescriptor: // -38
+			{
+			_LIT(KText, "Bad descriptor");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrAbort: // -39
+			{
+			_LIT(KText, "Aborted");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrTooBig: // -40
+			{
+			_LIT(KText, "Too big number");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrDivideByZero: // -41
+			{
+			_LIT(KText, "Divide by zero");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrBadPower: // -42
+			{
+			_LIT(KText, "Bad power");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrDirFull: // -43
+			{
+			_LIT(KText, "Dir full");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrHardwareNotAvailable: // -44
+			{
+			_LIT(KText, "Hardware not available");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrSessionClosed: // -45
+			{
+			_LIT(KText, "Session closed");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrPermissionDenied: // -46
+			{
+			_LIT(KText, "Permission denied");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrExtensionNotSupported: // -47
+			{
+			_LIT(KText, "Extension not supported");
+			aText.Copy(KText);
+			break;
+			}
+
+		case KErrCommsBreak: // -48
+			{
+			_LIT(KText, "Break in communication operation");
+			aText.Copy(KText);
+			break;
+			}
+
+		case /*KErrNoSecureTime*/ -49: // Added in s60v5 SDK
+			{
+			_LIT(KText, "No secure time");
+			aText.Copy(KText);
+			break;
+			}
+
+		default:
+			{
+			_LIT(KFmt, "Error number %d");
+			aText.Format(KFmt, aErrCode);
+			break;
+			}
+		}
+	}
+
+
 // CWindowGcEx
 
 CWindowGcEx::CWindowGcEx(CWsScreenDevice *aDevice)

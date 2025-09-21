@@ -16,6 +16,10 @@
 #include <eikenv.h>
 #include <eikinfo.h>
 
+// Constants
+
+const TInt KMaxErrorNameLength = 32;
+
 // CLASS DECLARATION
 
 class MathUtils
@@ -97,6 +101,17 @@ public:
 		{
 			CEikonEnv::Static()->InfoMsg(aMsg);
 		};
+	
+	/* 
+	 * Converts given error code to string representation (KErrNotFound => "Not found",
+	 * KErrNoError => "No error" and etc.). For unknown codes returns "Error number -XXX".
+	 * Defined error names up to KErrNoSecureTime (-49).
+	 * 
+	 * @param	aErrCode - error code
+	 * @param	aText - output descriptor (KMaxErrorNameLength chars should be enough)
+	 *  
+	 */
+	static void ErrorToDes(TInt aErrCode, TDes &aText);
 	};
 
 

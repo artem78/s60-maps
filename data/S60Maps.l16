@@ -103,4 +103,4 @@ CHARACTER_SET UTF8
 
 #define qtn_create_landmark_dlg_title "Новый ориентир"
 #define qtn_edit_landmark_dlg_title "Переименование ориентира"
-#define qtn_search_failed_fmt "Ошибка поиска! (%d)"
+#define qtn_search_failed_fmt "Ошибка поиска! (%S)"
