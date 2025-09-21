@@ -1568,12 +1568,13 @@ CTileBitmapManager* CTileBitmapManager::NewL(MTileBitmapManagerObserver *aObserv
 
 void CTileBitmapManager::ConstructL(const TDesC &aCacheDir)
 	{
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
 #ifdef __WINSCW__
 	// Add some delay for network services have been started on the emulator,
 	// otherwise CEcmtServer: 3 panic will be raised.
 	User::After(10 * KSecond);
 #endif
-	iHTTPClient = CHTTPClient2::NewL(this);
+	iHTTPClient = CHTTPClient2::NewL(this, appUi->iSockServ, appUi->iConn);
 	_LIT8(KAllowedTypes, "image/png, image/jpeg"); // PNG and JPG supported
 	iHTTPClient->SetHeaderL(HTTP::EAccept, KAllowedTypes);
 	_LIT8(KKeepAlive, "Keep-Alive");
@@ -1884,6 +1885,7 @@ void CTileBitmapManager::OnHTTPError(TInt aError,
 	switch (aError)
 		{
 		case KErrCancel:
+		case KErrNotReady:
 			{
 			// If access point not provided switch to offline mode
 			

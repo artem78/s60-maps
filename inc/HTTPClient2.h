@@ -15,6 +15,7 @@
 #include <e32std.h>
 #include <e32base.h>
 #include "HTTPClient.h"
+#include <es_sock.h>
 
 // CLASS DECLARATION
 
@@ -25,12 +26,12 @@ class CHTTPClient2 : public CHTTPClient
 	{
 	// Constructors and destructor
 public:
-	static CHTTPClient2* NewL(MHTTPClientObserver* aObserver);
-	static CHTTPClient2* NewLC(MHTTPClientObserver* aObserver);
+	static CHTTPClient2* NewL(MHTTPClientObserver* aObserver, RSocketServ &aSockServ, RConnection &aConn);
+	static CHTTPClient2* NewLC(MHTTPClientObserver* aObserver, RSocketServ &aSockServ, RConnection &aConn);
 
 private:
 	CHTTPClient2(MHTTPClientObserver* aObserver);
-	void ConstructL();
+	void ConstructL(RSocketServ &aSockServ, RConnection &aConn);
 	
 	// From CHTTPClient
 private:

@@ -28,6 +28,7 @@
 #include <epos_cposlandmarkdatabase.h> // For CPosLandmarkDatabase
 #include <lbssatellite.h>
 #include <hwrmlight.h> // For CHWRMLight
+#include <es_sock.h>
 
 
 enum TTileProviderIdx {
@@ -189,6 +190,7 @@ private:
 	CPeriodic* iResetInactivityTimer;
 	HBufC* iOriginalPaneTitle;
 	TBool iIsPositioningAvailable;
+	TBool iIsNetworkConnected;
 	
 	//static TInt UpdateTilesClearingProgress(TAny* aSelfPtr);
 	
@@ -242,6 +244,12 @@ public:
 
 	void EnablePositioningL();
 	void DisablePositioning();
+	
+	RSocketServ iSockServ;
+	RConnection iConn;
+	
+	TBool IsNetworkConnected();
+	void StartNetworkConnection();
 	
 	};
 

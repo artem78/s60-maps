@@ -99,7 +99,7 @@ class MSearchObserver
 	{
 protected:
 	virtual void OnSearchFinished(const TSearchResultItem &aResultData) = 0;
-	virtual void OnSearchFailed(/*TInt aError*/);
+	virtual void OnSearchFailedL(TInt aError);
 	
 	friend class CSearch;
 	};

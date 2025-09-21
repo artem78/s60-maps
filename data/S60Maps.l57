@@ -105,3 +105,4 @@ CHARACTER_SET UTF8
 
 #define qtn_create_landmark_dlg_title "New landmark"
 #define qtn_edit_landmark_dlg_title "Rename landmark"
+#define qtn_search_failed_fmt "Search failed! (%d)"
