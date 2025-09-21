@@ -251,6 +251,14 @@ public:
 	TBool IsNetworkConnected();
 	void StartNetworkConnection();
 	
+	//TBytesCount SessionBytesSent() const;
+	//TBytesCount SessionBytesRecieved() const;
+	//TBytesCount TotalBytesSent() const;
+	//TBytesCount TotalBytesRecieved() const;
+	
+	TInt GetSessionBytesTransferred(TBytesCount &aBytesRecieved, TBytesCount &aBytesSent) const; // fixme: on EMULATOR always aBytesRecieved = aBytesSent = 0!
+	TInt GetTotalBytesTransferred(TBytesCount &aBytesRecieved, TBytesCount &aBytesSent) const;
+	
 	};
 
 #endif // __S60MAPSAPPUI_h__

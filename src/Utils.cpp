@@ -662,6 +662,27 @@ void MiscUtils::ErrorToDes(TInt aErrCode, TDes &aText)
 		}
 	}
 
+void MiscUtils::WriteZeroesToStreamL(RWriteStream &aStream, TInt aLength)
+	{
+	RBuf8 tmp;
+	tmp.CreateMaxL(aLength);
+	tmp.CleanupClosePushL();
+	tmp.FillZ();
+	//aStream.WriteL(tmp); // ! wrong !
+	aStream.WriteL(tmp.Ptr(), tmp.Length());
+	CleanupStack::PopAndDestroy(&tmp);
+	}
+
+void MiscUtils::WriteTUint64ToStreamL(RWriteStream &aStream, const TUint64 &aNum)
+	{
+	aStream.WriteL((TUint16*)&aNum, sizeof(aNum));
+	}
+
+void MiscUtils::ReadTUint64FromStreamL(RReadStream &aStream, TUint64 &aNum)
+	{
+	aStream.ReadL((TUint16*)&aNum, sizeof(aNum));
+	}
+
 
 // CWindowGcEx
 

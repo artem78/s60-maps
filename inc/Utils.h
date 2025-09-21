@@ -112,6 +112,17 @@ public:
 	 *  
 	 */
 	static void ErrorToDes(TInt aErrCode, TDes &aText);
+	
+	/*
+	 * Writes NULL bytes to given stream
+	 * 
+	 * @param	aStream - Stream for write
+	 * @param	aLength - Length (in bytes)
+	 */
+	static void WriteZeroesToStreamL(RWriteStream &aStream, TInt aLength=1);
+	static void WriteTUint64ToStreamL(RWriteStream &aStream, const TUint64 &aNum);
+	static void ReadTUint64FromStreamL(RReadStream &aStream, TUint64 &aNum);
+
 	};
 
 

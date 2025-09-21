@@ -391,12 +391,18 @@ void CS60MapsAppUi::ExternalizeL(RWriteStream& aStream) const
 	{
 	DEBUG(_L("Settings saving started"));
 	
+	TBytesCount totalBytesRecieved(0);
+	TBytesCount totalBytesSent(0);
+	GetTotalBytesTransferred(totalBytesRecieved, totalBytesSent);
+	
 	// Update settings
 	TCoordinate coord = iMapView->MapControl()->GetCenterCoordinate();
 	iSettings->SetLat(coord.Latitude());
 	iSettings->SetLon(coord.Longitude());
 	iSettings->SetZoom(iMapView->MapControl()->GetZoom());
-	iSettings->SetTileProviderId(iActiveTileProvider->iId);	
+	iSettings->SetTileProviderId(iActiveTileProvider->iId);
+	iSettings->iTotalBytesRecieved = totalBytesRecieved;
+	iSettings->iTotalBytesSent = totalBytesSent;
 	
 	// And save
 	aStream << *iSettings;
@@ -985,6 +991,40 @@ void CS60MapsAppUi::StartNetworkConnection()
 		{
 		iIsOfflineMode = ETrue;
 		}*/
+	}
+
+TInt CS60MapsAppUi::GetSessionBytesTransferred(TBytesCount &aBytesRecieved, TBytesCount &aBytesSent) const
+	{
+	// fixme: also takes into account traffic from other applications via the same connection
+	
+	TPckg<TUint> sentBytesPckg(aBytesSent);
+	TPckg<TUint> recievedBytesPckg(aBytesRecieved);
+	TRequestStatus status;
+	
+	(const_cast<CS60MapsAppUi*>(this))->iConn.DataTransferredRequest(sentBytesPckg, recievedBytesPckg, status);
+	User::WaitForRequest(status);
+	if (status.Int() != KErrNone)
+		{
+		aBytesRecieved = 0;
+		aBytesSent = 0;
+		}
+	return status.Int();
+	}
+
+TInt CS60MapsAppUi::GetTotalBytesTransferred(TBytesCount &aBytesRecieved, TBytesCount &aBytesSent) const
+	{
+	TInt r = GetSessionBytesTransferred(aBytesRecieved, aBytesSent);
+	if (r == KErrNone)
+		{
+		aBytesRecieved += iSettings->iTotalBytesRecieved;
+		aBytesRecieved += iSettings->iTotalBytesSent;
+		}
+	else // error
+		{
+		aBytesRecieved	= /*0*/ iSettings->iTotalBytesRecieved;
+		aBytesSent		= /*0*/ iSettings->iTotalBytesSent;
+		}
+	return r;
 	}
 
 // End of File

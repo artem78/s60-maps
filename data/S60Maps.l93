@@ -103,3 +103,5 @@ CHARACTER_SET UTF8
 #define qtn_create_landmark_dlg_title "Новый ориентир"
 #define qtn_edit_landmark_dlg_title "Переименование ориентира"
 #define qtn_search_failed_fmt "Ошибка поиска! (%S)"
+#define qtn_traffic_counter "Счётчик данных"
+#define qtn_traffic_counter_dlg_msg_fmt "За сеанс:\n   принято %S\n   отправлено %S\n\nВсего:\n   принято %S\n   отправлено %S"
