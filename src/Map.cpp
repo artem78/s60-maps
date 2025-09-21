@@ -231,7 +231,7 @@ void CTiledMapLayer::VisibleTiles(RArray<TTile> &aTiles)
 
 void CTiledMapLayer::DrawTile(CWindowGc &aGc, const TTile &aTile, const CFbsBitmap *aBitmap)
 	{
-	TCoordinate coord = MapMath::TileToGeoCoords(aTile, iMapView->GetZoom());
+	TCoordinate coord = MapMath::TileToGeoCoords(aTile);
 	TPoint point = iMapView->GeoCoordsToScreenCoords(coord);
 	TRect destRect;
 	destRect.iTl = point;
@@ -507,7 +507,7 @@ void CTileBorderAndXYZLayer::VisibleTiles(RArray<TTile> &aTiles)
 void CTileBorderAndXYZLayer::DrawTile(CWindowGc &aGc, const TTile &aTile)
 	{
 	// Calculate tile position
-	TCoordinate coord = MapMath::TileToGeoCoords(aTile, iMapView->GetZoom());
+	TCoordinate coord = MapMath::TileToGeoCoords(aTile);
 	TPoint point = iMapView->GeoCoordsToScreenCoords(coord);
 	TRect rect(TSize(KTileSize, KTileSize));
 	rect.Move(point);
@@ -1881,38 +1881,50 @@ void CTileBitmapManager::OnHTTPError(TInt aError,
 	iState = /*TProcessingState::*/EIdle;
 	
 	
-	if (aError == KErrCancel)
+	switch (aError)
 		{
-		// If access point not provided switch to offline mode
-		
-		// ToDo: This code may be thrown in other cases. Try to find better way
-		// to determine if IAP have been choosed or not.
-		
-		// FixMe: Access point choosing dialog appears several times in a row
-		// (in my case: 2 in emulator, 5-6 on the phone) and only after that
-		// we can catch cancel in this callback
-		// https://github.com/artem78/s60-maps/issues/4
-		iIsOfflineMode = ETrue;
-		INFO(_L("Switched to Offline Mode"));
-		iItemsLoadingQueue.Reset(); // Clear queue of loading tiles
-		}
-	else if (aError == KErrAbort) // Request aborted
-		{
-		INFO(_L("HTTP request cancelled"));
-		// No any further action
-		}
-	else
-		{	
-		// Start download next tile in queue
-		if (iItemsLoadingQueue.Count())
+		case KErrCancel:
 			{
-			TTile tile = iItemsLoadingQueue[0]; 
-			iItemsLoadingQueue.Remove(0);
+			// If access point not provided switch to offline mode
 			
-			StartDownloadTileL(tile);
+			// ToDo: This code may be thrown in other cases. Try to find better way
+			// to determine if IAP have been choosed or not.
+			
+			// FixMe: Access point choosing dialog appears several times in a row
+			// (in my case: 2 in emulator, 5-6 on the phone) and only after that
+			// we can catch cancel in this callback
+			// https://github.com/artem78/s60-maps/issues/4
+			iIsOfflineMode = ETrue;
+			INFO(_L("Switched to Offline Mode"));
+			iItemsLoadingQueue.Reset(); // Clear queue of loading tiles
+			
+			break;
+			}
+		
+		case KErrAbort: // Request aborted
+			{
+			INFO(_L("HTTP request cancelled"));
+			// No any further action
+			
+			break;
+			}
+			
+		default:
+			{
+			// Start download next tile in queue
+			if (iItemsLoadingQueue.Count())
+				{
+				TTile tile = iItemsLoadingQueue[0]; 
+				iItemsLoadingQueue.Remove(0);
+				
+				StartDownloadTileL(tile);
+				}
+
+			break;
 			}
 		}
 	}
+
 void CTileBitmapManager::OnHTTPHeadersRecieved(
 		const RHTTPTransaction aTransaction)
 	{

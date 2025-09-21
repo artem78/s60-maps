@@ -98,12 +98,22 @@ TInt MathUtils::Pow2(TInt aPower)
 		case 18: return 262144;
 		case 19: return 524288;
 		case 20: return 1048576;
-		// should be enought
+		case 21: return 2097152;
+		case 22: return 4194304;
+		case 23: return 8388608;
+		case 24: return 16777216;
+		case 25: return 33554432;
+		case 26: return 67108864;
+		case 27: return 134217728;
+		case 28: return 268435456;
+		case 29: return 536870912;
+		case 30: return 1073741824;
+		// should be enought and greater power will raise TInt overflow
 		
 		default:
 			{
-			_LIT(KPanicCat,"MathUtils::Pow2");
-			User::Panic(KPanicCat, KErrNotSupported);
+			_LIT(KPanicCat, "MathUtils::Pow2");
+			User::Panic(KPanicCat, /*KErrNotSupported*/ KErrOverflow);
 			}
 		}
 	}
