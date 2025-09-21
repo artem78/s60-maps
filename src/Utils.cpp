@@ -293,6 +293,16 @@ void MiscUtils::WriteZeroesToStreamL(RWriteStream &aStream, TInt aLength)
 	CleanupStack::PopAndDestroy(&tmp);
 	}
 
+void MiscUtils::WriteTUint64ToStreamL(RWriteStream &aStream, const TUint64 &aNum)
+	{
+	aStream.WriteL((TUint16*)&aNum, sizeof(aNum));
+	}
+
+void MiscUtils::ReadTUint64FromStreamL(RReadStream &aStream, TUint64 &aNum)
+	{
+	aStream.ReadL((TUint16*)&aNum, sizeof(aNum));
+	}
+
 
 // CWindowGcEx
 

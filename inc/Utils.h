@@ -100,6 +100,8 @@ public:
 	 * @param	aLength - Length (in bytes)
 	 */
 	static void WriteZeroesToStreamL(RWriteStream &aStream, TInt aLength=1);
+	static void WriteTUint64ToStreamL(RWriteStream &aStream, const TUint64 &aNum);
+	static void ReadTUint64FromStreamL(RReadStream &aStream, TUint64 &aNum);
 	};
 
 

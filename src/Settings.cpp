@@ -95,8 +95,8 @@ void CSettings::ExternalizeL(RWriteStream& aStream) const
 	
 	// Added in version X.XX
 	MiscUtils::WriteZeroesToStreamL(aStream, KSkippedBytesAfterV1_14); // Skip 100 bytes
-	aStream << iTotalBytesRecieved;
-	aStream << iTotalBytesSent;
+	MiscUtils::WriteTUint64ToStreamL(aStream, iTotalBytesRecieved);
+	MiscUtils::WriteTUint64ToStreamL(aStream, iTotalBytesSent);
 	}
 
 // Load settings from file
@@ -146,8 +146,8 @@ void CSettings::DoInternalizeL(RReadStream& aStream)
 											config file created with previous version
 											of program (otherwise mess will be read
 											instead of setup zeroes by default) */
-	aStream >> iTotalBytesRecieved;
-	aStream >> iTotalBytesSent;
+	MiscUtils::ReadTUint64FromStreamL(aStream, iTotalBytesRecieved);
+	MiscUtils::ReadTUint64FromStreamL(aStream, iTotalBytesSent);
 	}
 
 void CSettings::InternalizeL(RReadStream& aStream)

@@ -21,7 +21,7 @@
 
 // Types
 
-typedef TUint32/*64*/ TBytesCount;
+typedef TUint64 TBytesCount;
 
 // CLASS DECLARATION
 
