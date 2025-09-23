@@ -5,12 +5,27 @@
  Version	 :
  Copyright   : 
  Description : CSettings implementation
+ 
+ 
+  Data structure in stream:
+ 
+  |---------- [40 bytes] reserved for headers -------|------------ Settings data ---------|
+  |------|--|----|-----------------------------------|
+     ^    ^   ^     ^--- [26 bytes] Zeroes (unused)
+     |    |   +--------- [4 bytes]  Program version
+     |    +------------- [2 bytes]  Settings data length (TUint16, max 64KB)
+     +------------------ [8 bytes]  "Magic number" to identify new config structure
+ 
+ 
  ============================================================================
  */
 
 #include "Settings.h"
 #include "Logger.h"
 #include "Utils.h"
+//#include <s32buf.h>
+#include <s32mem.h>
+#include "S60Maps.pan"
 
 
 // Constants
@@ -21,7 +36,8 @@ const TReal64 KDefaultLon = 9.0;
 const TZoom KDefaultZoom = 3;
 _LIT(KDefaultTileProviderId, "osm");
 _LIT/*8*/(KDefaultHttpsProxyUrl, "http://s60maps.publicvm.com:8088/proxy?url=");
-const TInt KSkippedBytesAfterV1_14 = 100;
+const TInt KReservedBlockLength = 40; // in bytes
+const TUint64 KMagicNumber = 0x1991071619452025; // 8 bytes to identify NEW config file format (after v1.15)
 
 
 CSettings::CSettings() :
@@ -69,6 +85,39 @@ CSettings::CSettings() :
 // Save setting to file
 void CSettings::ExternalizeL(RWriteStream& aStream) const
 	{
+	// Create temporary memory buffer
+	const TInt KMemBlockSize = /*0xFFFF*/ 1024; // 1KB should be enough at this time
+	TAny* tmpPtr = User::AllocLC(KMemBlockSize);
+
+	RMemWriteStream tmpStream(tmpPtr, KMemBlockSize);
+	CleanupClosePushL(tmpStream);
+	
+	// Call main method
+	DoExternalizeL(tmpStream);
+	
+	// Write headers (magic number, data length and program version)
+	MiscUtils::WriteTUint64ToStreamL(aStream, KMagicNumber);
+	TUint16 dataLength = tmpStream.Sink()->TellL(MStreamBuf::EWrite).Offset();
+//	DEBUG(_L("data length=%d"), (TInt)dataLength);
+	aStream << dataLength;
+	//aStream << KProgramVersion;
+	aStream << KProgramVersion.iMajor;
+	aStream << KProgramVersion.iMinor;
+	aStream << KProgramVersion.iBuild;
+	TInt nullBytesCount = KReservedBlockLength - aStream.Sink()->TellL(MStreamBuf::EWrite).Offset();
+	MiscUtils::WriteZeroesToStreamL(aStream, nullBytesCount);
+//	DEBUG(_L("begin data offset=%d"), (TInt)(aStream.Sink()->TellL(MStreamBuf::EWrite).Offset()));
+	
+	aStream.WriteL((TUint8*)tmpPtr, dataLength);
+	
+//	DEBUG(_L("end data offset=%d"), (TInt)(aStream.Sink()->TellL(MStreamBuf::EWrite).Offset()));
+	
+	CleanupStack::PopAndDestroy(2, tmpPtr);
+	}
+
+// Save setting to file
+void CSettings::DoExternalizeL(RWriteStream& aStream) const
+	{
 	aStream << iLat;
 	aStream << iLon;
 	aStream << TCardinality(iZoom);
@@ -94,15 +143,49 @@ void CSettings::ExternalizeL(RWriteStream& aStream) const
 	aStream << static_cast<TInt8>(iPositioningEnabled);
 	
 	// Added in version X.XX
-	MiscUtils::WriteZeroesToStreamL(aStream, KSkippedBytesAfterV1_14); // Skip 100 bytes
 	MiscUtils::WriteTUint64ToStreamL(aStream, iTotalBytesRecieved);
 	MiscUtils::WriteTUint64ToStreamL(aStream, iTotalBytesSent);
 	}
 
 // Load settings from file
 void CSettings::DoInternalizeL(RReadStream& aStream)
+	{	
+	const TStreamPos beginPos = aStream.Source()->TellL(MStreamBuf::ERead);
+	
+	// Try to test first 8 bytes as magic number
+	TUint64 magicNumber(0);
+	MiscUtils::ReadTUint64FromStreamL(aStream, magicNumber);
+	TBool legacy = magicNumber != KMagicNumber;
+	
+	TUint16 dataLength(0);
+	TVersion configVersion(0, 0, 0);
+	
+	if (legacy)
+		{ // Return to 0 offset if config file in old format
+		aStream.Source()->SeekL(MStreamBuf::ERead, beginPos);
+		}
+	else
+		{ // Read headers and go to KReservedBlockLength offset
+		aStream >> dataLength;
+		
+		//aStream >> configVersion;
+		aStream >> configVersion.iMajor;
+		aStream >> configVersion.iMinor;
+		aStream >> configVersion.iBuild;
+		
+		TInt nullBytesCount = KReservedBlockLength - aStream.Source()->TellL(MStreamBuf::ERead).Offset() - beginPos.Offset();
+		aStream.ReadL(nullBytesCount);
+		}
+	
+	// Start reading settings data itself
+	DoInternalizeL(aStream, legacy, dataLength, configVersion);
+	}
+
+// Load settings from file
+void CSettings::DoInternalizeL(RReadStream& aStream, TBool aLegacy, TUint16 aDataLength,
+		TVersion /*aConfigVersion*/)
 	{
-	// FixMe: Reads mess in new settings for old config file (make sure to validate them)
+	const TStreamPos dataBeginPos = aStream.Source()->TellL(MStreamBuf::ERead);
 	
 	TCardinality zoom, language;
 	TInt8 int8Val;
@@ -141,15 +224,21 @@ void CSettings::DoInternalizeL(RReadStream& aStream)
 	aStream >> int8Val;
 	iPositioningEnabled = static_cast<TBool>(int8Val);
 	
+	if (aLegacy) return;
+	
+	const TStreamPos dataEndPos = dataBeginPos + aDataLength;
+	
 	// Added in version X.XX
-	aStream.ReadL(KSkippedBytesAfterV1_14);	/* Skip 100 bytes for correct reading of
-											config file created with previous version
-											of program (otherwise mess will be read
-											instead of setup zeroes by default) */
 	MiscUtils::ReadTUint64FromStreamL(aStream, iTotalBytesRecieved);
 	MiscUtils::ReadTUint64FromStreamL(aStream, iTotalBytesSent);
+	
+	if (aStream.Source()->TellL(MStreamBuf::ERead) >= dataEndPos) return;
+	
+	// ...
+	
 	}
 
+// Load settings from file
 void CSettings::InternalizeL(RReadStream& aStream)
 	{
 	TRAPD(r, DoInternalizeL(aStream)); // Ignore any errors
