@@ -997,13 +997,18 @@ TInt CS60MapsAppUi::GetSessionBytesTransferred(TBytesCount &aBytesRecieved, TByt
 	{
 	// fixme: also takes into account traffic from other applications via the same connection
 	
-	TPckg<TUint> sentBytesPckg(aBytesSent);
-	TPckg<TUint> recievedBytesPckg(aBytesRecieved);
+	TPckg<TUint> sentBytesPckg(0);
+	TPckg<TUint> recievedBytesPckg(0);
 	TRequestStatus status;
 	
 	(const_cast<CS60MapsAppUi*>(this))->iConn.DataTransferredRequest(sentBytesPckg, recievedBytesPckg, status);
 	User::WaitForRequest(status);
-	if (status.Int() != KErrNone)
+	if (status.Int() == KErrNone)
+		{
+		aBytesRecieved = recievedBytesPckg();
+		aBytesSent = sentBytesPckg();
+		}
+	else // error
 		{
 		aBytesRecieved = 0;
 		aBytesSent = 0;
@@ -1017,7 +1022,7 @@ TInt CS60MapsAppUi::GetTotalBytesTransferred(TBytesCount &aBytesRecieved, TBytes
 	if (r == KErrNone)
 		{
 		aBytesRecieved += iSettings->iTotalBytesRecieved;
-		aBytesRecieved += iSettings->iTotalBytesSent;
+		aBytesSent += iSettings->iTotalBytesSent;
 		}
 	else // error
 		{
