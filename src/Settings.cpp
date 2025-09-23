@@ -23,9 +23,7 @@
 #include "Settings.h"
 #include "Logger.h"
 #include "Utils.h"
-//#include <s32buf.h>
 #include <s32mem.h>
-#include "S60Maps.pan"
 
 
 // Constants
