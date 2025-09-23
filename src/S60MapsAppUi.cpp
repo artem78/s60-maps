@@ -35,6 +35,9 @@
 #include "Utils.h"
 #include "ApiKeys.h"
 #include <akntitle.h>
+#ifdef __WINSCW__
+#include <commdbconnpref.h>
+#endif
 
 
 // Constants
@@ -982,8 +985,16 @@ TBool CS60MapsAppUi::IsNetworkConnected()
 
 void CS60MapsAppUi::StartNetworkConnection()
 	{
+#ifdef __WINSCW__
+	// Disable asking access point on emulator (always connect to winsock)
+	TCommDbConnPref connPref;
+	connPref.SetIapId(0);
+	connPref.SetDialogPreference(ECommDbDialogPrefDoNotPrompt);
+	if (iConn.Start(connPref) == KErrNone)
+#else
 	//User::LeaveIfError(iConn.Start());
 	if (iConn.Start() == KErrNone)
+#endif
 		{
 		iIsNetworkConnected = ETrue;
 		}

@@ -101,3 +101,5 @@ SOURCEPATH ..\src
 SOURCE MapView.cpp SettingsListBox.cpp SettingsView.cpp LBSSatelliteExtended.cpp Search.cpp HTTPClient2.cpp
 SOURCEPATH ..\modules\s-json\JsonParser\src
 SOURCE ConsumeString.cpp JsonParser.cpp
+
+DEBUGLIBRARY commdb.lib
