@@ -37,7 +37,7 @@ const TZoom KDefaultZoom = 3;
 _LIT(KDefaultTileProviderId, "osm");
 _LIT/*8*/(KDefaultHttpsProxyUrl, "http://s60maps.publicvm.com:8088/proxy?url=");
 const TInt KReservedBlockLength = 40; // in bytes
-const TUint64 KMagicNumber = 0x1991071619452025; // 8 bytes to identify NEW config file format (after v1.15)
+const TUint64 KMagicNumber = 0x1991071619452025ULL; // 8 bytes to identify NEW config file format (after v1.15)
 
 
 CSettings::CSettings() :
