@@ -116,6 +116,8 @@ TInt MathUtils::Pow2(TInt aPower)
 			User::Panic(KPanicCat, /*KErrNotSupported*/ KErrOverflow);
 			}
 		}
+	
+	return 0; // suppress "return value expected" warning
 	}
 
 
