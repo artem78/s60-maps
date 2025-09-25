@@ -73,7 +73,7 @@ private:
 	void DoExternalizeL(RWriteStream& aStream) const;
 	void DoInternalizeL(RReadStream& aStream);
 	void DoInternalizeL(RReadStream& aStream, TBool aLegacy, TUint16 aDataLength,
-			TVersion aConfigVersion);
+			TVersion aProgramVersion, TUint16 aConfigFileVersion);
 	
 	// Parameters
 	

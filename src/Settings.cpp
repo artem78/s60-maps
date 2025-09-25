@@ -10,9 +10,10 @@
   Data structure in stream:
  
   |---------- [40 bytes] reserved for headers -------|------------ Settings data ---------|
-  |------|--|----|-----------------------------------|
-     ^    ^   ^     ^--- [26 bytes] Zeroes (unused)
-     |    |   +--------- [4 bytes]  Program version
+  |------|--|----|--|--------------------------------|
+     ^    ^   ^   ^     ^--- [24 bytes] Zeroes (unused)
+     |    |   |   +----- [2 bytes]  Config file version (TUint16)
+     |    |   +--------- [4 bytes]  Program version (TVersion)
      |    +------------- [2 bytes]  Settings data length (TUint16, max 64KB)
      +------------------ [8 bytes]  "Magic number" to identify new config structure
  
@@ -93,7 +94,7 @@ void CSettings::ExternalizeL(RWriteStream& aStream) const
 	// Call main method
 	DoExternalizeL(tmpStream);
 	
-	// Write headers (magic number, data length and program version)
+	// Write headers (magic number, data length, program version, config version)
 	MiscUtils::WriteTUint64ToStreamL(aStream, KMagicNumber);
 	TUint16 dataLength = tmpStream.Sink()->TellL(MStreamBuf::EWrite).Offset();
 //	DEBUG(_L("data length=%d"), (TInt)dataLength);
@@ -102,6 +103,7 @@ void CSettings::ExternalizeL(RWriteStream& aStream) const
 	aStream << KProgramVersion.iMajor;
 	aStream << KProgramVersion.iMinor;
 	aStream << KProgramVersion.iBuild;
+	aStream << KConfigFileVersion;
 	TInt nullBytesCount = KReservedBlockLength - aStream.Sink()->TellL(MStreamBuf::EWrite).Offset();
 	MiscUtils::WriteZeroesToStreamL(aStream, nullBytesCount);
 //	DEBUG(_L("begin data offset=%d"), (TInt)(aStream.Sink()->TellL(MStreamBuf::EWrite).Offset()));
@@ -143,6 +145,9 @@ void CSettings::DoExternalizeL(RWriteStream& aStream) const
 	// Added in version X.XX
 	MiscUtils::WriteTUint64ToStreamL(aStream, iTotalBytesRecieved);
 	MiscUtils::WriteTUint64ToStreamL(aStream, iTotalBytesSent);
+	
+	/* Do not forget to increment KConfigFileVersion value
+	   in inc/Defs.h after new setting was added !!! */
 	}
 
 // Load settings from file
@@ -156,7 +161,8 @@ void CSettings::DoInternalizeL(RReadStream& aStream)
 	TBool legacy = magicNumber != KMagicNumber;
 	
 	TUint16 dataLength(0);
-	TVersion configVersion(0, 0, 0);
+	TVersion programVersion(0, 0, 0);
+	TUint16 configFileVersion(0);
 	
 	if (legacy)
 		{ // Return to 0 offset if config file in old format
@@ -167,21 +173,23 @@ void CSettings::DoInternalizeL(RReadStream& aStream)
 		aStream >> dataLength;
 		
 		//aStream >> configVersion;
-		aStream >> configVersion.iMajor;
-		aStream >> configVersion.iMinor;
-		aStream >> configVersion.iBuild;
+		aStream >> programVersion.iMajor;
+		aStream >> programVersion.iMinor;
+		aStream >> programVersion.iBuild;
+		
+		aStream >> configFileVersion;
 		
 		TInt nullBytesCount = KReservedBlockLength - aStream.Source()->TellL(MStreamBuf::ERead).Offset() - beginPos.Offset();
 		aStream.ReadL(nullBytesCount);
 		}
 	
 	// Start reading settings data itself
-	DoInternalizeL(aStream, legacy, dataLength, configVersion);
+	DoInternalizeL(aStream, legacy, dataLength, programVersion, configFileVersion);
 	}
 
 // Load settings from file
 void CSettings::DoInternalizeL(RReadStream& aStream, TBool aLegacy, TUint16 aDataLength,
-		TVersion /*aConfigVersion*/)
+		TVersion /*aConfigVersion*/, TUint16 aConfigFileVersion)
 	{
 	const TStreamPos dataBeginPos = aStream.Source()->TellL(MStreamBuf::ERead);
 	
@@ -230,7 +238,8 @@ void CSettings::DoInternalizeL(RReadStream& aStream, TBool aLegacy, TUint16 aDat
 	MiscUtils::ReadTUint64FromStreamL(aStream, iTotalBytesRecieved);
 	MiscUtils::ReadTUint64FromStreamL(aStream, iTotalBytesSent);
 	
-	if (aStream.Source()->TellL(MStreamBuf::ERead) >= dataEndPos) return;
+	//if (aStream.Source()->TellL(MStreamBuf::ERead) >= dataEndPos) return;
+	if (aConfigFileVersion <= 15) return;
 	
 	// ...
 	
