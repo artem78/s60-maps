@@ -4,7 +4,7 @@
 #define DEFS_H_
 
 // Main definitions
-const TVersion KProgramVersion(1, 15, 0);
+const TVersion KProgramVersion(1, 16, 0);
 const TUint16 KConfigFileVersion = 15;
 
 // Debugging

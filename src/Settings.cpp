@@ -142,7 +142,7 @@ void CSettings::DoExternalizeL(RWriteStream& aStream) const
 	// Added in version 1.14
 	aStream << static_cast<TInt8>(iPositioningEnabled);
 	
-	// Added in version X.XX
+	// Added in version 1.16
 	MiscUtils::WriteTUint64ToStreamL(aStream, iTotalBytesRecieved);
 	MiscUtils::WriteTUint64ToStreamL(aStream, iTotalBytesSent);
 	
@@ -234,7 +234,7 @@ void CSettings::DoInternalizeL(RReadStream& aStream, TBool aLegacy, TUint16 aDat
 	
 	const TStreamPos dataEndPos = dataBeginPos + aDataLength;
 	
-	// Added in version X.XX
+	// Added in version 1.16
 	MiscUtils::ReadTUint64FromStreamL(aStream, iTotalBytesRecieved);
 	MiscUtils::ReadTUint64FromStreamL(aStream, iTotalBytesSent);
 	

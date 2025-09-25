@@ -98,7 +98,7 @@
 
 #define qtn_no_results "No results!"
 
-// Added in version X.XX
+// Added in version 1.16
 
 #define qtn_create_landmark_dlg_title "New landmark"
 #define qtn_edit_landmark_dlg_title "Rename landmark"
