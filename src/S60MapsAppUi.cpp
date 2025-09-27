@@ -181,13 +181,15 @@ void CS60MapsAppUi::ConstructL()
 
 	
 	// Create view objects
-	iMapView = CMapView::NewL();
+	iMapView = CMapView::NewLC();
 	//iMapView->MapControl()->MakeVisible(EFalse); // Will be shown later after settings will be loaded in CS60MapsAppUi::RestoreL
 	AddViewL(iMapView);
+	CleanupStack::Pop();
 	SetDefaultViewL(*iMapView);
 
-	iSettingsView = CSettingsView::NewL();
+	iSettingsView = CSettingsView::NewLC();
 	AddViewL(iSettingsView);
+	CleanupStack::Pop();
 	
 	// Test if positioning available (todo: remake, can be moved to something like CPositionRequestor::IsPositioningAvailable() )
 	CPositionRequestor* posReqTmp = NULL;
