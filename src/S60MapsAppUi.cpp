@@ -75,7 +75,7 @@ void CS60MapsAppUi::ConstructL()
 	_LIT(KOsmCopyrightUrl, "https://www.openstreetmap.org/copyright");
 	iAvailableTileProviders[EOpenStreetMapIdx] = new (ELeave) TTileProvider(
 			_L("osm"), _L("OpenStreetMap"),
-			_L8("http://tile.openstreetmap.org/{$z}/{$x}/{$y}.png"),
+			_L8("https://tile.openstreetmap.org/{$z}/{$x}/{$y}.png"),
 			0, 19,
 			KOsmCopyrightShort, KOsmCopyright, KOsmCopyrightUrl);
 	
