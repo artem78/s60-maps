@@ -236,7 +236,8 @@ public:
 			{ return iSettingsView; }
 	
 	inline const TPositionSatelliteInfo* SatelliteInfo()
-			{ return IsPositioningAvailable() && iSettings->iPositioningEnabled && iPosRequestor->LastKnownPositionInfo()->PositionClassType() & EPositionSatelliteInfoClass ?
+			{ return IsPositioningAvailable() && iSettings->iPositioningEnabled && iPosRequestor
+						&& iPosRequestor->LastKnownPositionInfo()->PositionClassType() & EPositionSatelliteInfoClass ?
 					static_cast<const TPositionSatelliteInfo*>(iPosRequestor->LastKnownPositionInfo()) :
 					NULL;
 			}
