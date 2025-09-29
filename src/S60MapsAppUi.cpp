@@ -154,6 +154,22 @@ void CS60MapsAppUi::ConstructL()
 			0, 22,
 			KEsriCopyright, KNullDesC, KEsriCopyrightUrl);
 	
+	// ÖPNVKarte
+	// https://www.openbusmap.org/
+	{
+		_LIT(KProviderName, /*"ÖPNVKarte"*/ "OpenBusMap");
+		_LIT(KProviderId, "openbusmap");
+		_LIT8(KProviderTileUrl, "https://tileserver.memomaps.de/tilegen/{$z}/{$x}/{$y}.png");
+		_LIT(KProviderCopyrightShort, "memomaps.de");
+		_LIT(KProviderCopyright, "map: memomaps.de, map data: Openstreetmap");
+		_LIT(KProviderCopyrightUrl, /*"https://www.openbusmap.org/"*/ "https://memomaps.de/");
+		iAvailableTileProviders[6] = new (ELeave) TTileProvider(
+				KProviderId, KProviderName,
+				KProviderTileUrl,
+				0, 18,
+				KProviderCopyrightShort, KProviderCopyright, KProviderCopyrightUrl);
+	}
+	
 	iActiveTileProvider = iAvailableTileProviders[0]; // Use first
 	
 	
@@ -790,6 +806,10 @@ void CS60MapsAppUi::ChangeLanguageL(TLanguage aLang)
 	_LIT(KOpenTopo, "OpenTopoMap");
 	buff.Format(KCopyrightFmt, &*mapData, &KOsm, &*mapStyle, &KOpenTopo);
 	AvailableTileProviders()[EOpenTopoMapIdx]->iCopyrightText = buff;
+	
+	_LIT(KMemoMaps, "memomaps.de");
+	buff.Format(KCopyrightFmt, &*mapData, &KOsm, &*mapStyle, &KMemoMaps);
+	AvailableTileProviders()[EOpenBusMap]->iCopyrightText = buff;
 	
 	CleanupStack::PopAndDestroy(3, osmContributors);
 	}
