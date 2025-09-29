@@ -1,4 +1,4 @@
-#Wed Feb 16 12:37:45 GMT+03:00 2022
+#Mon Sep 29 14:33:55 GMT+03:00 2025
 eclipse.preferences.version=1
 encoding//data/S60Maps.l04=UTF-8
 encoding//data/S60Maps.l103=UTF-8
@@ -9,3 +9,4 @@ encoding//data/S60Maps.l57=UTF-8
 encoding//data/S60Maps.l83=UTF-8
 encoding//data/S60Maps.l93=UTF-8
 encoding//data/S60Maps.rls=UTF-8
+encoding//src/S60MapsAppUi.cpp=UTF-8
