@@ -16,6 +16,7 @@ Map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wiki/Symb
   - [Humanitarian Map layer](https://wiki.openstreetmap.org/wiki/Humanitarian_map_style)
   - [OpenTopoMap](https://wiki.openstreetmap.org/wiki/OpenTopoMap)
   - [Esri World Imagery (Clarity) Beta](https://wiki.openstreetmap.org/wiki/Esri)
+  - [ÖPNVKarte (OpenBusMap)](https://www.openbusmap.org/)
 - Show phone location on the map using GPS
 - Can work without GPS (no positioning)
 - Map tiles caching (you can see previously viewed area without network connection)
@@ -142,9 +143,3 @@ This is Open Source software licensed under [GNU GPL v3.0](/LICENSE.txt)
 - [GPS Track recorder for Symbian OS](https://github.com/artem78/s60-gps-tracker#readme)
 - [Accuracy of GNSS data](https://wiki.openstreetmap.org/wiki/Accuracy_of_GNSS_data)
 - [MahoMaps - Yandex.Maps client for Symbian OS](https://github.com/mahomaps/mm-v1)
-
-
-
-
-
-
