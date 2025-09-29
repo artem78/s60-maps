@@ -264,8 +264,11 @@ CS60MapsAppUi::~CS60MapsAppUi()
 	//delete iAvailableTileProviders;
 	iAvailableTileProviders.DeleteAll();
 	
-	iConn.Close();
-	iSockServ.Close();
+	/* If I correctly understand, iConn and iSockServ will be closed automatically.
+	   Otherwise program fails with kern-exec 0 panic when shutdown in this place:
+	   https://github.com/artem78/s60-http-client/blob/19ad9e20963f06cde954efe95d3c88e71344b5e9/HTTPClient.cpp#L24 */
+	/*iConn.Close();
+	iSockServ.Close();*/
 	
 	delete iSettings;
 	
