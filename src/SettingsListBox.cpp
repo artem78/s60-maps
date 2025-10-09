@@ -322,32 +322,10 @@ void CDriveListSettingItem::FillDriveListL()
 	{	
 	RFs fs = CCoeEnv::Static()->FsSession();
 	
-	TDriveList drvList;
-	User::LeaveIfError(fs.DriveList(drvList));
-	
 	EnumeratedTextArray()->ResetAndDestroy();
 	for (/*TDriveNumber*/ TInt driveNum = EDriveA; driveNum <= EDriveZ; driveNum++)
 		{
-		if (!drvList[driveNum])
-			continue;
-		
-		TVolumeInfo volInfo;
-		if (fs.Volume(volInfo, driveNum) != KErrNone)
-			continue;
-		
-		switch (volInfo.iDrive.iType)
-			{
-			case EMediaHardDisk:
-			case EMediaFlash:
-			case EMediaNANDFlash:
-			case EMediaRam: // ???
-				break;
-			
-			default:
-				continue;
-			};
-		
-		if (volInfo.iDrive.iMediaAtt & KMediaAttWriteProtected)
+		if (!FileUtils::IsDriveWritable(fs, static_cast<TDriveNumber>(driveNum)))
 			continue;
 				
 		TChar driveChar;

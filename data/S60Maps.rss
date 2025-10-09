@@ -498,6 +498,7 @@ RESOURCE TBUF r_edit_landmark_dlg_title { buf=qtn_edit_landmark_dlg_title; }
 RESOURCE TBUF r_search_failed_fmt { buf=qtn_search_failed_fmt; }
 RESOURCE TBUF r_traffic_counter { buf=qtn_traffic_counter; }
 RESOURCE TBUF r_traffic_counter_dlg_msg_fmt { buf=qtn_traffic_counter_dlg_msg_fmt; }
+RESOURCE TBUF r_tile_cache_drive_error_fmt { buf=qtn_tile_cache_drive_error_fmt; }
 
 
 // Language names

@@ -488,6 +488,36 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 		iSettings->iSignalIndicatorType = CSettings::ESignalIndicatorGeneralType;
 		}
 	
+	// Check tile cache drive
+	if (!FileUtils::IsDriveWritable(iEikonEnv->FsSession(), iSettings->iTileCacheDrive))
+		{	
+		HBufC* msgFmt = iEikonEnv->AllocReadResourceLC(R_TILE_CACHE_DRIVE_ERROR_FMT);
+		
+		RBuf msg;
+		msg.CreateL(msgFmt->Length() + 10);
+		CleanupClosePushL(msg);
+		
+		TChar driveChar;
+		User::LeaveIfError(iEikonEnv->FsSession().DriveToChar(iSettings->iTileCacheDrive, driveChar));
+		
+		TBuf<1> driveName;
+		driveName.Zero();
+		driveName.Append(driveChar);
+		
+		msg.Format(*msgFmt, &driveName);
+		
+		//CAknWarningNote* note = new (ELeave) CAknWarningNote;
+		CAknErrorNote* note = new (ELeave) CAknErrorNote;
+		note->ExecuteLD(msg);
+		CleanupStack::PopAndDestroy(2, msgFmt);
+		
+		
+		iSettings->iUseDiskCache = EFalse;
+		///////////////////////
+		iSettings->iTileCacheDrive = EDriveC;
+		//////////////////////
+		}
+	
 	DEBUG(_L("Settings reading ended"));
 	}
 
