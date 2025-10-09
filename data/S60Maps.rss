@@ -516,6 +516,7 @@ RESOURCE TBUF r_traffic_counter { buf=qtn_traffic_counter; }
 RESOURCE TBUF r_traffic_counter_dlg_msg_fmt { buf=qtn_traffic_counter_dlg_msg_fmt; }
 RESOURCE TBUF r_controls { buf=qtn_controls; }
 RESOURCE TBUF r_controls_dlg_text { buf=qtn_controls_dlg_text; }
+RESOURCE TBUF r_tile_cache_drive_error_fmt { buf=qtn_tile_cache_drive_error_fmt; }
 
 
 // Language names
