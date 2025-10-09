@@ -112,3 +112,7 @@
 
 #define qtn_controls "Controlli"
 #define qtn_controls_dlg_text "Tasti:\n  Movimento — frecce o 2/4/6/8\n  Zoom+ — volume+ o 3\n  Zoom- — volume- or 1\n  Crea/rinomina punto di riferimento — 5\n  Elimina punto di riferimento — C (azzera tasto)\n  Cerca — 0\n\nTouchscreen:\n  Spostamento — tocca lato sinistro dello schermo\n  Zoom-/it — swipe sinistro/destro\n  Visualizza/nascondi softkey — swipe su/giù"
+
+// Added in version X.XX
+
+#define qtn_tile_cache_drive "Tile cache drive"

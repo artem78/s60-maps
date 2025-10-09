@@ -53,7 +53,10 @@ CSettings::CSettings() :
 		iUseHttpsProxy(ETrue),
 		iHttpsProxyUrl(KDefaultHttpsProxyUrl),
 		iUseDiskCache(ETrue),
-		iPositioningEnabled(ETrue)
+		iPositioningEnabled(ETrue),
+		///////////////
+		iTileCacheDrive(/*'c'*/ EDriveC)
+		/////////////
 	{
 	}
 
@@ -145,6 +148,12 @@ void CSettings::DoExternalizeL(RWriteStream& aStream) const
 	// Added in version 1.16
 	MiscUtils::WriteTUint64ToStreamL(aStream, iTotalBytesRecieved);
 	MiscUtils::WriteTUint64ToStreamL(aStream, iTotalBytesSent);
+	
+	// Added in version X.XX
+	/*TUint driveChar(iTileCacheDrive);
+	aStream << driveChar;*/
+	aStream << static_cast<TInt8>(iTileCacheDrive);
+	
 	
 	/* Do not forget to increment KConfigFileVersion value
 	   in inc/Defs.h after new setting was added !!! */
@@ -240,6 +249,16 @@ void CSettings::DoInternalizeL(RReadStream& aStream, TBool aLegacy, TUint16 aDat
 	
 	//if (aStream.Source()->TellL(MStreamBuf::ERead) >= dataEndPos) return;
 	if (aConfigFileVersion <= 15) return;
+	
+	// Added in version X.XX
+	/*TUint driveChar;
+	aStream >> driveChar;
+	iTileCacheDrive = driveChar;*/
+	//aStream >> iTileCacheDrive;
+	aStream >> int8Val;
+	iTileCacheDrive = static_cast<TDriveNumber>(int8Val);
+	
+	if (aConfigFileVersion <= 16) return;
 	
 	// ...
 	
