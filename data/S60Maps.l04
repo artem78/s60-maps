@@ -106,3 +106,7 @@ CHARACTER_SET UTF8
 // Added in version 1.17
 
 #define qtn_clear_search_results "Borrar búsquedas"
+
+// Added in version X.XX
+
+#define qtn_tile_cache_drive "Tile cache drive"

@@ -93,6 +93,7 @@ public:
 	TBool iPositioningEnabled;
 	TBytesCount iTotalBytesRecieved;
 	TBytesCount iTotalBytesSent;
+	/*TChar*/ TDriveNumber iTileCacheDrive;
 	
 public:
 	CSettings();

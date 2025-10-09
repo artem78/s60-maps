@@ -33,7 +33,22 @@ public:
 private:
 	TInt& iValue;
 	
-	void LoadLanguageListL(); 
+	void LoadLanguageListL();
+	};
+	
+	
+class CDriveListSettingItem : public CAknEnumeratedTextPopupSettingItem
+	{
+	// From CAknEnumeratedTextPopupSettingItem
+public:
+	CDriveListSettingItem(TInt aResourceId, TInt& aValue);
+	void CompleteConstructionL();
+	
+	// New properties and methods
+private:
+	TInt& iValue;
+	
+	void FillDriveListL(); 
 	
 	};
 

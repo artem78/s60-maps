@@ -102,6 +102,14 @@ CAknSettingItem* CSettingsListBox::CreateSettingItemL(TInt aSettingId)
 			}
 			break;
 			
+		case ESettingTileCacheDrive:
+			{
+			TInt* ptr = reinterpret_cast<TInt*>(&appUi->Settings()->iTileCacheDrive); // TDriveNumber& --> TInt&
+			settingItem = new (ELeave) CDriveListSettingItem(aSettingId,
+					*ptr);
+			}
+			break;
+			
 		}
 	
 	return settingItem;
@@ -293,3 +301,69 @@ void CLanguageListSettingItem::LoadLanguageListL()
 	CleanupStack::PopAndDestroy(&langArr);
 	}
 
+
+// CDriveListSettingItem
+
+CDriveListSettingItem::CDriveListSettingItem(TInt aResourceId, TInt& aValue) :
+		CAknEnumeratedTextPopupSettingItem(aResourceId, aValue),
+		iValue(aValue)
+	{
+	
+	}
+
+void CDriveListSettingItem::CompleteConstructionL()
+	{
+	CAknEnumeratedTextPopupSettingItem::CompleteConstructionL();
+	
+	FillDriveListL();
+	}
+
+void CDriveListSettingItem::FillDriveListL()
+	{	
+	RFs fs = CCoeEnv::Static()->FsSession();
+	
+	TDriveList drvList;
+	User::LeaveIfError(fs.DriveList(drvList));
+	
+	EnumeratedTextArray()->ResetAndDestroy();
+	for (/*TDriveNumber*/ TInt driveNum = EDriveA; driveNum <= EDriveZ; driveNum++)
+		{
+		if (!drvList[driveNum])
+			continue;
+		
+		TVolumeInfo volInfo;
+		if (fs.Volume(volInfo, driveNum) != KErrNone)
+			continue;
+		
+		switch (volInfo.iDrive.iType)
+			{
+			case EMediaHardDisk:
+			case EMediaFlash:
+			case EMediaNANDFlash:
+			case EMediaRam: // ???
+				break;
+			
+			default:
+				continue;
+			};
+		
+		if (volInfo.iDrive.iMediaAtt & KMediaAttWriteProtected)
+			continue;
+				
+		TChar driveChar;
+		if (fs.DriveToChar(driveNum, driveChar) != KErrNone)
+			continue;
+		
+		//TBuf<1> tmpBuf(driveChar);
+		TBuf<1> tmpBuf;
+		tmpBuf.Zero();
+		tmpBuf.Append(driveChar);
+		HBufC* driveName = tmpBuf.AllocLC();
+		
+		CAknEnumeratedText* enumText = new (ELeave) CAknEnumeratedText(driveNum, driveName);
+		CleanupStack::Pop(driveName);
+		CleanupStack::PushL(enumText);
+		EnumeratedTextArray()->AppendL(enumText);
+		CleanupStack::Pop(enumText);
+		}
+	}

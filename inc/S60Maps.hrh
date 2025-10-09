@@ -62,7 +62,8 @@ enum TS60MapsSettingItemIds
 	ESettingUseHttpsProxy,
 	ESettingHttpsProxyUrl,
 	ESettingUseDiskCache,
-	ESettingPositioningEnabled
+	ESettingPositioningEnabled,
+	ESettingTileCacheDrive
 	};
 
 // Tile providers
