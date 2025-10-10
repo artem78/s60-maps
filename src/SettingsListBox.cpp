@@ -6,7 +6,6 @@
  */
 
 #include "SettingsListBox.h"
-#include "S60Maps.hrh"
 #include "S60MapsAppUi.h"
 #include "MapView.h"
 #include <S60Maps_0xED689B88.rsg>
@@ -141,7 +140,7 @@ void CSettingsListBox::EditItemL(TInt aIndex, TBool aCalledFromMenu)
 			TBool isVisible = appUi->IsPositioningAvailableAndEnabled()
 					&& appUi->Settings()->iIsSignalIndicatorVisible;
 			
-			(*SettingItemArray())[ESettingSignalIndicatorType]->SetHidden(!isVisible);
+			SettingItemById(ESettingSignalIndicatorType)->SetHidden(!isVisible);
 			HandleChangeInItemArrayOrVisibilityL();
 			}
 			break;
@@ -150,7 +149,7 @@ void CSettingsListBox::EditItemL(TInt aIndex, TBool aCalledFromMenu)
 			{
 			TBool isVisible = appUi->Settings()->iUseHttpsProxy;
 	
-			(*SettingItemArray())[ESettingHttpsProxyUrl]->SetHidden(!isVisible);
+			SettingItemById(ESettingHttpsProxyUrl)->SetHidden(!isVisible);
 			HandleChangeInItemArrayOrVisibilityL();
 			}
 			break;
@@ -174,12 +173,27 @@ void CSettingsListBox::EditItemL(TInt aIndex, TBool aCalledFromMenu)
 				{
 				appUi->DisablePositioning();
 				}
-			(*SettingItemArray())[ESettingShowSignalIndicator]->SetHidden(!appUi->Settings()->iPositioningEnabled);
-			(*SettingItemArray())[ESettingSignalIndicatorType]->SetHidden(!appUi->Settings()->iPositioningEnabled || !appUi->Settings()->iIsSignalIndicatorVisible);
+			SettingItemById(ESettingShowSignalIndicator)->SetHidden(!appUi->Settings()->iPositioningEnabled);
+			SettingItemById(ESettingSignalIndicatorType)->SetHidden(!appUi->Settings()->iPositioningEnabled || !appUi->Settings()->iIsSignalIndicatorVisible);
 			HandleChangeInItemArrayOrVisibilityL();
 			break;
 			}
 		}
+	}
+
+CAknSettingItem* CSettingsListBox::SettingItemById(TS60MapsSettingItemIds aSettingId)
+	{
+	// setting array index and identifier (id) may not always be the same
+	
+	for (TInt idx = 0; idx < SettingItemArray()->Count(); idx++)
+		{
+		if ((*SettingItemArray())[idx]->Identifier() == aSettingId)
+			{
+			return (*SettingItemArray())[idx];
+			}
+		}
+	
+	return NULL;
 	}
 
 

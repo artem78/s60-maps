@@ -8,6 +8,7 @@
 #ifndef __SETTINGSLISTBOX_H_
 #define __SETTINGSLISTBOX_H_
 
+#include "S60Maps.hrh"
 #include <aknsettingitemlist.h>
 
 class CSettingsListBox : public CAknSettingItemList
@@ -18,7 +19,13 @@ protected:
 	
 public:
 	void EditItemL(TInt aIndex, TBool aCalledFromMenu);
-
+	
+	// Own
+private:
+	
+	/* Returns setting item by given enum identifier (not index in array!) 
+	 * or NULL if item not found */
+	CAknSettingItem* SettingItemById(TS60MapsSettingItemIds aSettingId);
 	};
 
 
