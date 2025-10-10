@@ -13,6 +13,9 @@
 
 // CSettingsListBox
 
+/* todo: set each item visibility duplicates: in CreateSettingItemL and EditItemL
+   How to make it in one place? */
+
 CAknSettingItem* CSettingsListBox::CreateSettingItemL(TInt aSettingId)
 	{
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(iCoeEnv->Static()->AppUi());
@@ -289,3 +292,4 @@ void CLanguageListSettingItem::LoadLanguageListL()
 	
 	CleanupStack::PopAndDestroy(&langArr);
 	}
+
