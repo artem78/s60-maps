@@ -593,17 +593,17 @@ RESOURCE AVKON_SETTING_ITEM_LIST r_setting_item_list
 			},
 		AVKON_SETTING_ITEM
 			{
-			identifier = ESettingPositioningEnabled;
-			setting_page_resource = r_use_positioning_setting_page;
-			associated_resource = r_popup_setting_use_positioning_texts;
-			name = qtn_positioning;
-			},
-		AVKON_SETTING_ITEM
-			{
 			identifier = ESettingTileCacheDrive;
 			setting_page_resource = r_tile_cache_drive_setting_page;
 			associated_resource = r_popup_setting_tile_cache_drive_texts;
 			name = qtn_tile_cache_drive;
+			},
+		AVKON_SETTING_ITEM
+			{
+			identifier = ESettingPositioningEnabled;
+			setting_page_resource = r_use_positioning_setting_page;
+			associated_resource = r_popup_setting_use_positioning_texts;
+			name = qtn_positioning;
 			}
 		};
 	}
