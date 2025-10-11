@@ -503,8 +503,10 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 		}
 	
 	// Check tile cache drive
-	if (!FileUtils::IsDriveWritable(iEikonEnv->FsSession(), iSettings->iTileCacheDrive))
-		{	
+	if (iSettings->iUseDiskCache && !FileUtils::IsDriveWritable(iEikonEnv->FsSession(), iSettings->iTileCacheDrive))
+		{
+		iSettings->iUseDiskCache = EFalse;
+		
 		HBufC* msgFmt = iEikonEnv->AllocReadResourceLC(R_TILE_CACHE_DRIVE_ERROR_FMT);
 		
 		RBuf msg;
@@ -526,9 +528,8 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 		CleanupStack::PopAndDestroy(2, msgFmt);
 		
 		
-		iSettings->iUseDiskCache = EFalse;
 		///////////////////////
-		iSettings->iTileCacheDrive = EDriveC;
+		//iSettings->iTileCacheDrive = EDriveC;
 		//////////////////////
 		}
 	
