@@ -103,9 +103,19 @@ CAknSettingItem* CSettingsListBox::CreateSettingItemL(TInt aSettingId)
 			
 		case ESettingTileCacheDrive:
 			{
+			TBool isVisible = appUi->Settings()->iUseDiskCache;
+			
+			// reset drive to default value if it unavailable
+			if (/*isVisible &&*/ !FileUtils::IsDriveWritable(iEikonEnv->Static()->FsSession(), appUi->Settings()->iTileCacheDrive))
+				{
+				appUi->Settings()->iTileCacheDrive = EDriveC;
+				}
+			
 			TInt* ptr = reinterpret_cast<TInt*>(&appUi->Settings()->iTileCacheDrive); // TDriveNumber& --> TInt&
 			settingItem = new (ELeave) CDriveListSettingItem(aSettingId,
 					*ptr);
+			
+			settingItem->SetHidden(!isVisible);
 			}
 			break;
 			
@@ -177,6 +187,22 @@ void CSettingsListBox::EditItemL(TInt aIndex, TBool aCalledFromMenu)
 			SettingItemById(ESettingSignalIndicatorType)->SetHidden(!appUi->Settings()->iPositioningEnabled || !appUi->Settings()->iIsSignalIndicatorVisible);
 			HandleChangeInItemArrayOrVisibilityL();
 			break;
+			}
+			
+			case ESettingUseDiskCache:
+				{
+				TBool isVisible = appUi->Settings()->iUseDiskCache;
+				
+				// reset drive to default value if it unavailable
+				if (isVisible && !FileUtils::IsDriveWritable(iEikonEnv->Static()->FsSession(), appUi->Settings()->iTileCacheDrive))
+					{
+					appUi->Settings()->iTileCacheDrive = EDriveC;
+					SettingItemById(ESettingTileCacheDrive)->LoadL();
+					}
+				
+				SettingItemById(ESettingTileCacheDrive)->SetHidden(!isVisible);
+				HandleChangeInItemArrayOrVisibilityL();
+				break;
 			}
 		}
 	}
