@@ -43,10 +43,7 @@ TUid CS60MapsApplication::AppDllUid() const
 
 void CS60MapsApplication::GetDefaultDocumentFileName(TFileName& aDocumentName) const
 	{
-	aDocumentName.Zero();
-	DataDir(aDocumentName);
-	_LIT(KDocFileName, "store.dat");
-	RelPathToAbsFromDataDir(KDocFileName, aDocumentName);	
+	ConfigFile(aDocumentName);
 	}
 
 void CS60MapsApplication::DataDir(TFileName &aDataDir) const
@@ -100,6 +97,16 @@ CAknIcon* CS60MapsApplication::LoadIconL(TInt aBitmapId, TInt aMaskId)
 	icon->SetMask(mask);
 	CleanupStack::Pop(icon); // not ...AndDestroy()
 	return icon;
+	}
+
+void CS60MapsApplication::ConfigFile(TDes &aSettingFile) const
+	{
+#ifdef __WINSCW__
+	_LIT(KConfFile, "c:\\data\\S60Maps\\store.dat");
+#else
+	_LIT(KConfFile, "e:\\data\\S60Maps\\store.dat");
+#endif
+	aSettingFile.Copy(KConfFile);
 	}
 
 // End of File

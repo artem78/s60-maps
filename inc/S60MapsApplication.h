@@ -64,6 +64,8 @@ public:
 	// Transform relative path to absolute from program root data directory
 	void RelPathToAbsFromDataDir(const TDesC &aRelPath, TFileName &anAbsPath) const;
 	void CacheDir(TFileName &aCacheDir) const;
+	// Returns full path to config file (store.dat)
+	void ConfigFile(TDes &aSettingFile) const;
 	void IconFileL(TFileName &aFileName) const;
 	
 	/* Loads icon with given ID and mask ID from MBM file. Client takes ownership
