@@ -137,6 +137,8 @@ public:
 	// Check if https proxy url is valid string otherwise reset to default value
 	void ValidateHttpsProxyUrl();
 	
+	void ResetTileCacheDriveToDefault();
+	
 	};
 
 #endif // SETTINGS_H

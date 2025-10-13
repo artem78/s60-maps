@@ -25,6 +25,7 @@
 #include "Logger.h"
 #include "Utils.h"
 #include <s32mem.h>
+#include <bautils.h>
 
 
 // Constants
@@ -53,11 +54,10 @@ CSettings::CSettings() :
 		iUseHttpsProxy(ETrue),
 		iHttpsProxyUrl(KDefaultHttpsProxyUrl),
 		iUseDiskCache(ETrue),
-		iPositioningEnabled(ETrue),
-		///////////////
-		iTileCacheDrive(/*'c'*/ EDriveC)
-		/////////////
+		iPositioningEnabled(ETrue)/*,
+		iTileCacheDrive(...)*/
 	{
+	ResetTileCacheDriveToDefault();
 	}
 
 //CSettings::~CSettings()
@@ -287,4 +287,21 @@ void CSettings::ValidateHttpsProxyUrl()
 		{
 		iHttpsProxyUrl = KDefaultHttpsProxyUrl;
 		}
+	}
+
+void CSettings::ResetTileCacheDriveToDefault()
+	{
+	iTileCacheDrive = EDriveC;
+#ifndef __WINSCW__
+	_LIT(KOldTileCachePath, "e:\\Data\\S60Maps\\cache\\_PAlbTN\\");
+	RFs fs = /*iEikonEnv->*/CCoeEnv::Static()->FsSession();
+	if (BaflUtils::FolderExists(fs, KOldTileCachePath) && FileUtils::IsDriveWritable(fs, EDriveE))
+		{ // for compatibility with previous versions of the program with hardcoded E drive
+		iTileCacheDrive = EDriveE;
+		}
+	else
+		{
+		iTileCacheDrive = FileUtils::BiggestDrive(fs, ETrue);
+		}
+#endif
 	}
