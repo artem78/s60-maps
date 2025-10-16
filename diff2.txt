@@ -1,0 +1,79 @@
+diff --git a/src/S60MapsAppUi.cpp b/src/S60MapsAppUi.cpp
+index 23780b0..566a25c 100644
+--- a/src/S60MapsAppUi.cpp
++++ b/src/S60MapsAppUi.cpp
+@@ -991,30 +991,30 @@ void CS60MapsAppUi::StartNetworkConnection()
+ 
+ TBytesCount CS60MapsAppUi::SessionBytesSent() const
+ 	{
+-	TUint sentBytes(0);
+-	TUint recievedBytes(0);
+-	TPckg<TUint> sentBytesPckg(sentBytes/* 0*/);
+-	TPckg<TUint> recievedBytesPckg(recievedBytes/* 0*/);
+-	TRequestStatus status;
+-	
+-	//RConnection *conn;
+-	//conn = &(const_cast<*CS60MapsAppUi>(this))->iConn;
+-	/*const RConnection conn(iConn);
+-	conn.DataTransferredRequest(sentBytesPckg, recievedBytesPckg, status);*/
+-	
+-	/*const_cast<const RConnection>(iConn)*//*iConn.	 */
+-	/*(*conn).*/  
+-	
+-	(const_cast<CS60MapsAppUi*>(this))->iConn.DataTransferredRequest(sentBytesPckg, recievedBytesPckg, status);
+-	User::WaitForRequest(status);
+-	if (status.Int() == KErrNone)
+-		{
+-		return sentBytes /*sentBytesPckg()*/;
+-		}
+-	else // error
+-		{
++//	TUint sentBytes(0);
++//	TUint recievedBytes(0);
++//	TPckg<TUint> sentBytesPckg(sentBytes/* 0*/);
++//	TPckg<TUint> recievedBytesPckg(recievedBytes/* 0*/);
++//	TRequestStatus status;
++//	
++//	//RConnection *conn;
++//	//conn = &(const_cast<*CS60MapsAppUi>(this))->iConn;
++//	/*const RConnection conn(iConn);
++//	conn.DataTransferredRequest(sentBytesPckg, recievedBytesPckg, status);*/
++//	
++//	/*const_cast<const RConnection>(iConn)*//*iConn.	 */
++//	/*(*conn).*/  
++//	
++//	(const_cast<CS60MapsAppUi*>(this))->iConn.DataTransferredRequest(sentBytesPckg, recievedBytesPckg, status);
++//	User::WaitForRequest(status);
++//	if (status.Int() == KErrNone)
++//		{
++//		return sentBytes /*sentBytesPckg()*/;
++//		}
++//	else // error
++//		{
+ 		return 0;
+-		}
++//		}
+ 	};
+ 
+ TBytesCount CS60MapsAppUi::SessionBytesRecieved() const
+@@ -1033,7 +1033,19 @@ TBytesCount CS60MapsAppUi::SessionBytesRecieved() const
+ 	/*const_cast<const RConnection>(iConn)*//*iConn.	 */
+ 	/*(*conn).*/  
+ 	
+-	(const_cast<CS60MapsAppUi*>(this))->iConn.DataTransferredRequest(sentBytesPckg, recievedBytesPckg, status);
++	TUint subConnCount = 0;
++	TInt r = (const_cast<CS60MapsAppUi*>(this))->iConn.EnumerateSubConnections(subConnCount);
++	DEBUG(_L("subConnCount=%d  error=%d"), subConnCount, r);
++	if (r == KErrNone && subConnCount)
++		{
++		TInt subConId = subConnCount - 1;
++		(const_cast<CS60MapsAppUi*>(this))->iConn.DataTransferredRequest(subConId, sentBytesPckg, recievedBytesPckg, status);
++		}
++	else
++		{	
++		//(const_cast<CS60MapsAppUi*>(this))->iConn.DataTransferredRequest(sentBytesPckg, recievedBytesPckg, status);
++		return 0;
++		}
+ 	User::WaitForRequest(status);
+ 	if (status.Int() == KErrNone)
+ 		{
