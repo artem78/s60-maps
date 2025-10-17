@@ -54,7 +54,14 @@ void CS60MapsDocument::ConstructL()
 #if LOGGING_ENABLED
 	_LIT(KLogFileName, "s60maps_log.txt");
 	TFileName logFilePath;
-	static_cast<CS60MapsApplication *>(Application())->RelPathToAbsFromDataDir(KLogFileName, logFilePath);
+	//static_cast<CS60MapsApplication *>(Application())->RelPathToAbsFromDataDir(KLogFileName, logFilePath);
+#ifdef __WINSCW__
+	_LIT(KLogDir, "c:\\data\\S60Maps\\");
+#else
+	_LIT(KLogDir, "e:\\data\\S60Maps\\");
+#endif
+	logFilePath.Copy(KLogDir);
+	logFilePath.Append(KLogFileName);
 	TParse pathParser;
 	pathParser.Set(logFilePath, NULL, NULL);
 	BaflUtils::EnsurePathExistsL(CEikonEnv::Static()->FsSession(), pathParser.DriveAndPath());

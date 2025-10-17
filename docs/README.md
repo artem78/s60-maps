@@ -86,7 +86,7 @@ This software was tested on:
 
 ## Technical details
 
-All data stored in directory `E:\Data\S60Maps\` (**note:** E drive used regardles of on which drive program installed). Map cache located in `E:\Data\S60Maps\cache\_PAlbTN\<map service>\` directory.
+All data stored in directory `E:\Data\S60Maps\` (<!-- fixme... -->**note:** E drive used regardles of on which drive program installed). Map cache located in `E:\Data\S60Maps\cache\_PAlbTN\<map service>\` directory.
 
 Settings store in `store.dat` file. If you have problems with application to run, try to delete this file and run again.
 

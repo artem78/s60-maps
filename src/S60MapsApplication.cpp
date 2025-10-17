@@ -16,6 +16,7 @@
 
 #include <coemain.h>
 #include "FileUtils.h"
+#include "S60MapsAppUi.h"
 
 // ============================ MEMBER FUNCTIONS ===============================
 
@@ -48,17 +49,16 @@ void CS60MapsApplication::GetDefaultDocumentFileName(TFileName& aDocumentName) c
 
 void CS60MapsApplication::DataDir(TFileName &aDataDir) const
 	{
-#ifdef __WINSCW__
-	// Emulator do not have E drive, use C instead
-	_LIT(KProgramDataDir, "c:\\data\\S60Maps\\");
-#else
-	// Change data directory to e:\data\S60Maps
-	// Note: program data need to be stored on E drive
-	// regardless of on which drive program installed
-	// because tiles cache will be use much space
-	_LIT(KProgramDataDir, "e:\\data\\S60Maps\\");
-#endif
-	aDataDir.Copy(KProgramDataDir);
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(iCoeEnv->Static()->AppUi());
+	RFs fs = iCoeEnv->Static()->FsSession();
+	
+	TDriveNumber drive = appUi->Settings()->iTileCacheDrive;
+	TChar driveChar;
+	TInt r = fs.DriveToChar(drive, driveChar);
+	//if (r != KErrNone) ...
+
+	_LIT(KProgramDataDirFmt, "%c:\\data\\S60Maps\\");
+	aDataDir.Format(KProgramDataDirFmt, (TUint) driveChar);
 	}
 
 void CS60MapsApplication::RelPathToAbsFromDataDir(const TDesC &aRelPath, TFileName &anAbsPath) const
