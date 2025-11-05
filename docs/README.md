@@ -69,6 +69,7 @@ This software was tested on:
   - `OK` [Nokia E71](https://en.wikipedia.org/wiki/Nokia_E71) (thanks to [misheu12](https://github.com/misheu12))
   - `OK` [Nokia E72](https://en.wikipedia.org/wiki/Nokia_E72) (thanks to [Fizolas](https://github.com/fizolas))
   - `OK` [Nokia N8](https://en.wikipedia.org/wiki/Nokia_N8) (thanks to Alistair Inglis)
+  - `OK` [Nokia N86](https://en.wikipedia.org/wiki/Nokia_N86)
   - `OK` [Nokia N95 8GB](https://en.wikipedia.org/wiki/Nokia_N95#Variations) (my phone)
   - `OK` [Samsung SGH-i550](https://www.phonearena.com/phones/Samsung-SGH-i550_id2345) (thanks to [Ilya Vysotsky](https://github.com/Computershik73))
 - Emulators:
@@ -139,6 +140,7 @@ This is Open Source software licensed under [GNU GPL v3.0](/LICENSE.txt)
 - [GPS Track recorder for Symbian OS](https://github.com/artem78/s60-gps-tracker#readme)
 - [Accuracy of GNSS data](https://wiki.openstreetmap.org/wiki/Accuracy_of_GNSS_data)
 - [MahoMaps - Yandex.Maps client for Symbian OS](https://github.com/mahomaps/mm-v1)
+
 
 
 
