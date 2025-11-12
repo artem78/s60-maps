@@ -64,14 +64,15 @@ This software was tested on:
   - `OK` [Nokia 5530 XM](https://en.wikipedia.org/wiki/Nokia_5530_XpressMusic) (thanks to [Baranovskiy Konstantin](https://github.com/baranovskiykonstantin))
   - `OK` [Nokia 5800](https://en.wikipedia.org/wiki/Nokia_5800_XpressMusic) (thanks to [fedor4ever](https://github.com/fedor4ever))
   - `OK` [Nokia C5-00 5MP](https://en.wikipedia.org/wiki/Nokia_C5-00) (thanks to [Men770](https://github.com/Men770))
+  - `OK` [Nokia E7-00](https://en.wikipedia.org/wiki/Nokia_E7-00) (thanks to [maksimkaXclusive](https://github.com/maksimkaXclusive))
   - `OK` [Nokia E52](https://en.wikipedia.org/wiki/Nokia_E52/E55) (thanks to [Fizolas](https://github.com/fizolas))
   - `OK` [Nokia E63](https://en.wikipedia.org/wiki/Nokia_E63) (thanks to [Fizolas](https://github.com/fizolas))
   - `OK` [Nokia E71](https://en.wikipedia.org/wiki/Nokia_E71) (thanks to [misheu12](https://github.com/misheu12))
   - `OK` [Nokia E72](https://en.wikipedia.org/wiki/Nokia_E72) (thanks to [Fizolas](https://github.com/fizolas))
   - `OK` [Nokia N8](https://en.wikipedia.org/wiki/Nokia_N8) (thanks to Alistair Inglis)
-  - `OK` [Nokia N86](https://en.wikipedia.org/wiki/Nokia_N86)
+  - `OK` [Nokia N86](https://en.wikipedia.org/wiki/Nokia_N86) (thanks to [maksimkaXclusive](https://github.com/maksimkaXclusive))
   - `OK` [Nokia N95 8GB](https://en.wikipedia.org/wiki/Nokia_N95#Variations) (my phone)
-  - `OK` [Nokia N97](https://en.wikipedia.org/wiki/Nokia_N97)
+  - `OK` [Nokia N97](https://en.wikipedia.org/wiki/Nokia_N97) (thanks to [maksimkaXclusive](https://github.com/maksimkaXclusive))
   - `OK` [Samsung SGH-i550](https://www.phonearena.com/phones/Samsung-SGH-i550_id2345) (thanks to [Ilya Vysotsky](https://github.com/Computershik73))
 - Emulators:
   - `FAILED` [EKA2L1](https://github.com/EKA2L1/EKA2L1) (here is [issue thread](https://github.com/EKA2L1/EKA2L1/issues/231))
@@ -141,6 +142,7 @@ This is Open Source software licensed under [GNU GPL v3.0](/LICENSE.txt)
 - [GPS Track recorder for Symbian OS](https://github.com/artem78/s60-gps-tracker#readme)
 - [Accuracy of GNSS data](https://wiki.openstreetmap.org/wiki/Accuracy_of_GNSS_data)
 - [MahoMaps - Yandex.Maps client for Symbian OS](https://github.com/mahomaps/mm-v1)
+
 
 
 
