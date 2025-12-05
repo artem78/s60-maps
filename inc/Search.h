@@ -45,19 +45,19 @@ public:
 	/**
 	 * Two-phased constructor.
 	 */
-	static CSearch* NewL(MSearchObserver* aObserver);
+	static CSearch* NewL(MSearchObserver* aObserver, const TBounds &aPreferredBounds);
 
 	/**
 	 * Two-phased constructor.
 	 */
-	static CSearch* NewLC(MSearchObserver* aObserver);
+	static CSearch* NewLC(MSearchObserver* aObserver, const TBounds &aPreferredBounds);
 
 private:
 
 	/**
 	 * Constructor for performing 1st stage construction
 	 */
-	CSearch(MSearchObserver* aObserver);
+	CSearch(MSearchObserver* aObserver, const TBounds &aPreferredBounds);
 
 	/**
 	 * EPOC default constructor for performing 2nd stage construction
@@ -81,6 +81,7 @@ private:
 	CHTTPClient2* iHttpClient;
 	HBufC8* iResponseBuff;
 	MSearchObserver* iObserver;
+	TBounds iPreferredBounds;
 	
 	TBool RunQueryDialogL();
 	/*TBool*/ void RunResultsDialogL();

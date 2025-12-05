@@ -21,10 +21,10 @@
 #include <aknnotewrappers.h> 
 
 
-CSearch::CSearch(MSearchObserver* aObserver)
+CSearch::CSearch(MSearchObserver* aObserver, const TBounds &aPreferredBounds)
 		: iObserver(aObserver)
 	{
-	// No implementation required
+	iPreferredBounds.SetCoords(aPreferredBounds.iTlCoord, aPreferredBounds.iBrCoord);
 	}
 
 CSearch::~CSearch()
@@ -34,17 +34,17 @@ CSearch::~CSearch()
 	DEBUG(_L("Destructor"));
 	}
 
-CSearch* CSearch::NewLC(MSearchObserver* aObserver)
+CSearch* CSearch::NewLC(MSearchObserver* aObserver, const TBounds &aPreferredBounds)
 	{
-	CSearch* self = new (ELeave) CSearch(aObserver);
+	CSearch* self = new (ELeave) CSearch(aObserver, aPreferredBounds);
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	return self;
 	}
 
-CSearch* CSearch::NewL(MSearchObserver* aObserver)
+CSearch* CSearch::NewL(MSearchObserver* aObserver, const TBounds &aPreferredBounds)
 	{
-	CSearch* self = CSearch::NewLC(aObserver);
+	CSearch* self = CSearch::NewLC(aObserver, aPreferredBounds);
 	CleanupStack::Pop(); // self;
 	return self;
 	}
@@ -250,6 +250,13 @@ void CSearch::RunApiReqestL()
 	__ASSERT_DEBUG(iQuery != KNullDesC, Panic());
 	
 	_LIT8(KApiBaseUrl, "https://nominatim.openstreetmap.org/search?format=json&q=");
+	_LIT8(KViewboxArg, "&viewbox=");
+	
+	TRealFormat realFmt;
+	realFmt.iType = KRealFormatFixed;
+	realFmt.iPlaces = 6;
+	realFmt.iPoint = '.';
+	realFmt.iTriLen = 0;
 	
 	HBufC8* utf8Query = CnvUtfConverter::ConvertFromUnicodeToUtf8L(iQuery);
 	CleanupStack::PushL(utf8Query);
@@ -258,10 +265,18 @@ void CSearch::RunApiReqestL()
 	CleanupStack::PushL(encodedQuery);
 	
 	RBuf8 url;
-	url.CreateL(KApiBaseUrl().Length() + encodedQuery->Length());
+	url.CreateL(KApiBaseUrl().Length() + encodedQuery->Length() + KViewboxArg().Length() + 64);
 	CleanupClosePushL(url);
 	url = KApiBaseUrl;
 	url.Append(*encodedQuery);
+	url.Append(KViewboxArg);
+	url.AppendNum(iPreferredBounds.iTlCoord.Longitude(), realFmt); // lon1
+	url.Append(',');
+	url.AppendNum(iPreferredBounds.iTlCoord.Latitude(), realFmt); // lat1
+	url.Append(',');
+	url.AppendNum(iPreferredBounds.iBrCoord.Longitude(), realFmt); // lon2
+	url.Append(',');
+	url.AppendNum(iPreferredBounds.iBrCoord.Latitude(), realFmt); // lat2
 	
 	iHttpClient->GetL(url);
 		

@@ -695,7 +695,9 @@ void CMapView::HandleSearchL()
 	delete iSearch;
 	iSearch = NULL;
 	
-	iSearch = CSearch::NewL(this);
+	TBounds bounds;
+	iMapControl->Bounds(bounds);
+	iSearch = CSearch::NewL(this, bounds);
 	iSearch->RunL();
 	
 	DEBUG(_L("end"));
