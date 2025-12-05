@@ -246,6 +246,8 @@ void CSearch::ParseJsonValueL(CJsonParser* aParser, const TDesC &aParam, TReal64
 
 void CSearch::RunApiReqestL()
 	{
+	// Api docs: https://nominatim.org/release-docs/develop/api/Search/
+	
 	DEBUG(_L("begin"));
 	__ASSERT_DEBUG(iQuery != KNullDesC, Panic());
 	
