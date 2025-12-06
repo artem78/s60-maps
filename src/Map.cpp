@@ -23,6 +23,7 @@
 #include <epos_cposlmareacriteria.h>
 #include "icons.mbg"
 #include "LBSSatelliteExtended.h"
+#include "Search.h"
 
 CMapLayerBase::CMapLayerBase(/*const*/ CMapControl* aMapView) :
 		iMapView(aMapView)
@@ -1339,6 +1340,100 @@ TReal32 CSignalIndicatorLayer::SignalStrengthToReal(TInt aSignalStrength)
 	{
 	const TInt KMaxSignalStrength = 40; // Taken from here: https://github.com/SymbianSource/oss.FCL.sf.mw.locationsrv/blob/282094c09b81e1848755ad40e31052da0bcac81b/locationsystemui/locationsysui/locblidsatelliteinfo/src/satellitecontrol.cpp#L1193
 	return Min(Max(aSignalStrength / TReal32(KMaxSignalStrength), 0.0), 1.0); // KMaxSignalStrength => 1, 0 => 0
+	}
+
+
+// CSearchResultsLayer
+
+CSearchResultsLayer::CSearchResultsLayer(CMapControl* aMapView):
+		CMapLayerBase(aMapView)
+	{
+	}
+
+CSearchResultsLayer::~CSearchResultsLayer()
+	{
+	//...
+	
+	//delete iIcon;
+	}
+
+CSearchResultsLayer* CSearchResultsLayer::NewLC(CMapControl* aMapView)
+	{
+	CSearchResultsLayer* self = new (ELeave) CSearchResultsLayer(aMapView);
+	CleanupStack::PushL(self);
+	self->ConstructL();
+	return self;
+	}
+
+CSearchResultsLayer* CSearchResultsLayer::NewL(CMapControl* aMapView)
+	{
+	CSearchResultsLayer* self = CSearchResultsLayer::NewLC(aMapView);
+	CleanupStack::Pop(); // self;
+	return self;
+	}
+
+void CSearchResultsLayer::ConstructL()
+	{
+	//CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
+	//CS60MapsApplication* app = static_cast<CS60MapsApplication*>(appUi->Application());
+	
+	//iIcon = app->LoadIconL(EMbmIconsXXX, EMbmIconsXXX_mask);
+	}
+
+void CSearchResultsLayer::Draw(CWindowGc &aGc)
+	{
+	/*CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CEikonEnv::Static()->AppUi());
+	
+	if (!appUi->....()) // Check display or not
+		return;
+	
+	TRAPD(r, DrawL(aGc));
+	if (r != KErrNone)
+		{
+		DEBUG(_L("Leave with code %d"), r);
+		}*/
+	
+	//////
+	CArrayFixSeg<TSearchResultItem>* searchResArr = new (ELeave) CArrayFixSeg<TSearchResultItem>(10);
+	TSearchResultItem item;
+	
+	item.iName = _L("Result 1");
+	item.iCoord.SetCoordinate(39.9153, -75.2896);
+	searchResArr->AppendL(item);
+	
+	item.iName = _L("Result 2");
+	item.iCoord.SetCoordinate(39.8768, -75.3288);
+	searchResArr->AppendL(item);
+	
+	item.iName = _L("Result 3");
+	item.iCoord.SetCoordinate(39.9366, -75.3466);
+	searchResArr->AppendL(item);
+	
+	item.iName = _L("Result 4");
+	item.iCoord.SetCoordinate(39.94969, -75.34055);
+	searchResArr->AppendL(item);
+	//////
+	
+	/*aGc.SetPenColor(KRgbRed);
+	aGc.SetPenSize(TSize(5,5));
+	aGc.SetPenStyle(CGraphicsContext::ESolidPen);
+	*/
+	aGc.SetBrushColor(KRgbRed);
+	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
+	for (TInt i = 0; i < searchResArr->Count(); i++)
+		{
+		item = (*searchResArr)[i];
+		TPoint p = iMapView->GeoCoordsToScreenCoords(item.iCoord);
+		//aGc.DrawLine(p,p);
+		TRect r = TRect(p, TSize(1,1));
+		r.Grow(5,5);
+		aGc.DrawEllipse(r);
+		}
+	
+	
+	//////
+	delete searchResArr;
+	//////
 	}
 
 
