@@ -1480,7 +1480,9 @@ void CSearchResultsLayer::Draw(CWindowGc &aGc)
 			//aGc.SetPenColor(KRgbDarkRed);
 			const TRgb KTextColor(0x4040cd);
 			//aGc.DrawText(item.iName, p);
-			static_cast<CWindowGcEx*>(&aGc)->DrawOutlinedText(item.iName, p, KTextColor, KRgbWhite, ETrue);
+			// Skip leading TAB (used for propper display in list)
+			TPtrC name(item.iName.Right(item.iName.Length() - 1));
+			static_cast<CWindowGcEx*>(&aGc)->DrawOutlinedText(name, p, KTextColor, KRgbWhite, ETrue);
 			aGc.DiscardFont();
 			}
 		}
