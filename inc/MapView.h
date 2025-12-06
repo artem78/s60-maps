@@ -59,6 +59,8 @@ public:
 	// Getters/setters
 	inline CMapControl* MapControl()
 				{ return iMapControl; };
+	inline CSearch* Search()
+				{ return iSearch; };
 	
 private:
 	// Controls

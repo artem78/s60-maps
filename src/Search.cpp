@@ -29,6 +29,7 @@ CSearch::CSearch(MSearchObserver* aObserver, const TBounds &aPreferredBounds)
 
 CSearch::~CSearch()
 	{
+	delete iResultsArr;
 	delete iHttpClient;
 	
 	DEBUG(_L("Destructor"));
@@ -53,6 +54,9 @@ void CSearch::ConstructL()
 	{
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
 	iHttpClient = CHTTPClient2::NewL(this,appUi->iSockServ, appUi->iConn);
+	
+	const TInt KGranularity = 10;
+	iResultsArr = new (ELeave) CArrayFixSeg<TSearchResultItem>(KGranularity);
 	
 	DEBUG(_L("Constructor"));
 	}
@@ -91,12 +95,9 @@ void CSearch::RunResultsDialogL()
 	
 	const TInt KGranularity = 10;
 	
-	CArrayFixSeg<TSearchResultItem>* items = new (ELeave) CArrayFixSeg<TSearchResultItem>(KGranularity);
-	CleanupStack::PushL(items);
+	ParseApiResponseL();
 	
-	ParseApiResponseL(items);
-	
-	switch (items->Count())
+	switch (iResultsArr->Count())
 		{
 		case 0:
 			{ // nothing found
@@ -112,7 +113,7 @@ void CSearch::RunResultsDialogL()
 		
 		case 1:
 			{ // go directly to single result
-			iObserver->OnSearchFinished(items->At(0));
+			iObserver->OnSearchFinished(iResultsArr->At(0));
 			
 			break;
 			}
@@ -122,9 +123,9 @@ void CSearch::RunResultsDialogL()
 			CPtrCArray* namesArray = new (ELeave) CPtrCArray(KGranularity);
 			CleanupStack::PushL(namesArray);
 			
-			for (TInt i = 0; i < items->Count(); i++)
+			for (TInt i = 0; i < iResultsArr->Count(); i++)
 				{
-				namesArray->AppendL(TPtrC(items->At(i).iName));
+				namesArray->AppendL(TPtrC(iResultsArr->At(i).iName));
 				}
 			
 			TInt chosenItem = -1;
@@ -138,12 +139,12 @@ void CSearch::RunResultsDialogL()
 			
 			if (res)
 				{
-				DEBUG(_L("Selected name=%S idx=%d lat=%f lon=%f"), &items->At(chosenItem).iName,
+				DEBUG(_L("Selected name=%S idx=%d lat=%f lon=%f"), &iResultsArr->At(chosenItem).iName,
 						chosenItem,
-						items->At(chosenItem).iCoord.Latitude(),
-						items->At(chosenItem).iCoord.Longitude());
+						iResultsArr->At(chosenItem).iCoord.Latitude(),
+						iResultsArr->At(chosenItem).iCoord.Longitude());
 				
-				iObserver->OnSearchFinished(items->At(chosenItem));
+				iObserver->OnSearchFinished(iResultsArr->At(chosenItem));
 				}
 			else
 				{
@@ -154,17 +155,17 @@ void CSearch::RunResultsDialogL()
 			}
 		}
 	
-	CleanupStack::PopAndDestroy(items);
-	
 	
 	DEBUG(_L("end"));
 	}
 
-void CSearch::ParseApiResponseL(CArrayFix<TSearchResultItem>* aResultsArr)
+void CSearch::ParseApiResponseL()
 	{
 	DEBUG(_L("begin"));
 	
 	enum TBoundsArrIdx {ELat1, ELat2, ELon1, ELon2};
+	
+	iResultsArr->Reset();
 	
 	CJsonParser* parser = new (ELeave) CJsonParser();
 	CleanupStack::PushL(parser);
@@ -215,7 +216,7 @@ void CSearch::ParseApiResponseL(CArrayFix<TSearchResultItem>* aResultsArr)
 		result.iBounds.SetCoords(bLat1, bLon1, bLat2, bLon2);
 		
 		
-		aResultsArr->AppendL(result);
+		iResultsArr->AppendL(result);
 		}
 	
 	CleanupStack::PopAndDestroy(2, parser);

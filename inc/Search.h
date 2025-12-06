@@ -28,6 +28,8 @@ class CJsonParser;
 
 // CLASS DECLARATION
 
+// todo: make type for array of TSearchResultItem
+
 /**
  *  CSearch
  * 
@@ -82,16 +84,19 @@ private:
 	HBufC8* iResponseBuff;
 	MSearchObserver* iObserver;
 	TBounds iPreferredBounds;
+	CArrayFix<TSearchResultItem>* iResultsArr;
 	
 	TBool RunQueryDialogL();
 	/*TBool*/ void RunResultsDialogL();
-	void ParseApiResponseL(CArrayFix<TSearchResultItem>* aResultsArr);
+	void ParseApiResponseL();
 	void RunApiReqestL();
 	static void ParseJsonValueL(CJsonParser* aParser, const TDesC &aParam, TDes &aVal);
 	static void ParseJsonValueL(CJsonParser* aParser, const TDesC &aParam, TReal64 &aVal);
 	
 public:
 	TBool RunL();
+	inline const CArrayFix<TSearchResultItem>* Results() const
+		{ return iResultsArr; };
 
 	};
 

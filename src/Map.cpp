@@ -24,6 +24,8 @@
 #include "icons.mbg"
 #include "LBSSatelliteExtended.h"
 #include "Search.h"
+#include "MapView.h"
+
 
 CMapLayerBase::CMapLayerBase(/*const*/ CMapControl* aMapView) :
 		iMapView(aMapView)
@@ -1380,19 +1382,25 @@ void CSearchResultsLayer::ConstructL()
 
 void CSearchResultsLayer::Draw(CWindowGc &aGc)
 	{
-	/*CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CEikonEnv::Static()->AppUi());
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CEikonEnv::Static()->AppUi());
 	
-	if (!appUi->....()) // Check display or not
+	// Check if any items to display
+	CSearch* search = appUi->MapView()->Search();
+	if (!/*iMapView->Search()*/ search)
 		return;
 	
-	TRAPD(r, DrawL(aGc));
+	const CArrayFix/*Seg*/<TSearchResultItem>* searchResArr = /*iMapView->Search()*/search->Results();
+	if (!searchResArr || !searchResArr->Count())
+		return;
+	
+	/*TRAPD(r, DrawL(aGc));
 	if (r != KErrNone)
 		{
 		DEBUG(_L("Leave with code %d"), r);
 		}*/
 	
 	//////
-	CArrayFixSeg<TSearchResultItem>* searchResArr = new (ELeave) CArrayFixSeg<TSearchResultItem>(10);
+	/*CArrayFixSeg<TSearchResultItem>* searchResArr = new (ELeave) CArrayFixSeg<TSearchResultItem>(10);
 	TSearchResultItem item;
 	
 	item.iName = _L("Result 1");
@@ -1409,7 +1417,7 @@ void CSearchResultsLayer::Draw(CWindowGc &aGc)
 	
 	item.iName = _L("Result 4");
 	item.iCoord.SetCoordinate(39.94969, -75.34055);
-	searchResArr->AppendL(item);
+	searchResArr->AppendL(item);*/
 	//////
 	
 	/*aGc.SetPenColor(KRgbRed);
@@ -1424,6 +1432,7 @@ void CSearchResultsLayer::Draw(CWindowGc &aGc)
 	TReal32 distance, minDistance = 99999999;
 	TCoordinate screenCenterCoord = iMapView->GetCenterCoordinate();
 	TSize iconSize = iIcon->Bitmap()->SizeInPixels();
+	TSearchResultItem item;
 	for (TInt i = 0; i < searchResArr->Count(); i++)
 		{
 		item = (*searchResArr)[i];
@@ -1477,9 +1486,9 @@ void CSearchResultsLayer::Draw(CWindowGc &aGc)
 		}
 	//aGc.DiscardFont();
 	
-	//////
-	delete searchResArr;
-	//////
+	/*//////
+	//delete searchResArr;
+	//////*/
 	}
 
 
