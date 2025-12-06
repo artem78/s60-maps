@@ -1352,9 +1352,7 @@ CSearchResultsLayer::CSearchResultsLayer(CMapControl* aMapView):
 
 CSearchResultsLayer::~CSearchResultsLayer()
 	{
-	//...
-	
-	//delete iIcon;
+	delete iIcon;
 	}
 
 CSearchResultsLayer* CSearchResultsLayer::NewLC(CMapControl* aMapView)
@@ -1374,10 +1372,10 @@ CSearchResultsLayer* CSearchResultsLayer::NewL(CMapControl* aMapView)
 
 void CSearchResultsLayer::ConstructL()
 	{
-	//CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
-	//CS60MapsApplication* app = static_cast<CS60MapsApplication*>(appUi->Application());
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
+	CS60MapsApplication* app = static_cast<CS60MapsApplication*>(appUi->Application());
 	
-	//iIcon = app->LoadIconL(EMbmIconsXXX, EMbmIconsXXX_mask);
+	iIcon = app->LoadIconL(EMbmIconsLocation, EMbmIconsLocation_mask);
 	}
 
 void CSearchResultsLayer::Draw(CWindowGc &aGc)
@@ -1418,13 +1416,14 @@ void CSearchResultsLayer::Draw(CWindowGc &aGc)
 	aGc.SetPenSize(TSize(5,5));
 	aGc.SetPenStyle(CGraphicsContext::ESolidPen);
 	*/
-	aGc.SetBrushColor(KRgbRed);
-	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
+	/*aGc.SetBrushColor(KRgbRed);
+	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);*/
 	//aGc.UseFont(iMapView->DefaultFont());
 	
 	TInt nearestItemIdx = -1;
 	TReal32 distance, minDistance = 99999999;
 	TCoordinate screenCenterCoord = iMapView->GetCenterCoordinate();
+	TSize iconSize = iIcon->Bitmap()->SizeInPixels();
 	for (TInt i = 0; i < searchResArr->Count(); i++)
 		{
 		item = (*searchResArr)[i];
@@ -1441,18 +1440,20 @@ void CSearchResultsLayer::Draw(CWindowGc &aGc)
 			}
 		
 		
-		TPoint p = iMapView->GeoCoordsToScreenCoords(item.iCoord);
-		//aGc.DrawLine(p,p);
-		TRect r = TRect(p, TSize(1,1));
-		r.Grow(5,5);
-		aGc.DrawEllipse(r);
+		// Calculate icon position on the screen
+		//TSize iconSize = iIcon->Bitmap()->SizeInPixels();
+		TPoint resultPoint = iMapView->GeoCoordsToScreenCoords(item.iCoord);
+		TRect dstRect(resultPoint, iconSize);
+		dstRect.Move(-iconSize.iWidth / 2, -iconSize.iHeight);
 		
-		//p.iX += 10;
-		//aGc.DrawText(item.iName, p);
-
+		TRect srcRect(TPoint(0, 0), iconSize);
+		
+		// Draw icon
+		aGc.DrawBitmapMasked(dstRect, iIcon->Bitmap(), srcRect, iIcon->Mask(), 0);
 		}
 	
 	
+	// Draw text
 	if (nearestItemIdx > -1)
 		{
 		item = (*searchResArr)[nearestItemIdx];
@@ -1463,10 +1464,14 @@ void CSearchResultsLayer::Draw(CWindowGc &aGc)
 		r.Grow(25, 25);
 		if (r.Contains(p))
 			{
-			p.iX += 10;
+			p.iX += iconSize.iWidth / 2 + 5;
 			
+			//aGc.UseFont(iMapView->SmallFont());
 			aGc.UseFont(iMapView->DefaultFont());
-			aGc.DrawText(item.iName, p);
+			//aGc.SetPenColor(KRgbDarkRed);
+			const TRgb KTextColor(0x4040cd);
+			//aGc.DrawText(item.iName, p);
+			static_cast<CWindowGcEx*>(&aGc)->DrawOutlinedText(item.iName, p, KTextColor, KRgbWhite, ETrue);
 			aGc.DiscardFont();
 			}
 		}

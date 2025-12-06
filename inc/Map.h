@@ -310,7 +310,7 @@ public:
 	// Own
 private:
 	//iSearchResults; // Not owned
-	//CAknIcon* iIcon;
+	CAknIcon* iIcon;
 	
 	//void DrawL(CWindowGc &aGc);
 	//void DrawIcon(CWindowGc &aGc, ...);
