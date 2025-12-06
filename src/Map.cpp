@@ -1420,16 +1420,57 @@ void CSearchResultsLayer::Draw(CWindowGc &aGc)
 	*/
 	aGc.SetBrushColor(KRgbRed);
 	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
+	//aGc.UseFont(iMapView->DefaultFont());
+	
+	TInt nearestItemIdx = -1;
+	TReal32 distance, minDistance = 99999999;
+	TCoordinate screenCenterCoord = iMapView->GetCenterCoordinate();
 	for (TInt i = 0; i < searchResArr->Count(); i++)
 		{
 		item = (*searchResArr)[i];
+		
+		// Calculate nearest to the screen center landmark index
+		distance = 99999999;
+		if (screenCenterCoord.Distance(item.iCoord, distance) == KErrNone)
+			{
+			if (distance < minDistance)
+				{
+				nearestItemIdx = i;
+				minDistance = distance;
+				}
+			}
+		
+		
 		TPoint p = iMapView->GeoCoordsToScreenCoords(item.iCoord);
 		//aGc.DrawLine(p,p);
 		TRect r = TRect(p, TSize(1,1));
 		r.Grow(5,5);
 		aGc.DrawEllipse(r);
+		
+		//p.iX += 10;
+		//aGc.DrawText(item.iName, p);
+
 		}
 	
+	
+	if (nearestItemIdx > -1)
+		{
+		item = (*searchResArr)[nearestItemIdx];
+		TPoint p = iMapView->GeoCoordsToScreenCoords(item.iCoord);
+		
+		TPoint c = iMapView->GeoCoordsToScreenCoords(iMapView->GetCenterCoordinate());
+		TRect r = TRect(c, TSize(1, 1));
+		r.Grow(25, 25);
+		if (r.Contains(p))
+			{
+			p.iX += 10;
+			
+			aGc.UseFont(iMapView->DefaultFont());
+			aGc.DrawText(item.iName, p);
+			aGc.DiscardFont();
+			}
+		}
+	//aGc.DiscardFont();
 	
 	//////
 	delete searchResArr;
