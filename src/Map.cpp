@@ -1466,23 +1466,33 @@ void CSearchResultsLayer::Draw(CWindowGc &aGc)
 	if (nearestItemIdx > -1)
 		{
 		item = (*searchResArr)[nearestItemIdx];
-		TPoint p = iMapView->GeoCoordsToScreenCoords(item.iCoord);
+		TPoint resultPoint = iMapView->GeoCoordsToScreenCoords(item.iCoord);
+		TPoint screenCenterPoint = iMapView->GeoCoordsToScreenCoords(iMapView->GetCenterCoordinate());
 		
-		TPoint c = iMapView->GeoCoordsToScreenCoords(iMapView->GetCenterCoordinate());
-		TRect r = TRect(c, TSize(1, 1));
-		r.Grow(25, 25);
-		if (r.Contains(p))
+		/*TRect popupArea = TRect(resultPoint, TSize(0, 0));
+		const TInt areaSize = 30;
+		popupArea.Grow(areaSize / 2, areaSize / 2);*/
+		 
+		TRect popupArea(resultPoint, iconSize);
+		popupArea.Move(-iconSize.iWidth / 2, -iconSize.iHeight);
+		const TInt areaIndent = 10;
+		popupArea.Grow(areaIndent, areaIndent);
+		////////////
+		/*aGc.SetPenStyle(CGraphicsContext::EDashedPen);
+		aGc.DrawRect(popupArea);*/
+		/////////
+		if (popupArea.Contains(screenCenterPoint))
 			{
-			p.iX += iconSize.iWidth / 2 + 5;
+			resultPoint.iX += iconSize.iWidth / 2 + 5;
 			
 			//aGc.UseFont(iMapView->SmallFont());
 			aGc.UseFont(iMapView->DefaultFont());
 			//aGc.SetPenColor(KRgbDarkRed);
 			const TRgb KTextColor(0x4040cd);
-			//aGc.DrawText(item.iName, p);
+			//aGc.DrawText(item.iName, popupArea);
 			// Skip leading TAB (used for propper display in list)
 			TPtrC name(item.iName.Right(item.iName.Length() - 1));
-			static_cast<CWindowGcEx*>(&aGc)->DrawOutlinedText(name, p, KTextColor, KRgbWhite, ETrue);
+			static_cast<CWindowGcEx*>(&aGc)->DrawOutlinedText(name, resultPoint, KTextColor, KRgbWhite, ETrue);
 			aGc.DiscardFont();
 			}
 		}
