@@ -25,6 +25,7 @@
 #include "LBSSatelliteExtended.h"
 #include "Search.h"
 #include "MapView.h"
+#include <aknutils.h> 
 
 
 CMapLayerBase::CMapLayerBase(/*const*/ CMapControl* aMapView) :
@@ -1483,17 +1484,32 @@ void CSearchResultsLayer::Draw(CWindowGc &aGc)
 		/////////
 		if (popupArea.Contains(screenCenterPoint))
 			{
-			resultPoint.iX += iconSize.iWidth / 2 + 5;
-			
-			//aGc.UseFont(iMapView->SmallFont());
-			aGc.UseFont(iMapView->DefaultFont());
-			//aGc.SetPenColor(KRgbDarkRed);
+			//const CFont* font = iMapView->SmallFont();
+			const CFont* font = iMapView->DefaultFont();
+			TInt baselineOffset = /*font->BaselineOffsetInPixels()*/ /*font->AscentInPixels()*/ font->FontMaxAscent();
 			const TRgb KTextColor(0x4040cd);
-			//aGc.DrawText(item.iName, popupArea);
 			// Skip leading TAB (used for propper display in list)
 			TPtrC name(item.iName.Right(item.iName.Length() - 1));
-			static_cast<CWindowGcEx*>(&aGc)->DrawOutlinedText(name, resultPoint, KTextColor, KRgbWhite, ETrue);
+			TRect textRect(iMapView->Rect());
+			textRect.iTl.iY = resultPoint.iY + 10;
+			textRect.SetHeight(50);
+			textRect.Shrink(10, 0);
+			//////////
+			//aGc.DrawRect(textRect);
+			/////////
+			CArrayFix<TPtrC>* lines = new (ELeave) CArrayFixFlat<TPtrC>(10);
+			CleanupStack::PushL(lines);
+			AknTextUtils::WrapToArrayL(name, textRect.Width(), *iMapView->DefaultFont(), *lines);
+			aGc.UseFont(font);
+			for (TInt i = 0; i < lines->Count(); i++)
+				{
+				static_cast<CWindowGcEx*>(&aGc)->DrawOutlinedText((*lines)[i], textRect,
+						baselineOffset, CGraphicsContext::ECenter, 0, KTextColor);
+				textRect.Move(0, font->HeightInPixels() + 3);
+				}
 			aGc.DiscardFont();
+			CleanupStack::PopAndDestroy(lines);
+			
 			}
 		}
 	//aGc.DiscardFont();
