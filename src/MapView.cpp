@@ -720,6 +720,28 @@ void CMapView::OnSearchFinished(const TSearchResultItem &aResultData)
 	//iSearch = NULL;
 	}
 
+void CMapView::OnSearchClosed/*L*/()
+	{
+	//MiscUtils::DbgMsg(_L("OnSearchClosed"));
+	if (!iSearch->Results() || !iSearch->Results()->Count())
+		return;
+	
+	
+	MapControl()->SetFollowUser(EFalse);
+	//TZoom prefferedZoom = MapControl()->PreferredZoomForBounds(aResultData.iBounds);
+	//MapControl()->Move(aResultData.iCoord, prefferedZoom);
+	
+	TBounds maxBounds = (*iSearch->Results())[0].iBounds;
+	for (TInt i = /*0*/ 1; i < iSearch->Results()->Count(); i++)
+		{
+		maxBounds.Join((*iSearch->Results())[i].iBounds);
+		}
+	TZoom zoom = MapControl()->PreferredZoomForBounds(maxBounds);
+	TCoordinate center;
+	maxBounds.Center(center);
+	MapControl()->Move(center, zoom);
+	}
+
 void CMapView::HandleTrafficCounterL()
 	{
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(AppUi());

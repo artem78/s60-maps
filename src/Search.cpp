@@ -148,7 +148,7 @@ void CSearch::RunResultsDialogL()
 				}
 			else
 				{
-				//iObserver->OnSearchFailed();
+				iObserver->OnSearchClosed();
 				}
 			
 			break;

@@ -52,6 +52,7 @@ private:
 private:
 	void OnSearchFinished(const TSearchResultItem &aResultData);
 	/*void OnSearchFailed();*/
+	void OnSearchClosed/*L*/();
 	
 	
 	// Custom properties and methods

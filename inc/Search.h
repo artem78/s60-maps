@@ -106,6 +106,7 @@ class MSearchObserver
 protected:
 	virtual void OnSearchFinished(const TSearchResultItem &aResultData) = 0;
 	virtual void OnSearchFailedL(TInt aError);
+	virtual void OnSearchClosed/*L*/() = 0;
 	
 	friend class CSearch;
 	};

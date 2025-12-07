@@ -177,6 +177,12 @@ public:
 	// Returns ETrue if given rect completely located inside this rect
 	TBool Contains(const TBounds &aCoordRect) const;
 	
+	// Sets this bound to minimum bound which contains both this bound and specified bound.
+	// This is similar to TRect::BoundingRect().
+	void Join(const TBounds &aCoordRect);
+	
+	void Center(TCoordinate &aCoord);
+	
     friend bool operator == (const TBounds &aCoordRect1, const TBounds &aCoordRect2);
     friend bool operator != (const TBounds &aCoordRect1, const TBounds &aCoordRect2);
 	};
