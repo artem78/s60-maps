@@ -105,3 +105,7 @@ CHARACTER_SET UTF8
 #define qtn_search_failed_fmt "Search failed! (%S)"
 #define qtn_traffic_counter "Traffic counter"
 #define qtn_traffic_counter_dlg_msg_fmt "Session:\n   recieved %S\n   sent %S\n\nTotal:\n   recieved %S\n   sent %S"
+
+// Added in version X.XX
+
+#define qtn_clear_search_results "Clear search results"

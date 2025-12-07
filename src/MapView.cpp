@@ -186,6 +186,10 @@ void CMapView::HandleCommandL(TInt aCommand)
 			HandleTrafficCounterL();
 			break;
 			
+		case EClearSearchResults:
+			HandleClearSearchResultsL();
+			break;
+			
 		default:
 			// Let the AppUi handle unknown for view commands
 			AppUi()->HandleCommandL(aCommand);
@@ -205,6 +209,9 @@ void CMapView::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
 				//		iAppView->IsFollowingUser() ? EEikMenuItemSymbolOn : EEikMenuItemSymbolIndeterminate
 				//);
 				aMenuPane->SetItemDimmed(EFindMe, !appUi->IsPositioningAvailableAndEnabled() || MapControl()->IsFollowingUser());
+				
+				TBool isVisible = iSearch && iSearch->Results() && iSearch->Results()->Count();
+				aMenuPane->SetItemDimmed(EClearSearchResults, !isVisible);
 				
 				break;
 			}
@@ -746,4 +753,10 @@ void CMapView::HandleTrafficCounterL()
 	dlg->RunLD();
 	
 	CleanupStack::PopAndDestroy(3, title);
+	}
+
+void CMapView::HandleClearSearchResultsL()
+	{
+	delete iSearch;
+	iSearch = NULL;
 	}

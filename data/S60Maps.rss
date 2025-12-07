@@ -113,6 +113,11 @@ RESOURCE MENU_PANE r_menu
 				},
 		MENU_ITEM
 				{
+				command = EClearSearchResults;
+				txt = qtn_clear_search_results;
+				},
+		MENU_ITEM
+				{
 				//command = ...;
 				txt = qtn_goto;
 				cascade = r_submenu_goto;
