@@ -28,6 +28,8 @@ class CJsonParser;
 
 // CLASS DECLARATION
 
+// todo: make type for array of TSearchResultItem
+
 /**
  *  CSearch
  * 
@@ -45,19 +47,19 @@ public:
 	/**
 	 * Two-phased constructor.
 	 */
-	static CSearch* NewL(MSearchObserver* aObserver);
+	static CSearch* NewL(MSearchObserver* aObserver, const TBounds &aPreferredBounds);
 
 	/**
 	 * Two-phased constructor.
 	 */
-	static CSearch* NewLC(MSearchObserver* aObserver);
+	static CSearch* NewLC(MSearchObserver* aObserver, const TBounds &aPreferredBounds);
 
 private:
 
 	/**
 	 * Constructor for performing 1st stage construction
 	 */
-	CSearch(MSearchObserver* aObserver);
+	CSearch(MSearchObserver* aObserver, const TBounds &aPreferredBounds);
 
 	/**
 	 * EPOC default constructor for performing 2nd stage construction
@@ -81,16 +83,20 @@ private:
 	CHTTPClient2* iHttpClient;
 	HBufC8* iResponseBuff;
 	MSearchObserver* iObserver;
+	TBounds iPreferredBounds;
+	CArrayFix<TSearchResultItem>* iResultsArr;
 	
 	TBool RunQueryDialogL();
 	/*TBool*/ void RunResultsDialogL();
-	void ParseApiResponseL(CArrayFix<TSearchResultItem>* aResultsArr);
+	void ParseApiResponseL();
 	void RunApiReqestL();
 	static void ParseJsonValueL(CJsonParser* aParser, const TDesC &aParam, TDes &aVal);
 	static void ParseJsonValueL(CJsonParser* aParser, const TDesC &aParam, TReal64 &aVal);
 	
 public:
 	TBool RunL();
+	inline const CArrayFix<TSearchResultItem>* Results() const
+		{ return iResultsArr; };
 
 	};
 
@@ -100,6 +106,7 @@ class MSearchObserver
 protected:
 	virtual void OnSearchFinished(const TSearchResultItem &aResultData) = 0;
 	virtual void OnSearchFailedL(TInt aError);
+	virtual void OnSearchClosed/*L*/() = 0;
 	
 	friend class CSearch;
 	};

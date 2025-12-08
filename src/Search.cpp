@@ -21,30 +21,31 @@
 #include <aknnotewrappers.h> 
 
 
-CSearch::CSearch(MSearchObserver* aObserver)
+CSearch::CSearch(MSearchObserver* aObserver, const TBounds &aPreferredBounds)
 		: iObserver(aObserver)
 	{
-	// No implementation required
+	iPreferredBounds.SetCoords(aPreferredBounds.iTlCoord, aPreferredBounds.iBrCoord);
 	}
 
 CSearch::~CSearch()
 	{
+	delete iResultsArr;
 	delete iHttpClient;
 	
 	DEBUG(_L("Destructor"));
 	}
 
-CSearch* CSearch::NewLC(MSearchObserver* aObserver)
+CSearch* CSearch::NewLC(MSearchObserver* aObserver, const TBounds &aPreferredBounds)
 	{
-	CSearch* self = new (ELeave) CSearch(aObserver);
+	CSearch* self = new (ELeave) CSearch(aObserver, aPreferredBounds);
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	return self;
 	}
 
-CSearch* CSearch::NewL(MSearchObserver* aObserver)
+CSearch* CSearch::NewL(MSearchObserver* aObserver, const TBounds &aPreferredBounds)
 	{
-	CSearch* self = CSearch::NewLC(aObserver);
+	CSearch* self = CSearch::NewLC(aObserver, aPreferredBounds);
 	CleanupStack::Pop(); // self;
 	return self;
 	}
@@ -53,6 +54,9 @@ void CSearch::ConstructL()
 	{
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
 	iHttpClient = CHTTPClient2::NewL(this,appUi->iSockServ, appUi->iConn);
+	
+	const TInt KGranularity = 10;
+	iResultsArr = new (ELeave) CArrayFixSeg<TSearchResultItem>(KGranularity);
 	
 	DEBUG(_L("Constructor"));
 	}
@@ -91,12 +95,9 @@ void CSearch::RunResultsDialogL()
 	
 	const TInt KGranularity = 10;
 	
-	CArrayFixSeg<TSearchResultItem>* items = new (ELeave) CArrayFixSeg<TSearchResultItem>(KGranularity);
-	CleanupStack::PushL(items);
+	ParseApiResponseL();
 	
-	ParseApiResponseL(items);
-	
-	switch (items->Count())
+	switch (iResultsArr->Count())
 		{
 		case 0:
 			{ // nothing found
@@ -112,7 +113,7 @@ void CSearch::RunResultsDialogL()
 		
 		case 1:
 			{ // go directly to single result
-			iObserver->OnSearchFinished(items->At(0));
+			iObserver->OnSearchFinished(iResultsArr->At(0));
 			
 			break;
 			}
@@ -122,9 +123,9 @@ void CSearch::RunResultsDialogL()
 			CPtrCArray* namesArray = new (ELeave) CPtrCArray(KGranularity);
 			CleanupStack::PushL(namesArray);
 			
-			for (TInt i = 0; i < items->Count(); i++)
+			for (TInt i = 0; i < iResultsArr->Count(); i++)
 				{
-				namesArray->AppendL(TPtrC(items->At(i).iName));
+				namesArray->AppendL(TPtrC(iResultsArr->At(i).iName));
 				}
 			
 			TInt chosenItem = -1;
@@ -138,33 +139,33 @@ void CSearch::RunResultsDialogL()
 			
 			if (res)
 				{
-				DEBUG(_L("Selected name=%S idx=%d lat=%f lon=%f"), &items->At(chosenItem).iName,
+				DEBUG(_L("Selected name=%S idx=%d lat=%f lon=%f"), &iResultsArr->At(chosenItem).iName,
 						chosenItem,
-						items->At(chosenItem).iCoord.Latitude(),
-						items->At(chosenItem).iCoord.Longitude());
+						iResultsArr->At(chosenItem).iCoord.Latitude(),
+						iResultsArr->At(chosenItem).iCoord.Longitude());
 				
-				iObserver->OnSearchFinished(items->At(chosenItem));
+				iObserver->OnSearchFinished(iResultsArr->At(chosenItem));
 				}
 			else
 				{
-				//iObserver->OnSearchFailed();
+				iObserver->OnSearchClosed();
 				}
 			
 			break;
 			}
 		}
 	
-	CleanupStack::PopAndDestroy(items);
-	
 	
 	DEBUG(_L("end"));
 	}
 
-void CSearch::ParseApiResponseL(CArrayFix<TSearchResultItem>* aResultsArr)
+void CSearch::ParseApiResponseL()
 	{
 	DEBUG(_L("begin"));
 	
 	enum TBoundsArrIdx {ELat1, ELat2, ELon1, ELon2};
+	
+	iResultsArr->Reset();
 	
 	CJsonParser* parser = new (ELeave) CJsonParser();
 	CleanupStack::PushL(parser);
@@ -215,7 +216,7 @@ void CSearch::ParseApiResponseL(CArrayFix<TSearchResultItem>* aResultsArr)
 		result.iBounds.SetCoords(bLat1, bLon1, bLat2, bLon2);
 		
 		
-		aResultsArr->AppendL(result);
+		iResultsArr->AppendL(result);
 		}
 	
 	CleanupStack::PopAndDestroy(2, parser);
@@ -246,10 +247,19 @@ void CSearch::ParseJsonValueL(CJsonParser* aParser, const TDesC &aParam, TReal64
 
 void CSearch::RunApiReqestL()
 	{
+	// Api docs: https://nominatim.org/release-docs/develop/api/Search/
+	
 	DEBUG(_L("begin"));
 	__ASSERT_DEBUG(iQuery != KNullDesC, Panic());
 	
 	_LIT8(KApiBaseUrl, "https://nominatim.openstreetmap.org/search?format=json&q=");
+	_LIT8(KViewboxArg, "&viewbox=");
+	
+	TRealFormat realFmt;
+	realFmt.iType = KRealFormatFixed;
+	realFmt.iPlaces = 6;
+	realFmt.iPoint = '.';
+	realFmt.iTriLen = 0;
 	
 	HBufC8* utf8Query = CnvUtfConverter::ConvertFromUnicodeToUtf8L(iQuery);
 	CleanupStack::PushL(utf8Query);
@@ -258,10 +268,18 @@ void CSearch::RunApiReqestL()
 	CleanupStack::PushL(encodedQuery);
 	
 	RBuf8 url;
-	url.CreateL(KApiBaseUrl().Length() + encodedQuery->Length());
+	url.CreateL(KApiBaseUrl().Length() + encodedQuery->Length() + KViewboxArg().Length() + 64);
 	CleanupClosePushL(url);
 	url = KApiBaseUrl;
 	url.Append(*encodedQuery);
+	url.Append(KViewboxArg);
+	url.AppendNum(iPreferredBounds.iTlCoord.Longitude(), realFmt); // lon1
+	url.Append(',');
+	url.AppendNum(iPreferredBounds.iTlCoord.Latitude(), realFmt); // lat1
+	url.Append(',');
+	url.AppendNum(iPreferredBounds.iBrCoord.Longitude(), realFmt); // lon2
+	url.Append(',');
+	url.AppendNum(iPreferredBounds.iBrCoord.Latitude(), realFmt); // lat2
 	
 	iHttpClient->GetL(url);
 		

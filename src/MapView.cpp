@@ -186,6 +186,10 @@ void CMapView::HandleCommandL(TInt aCommand)
 			HandleTrafficCounterL();
 			break;
 			
+		case EClearSearchResults:
+			HandleClearSearchResultsL();
+			break;
+			
 		default:
 			// Let the AppUi handle unknown for view commands
 			AppUi()->HandleCommandL(aCommand);
@@ -205,6 +209,9 @@ void CMapView::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
 				//		iAppView->IsFollowingUser() ? EEikMenuItemSymbolOn : EEikMenuItemSymbolIndeterminate
 				//);
 				aMenuPane->SetItemDimmed(EFindMe, !appUi->IsPositioningAvailableAndEnabled() || MapControl()->IsFollowingUser());
+				
+				TBool isVisible = iSearch && iSearch->Results() && iSearch->Results()->Count();
+				aMenuPane->SetItemDimmed(EClearSearchResults, !isVisible);
 				
 				break;
 			}
@@ -695,7 +702,9 @@ void CMapView::HandleSearchL()
 	delete iSearch;
 	iSearch = NULL;
 	
-	iSearch = CSearch::NewL(this);
+	TBounds bounds;
+	iMapControl->Bounds(bounds);
+	iSearch = CSearch::NewL(this, bounds);
 	iSearch->RunL();
 	
 	DEBUG(_L("end"));
@@ -709,6 +718,28 @@ void CMapView::OnSearchFinished(const TSearchResultItem &aResultData)
 	
 	//delete iSearch;
 	//iSearch = NULL;
+	}
+
+void CMapView::OnSearchClosed/*L*/()
+	{
+	//MiscUtils::DbgMsg(_L("OnSearchClosed"));
+	if (!iSearch->Results() || !iSearch->Results()->Count())
+		return;
+	
+	
+	MapControl()->SetFollowUser(EFalse);
+	//TZoom prefferedZoom = MapControl()->PreferredZoomForBounds(aResultData.iBounds);
+	//MapControl()->Move(aResultData.iCoord, prefferedZoom);
+	
+	TBounds maxBounds = (*iSearch->Results())[0].iBounds;
+	for (TInt i = /*0*/ 1; i < iSearch->Results()->Count(); i++)
+		{
+		maxBounds.Join((*iSearch->Results())[i].iBounds);
+		}
+	TZoom zoom = MapControl()->PreferredZoomForBounds(maxBounds);
+	TCoordinate center;
+	maxBounds.Center(center);
+	MapControl()->Move(center, zoom);
 	}
 
 void CMapView::HandleTrafficCounterL()
@@ -744,4 +775,10 @@ void CMapView::HandleTrafficCounterL()
 	dlg->RunLD();
 	
 	CleanupStack::PopAndDestroy(3, title);
+	}
+
+void CMapView::HandleClearSearchResultsL()
+	{
+	delete iSearch;
+	iSearch = NULL;
 	}

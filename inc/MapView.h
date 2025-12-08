@@ -52,6 +52,7 @@ private:
 private:
 	void OnSearchFinished(const TSearchResultItem &aResultData);
 	/*void OnSearchFailed();*/
+	void OnSearchClosed/*L*/();
 	
 	
 	// Custom properties and methods
@@ -59,6 +60,8 @@ public:
 	// Getters/setters
 	inline CMapControl* MapControl()
 				{ return iMapControl; };
+	inline CSearch* Search()
+				{ return iSearch; };
 	
 private:
 	// Controls
@@ -86,6 +89,7 @@ private:
 	void HandleReloadVisibleAreaL();
 	void HandleSearchL();
 	void HandleTrafficCounterL();
+	void HandleClearSearchResultsL();
 	
 	// Others
 	CSearch* iSearch;

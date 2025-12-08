@@ -283,6 +283,26 @@ bool operator != (const TBounds &aCoordRect1, const TBounds &aCoordRect2)
 	return !(aCoordRect1 == aCoordRect2);
 	}
 
+void TBounds::Join(const TBounds &aCoordRect)
+	{
+	iTlCoord.SetCoordinate(
+			Max(iTlCoord.Latitude(), aCoordRect.iTlCoord.Latitude()),
+			Min(iTlCoord.Longitude(), aCoordRect.iTlCoord.Longitude())
+		);
+	iBrCoord.SetCoordinate(
+			Min(iBrCoord.Latitude(), aCoordRect.iBrCoord.Latitude()),
+			Max(iBrCoord.Longitude(), aCoordRect.iBrCoord.Longitude())
+		);
+	}
+
+void TBounds::Center(TCoordinate &aCoord)
+	{
+	aCoord.SetCoordinate(
+			(iTlCoord.Latitude() + iBrCoord.Latitude()) / 2,
+			(iTlCoord.Longitude() + iBrCoord.Longitude()) / 2
+		);
+	}
+
 
 // MiscUtils
 
