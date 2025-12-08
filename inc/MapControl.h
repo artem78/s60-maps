@@ -191,8 +191,6 @@ private:
 public:
 	void Move(const TCoordinate &aPos);
 	void Move(const TCoordinate &aPos, TZoom aZoom);
-	void Move(TReal64 aLat, TReal64 aLon);
-	void Move(TReal64 aLat, TReal64 aLon, TZoom aZoom);
 	void MoveAndZoomIn(const TCoordinate &aPos);
 	void MoveAndZoomToBounds(const TBounds &aBounds);
 

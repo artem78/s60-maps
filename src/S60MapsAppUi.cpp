@@ -430,7 +430,8 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 		EnablePositioningL();
 		}
 	
-	iMapView->MapControl()->Move(iSettings->GetLat(), iSettings->GetLon(), iSettings->GetZoom());
+	const TCoordinate coord(iSettings->GetLat(), iSettings->GetLon());
+	iMapView->MapControl()->Move(coord, iSettings->GetZoom());
 	
 	// Tile provider
 	TTileProviderId tileProviderId(iSettings->GetTileProviderId());

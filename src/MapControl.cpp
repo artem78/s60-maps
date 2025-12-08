@@ -553,25 +553,6 @@ void CMapControl::Move(const TCoordinate &aPos, TZoom aZoom)
 	EnableDraw();
 	}
 
-void CMapControl::Move(TReal64 aLat, TReal64 aLon)
-	{
-	DisableDraw();
-	
-	Move(aLat, aLon, iZoom);
-	
-	EnableDraw();
-	}
-
-void CMapControl::Move(TReal64 aLat, TReal64 aLon, TZoom aZoom)
-	{
-	DisableDraw();
-	
-	TCoordinate coord(aLat, aLon);
-	Move(coord, aZoom);
-	
-	EnableDraw();
-	}
-
 void CMapControl::MoveAndZoomIn(const TCoordinate &aPos)
 	{
 	DisableDraw();
