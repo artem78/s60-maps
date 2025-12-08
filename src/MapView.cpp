@@ -713,8 +713,7 @@ void CMapView::HandleSearchL()
 void CMapView::OnSearchFinished(const TSearchResultItem &aResultData)
 	{
 	MapControl()->SetFollowUser(EFalse);
-	TZoom prefferedZoom = MapControl()->PreferredZoomForBounds(aResultData.iBounds);
-	MapControl()->Move(aResultData.iCoord, prefferedZoom);
+	MapControl()->MoveAndZoomToBounds(aResultData.iBounds);
 	
 	//delete iSearch;
 	//iSearch = NULL;
@@ -726,20 +725,14 @@ void CMapView::OnSearchClosed/*L*/()
 	if (!iSearch->Results() || !iSearch->Results()->Count())
 		return;
 	
-	
 	MapControl()->SetFollowUser(EFalse);
-	//TZoom prefferedZoom = MapControl()->PreferredZoomForBounds(aResultData.iBounds);
-	//MapControl()->Move(aResultData.iCoord, prefferedZoom);
 	
 	TBounds maxBounds = (*iSearch->Results())[0].iBounds;
 	for (TInt i = /*0*/ 1; i < iSearch->Results()->Count(); i++)
 		{
 		maxBounds.Join((*iSearch->Results())[i].iBounds);
 		}
-	TZoom zoom = MapControl()->PreferredZoomForBounds(maxBounds);
-	TCoordinate center;
-	maxBounds.Center(center);
-	MapControl()->Move(center, zoom);
+	MapControl()->MoveAndZoomToBounds(maxBounds);
 	}
 
 void CMapView::HandleTrafficCounterL()

@@ -181,7 +181,7 @@ public:
 	// This is similar to TRect::BoundingRect().
 	void Join(const TBounds &aCoordRect);
 	
-	void Center(TCoordinate &aCoord);
+	void Center(TCoordinate &aCoord) const;
 	
     friend bool operator == (const TBounds &aCoordRect1, const TBounds &aCoordRect2);
     friend bool operator != (const TBounds &aCoordRect1, const TBounds &aCoordRect2);

@@ -194,6 +194,7 @@ public:
 	void Move(TReal64 aLat, TReal64 aLon);
 	void Move(TReal64 aLat, TReal64 aLon, TZoom aZoom);
 	void MoveAndZoomIn(const TCoordinate &aPos);
+	void MoveAndZoomToBounds(const TBounds &aBounds);
 
 	static TInt MovementRepeaterCallback(TAny* aObject);
 	void ExecuteMovement();
@@ -250,6 +251,8 @@ public:
 		{ return iSmallFont; };
 	void NotifyLandmarksUpdated();
 	/*inline*/ TPoint ScreenCoordsToProjectionCoords(const TPoint &aPoint) const;
+	
+private:
 	TZoom PreferredZoomForBounds(const TBounds &aBounds) const;
 
 	};

@@ -941,4 +941,12 @@ TZoom CMapControl::PreferredZoomForBounds(const TBounds &aBounds) const
 	return zoom;
 	}
 
+void CMapControl::MoveAndZoomToBounds(const TBounds &aBounds)
+	{
+	TZoom zoom = PreferredZoomForBounds(aBounds);
+	TCoordinate center;
+	aBounds.Center(center);
+	Move(center, zoom);
+	}
+
 // End of File

@@ -295,7 +295,7 @@ void TBounds::Join(const TBounds &aCoordRect)
 		);
 	}
 
-void TBounds::Center(TCoordinate &aCoord)
+void TBounds::Center(TCoordinate &aCoord) const
 	{
 	aCoord.SetCoordinate(
 			(iTlCoord.Latitude() + iBrCoord.Latitude()) / 2,
