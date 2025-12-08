@@ -106,6 +106,6 @@ CHARACTER_SET UTF8
 #define qtn_traffic_counter "Счётчик данных"
 #define qtn_traffic_counter_dlg_msg_fmt "За сеанс:\n   принято %S\n   отправлено %S\n\nВсего:\n   принято %S\n   отправлено %S"
 
-// Added in version X.XX
+// Added in version 1.17
 
 #define qtn_clear_search_results "Очистить рез. поиска"
