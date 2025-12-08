@@ -97,6 +97,14 @@ public:
 	TBool RunL();
 	inline const CArrayFix<TSearchResultItem>* Results() const
 		{ return iResultsArr; };
+	
+	/**
+	 * Returns minimum boundaries contains all search results
+	 * 
+	 * @param aBounds result bounds
+	 * @return EFalse if no results, ETrue otherwise.
+	 */
+	TBool AllResultsBounds(TBounds &aBounds);
 
 	};
 

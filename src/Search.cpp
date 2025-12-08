@@ -325,6 +325,20 @@ void CSearch::OnHTTPHeadersRecieved(const RHTTPTransaction /*aTransaction*/)
 
 	}
 
+TBool CSearch::AllResultsBounds(TBounds &aBounds)
+	{
+	if (!iResultsArr || !iResultsArr->Count())
+		return EFalse;
+	
+	aBounds = (*iResultsArr)[0].iBounds;
+	for (TInt i = /*0*/ 1; i < iResultsArr->Count(); i++)
+		{
+		aBounds.Join((*iResultsArr)[i].iBounds);
+		}
+	return ETrue;
+	}
+
+
 void MSearchObserver::OnSearchFailedL(TInt aErrCode)
 	{
 	TBuf<KMaxErrorNameLength> errStr;

@@ -721,18 +721,12 @@ void CMapView::OnSearchFinished(const TSearchResultItem &aResultData)
 
 void CMapView::OnSearchClosed/*L*/()
 	{
-	//MiscUtils::DbgMsg(_L("OnSearchClosed"));
-	if (!iSearch->Results() || !iSearch->Results()->Count())
-		return;
-	
-	MapControl()->SetFollowUser(EFalse);
-	
-	TBounds maxBounds = (*iSearch->Results())[0].iBounds;
-	for (TInt i = /*0*/ 1; i < iSearch->Results()->Count(); i++)
+	TBounds maxBounds;
+	if (iSearch->AllResultsBounds(maxBounds))
 		{
-		maxBounds.Join((*iSearch->Results())[i].iBounds);
+		MapControl()->SetFollowUser(EFalse);
+		MapControl()->MoveAndZoomToBounds(maxBounds);
 		}
-	MapControl()->MoveAndZoomToBounds(maxBounds);
 	}
 
 void CMapView::HandleTrafficCounterL()
