@@ -1488,28 +1488,50 @@ void CSearchResultsLayer::Draw(CWindowGc &aGc)
 			const CFont* font = iMapView->DefaultFont();
 			TInt baselineOffset = /*font->BaselineOffsetInPixels()*/ /*font->AscentInPixels()*/ font->FontMaxAscent();
 			const TRgb KTextColor(0x4040cd);
+			aGc.SetPenColor(KTextColor);
+			aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
+			TRgb bgColor(KRgbWhite);
+			bgColor.SetAlpha(170);
+			aGc.SetBrushColor(bgColor);
 			// Skip leading TAB (used for propper display in list)
 			TPtrC name(item.iName.Right(item.iName.Length() - 1));
 			TRect textRect(iMapView->Rect());
-			textRect.iTl.iY = resultPoint.iY + 10;
+			textRect.iTl.iY = resultPoint.iY + 20;
 			textRect.SetHeight(50);
-			textRect.Shrink(10, 0);
+			textRect.Shrink(15, 0);
 			//////////
 			//aGc.DrawRect(textRect);
-			/////////
+			/////////			
 			CArrayFix<TPtrC>* lines = new (ELeave) CArrayFixFlat<TPtrC>(10);
 			CleanupStack::PushL(lines);
 			AknTextUtils::WrapToArrayL(name, textRect.Width(), *iMapView->DefaultFont(), *lines);
+			const TInt nextLineDelta = font->HeightInPixels() + 3;
+			TRect r2 = textRect;
+			r2.SetHeight(lines->Count() * nextLineDelta);
+			r2.Grow(3, 3);
+			CArrayFix<TPoint>* points = new CArrayFixFlat<TPoint>(7);
+			CleanupStack::PushL(points);
+			const TInt d = 7;
+			points->AppendL(TPoint(r2.iBr.iX, r2.iTl.iY));
+			points->AppendL(TPoint(r2.iBr.iX, r2.iBr.iY));
+			points->AppendL(TPoint(r2.iTl.iX, r2.iBr.iY));
+			points->AppendL(TPoint(r2.iTl.iX, r2.iTl.iY));
+			points->AppendL(TPoint(r2.Center().iX - d, r2.iTl.iY));
+			points->AppendL(resultPoint);
+			points->AppendL(TPoint(r2.Center().iX + d, r2.iTl.iY));
+			aGc.DrawPolygon(points);
+			CleanupStack::PopAndDestroy(points);
+			
+			aGc.SetBrushStyle(CGraphicsContext::ENullBrush); // Should be reset before text will be drawn
 			aGc.UseFont(font);
 			for (TInt i = 0; i < lines->Count(); i++)
 				{
-				static_cast<CWindowGcEx*>(&aGc)->DrawOutlinedText((*lines)[i], textRect,
-						baselineOffset, CGraphicsContext::ECenter, 0, KTextColor);
-				textRect.Move(0, font->HeightInPixels() + 3);
+				/*static_cast<CWindowGcEx*>(&aGc)->DrawOutlinedText*/ aGc.DrawText((*lines)[i], textRect,
+						baselineOffset, CGraphicsContext::ECenter, 0/*, KTextColor*/);
+				textRect.Move(0, nextLineDelta);
 				}
 			aGc.DiscardFont();
 			CleanupStack::PopAndDestroy(lines);
-			
 			}
 		}
 	//aGc.DiscardFont();
