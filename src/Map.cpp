@@ -1498,17 +1498,25 @@ void CSearchResultsLayer::Draw(CWindowGc &aGc)
 			TRect textRect(iMapView->Rect());
 			textRect.iTl.iY = resultPoint.iY + 20;
 			textRect.SetHeight(50);
-			textRect.Shrink(15, 0);
+			textRect.Shrink(/*15*/25, 0);
 			//////////
 			//aGc.DrawRect(textRect);
 			/////////			
 			CArrayFix<TPtrC>* lines = new (ELeave) CArrayFixFlat<TPtrC>(10);
 			CleanupStack::PushL(lines);
 			AknTextUtils::WrapToArrayL(name, textRect.Width(), *iMapView->DefaultFont(), *lines);
+			TInt maxLineWidth = 0;
+			for (TInt i = 0; i < lines->Count(); i++)
+				{
+				maxLineWidth = Max(maxLineWidth, font->TextWidthInPixels((*lines)[i]));
+				}
 			const TInt nextLineDelta = font->HeightInPixels() + 3;
-			TRect r2 = textRect;
+			TRect r2 /*= textRect*/;
+			r2.iTl.iX = iMapView->Rect().Center().iX - maxLineWidth / 2;
+			r2.iTl.iY = textRect.iTl.iY;
+			r2.SetWidth(maxLineWidth);
 			r2.SetHeight(lines->Count() * nextLineDelta);
-			r2.Grow(3, 3);
+			r2.Grow(/*3*/ 12, 3);
 			CArrayFix<TPoint>* points = new CArrayFixFlat<TPoint>(7);
 			CleanupStack::PushL(points);
 			const TInt d = 7;
