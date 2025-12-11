@@ -14,4 +14,4 @@ Make your pull request to the `develop` branch and do not touch `master`.
 
 **Many localization strings need to be translated! We need translators for update them.**
 
-If you can help with translation of S60Maps to your language please read [this instruction](https://github.com/artem78/s60-maps/wiki/How-to-create-new-translation) how to do this.
+If you can help with translation of S60Maps to your language please read [this instruction](https://github.com/artem78/s60-maps/wiki/How-to-edit-or-create-new-translation) how to do this.
