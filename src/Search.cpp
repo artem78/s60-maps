@@ -254,6 +254,9 @@ void CSearch::RunApiReqestL()
 	
 	_LIT8(KApiBaseUrl, "https://nominatim.openstreetmap.org/search?format=json&q=");
 	_LIT8(KViewboxArg, "&viewbox=");
+	_LIT8(KLangArg, "&accept-language=");
+	
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
 	
 	TRealFormat realFmt;
 	realFmt.iType = KRealFormatFixed;
@@ -268,7 +271,8 @@ void CSearch::RunApiReqestL()
 	CleanupStack::PushL(encodedQuery);
 	
 	RBuf8 url;
-	url.CreateL(KApiBaseUrl().Length() + encodedQuery->Length() + KViewboxArg().Length() + 64);
+	url.CreateL(KApiBaseUrl().Length() + encodedQuery->Length() + KViewboxArg().Length() + 64
+			+ KLangArg().Length() + /*3*/2);
 	CleanupClosePushL(url);
 	url = KApiBaseUrl;
 	url.Append(*encodedQuery);
@@ -280,6 +284,14 @@ void CSearch::RunApiReqestL()
 	url.AppendNum(iPreferredBounds.iBrCoord.Longitude(), realFmt); // lon2
 	url.Append(',');
 	url.AppendNum(iPreferredBounds.iBrCoord.Latitude(), realFmt); // lat2
+	
+	TBuf</*3*/2> langCode;
+	MiscUtils::LanguageToIso639Code(appUi->Settings()->iLanguage, langCode);
+	if (langCode.Length())
+		{
+		url.Append(KLangArg);
+		url.Append(langCode);
+		}
 	
 	iHttpClient->GetL(url);
 		

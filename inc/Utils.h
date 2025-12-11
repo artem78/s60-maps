@@ -122,6 +122,8 @@ public:
 	static void WriteZeroesToStreamL(RWriteStream &aStream, TInt aLength=1);
 	static void WriteTUint64ToStreamL(RWriteStream &aStream, const TUint64 &aNum);
 	static void ReadTUint64FromStreamL(RReadStream &aStream, TUint64 &aNum);
+	
+	static void LanguageToIso639Code(TLanguage aLang, /*TDes*/ TBuf</*3*/2> &aCode);
 
 	};
 
