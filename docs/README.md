@@ -21,7 +21,7 @@ Map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wiki/Symb
 - Map tiles caching (you can see previously viewed area without network connection)
 - Display and edit landmarks
 - Search
-- Multilanguage:
+- Multilanguage (**[we need help with translations!](/docs/CONTRIBUTING.md#localization)**):
   - English
   - Spanish
   - Galician
@@ -142,6 +142,7 @@ This is Open Source software licensed under [GNU GPL v3.0](/LICENSE.txt)
 - [GPS Track recorder for Symbian OS](https://github.com/artem78/s60-gps-tracker#readme)
 - [Accuracy of GNSS data](https://wiki.openstreetmap.org/wiki/Accuracy_of_GNSS_data)
 - [MahoMaps - Yandex.Maps client for Symbian OS](https://github.com/mahomaps/mm-v1)
+
 
 
 
