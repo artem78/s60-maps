@@ -1401,7 +1401,6 @@ void CSearchResultsLayer::Draw(CWindowGc &aGc)
 	TInt nearestItemIdx = -1;
 	TReal32 distance, minDistance = 99999999;
 	TCoordinate screenCenterCoord = iMapView->GetCenterCoordinate();
-	TSize iconSize = iIcon->Bitmap()->SizeInPixels();
 	TSearchResultItem item;
 	for (TInt i = 0; i < searchResArr->Count(); i++)
 		{
@@ -1419,15 +1418,8 @@ void CSearchResultsLayer::Draw(CWindowGc &aGc)
 			}
 		
 		
-		// Calculate icon position on the screen
-		TPoint resultPoint = iMapView->GeoCoordsToScreenCoords(item.iCoord);
-		TRect dstRect(resultPoint, iconSize);
-		dstRect.Move(-iconSize.iWidth / 2, -iconSize.iHeight);
-		
-		TRect srcRect(TPoint(0, 0), iconSize);
-		
 		// Draw icon
-		aGc.DrawBitmapMasked(dstRect, iIcon->Bitmap(), srcRect, iIcon->Mask(), 0);
+		DrawIcon(aGc, item);
 		}
 	
 	
@@ -1441,6 +1433,7 @@ void CSearchResultsLayer::Draw(CWindowGc &aGc)
 		const TInt areaSize = 30;
 		popupArea.Grow(areaSize / 2, areaSize / 2);*/
 		 
+		TSize iconSize = iIcon->Bitmap()->SizeInPixels();
 		TRect popupArea(resultPoint, iconSize);
 		popupArea.Move(-iconSize.iWidth / 2, -iconSize.iHeight);
 		const TInt areaIndent = 10;
@@ -1453,15 +1446,29 @@ void CSearchResultsLayer::Draw(CWindowGc &aGc)
 		if (popupArea.Contains(screenCenterPoint)) // Check if showing popup needed
 			{
 			// Draw selected icon over the others
-			TRect dstRect(resultPoint, iconSize);
-			dstRect.Move(-iconSize.iWidth / 2, -iconSize.iHeight);
-			TRect srcRect(TPoint(0, 0), iconSize);
-			aGc.DrawBitmapMasked(dstRect, iIconSelected->Bitmap(), srcRect, iIconSelected->Mask(), 0);
+			DrawIcon(aGc, item, ETrue);
 			
 			// Draw text with box
 			TRAP_IGNORE(DrawTextWithBackgroundL(aGc, item));
 			}
 		}
+	}
+
+void CSearchResultsLayer::DrawIcon(CWindowGc &aGc, const TSearchResultItem &aSearchResult,
+		TBool aSelected)
+	{
+	const CAknIcon* icon = aSelected ? iIconSelected : iIcon;
+	
+	// Calculate icon position on the screen
+	TPoint resultPoint = iMapView->GeoCoordsToScreenCoords(aSearchResult.iCoord);
+	TSize iconSize = icon->Bitmap()->SizeInPixels();
+	TRect dstRect(resultPoint, iconSize);
+	dstRect.Move(-iconSize.iWidth / 2, -iconSize.iHeight);
+	
+	TRect srcRect(TPoint(0, 0), iconSize);
+	
+	// Draw icon
+	aGc.DrawBitmapMasked(dstRect, icon->Bitmap(), srcRect, icon->Mask(), 0);
 	}
 
 void CSearchResultsLayer::DrawTextWithBackgroundL(CWindowGc &aGc,

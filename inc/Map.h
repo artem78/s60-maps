@@ -314,7 +314,7 @@ private:
 	CAknIcon* iIcon;
 	CAknIcon* iIconSelected;
 	
-	//void DrawIcon(CWindowGc &aGc, ...);
+	void DrawIcon(CWindowGc &aGc, const TSearchResultItem &aSearchResult, TBool aSelected = EFalse);
 	//void DrawBackgroundBoxL(CWindowGc &aGc, ...);
 	void DrawTextWithBackgroundL(CWindowGc &aGc, const TSearchResultItem &aSearchResult);
 	};
