@@ -1386,49 +1386,17 @@ void CSearchResultsLayer::Draw(CWindowGc &aGc)
 	{
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CEikonEnv::Static()->AppUi());
 	
+	
 	// Check if any items to display
 	CSearch* search = appUi->MapView()->Search();
-	if (!/*iMapView->Search()*/ search)
+	if (!search)
 		return;
 	
-	const CArrayFix/*Seg*/<TSearchResultItem>* searchResArr = /*iMapView->Search()*/search->Results();
+	const CArrayFix<TSearchResultItem>* searchResArr = search->Results();
 	if (!searchResArr || !searchResArr->Count())
 		return;
 	
-	/*TRAPD(r, DrawL(aGc));
-	if (r != KErrNone)
-		{
-		DEBUG(_L("Leave with code %d"), r);
-		}*/
-	
-	//////
-	/*CArrayFixSeg<TSearchResultItem>* searchResArr = new (ELeave) CArrayFixSeg<TSearchResultItem>(10);
-	TSearchResultItem item;
-	
-	item.iName = _L("Result 1");
-	item.iCoord.SetCoordinate(39.9153, -75.2896);
-	searchResArr->AppendL(item);
-	
-	item.iName = _L("Result 2");
-	item.iCoord.SetCoordinate(39.8768, -75.3288);
-	searchResArr->AppendL(item);
-	
-	item.iName = _L("Result 3");
-	item.iCoord.SetCoordinate(39.9366, -75.3466);
-	searchResArr->AppendL(item);
-	
-	item.iName = _L("Result 4");
-	item.iCoord.SetCoordinate(39.94969, -75.34055);
-	searchResArr->AppendL(item);*/
-	//////
-	
-	/*aGc.SetPenColor(KRgbRed);
-	aGc.SetPenSize(TSize(5,5));
-	aGc.SetPenStyle(CGraphicsContext::ESolidPen);
-	*/
-	/*aGc.SetBrushColor(KRgbRed);
-	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);*/
-	//aGc.UseFont(iMapView->DefaultFont());
+
 	
 	TInt nearestItemIdx = -1;
 	TReal32 distance, minDistance = 99999999;
@@ -1452,7 +1420,6 @@ void CSearchResultsLayer::Draw(CWindowGc &aGc)
 		
 		
 		// Calculate icon position on the screen
-		//TSize iconSize = iIcon->Bitmap()->SizeInPixels();
 		TPoint resultPoint = iMapView->GeoCoordsToScreenCoords(item.iCoord);
 		TRect dstRect(resultPoint, iconSize);
 		dstRect.Move(-iconSize.iWidth / 2, -iconSize.iHeight);
@@ -1464,7 +1431,6 @@ void CSearchResultsLayer::Draw(CWindowGc &aGc)
 		}
 	
 	
-	// Draw text
 	if (nearestItemIdx > -1)
 		{
 		item = (*searchResArr)[nearestItemIdx];
@@ -1483,25 +1449,19 @@ void CSearchResultsLayer::Draw(CWindowGc &aGc)
 		/*aGc.SetPenStyle(CGraphicsContext::EDashedPen);
 		aGc.DrawRect(popupArea);*/
 		/////////
-		if (popupArea.Contains(screenCenterPoint))
+		
+		if (popupArea.Contains(screenCenterPoint)) // Check if showing popup needed
 			{
-			// Selected icon
+			// Draw selected icon over the others
 			TRect dstRect(resultPoint, iconSize);
 			dstRect.Move(-iconSize.iWidth / 2, -iconSize.iHeight);
-			
 			TRect srcRect(TPoint(0, 0), iconSize);
-			
-			// Draw icon
 			aGc.DrawBitmapMasked(dstRect, iIconSelected->Bitmap(), srcRect, iIconSelected->Mask(), 0);
 			
+			// Draw text with box
 			TRAP_IGNORE(DrawTextWithBackgroundL(aGc, item));
 			}
 		}
-	//aGc.DiscardFont();
-	
-	/*//////
-	//delete searchResArr;
-	//////*/
 	}
 
 void CSearchResultsLayer::DrawTextWithBackgroundL(CWindowGc &aGc,
