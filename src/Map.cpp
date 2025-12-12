@@ -1433,11 +1433,11 @@ void CSearchResultsLayer::Draw(CWindowGc &aGc)
 		const TInt areaSize = 30;
 		popupArea.Grow(areaSize / 2, areaSize / 2);*/
 		 
-		TSize iconSize = iIcon->Bitmap()->SizeInPixels();
-		TRect popupArea(resultPoint, iconSize);
-		popupArea.Move(-iconSize.iWidth / 2, -iconSize.iHeight);
+		TRect popupArea;
+		IconRect(item, popupArea);
 		const TInt areaIndent = 10;
 		popupArea.Grow(areaIndent, areaIndent);
+		
 		////////////
 		/*aGc.SetPenStyle(CGraphicsContext::EDashedPen);
 		aGc.DrawRect(popupArea);*/
@@ -1460,12 +1460,10 @@ void CSearchResultsLayer::DrawIcon(CWindowGc &aGc, const TSearchResultItem &aSea
 	const CAknIcon* icon = aSelected ? iIconSelected : iIcon;
 	
 	// Calculate icon position on the screen
-	TPoint resultPoint = iMapView->GeoCoordsToScreenCoords(aSearchResult.iCoord);
-	TSize iconSize = icon->Bitmap()->SizeInPixels();
-	TRect dstRect(resultPoint, iconSize);
-	dstRect.Move(-iconSize.iWidth / 2, -iconSize.iHeight);
+	TRect dstRect;
+	IconRect(aSearchResult, dstRect);
 	
-	TRect srcRect(TPoint(0, 0), iconSize);
+	TRect srcRect(TPoint(0, 0), dstRect.Size());
 	
 	// Draw icon
 	aGc.DrawBitmapMasked(dstRect, icon->Bitmap(), srcRect, icon->Mask(), 0);
@@ -1537,6 +1535,17 @@ void CSearchResultsLayer::DrawTextWithBackgroundL(CWindowGc &aGc,
 	aGc.DiscardFont();
 	/////////////////////////
 	CleanupStack::PopAndDestroy(lines);
+	}
+
+void CSearchResultsLayer::IconRect(const TSearchResultItem &aSearchResult, TRect &aRect)
+	{
+	const CAknIcon* icon = /*aSelected ? iIconSelected :*/ iIcon; // Assume both icons have the same size in pixels!
+	
+	// Calculate icon position on the screen
+	TPoint resultPoint = iMapView->GeoCoordsToScreenCoords(aSearchResult.iCoord);
+	TSize iconSize = icon->Bitmap()->SizeInPixels();
+	aRect = TRect(resultPoint, iconSize);
+	aRect.Move(-iconSize.iWidth / 2, -iconSize.iHeight);
 	}
 
 
