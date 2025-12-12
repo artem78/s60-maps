@@ -24,6 +24,7 @@
 #include <akniconutils.h> // For CAknIcon
 #include <lbssatellite.h>
 #include "Utils.h"
+#include "Search.h"
 
 
 // Constants
@@ -313,9 +314,9 @@ private:
 	CAknIcon* iIcon;
 	CAknIcon* iIconSelected;
 	
-	//void DrawL(CWindowGc &aGc);
 	//void DrawIcon(CWindowGc &aGc, ...);
-	//void DrawName(CWindowGc &aGc, ...);
+	//void DrawBackgroundBoxL(CWindowGc &aGc, ...);
+	void DrawTextWithBackgroundL(CWindowGc &aGc, const TSearchResultItem &aSearchResult);
 	};
 
 
