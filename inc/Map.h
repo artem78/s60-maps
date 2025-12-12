@@ -311,6 +311,7 @@ public:
 private:
 	//iSearchResults; // Not owned
 	CAknIcon* iIcon;
+	CAknIcon* iIconSelected;
 	
 	//void DrawL(CWindowGc &aGc);
 	//void DrawIcon(CWindowGc &aGc, ...);

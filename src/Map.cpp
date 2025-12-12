@@ -1355,6 +1355,7 @@ CSearchResultsLayer::CSearchResultsLayer(CMapControl* aMapView):
 
 CSearchResultsLayer::~CSearchResultsLayer()
 	{
+	delete iIconSelected;
 	delete iIcon;
 	}
 
@@ -1379,6 +1380,7 @@ void CSearchResultsLayer::ConstructL()
 	CS60MapsApplication* app = static_cast<CS60MapsApplication*>(appUi->Application());
 	
 	iIcon = app->LoadIconL(EMbmIconsLocation, EMbmIconsLocation_mask);
+	iIconSelected = app->LoadIconL(EMbmIconsLocation_selected, EMbmIconsLocation_mask);
 	}
 
 void CSearchResultsLayer::Draw(CWindowGc &aGc)
@@ -1468,7 +1470,7 @@ void CSearchResultsLayer::Draw(CWindowGc &aGc)
 		{
 		item = (*searchResArr)[nearestItemIdx];
 		TPoint resultPoint = iMapView->GeoCoordsToScreenCoords(item.iCoord);
-		TPoint screenCenterPoint = iMapView->GeoCoordsToScreenCoords(iMapView->GetCenterCoordinate());
+		TPoint screenCenterPoint = iMapView->GeoCoordsToScreenCoords(iMapView->GetCenterCoordinate());		
 		
 		/*TRect popupArea = TRect(resultPoint, TSize(0, 0));
 		const TInt areaSize = 30;
@@ -1484,6 +1486,16 @@ void CSearchResultsLayer::Draw(CWindowGc &aGc)
 		/////////
 		if (popupArea.Contains(screenCenterPoint))
 			{
+			// Selected icon
+			TRect dstRect(resultPoint, iconSize);
+			dstRect.Move(-iconSize.iWidth / 2, -iconSize.iHeight);
+			
+			TRect srcRect(TPoint(0, 0), iconSize);
+			
+			// Draw icon
+			aGc.DrawBitmapMasked(dstRect, iIconSelected->Bitmap(), srcRect, iIconSelected->Mask(), 0);
+			
+			
 			//const CFont* font = iMapView->SmallFont();
 			const CFont* font = iMapView->DefaultFont();
 			TInt baselineOffset = /*font->BaselineOffsetInPixels()*/ /*font->AscentInPixels()*/ font->FontMaxAscent();

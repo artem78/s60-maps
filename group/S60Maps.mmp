@@ -93,7 +93,7 @@ START BITMAP icons.mbm
 	TARGETPATH private\ED689B88
 	HEADER
 	SOURCEPATH ..\gfx
-	SOURCE c24,8 star.bmp star_mask.bmp satellite.bmp satellite_mask.bmp location.bmp location_mask.bmp
+	SOURCE c24,8 star.bmp star_mask.bmp satellite.bmp satellite_mask.bmp location.bmp location_mask.bmp location_selected.bmp
 END
 SOURCEPATH ..\src
 SOURCE Utils.cpp
