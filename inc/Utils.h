@@ -77,22 +77,6 @@ public:
 	};
 
 
-// Similar as TRect but for couple of TCoordinate objects
-class TCoordRect
-	{
-public:
-	TCoordinate iTlCoord, iBrCoord;
-	
-	void SetCoords(const TCoordinate &aTlCoord, const TCoordinate &aBrCoord);
-	
-	// Returns ETrue if given rect completely located inside this rect
-	TBool Contains(const TCoordRect &aCoordRect) const;
-	
-    friend bool operator == (const TCoordRect &aCoordRect1, const TCoordRect &aCoordRect2);
-    friend bool operator != (const TCoordRect &aCoordRect1, const TCoordRect &aCoordRect2);
-	};
-
-
 // Other utils
 class MiscUtils
 	{
@@ -168,6 +152,7 @@ public:
 
 
 // Holds bounding box defined with top-left and bottom-right TCoordinate
+// Similar as TRect but for couple of TCoordinate objects
 class /*TCoordRect*/ /*TBoundingRect*/ TBounds
 	{
 public:
