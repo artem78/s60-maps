@@ -246,6 +246,16 @@ TBool StrUtils::EndsWith(const TDesC8& aStr, const TDesC8& aSubstr, TBool aIgnor
 	}
 */
 
+TInt StrUtils::MaxLineWidthInPixels(CArrayFix<TPtrC>* aLines, const CFont* aFont)
+	{
+	TInt result = 0;
+	for (TInt i = 0; i < aLines->Count(); i++)
+		{
+		result = Max(result, aFont->TextWidthInPixels((*aLines)[i]));
+		}
+	return result;
+	}
+
 
 // TBounds
 

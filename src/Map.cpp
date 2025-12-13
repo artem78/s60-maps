@@ -1474,13 +1474,10 @@ void CSearchResultsLayer::DrawTextWithBackgroundL(CWindowGc &aGc,
 	{
 	//const CFont* font = iMapView->SmallFont();
 	const CFont* font = iMapView->DefaultFont();
-	//TInt baselineOffset = /*font->BaselineOffsetInPixels()*/ /*font->AscentInPixels()*/ font->FontMaxAscent();
-	const TRgb KTextColor(0x4040cd);
-	aGc.SetPenColor(KTextColor);
-	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
+	const TRgb KTextAndBoxBorderColor(0x4040cd);
 	TRgb bgColor(KRgbWhite);
 	bgColor.SetAlpha(170);
-	aGc.SetBrushColor(bgColor);
+	
 	// Skip leading TAB (used for propper display in list)
 	TPtrC name(aSearchResult.iName.Right(aSearchResult.iName.Length() - 1));
 	TPoint resultPoint = iMapView->GeoCoordsToScreenCoords(aSearchResult.iCoord);
@@ -1488,26 +1485,24 @@ void CSearchResultsLayer::DrawTextWithBackgroundL(CWindowGc &aGc,
 	firstLineRect.iTl.iY = resultPoint.iY + 20;
 	firstLineRect.SetHeight(50);
 	firstLineRect.Shrink(/*15*/25, 0);
-	//////////
-	//aGc.DrawRect(textRect);
-	/////////			
+		
 	CArrayFix<TPtrC>* lines = new (ELeave) CArrayFixFlat<TPtrC>(10);
 	CleanupStack::PushL(lines);
-	AknTextUtils::WrapToArrayL(name, firstLineRect.Width(), *iMapView->DefaultFont(), *lines);
-	TInt maxLineWidth = 0;
-	for (TInt i = 0; i < lines->Count(); i++)
-		{
-		maxLineWidth = Max(maxLineWidth, font->TextWidthInPixels((*lines)[i]));
-		}
+	AknTextUtils::WrapToArrayL(name, firstLineRect.Width(), *font, *lines);
+	TInt maxLineWidth = StrUtils::MaxLineWidthInPixels(lines, font);
 	const TInt lineHeight = font->HeightInPixels() + 3;
-	TRect r2 /*= textRect*/;
-	r2.iTl.iX = iMapView->Rect().Center().iX - maxLineWidth / 2;
-	r2.iTl.iY = firstLineRect.iTl.iY;
-	r2.SetWidth(maxLineWidth);
-	r2.SetHeight(lines->Count() * lineHeight);
-	r2.Grow(/*3*/ 12, 3);
+	TRect bgRect;
+	bgRect.iTl.iX = iMapView->Rect().Center().iX - maxLineWidth / 2;
+	bgRect.iTl.iY = firstLineRect.iTl.iY;
+	bgRect.SetWidth(maxLineWidth);
+	bgRect.SetHeight(lines->Count() * lineHeight);
+	bgRect.Grow(/*3*/ 12, 3);
 
-	DrawBackgroundBoxL(aGc, r2, resultPoint);
+	aGc.SetPenColor(KTextAndBoxBorderColor);
+	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
+	aGc.SetBrushColor(bgColor);
+	
+	DrawBackgroundBoxL(aGc, bgRect, resultPoint);
 	DrawMultiLineText(aGc, lines, font, lineHeight, firstLineRect);
 	
 	CleanupStack::PopAndDestroy(lines);

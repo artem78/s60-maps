@@ -297,8 +297,8 @@ class CSearchResultsLayer : public CMapLayerBase
 	// Constructor / destructor
 public:
 	~CSearchResultsLayer();
-	static CSearchResultsLayer* NewL(CMapControl* aMapView/*, aSearchResults*/);
-	static CSearchResultsLayer* NewLC(CMapControl* aMapView/*, aSearchResults*/);
+	static CSearchResultsLayer* NewL(CMapControl* aMapView);
+	static CSearchResultsLayer* NewLC(CMapControl* aMapView);
 
 private:
 	CSearchResultsLayer(CMapControl* aMapView);
@@ -310,7 +310,6 @@ public:
 	
 	// Own
 private:
-	//iSearchResults; // Not owned
 	CAknIcon* iIcon;
 	CAknIcon* iIconSelected;
 	
