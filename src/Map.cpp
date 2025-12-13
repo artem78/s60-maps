@@ -1506,26 +1506,31 @@ void CSearchResultsLayer::DrawTextWithBackgroundL(CWindowGc &aGc,
 	r2.SetWidth(maxLineWidth);
 	r2.SetHeight(lines->Count() * lineHeight);
 	r2.Grow(/*3*/ 12, 3);
-	CArrayFix<TPoint>* points = new (ELeave) CArrayFixFlat<TPoint>(7);
-	CleanupStack::PushL(points);
-	const TInt d = 7;
-	points->AppendL(TPoint(r2.iBr.iX, r2.iTl.iY));
-	points->AppendL(TPoint(r2.iBr.iX, r2.iBr.iY));
-	points->AppendL(TPoint(r2.iTl.iX, r2.iBr.iY));
-	points->AppendL(TPoint(r2.iTl.iX, r2.iTl.iY));
-	points->AppendL(TPoint(r2.Center().iX - d, r2.iTl.iY));
-	points->AppendL(resultPoint);
-	points->AppendL(TPoint(r2.Center().iX + d, r2.iTl.iY));
-	
-	// Draw background box
-	aGc.DrawPolygon(points);
-	CleanupStack::PopAndDestroy(points);
-	
-	
-	
+
+	DrawBackgroundBoxL(aGc, r2, resultPoint);
 	DrawMultiLineText(aGc, lines, font, lineHeight, firstLineRect);
 	
 	CleanupStack::PopAndDestroy(lines);
+	}
+
+void CSearchResultsLayer::DrawBackgroundBoxL(CWindowGc &aGc, const TRect &aRect,
+		const TPoint &aArrowTopPoint)
+	{
+	const TInt KPointCount = 7; 
+	CArrayFix<TPoint>* points = new (ELeave) CArrayFixFlat<TPoint>(KPointCount);
+	CleanupStack::PushL(points);
+	const TInt KArrowHalfWidth = 7;
+	points->AppendL(TPoint(aRect.iBr.iX, aRect.iTl.iY));
+	points->AppendL(TPoint(aRect.iBr.iX, aRect.iBr.iY));
+	points->AppendL(TPoint(aRect.iTl.iX, aRect.iBr.iY));
+	points->AppendL(TPoint(aRect.iTl.iX, aRect.iTl.iY));
+	points->AppendL(TPoint(aRect.Center().iX - KArrowHalfWidth, aRect.iTl.iY));
+	points->AppendL(aArrowTopPoint);
+	points->AppendL(TPoint(aRect.Center().iX + KArrowHalfWidth, aRect.iTl.iY));
+	
+	aGc.DrawPolygon(points);
+	
+	CleanupStack::PopAndDestroy(points);
 	}
 
 void CSearchResultsLayer::DrawMultiLineText(CWindowGc &aGc, CArrayFix<TPtrC>* aLines,
