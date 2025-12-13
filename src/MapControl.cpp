@@ -714,15 +714,10 @@ TPoint CMapControl::ScreenCoordsToProjectionCoords(const TPoint &aPoint) const
 	return aPoint + iTopLeftPosition;
 	}
 
-void CMapControl::Bounds(TCoordinate &aTopLeftCoord, TCoordinate &aBottomRightCoord) const
-	{
-	aTopLeftCoord = ScreenCoordsToGeoCoords(Rect().iTl);
-	aBottomRightCoord = ScreenCoordsToGeoCoords(Rect().iBr - TPoint(1, 1));
-	}
-
 void CMapControl::Bounds(TBounds &aCoordRect) const
 	{
-	Bounds(aCoordRect.iTlCoord, aCoordRect.iBrCoord);
+	aCoordRect.iTlCoord = ScreenCoordsToGeoCoords(Rect().iTl);
+	aCoordRect.iBrCoord = ScreenCoordsToGeoCoords(Rect().iBr - TPoint(1, 1));
 	}
 
 void CMapControl::Bounds(TTile &aTopLeftTile, TTile &aBottomRightTile) const
