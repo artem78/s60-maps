@@ -1,35 +1,36 @@
 /*
 ========================================================================
  Name        : S60Maps.l04
- Author      : fizolas
+ Author      : 
  Copyright   : 
  Description : 
 ========================================================================
 */
-// localized strings for language: Spanish (04)
+// localized strings for language: Castellano - España (04)
+
 CHARACTER_SET UTF8
 
-#define qtn_find_me "Sígueme"
+#define qtn_find_me "Mi ubicación"
 //#define qtn_help "Ayuda"
 #define qtn_about "Sobre"
-#define qtn_exit "Salida"
-#define qtn_tile_providers_title "Mapas"	// todo: update!
-#define qtn_service_title "Servicio"
-#define qtn_tiles_cache_stats "Estadísticas de la caché de mapas"
-#define qtn_reset_tiles_cache "Limpiar la caché de mapas"
-//#define qtn_confirm_reset_tiles_cache_dialog_title "Confirmar limpieza de la caché"
-#define qtn_confirm_reset_tiles_cache_dialog_text "Esta acción borrará todos los mapas de la caché. ¿Seguro?"
-#define qtn_about_dialog_title "Sobre"
-#define qtn_about_dialog_text "S60Maps Versión %S\nCompilación: " __DATE__ " " __TIME__ "\nGit: %S\nAutor: %S\nWeb: %S\nGracias a: %S y otros"
+#define qtn_exit "Salir"
+#define qtn_tile_providers_title "Visor de mapas"	// todo: ¡Actualizado!
+#define qtn_service_title "Servicios"
+#define qtn_tiles_cache_stats "Estadísticas de caché de mapas"
+#define qtn_reset_tiles_cache "Limpiar caché de mapas"
+//#define qtn_confirm_reset_tiles_cache_dialog_title "Confirmar limpieza de caché"
+#define qtn_confirm_reset_tiles_cache_dialog_text "Esta acción borrará todos los mapas del caché. ¿Seguro?"
+#define qtn_about_dialog_title "S60Maps"
+#define qtn_about_dialog_text "Versión %S\nCompilación: " __DATE__ " " __TIME__ "\nGit: %S\nAutor: %S\nWeb: %S\nGracias a: %S y otros"
 //#define qtn_confirm_exit_dialog_title "Confirmar salida"
-#define qtn_confirm_exit_dialog_text "¿Estás seguro de querer salir?"
+#define qtn_confirm_exit_dialog_text "¿Estás seguro que quieres salir?"
 #define qtn_done "¡Listo!"
-#define qtn_stats_line "%S: %d ficheros, %S\n"
-#define qtn_stats_total "Total: %d ficheros, %S"
+#define qtn_stats_line "%S: %d fichero(s), %S\n"
+#define qtn_stats_total "Total: %d fichero(s), %S"
 
 // Added in version 1.4.0:
 
-#define qtn_positioning_disabled "¡Posicionamiento no disponible!"
+#define qtn_positioning_disabled "¡Ubicación no disponible!"
 #define qtn_wait "Espera por favor..."
 #define qtn_meters_unit_short "m"
 #define qtn_kilometers_unit_short "km"
@@ -39,7 +40,7 @@ CHARACTER_SET UTF8
 #define qtn_landmarks "Marcadores"
 #define qtn_display "Mostrar"
 #define qtn_create "Crear"
-#define qtn_input_name "Introduce nombre"
+#define qtn_input_name "Introduce nombre:"
 #define qtn_rename "Renombrar"
 #define qtn_delete "Borrar"
 #define qtn_confirm_landmark_deletion "Borrar \"%S\" marcador?"
@@ -47,15 +48,15 @@ CHARACTER_SET UTF8
 // Added in version 1.6:
 
 #define qtn_goto "Ir a..."
-#define qtn_landmark "Marcador"
+#define qtn_landmark "Sitios de interés"
 #define qtn_coordinate "Coordenadas"
 #define qtn_latitude "Latitud"
 #define qtn_longitude "Longitud"
 
 // Added in version 1.7:
 
-#define qtn_settings "Configuración"
-#define qtn_language "Idioma"
+#define qtn_settings "Ajustes"
+#define qtn_language "Lenguaje"
 
 // Added in version 1.8:
 
@@ -63,49 +64,49 @@ CHARACTER_SET UTF8
 #define qtn_show "Mostrar"
 #define qtn_hide "Ocultar"
 #define qtn_signal_indicator "Indicador de señal GPS"
-#define qtn_scale_bar "Barra de escala"
+#define qtn_scale_bar "Barra de opciones"
 
 // Added in version 1.10:
 
-#define qtn_signal_indicator_type "Signal indicator type"
-#define qtn_signal_indicator_general_type "General"
-#define qtn_signal_indicator_per_satellite_type "Per satellite"
+#define qtn_signal_indicator_type "Iconos de señal"
+#define qtn_signal_indicator_general_type "Red, satélite"
+#define qtn_signal_indicator_per_satellite_type "Satélite"
 
 // Added in version 1.12
 
-#define qtn_use_https_proxy "HTTPS proxy"
-#define qtn_enabled "Enabled"
-#define qtn_disabled "Disabled"
-#define qtn_https_proxy_url "HTTPS proxy url"
-#define qtn_use_disk_cache "Cache tiles on disk"
+#define qtn_use_https_proxy "Servidor HTTPS"
+#define qtn_enabled "Activar"
+#define qtn_disabled "Desactivar"
+#define qtn_https_proxy_url "Dirección de servidor"
+#define qtn_use_disk_cache "Caché de Tiles"
 
 // Added in version 1.13
 
-#define qtn_search "Search"
-#define qtn_search_results "Search results"
+#define qtn_search "Buscar"
+#define qtn_search_results "Resultados"
 
 // Added in version 1.14
 
-#define qtn_data_licences "Data licences"
-#define qtn_layer_fmt "\"%S\" layer"
-#define qtn_search_api "Search API"
-#define qtn_osm_contributors "OpenStreetMap contributors"
-#define qtn_map_data "map data"
-#define qtn_map_style "map style"
-#define qtn_positioning "Positioning"
+#define qtn_data_licences "Licencias"
+#define qtn_layer_fmt "Visor \"%S\""
+#define qtn_search_api "API de exploración"
+#define qtn_osm_contributors "Colaboradores de OpenStreetMap"
+#define qtn_map_data "datos"
+#define qtn_map_style "estilo"
+#define qtn_positioning "Ubicación"
 
 // Added in version 1.15
 
-#define qtn_no_results "No results!"
+#define qtn_no_results "¡No se logro encontrar la dirección!"
 
 // Added in version 1.16
 
-#define qtn_create_landmark_dlg_title "New landmark"
-#define qtn_edit_landmark_dlg_title "Rename landmark"
-#define qtn_search_failed_fmt "Search failed! (%S)"
-#define qtn_traffic_counter "Traffic counter"
-#define qtn_traffic_counter_dlg_msg_fmt "Session:\n   recieved %S\n   sent %S\n\nTotal:\n   recieved %S\n   sent %S"
+#define qtn_create_landmark_dlg_title "Añadir favorito"
+#define qtn_edit_landmark_dlg_title "Renombrar favorito"
+#define qtn_search_failed_fmt "¡Búsqueda fallida! (%S)"
+#define qtn_traffic_counter "Contador de datos"
+#define qtn_traffic_counter_dlg_msg_fmt "Sesión:\n   Recibid. %S\n   Enviados %S\n\nTotal:\n   Recibid. %S\n   Enviados %S"
 
 // Added in version 1.17
 
-#define qtn_clear_search_results "Clear search results"
+#define qtn_clear_search_results "Borrar búsquedas"
