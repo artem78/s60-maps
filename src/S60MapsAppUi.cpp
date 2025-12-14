@@ -809,7 +809,7 @@ void CS60MapsAppUi::ChangeLanguageL(TLanguage aLang)
 	
 	_LIT(KMemoMaps, "memomaps.de");
 	buff.Format(KCopyrightFmt, &*mapData, &KOsm, &*mapStyle, &KMemoMaps);
-	AvailableTileProviders()[EOpenBusMap]->iCopyrightText = buff;
+	AvailableTileProviders()[EOpenBusMapIdx]->iCopyrightText = buff;
 	
 	CleanupStack::PopAndDestroy(3, osmContributors);
 	}
