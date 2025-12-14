@@ -8,6 +8,8 @@
 */
 // localized strings for language: UK English (01)
 
+// CHARACTER_SET UTF8
+
 #define qtn_find_me "Follow me"
 //#define qtn_help "Help"
 #define qtn_about "About"
@@ -109,3 +111,4 @@
 // Added in version 1.17
 
 #define qtn_clear_search_results "Clear search results"
+
