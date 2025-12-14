@@ -154,14 +154,14 @@ void CS60MapsAppUi::ConstructL()
 			0, 22,
 			KEsriCopyright, KNullDesC, KEsriCopyrightUrl);
 	
-	// ÖPNVKarte
+	// ÖPNVKarte / OpenBusMap
 	// https://www.openbusmap.org/
 	{
-		_LIT(KProviderName, /*"ÖPNVKarte"*/ "OpenBusMap");
+		_LIT(KProviderName, "\u00D6PNVKarte" /*"OpenBusMap"*/);
 		_LIT(KProviderId, "openbusmap");
 		_LIT8(KProviderTileUrl, "https://tileserver.memomaps.de/tilegen/{$z}/{$x}/{$y}.png");
 		_LIT(KProviderCopyrightShort, "memomaps.de");
-		_LIT(KProviderCopyright, "map: memomaps.de, map data: Openstreetmap");
+		_LIT(KProviderCopyright, "map: memomaps.de, map data: OpenStreetMap");
 		_LIT(KProviderCopyrightUrl, /*"https://www.openbusmap.org/"*/ "https://memomaps.de/");
 		iAvailableTileProviders[6] = new (ELeave) TTileProvider(
 				KProviderId, KProviderName,
