@@ -23,13 +23,13 @@ Map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wiki/Symb
 - Search
 - Multilanguage (**[we need help with translations!](/docs/CONTRIBUTING.md#localization)**):
   - English
-  - Spanish
+  - Castilian/Spanish (Spain)
   - Galician
   - Portuguese
   - Russian
   - Polish
   - Hebrew
-  - Latin American Spanish
+  - Spanish (Hispanoamérica)
   - Ukrainian
 - Both keypad and touch ui supports
 - Free and Open Source software
