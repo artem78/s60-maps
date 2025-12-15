@@ -479,7 +479,7 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 	// After localization loaded show translated message if positioning unavailable
 	if (!IsPositioningAvailable())
 		{
-		HBufC* msg = iEikonEnv->AllocReadResourceLC(R_POSITIONING_DISABLED);
+		HBufC* msg = iEikonEnv->AllocReadResourceLC(R_POSITIONING_UNAVAILABLE);
 		//CAknWarningNote* note = new (ELeave) CAknWarningNote;
 		CAknErrorNote* note = new (ELeave) CAknErrorNote;
 		note->ExecuteLD(*msg);
@@ -733,9 +733,6 @@ void CS60MapsAppUi::HandleExitL()
 		{
 		CAknQueryDialog* dlg = CAknQueryDialog::NewL();
 		dlg->PrepareLC(R_CONFIRM_DIALOG);
-		/*HBufC* title = iEikonEnv->AllocReadResourceLC(R_CONFIRM_EXIT_DIALOG_TITLE);
-		dlg->SetHeaderTextL(*title);
-		CleanupStack::PopAndDestroy(); //title*/
 		HBufC* msg = iEikonEnv->AllocReadResourceLC(R_CONFIRM_EXIT_DIALOG_TEXT);
 		dlg->SetPromptL(*msg);
 		CleanupStack::PopAndDestroy(); //msg

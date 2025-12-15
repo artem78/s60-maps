@@ -10,26 +10,23 @@
 CHARACTER_SET UTF8
 
 #define qtn_find_me "Podążaj za mną"
-//#define qtn_help "Pomoc"
 #define qtn_about "Informacje"
 #define qtn_exit "Wyjdź"
 #define qtn_tile_providers_title "Mapy"	// todo: update!
 #define qtn_service_title "Usługa"
 #define qtn_tiles_cache_stats "Statystyki pamięci podręcznej mapy"
 #define qtn_reset_tiles_cache "Wyczyść pamięć podręczną mapy"
-//#define qtn_confirm_reset_tiles_cache_dialog_title "Potwierdź wyczyszczenie pamięci podręcznej"
 #define qtn_confirm_reset_tiles_cache_dialog_text "Ta czynność usunie całą pamięć podręczną map. Czy jesteś pewny?"
 #define qtn_about_dialog_title "O"
 #define qtn_about_dialog_text "S60Maps Wersja %S\nBuild: " __DATE__ " " __TIME__ "\nGit: %S\nAutor: %S\nWeb: %S\nPodziękowania dla: %S i innych"
-//#define qtn_confirm_exit_dialog_title "Potwierdź wyjście"
 #define qtn_confirm_exit_dialog_text "Jesteś pewny, aby wyjść?"
 #define qtn_done "Gotowe!"
-#define qtn_stats_line "%S: %d plików, %S\n"
+#define qtn_stats_line "%S: %d plików, %S"
 #define qtn_stats_total "Łącznie: %d plików, %S"
 
 // Added in version 1.4.0:
 
-#define qtn_positioning_disabled "Pozycjonowanie niedostępne!"
+#define qtn_positioning_unavailable "Pozycjonowanie niedostępne!"
 #define qtn_wait "Proszę czekać..."
 #define qtn_meters_unit_short "m"
 #define qtn_kilometers_unit_short "km"
@@ -39,7 +36,6 @@ CHARACTER_SET UTF8
 #define qtn_landmarks "Punkty na mapie"
 #define qtn_display "Wyświetl"
 #define qtn_create "Stwórz"
-#define qtn_input_name "Wpisz nazwę"
 #define qtn_rename "Zmień nazwę"
 #define qtn_delete "Usuń"
 #define qtn_confirm_landmark_deletion "Usunąć \"%S\" punkt na mapie?"

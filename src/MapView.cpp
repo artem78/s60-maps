@@ -348,6 +348,7 @@ void CMapView::HandleTilesCacheStatsL()
 			TBuf<64> buf;
 			iEikonEnv->Format128(buf, R_STATS_LINE, &itemName, dirStats.iFilesCount, &sizeBuff);
 			msg.Append(buf);
+			msg.Append('\n');
 			}
 		
 		delete cacheSubDirs;
@@ -380,9 +381,6 @@ void CMapView::HandleTilesCacheResetL()
 	{
 	CAknQueryDialog* dlg = CAknQueryDialog::NewL();
 	dlg->PrepareLC(R_CONFIRM_DIALOG);
-	/*HBufC* title = iEikonEnv->AllocReadResourceLC(R_CONFIRM_RESET_TILES_CACHE_DIALOG_TITLE);
-	dlg->SetHeaderTextL(*title);
-	CleanupStack::PopAndDestroy(); //title*/
 	HBufC* msg = iEikonEnv->AllocReadResourceLC(R_CONFIRM_RESET_TILES_CACHE_DIALOG_TEXT);
 	dlg->SetPromptL(*msg);
 	CleanupStack::PopAndDestroy(); //msg

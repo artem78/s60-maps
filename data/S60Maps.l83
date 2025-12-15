@@ -7,26 +7,23 @@
 CHARACTER_SET UTF8
 
 #define qtn_find_me "Buscar posición"
-//#define qtn_help "Ayuda"
 #define qtn_about "Acerca de"
 #define qtn_exit "Salir"
 #define qtn_tile_providers_title "Cambiar vista"	// todo: update!
 #define qtn_service_title "Cargador de mapas"
 #define qtn_tiles_cache_stats "Detalles de mapas"
 #define qtn_reset_tiles_cache "Eliminar mapas"
-//#define qtn_confirm_reset_tiles_cache_dialog_title "Acepta eliminar los mapas"
 #define qtn_confirm_reset_tiles_cache_dialog_text "Se eliminarán los mapas. ¿Está seguro?"
 #define qtn_about_dialog_title "S60Maps"
 #define qtn_about_dialog_text "Versión: %S\nComp.: " __DATE__ " " __TIME__ "\nGit: %S\nAutor: %S\nWeb: %S\nAgradecimientos: %S y otros"
-//#define qtn_confirm_exit_dialog_title "Cerrar S60Maps"
 #define qtn_confirm_exit_dialog_text "¿Desea cerrar S60Maps?"
 #define qtn_done "¡Mapas eliminados!"
-#define qtn_stats_line "%S: %d archivos, %S\n"
+#define qtn_stats_line "%S: %d archivos, %S"
 #define qtn_stats_total "Total: %d archivos, %S"
 
 // Added in version 1.4.0:
 
-#define qtn_positioning_disabled "¡Ubicación no disponible!"
+#define qtn_positioning_unavailable "¡Ubicación no disponible!"
 #define qtn_wait "Espere por favor..."
 #define qtn_meters_unit_short "m"
 #define qtn_kilometers_unit_short "km"
@@ -36,7 +33,6 @@ CHARACTER_SET UTF8
 #define qtn_landmarks "Lugares de interés"
 #define qtn_display "Mostrar"
 #define qtn_create "Crear"
-#define qtn_input_name "Guardar como:"
 #define qtn_rename "Renombrar"
 #define qtn_delete "Eliminar"
 #define qtn_confirm_landmark_deletion "¿Desea eliminar \"%S\"?"

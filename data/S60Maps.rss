@@ -368,7 +368,6 @@ RESOURCE DIALOG r_landmark_name_input_query
       control = AVKON_DATA_QUERY
         {
         layout = EDataLayout;
-        label = qtn_input_name;
         control = EDWIN
           {
           flags = EEikEdwinNoHorizScrolling | EEikEdwinResizable;
@@ -471,26 +470,18 @@ RESOURCE DIALOG r_location_query_dialog
 RESOURCE TBUF32 r_caption_string { buf=qtn_caption_string; }
 
 RESOURCE /*TBUF32*/ TBUF r_map_cache_stats_dialog_title { buf=qtn_tiles_cache_stats; }
-//RESOURCE TBUF32 r_confirm_reset_tiles_cache_dialog_title { buf=qtn_confirm_reset_tiles_cache_dialog_title; }
 RESOURCE TBUF r_confirm_reset_tiles_cache_dialog_text { buf=qtn_confirm_reset_tiles_cache_dialog_text; }
 RESOURCE TBUF32 r_about_dialog_title { buf=qtn_about_dialog_title; }
 RESOURCE TBUF r_about_dialog_text { buf=qtn_about_dialog_text; }
 RESOURCE TBUF r_about_dialog_git_text { buf=qtn_about_dialog_git_text; }
-//RESOURCE TBUF32 r_confirm_exit_dialog_title { buf=qtn_confirm_exit_dialog_title; }
 RESOURCE TBUF r_confirm_exit_dialog_text { buf=qtn_confirm_exit_dialog_text; }
 RESOURCE TBUF r_done { buf=qtn_done; }
 RESOURCE TBUF r_stats_line { buf=qtn_stats_line; }
 RESOURCE TBUF r_stats_total { buf=qtn_stats_total; }
-RESOURCE TBUF r_positioning_disabled { buf=qtn_positioning_disabled; }
-//RESOURCE TBUF r_wait { buf=qtn_wait; }
+RESOURCE TBUF r_positioning_unavailable { buf=qtn_positioning_unavailable; }
 RESOURCE TBUF r_meters_unit_short { buf=qtn_meters_unit_short; }
 RESOURCE TBUF r_kilometers_unit_short { buf=qtn_kilometers_unit_short; }
 RESOURCE TBUF r_landmarks { buf=qtn_landmarks; }
-//RESOURCE TBUD r_display { buf=qtn_display; }
-//RESOURCE TBUD r_create { buf=qtn_create; }
-RESOURCE TBUF r_input_name { buf=qtn_input_name; }
-//RESOURCE TBUF r_rename { buf=qtn_rename; }
-//RESOURCE TBUF r_delete { buf=qtn_delete; }
 RESOURCE TBUF r_confirm_landmark_deletion { buf=qtn_confirm_landmark_deletion; }
 RESOURCE TBUF r_settings_title { buf=qtn_settings; }
 RESOURCE TBUF r_search { buf=qtn_search; }

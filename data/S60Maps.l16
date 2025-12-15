@@ -10,27 +10,23 @@
 CHARACTER_SET UTF8
 
 #define qtn_find_me "Где я?"
-//#define qtn_help "Help"
 #define qtn_about "О программе"
 #define qtn_exit "Выйти"
-// #define qtn_tile_providers_title "Карты"
 #define qtn_tile_providers_title "Слой карты"
 #define qtn_service_title "Сервис"
 #define qtn_tiles_cache_stats "Статистика кеша"
 #define qtn_reset_tiles_cache "Очистить кеш карт"
-//#define qtn_confirm_reset_tiles_cache_dialog_title "Подтверждение очистки"
 #define qtn_confirm_reset_tiles_cache_dialog_text "Кеш для все карт будет полностью очищен. Вы уверены?"
 #define qtn_about_dialog_title "О программе"
 #define qtn_about_dialog_text "S60Maps Версия %S\nСборка: " __DATE__ " " __TIME__ "\nGit: %S\nАвтор: %S\nWeb: %S\nБлагодарности: %S и другие"
-//#define qtn_confirm_exit_dialog_title "Подтверждение выхода"
 #define qtn_confirm_exit_dialog_text "Выйти?"
 #define qtn_done "Выполнено!"
-#define qtn_stats_line "%S: %d файлов, %S\n"
+#define qtn_stats_line "%S: %d файлов, %S"
 #define qtn_stats_total "Всего: %d файлов, %S"
 
 // Added in version 1.4.0:
 
-#define qtn_positioning_disabled "Определение местоположения недоступно!"
+#define qtn_positioning_unavailable "Определение местоположения недоступно!"
 #define qtn_wait "Подождите..."
 #define qtn_meters_unit_short "м"
 #define qtn_kilometers_unit_short "км"
@@ -40,7 +36,6 @@ CHARACTER_SET UTF8
 #define qtn_landmarks "Ориентиры"
 #define qtn_display "Показывать"
 #define qtn_create "Создать"
-#define qtn_input_name "Введите имя"
 #define qtn_rename "Переименовать"
 #define qtn_delete "Удалить"
 #define qtn_confirm_landmark_deletion "Удалить ориентир \"%S\"?"
