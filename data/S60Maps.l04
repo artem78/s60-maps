@@ -14,7 +14,7 @@ CHARACTER_SET UTF8
 //#define qtn_help "Ayuda"
 #define qtn_about "Sobre"
 #define qtn_exit "Salir"
-#define qtn_tile_providers_title "Visor de mapas"	// todo: ¡Actualizado!
+#define qtn_tile_providers_title "Visor de mapas"
 #define qtn_service_title "Servicios"
 #define qtn_tiles_cache_stats "Estadísticas de caché de mapas"
 #define qtn_reset_tiles_cache "Limpiar caché de mapas"
