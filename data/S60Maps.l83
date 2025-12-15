@@ -78,7 +78,7 @@ CHARACTER_SET UTF8
 #define qtn_enabled "Activar"
 #define qtn_disabled "Desactivar"
 #define qtn_https_proxy_url "Dirección de servidor"
-#define qtn_use_disk_cache ""Tiles temporales"
+#define qtn_use_disk_cache "Tiles temporales"
 
 // Added in version 1.13
 
@@ -110,3 +110,4 @@ CHARACTER_SET UTF8
 // Added in version 1.17
 
 #define qtn_clear_search_results "Eliminar búsquedas"
+
