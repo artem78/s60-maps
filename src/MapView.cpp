@@ -121,6 +121,7 @@ void CMapView::HandleCommandL(TInt aCommand)
 		case ESetOsmTransportTileProvider:
 		case ESetOpenTopoMapTileProvider:
 		case ESetEsriTileProvider:
+		case ESetOpenBusMapTileProvider:
 			HandleTileProviderChangeL(aCommand - ESetTileProviderBase);
 			break;	
 			
@@ -347,6 +348,7 @@ void CMapView::HandleTilesCacheStatsL()
 			TBuf<64> buf;
 			iEikonEnv->Format128(buf, R_STATS_LINE, &itemName, dirStats.iFilesCount, &sizeBuff);
 			msg.Append(buf);
+			msg.Append('\n');
 			}
 		
 		delete cacheSubDirs;
@@ -379,9 +381,6 @@ void CMapView::HandleTilesCacheResetL()
 	{
 	CAknQueryDialog* dlg = CAknQueryDialog::NewL();
 	dlg->PrepareLC(R_CONFIRM_DIALOG);
-	/*HBufC* title = iEikonEnv->AllocReadResourceLC(R_CONFIRM_RESET_TILES_CACHE_DIALOG_TITLE);
-	dlg->SetHeaderTextL(*title);
-	CleanupStack::PopAndDestroy(); //title*/
 	HBufC* msg = iEikonEnv->AllocReadResourceLC(R_CONFIRM_RESET_TILES_CACHE_DIALOG_TEXT);
 	dlg->SetPromptL(*msg);
 	CleanupStack::PopAndDestroy(); //msg
@@ -713,8 +712,7 @@ void CMapView::HandleSearchL()
 void CMapView::OnSearchFinished(const TSearchResultItem &aResultData)
 	{
 	MapControl()->SetFollowUser(EFalse);
-	TZoom prefferedZoom = MapControl()->PreferredZoomForBounds(aResultData.iBounds);
-	MapControl()->Move(aResultData.iCoord, prefferedZoom);
+	MapControl()->MoveAndZoomToBounds(aResultData.iBounds);
 	
 	//delete iSearch;
 	//iSearch = NULL;
@@ -722,24 +720,12 @@ void CMapView::OnSearchFinished(const TSearchResultItem &aResultData)
 
 void CMapView::OnSearchClosed/*L*/()
 	{
-	//MiscUtils::DbgMsg(_L("OnSearchClosed"));
-	if (!iSearch->Results() || !iSearch->Results()->Count())
-		return;
-	
-	
-	MapControl()->SetFollowUser(EFalse);
-	//TZoom prefferedZoom = MapControl()->PreferredZoomForBounds(aResultData.iBounds);
-	//MapControl()->Move(aResultData.iCoord, prefferedZoom);
-	
-	TBounds maxBounds = (*iSearch->Results())[0].iBounds;
-	for (TInt i = /*0*/ 1; i < iSearch->Results()->Count(); i++)
+	TBounds maxBounds;
+	if (iSearch->AllResultsBounds(maxBounds))
 		{
-		maxBounds.Join((*iSearch->Results())[i].iBounds);
+		MapControl()->SetFollowUser(EFalse);
+		MapControl()->MoveAndZoomToBounds(maxBounds);
 		}
-	TZoom zoom = MapControl()->PreferredZoomForBounds(maxBounds);
-	TCoordinate center;
-	maxBounds.Center(center);
-	MapControl()->Move(center, zoom);
 	}
 
 void CMapView::HandleTrafficCounterL()

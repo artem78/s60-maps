@@ -74,22 +74,7 @@ public:
 	static TBool StartsWith(const TDesC8& aStr, const TDesC8& aSubstr, TBool aIgnoreCase = EFalse);
 	//static TBool EndsWith(const TDesC16& aStr, const TDesC16& aSubstr, TBool aIgnoreCase = EFalse);
 	//static TBool EndsWith(const TDesC8& aStr, const TDesC8& aSubstr, TBool aIgnoreCase = EFalse);
-	};
-
-
-// Similar as TRect but for couple of TCoordinate objects
-class TCoordRect
-	{
-public:
-	TCoordinate iTlCoord, iBrCoord;
-	
-	void SetCoords(const TCoordinate &aTlCoord, const TCoordinate &aBrCoord);
-	
-	// Returns ETrue if given rect completely located inside this rect
-	TBool Contains(const TCoordRect &aCoordRect) const;
-	
-    friend bool operator == (const TCoordRect &aCoordRect1, const TCoordRect &aCoordRect2);
-    friend bool operator != (const TCoordRect &aCoordRect1, const TCoordRect &aCoordRect2);
+	static TInt MaxLineWidthInPixels(CArrayFix<TPtrC>* aLines, const CFont* aFont);
 	};
 
 
@@ -122,6 +107,8 @@ public:
 	static void WriteZeroesToStreamL(RWriteStream &aStream, TInt aLength=1);
 	static void WriteTUint64ToStreamL(RWriteStream &aStream, const TUint64 &aNum);
 	static void ReadTUint64FromStreamL(RReadStream &aStream, TUint64 &aNum);
+	
+	static void LanguageToIso639Code(TLanguage aLang, /*TDes*/ TBuf</*3*/2> &aCode);
 
 	};
 
@@ -166,6 +153,7 @@ public:
 
 
 // Holds bounding box defined with top-left and bottom-right TCoordinate
+// Similar as TRect but for couple of TCoordinate objects
 class /*TCoordRect*/ /*TBoundingRect*/ TBounds
 	{
 public:
@@ -181,7 +169,7 @@ public:
 	// This is similar to TRect::BoundingRect().
 	void Join(const TBounds &aCoordRect);
 	
-	void Center(TCoordinate &aCoord);
+	void Center(TCoordinate &aCoord) const;
 	
     friend bool operator == (const TBounds &aCoordRect1, const TBounds &aCoordRect2);
     friend bool operator != (const TBounds &aCoordRect1, const TBounds &aCoordRect2);

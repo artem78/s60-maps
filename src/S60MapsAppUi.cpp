@@ -154,6 +154,22 @@ void CS60MapsAppUi::ConstructL()
 			0, 22,
 			KEsriCopyright, KNullDesC, KEsriCopyrightUrl);
 	
+	// ÖPNVKarte / OpenBusMap
+	// https://www.openbusmap.org/
+	{
+		_LIT(KProviderName, "\u00D6PNVKarte" /*"OpenBusMap"*/);
+		_LIT(KProviderId, "openbusmap");
+		_LIT8(KProviderTileUrl, "https://tileserver.memomaps.de/tilegen/{$z}/{$x}/{$y}.png");
+		_LIT(KProviderCopyrightShort, "memomaps.de");
+		_LIT(KProviderCopyright, "map: memomaps.de, map data: OpenStreetMap");
+		_LIT(KProviderCopyrightUrl, /*"https://www.openbusmap.org/"*/ "https://memomaps.de/");
+		iAvailableTileProviders[6] = new (ELeave) TTileProvider(
+				KProviderId, KProviderName,
+				KProviderTileUrl,
+				0, 18,
+				KProviderCopyrightShort, KProviderCopyright, KProviderCopyrightUrl);
+	}
+	
 	iActiveTileProvider = iAvailableTileProviders[0]; // Use first
 	
 	
@@ -430,7 +446,8 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 		EnablePositioningL();
 		}
 	
-	iMapView->MapControl()->Move(iSettings->GetLat(), iSettings->GetLon(), iSettings->GetZoom());
+	const TCoordinate coord(iSettings->GetLat(), iSettings->GetLon());
+	iMapView->MapControl()->Move(coord, iSettings->GetZoom());
 	
 	// Tile provider
 	TTileProviderId tileProviderId(iSettings->GetTileProviderId());
@@ -462,7 +479,7 @@ void CS60MapsAppUi::InternalizeL(RReadStream& aStream)
 	// After localization loaded show translated message if positioning unavailable
 	if (!IsPositioningAvailable())
 		{
-		HBufC* msg = iEikonEnv->AllocReadResourceLC(R_POSITIONING_DISABLED);
+		HBufC* msg = iEikonEnv->AllocReadResourceLC(R_POSITIONING_UNAVAILABLE);
 		//CAknWarningNote* note = new (ELeave) CAknWarningNote;
 		CAknErrorNote* note = new (ELeave) CAknErrorNote;
 		note->ExecuteLD(*msg);
@@ -716,9 +733,6 @@ void CS60MapsAppUi::HandleExitL()
 		{
 		CAknQueryDialog* dlg = CAknQueryDialog::NewL();
 		dlg->PrepareLC(R_CONFIRM_DIALOG);
-		/*HBufC* title = iEikonEnv->AllocReadResourceLC(R_CONFIRM_EXIT_DIALOG_TITLE);
-		dlg->SetHeaderTextL(*title);
-		CleanupStack::PopAndDestroy(); //title*/
 		HBufC* msg = iEikonEnv->AllocReadResourceLC(R_CONFIRM_EXIT_DIALOG_TEXT);
 		dlg->SetPromptL(*msg);
 		CleanupStack::PopAndDestroy(); //msg
@@ -789,6 +803,10 @@ void CS60MapsAppUi::ChangeLanguageL(TLanguage aLang)
 	_LIT(KOpenTopo, "OpenTopoMap");
 	buff.Format(KCopyrightFmt, &*mapData, &KOsm, &*mapStyle, &KOpenTopo);
 	AvailableTileProviders()[EOpenTopoMapIdx]->iCopyrightText = buff;
+	
+	_LIT(KMemoMaps, "memomaps.de");
+	buff.Format(KCopyrightFmt, &*mapData, &KOsm, &*mapStyle, &KMemoMaps);
+	AvailableTileProviders()[EOpenBusMapIdx]->iCopyrightText = buff;
 	
 	CleanupStack::PopAndDestroy(3, osmContributors);
 	}

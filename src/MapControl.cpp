@@ -553,25 +553,6 @@ void CMapControl::Move(const TCoordinate &aPos, TZoom aZoom)
 	EnableDraw();
 	}
 
-void CMapControl::Move(TReal64 aLat, TReal64 aLon)
-	{
-	DisableDraw();
-	
-	Move(aLat, aLon, iZoom);
-	
-	EnableDraw();
-	}
-
-void CMapControl::Move(TReal64 aLat, TReal64 aLon, TZoom aZoom)
-	{
-	DisableDraw();
-	
-	TCoordinate coord(aLat, aLon);
-	Move(coord, aZoom);
-	
-	EnableDraw();
-	}
-
 void CMapControl::MoveAndZoomIn(const TCoordinate &aPos)
 	{
 	DisableDraw();
@@ -697,17 +678,18 @@ TCoordinate CMapControl::GetCenterCoordinate() const
 	return MapMath::ProjectionPointToGeoCoords(point, iZoom);
 	}
 
-TBool CMapControl::CheckCoordVisibility(const TCoordinate &aCoord) const
+TBool CMapControl::CheckCoordVisibility(const TCoordinate &aCoord, TInt aGoingBeyondToleranceInPx) const
 	{	
 	TPoint projectionPoint = MapMath::GeoCoordsToProjectionPoint(aCoord, iZoom);
 	TPoint screenPoint = ProjectionCoordsToScreenCoords(projectionPoint);
-	return CheckPointVisibility(screenPoint);
+	return CheckPointVisibility(screenPoint, aGoingBeyondToleranceInPx);
 	}
 
-TBool CMapControl::CheckPointVisibility(const TPoint &aPoint) const
+TBool CMapControl::CheckPointVisibility(const TPoint &aPoint, TInt aGoingBeyondToleranceInPx) const
 	{
 	TRect screenRect = Rect();
 	screenRect.Resize(1, 1);
+	screenRect.Grow(aGoingBeyondToleranceInPx, aGoingBeyondToleranceInPx);
 	return screenRect.Contains(aPoint);
 	}
 
@@ -733,15 +715,10 @@ TPoint CMapControl::ScreenCoordsToProjectionCoords(const TPoint &aPoint) const
 	return aPoint + iTopLeftPosition;
 	}
 
-void CMapControl::Bounds(TCoordinate &aTopLeftCoord, TCoordinate &aBottomRightCoord) const
-	{
-	aTopLeftCoord = ScreenCoordsToGeoCoords(Rect().iTl);
-	aBottomRightCoord = ScreenCoordsToGeoCoords(Rect().iBr - TPoint(1, 1));
-	}
-
 void CMapControl::Bounds(TBounds &aCoordRect) const
 	{
-	Bounds(aCoordRect.iTlCoord, aCoordRect.iBrCoord);
+	aCoordRect.iTlCoord = ScreenCoordsToGeoCoords(Rect().iTl);
+	aCoordRect.iBrCoord = ScreenCoordsToGeoCoords(Rect().iBr - TPoint(1, 1));
 	}
 
 void CMapControl::Bounds(TTile &aTopLeftTile, TTile &aBottomRightTile) const
@@ -939,6 +916,14 @@ TZoom CMapControl::PreferredZoomForBounds(const TBounds &aBounds) const
 		}
 	
 	return zoom;
+	}
+
+void CMapControl::MoveAndZoomToBounds(const TBounds &aBounds)
+	{
+	TZoom zoom = PreferredZoomForBounds(aBounds);
+	TCoordinate center;
+	aBounds.Center(center);
+	Move(center, zoom);
 	}
 
 // End of File

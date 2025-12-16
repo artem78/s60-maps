@@ -11,27 +11,24 @@
 CHARACTER_SET UTF8
 
 #define qtn_find_me "עקוב אחרי"
-//#define qtn_help "עזרה"
 #define qtn_about "אודות"
 #define qtn_exit "יציאה"
 #define qtn_tile_providers_title "מפות"	// todo: update!
 #define qtn_service_title "כלים"
 #define qtn_tiles_cache_stats "סטטיסטיקות מטמון מפה"
 #define qtn_reset_tiles_cache "נקה מטמון מפה"
-//#define qtn_confirm_reset_tiles_cache_dialog_title "אשר ניקוי מטמון"
 #define qtn_confirm_reset_tiles_cache_dialog_text "פעולה זו תמחק את כל המטמון ששמור לך. האם אתה בטוח?"
 #define qtn_about_dialog_title "אודות"
 #define qtn_about_dialog_text "S60Maps גירסא %S\nזמן: " __DATE__ " " __TIME__ "\nגיט: %S\nתכנות: %S\nאתר: %S\nתודות: %S"
-//#define qtn_confirm_exit_dialog_title "אישור יציאה"
 #define qtn_confirm_exit_dialog_text "האם אתה בטוח שברצונך לצאת?"
 #define qtn_done "בוצע!"
-#define qtn_stats_line "%S: %d קבצים, %S\n"
+#define qtn_stats_line "%S: %d קבצים, %S"
 #define qtn_stats_total "סך הכל: %d קבצים, %S"
 
 // Added in version 1.4.0:
 // ToDo: Translate strings below
 
-#define qtn_positioning_disabled "Positioning unavailable!"
+#define qtn_positioning_unavailable "Positioning unavailable!"
 #define qtn_wait "Please wait..."
 #define qtn_meters_unit_short "m"
 #define qtn_kilometers_unit_short "km"
@@ -42,7 +39,6 @@ CHARACTER_SET UTF8
 #define qtn_landmarks "Landmarks"
 #define qtn_display "Display"
 #define qtn_create "Create"
-#define qtn_input_name "Input name"
 #define qtn_rename "Rename"
 #define qtn_delete "Delete"
 #define qtn_confirm_landmark_deletion "Delete \"%S\" landmark?"

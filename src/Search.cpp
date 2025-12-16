@@ -56,7 +56,7 @@ void CSearch::ConstructL()
 	iHttpClient = CHTTPClient2::NewL(this,appUi->iSockServ, appUi->iConn);
 	
 	const TInt KGranularity = 10;
-	iResultsArr = new (ELeave) CArrayFixSeg<TSearchResultItem>(KGranularity);
+	iResultsArr = new (ELeave) CArrayFixFlat<TSearchResultItem>(KGranularity);
 	
 	DEBUG(_L("Constructor"));
 	}
@@ -218,6 +218,7 @@ void CSearch::ParseApiResponseL()
 		
 		iResultsArr->AppendL(result);
 		}
+	iResultsArr->Compress();
 	
 	CleanupStack::PopAndDestroy(2, parser);
 	
@@ -252,8 +253,13 @@ void CSearch::RunApiReqestL()
 	DEBUG(_L("begin"));
 	__ASSERT_DEBUG(iQuery != KNullDesC, Panic());
 	
+	const TInt KResultsMaxCount = 25; // Should not be more than Nominatim limit = 40
 	_LIT8(KApiBaseUrl, "https://nominatim.openstreetmap.org/search?format=json&q=");
 	_LIT8(KViewboxArg, "&viewbox=");
+	_LIT8(KLangArg, "&accept-language=");
+	_LIT8(KLimit, "&limit=");
+	
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
 	
 	TRealFormat realFmt;
 	realFmt.iType = KRealFormatFixed;
@@ -268,7 +274,8 @@ void CSearch::RunApiReqestL()
 	CleanupStack::PushL(encodedQuery);
 	
 	RBuf8 url;
-	url.CreateL(KApiBaseUrl().Length() + encodedQuery->Length() + KViewboxArg().Length() + 64);
+	url.CreateL(KApiBaseUrl().Length() + encodedQuery->Length() + KViewboxArg().Length() + 64
+			+ KLangArg().Length() + /*3*/2 + KLimit().Length() + 2);
 	CleanupClosePushL(url);
 	url = KApiBaseUrl;
 	url.Append(*encodedQuery);
@@ -280,6 +287,17 @@ void CSearch::RunApiReqestL()
 	url.AppendNum(iPreferredBounds.iBrCoord.Longitude(), realFmt); // lon2
 	url.Append(',');
 	url.AppendNum(iPreferredBounds.iBrCoord.Latitude(), realFmt); // lat2
+	
+	TBuf</*3*/2> langCode;
+	MiscUtils::LanguageToIso639Code(appUi->Settings()->iLanguage, langCode);
+	if (langCode.Length())
+		{
+		url.Append(KLangArg);
+		url.Append(langCode);
+		}
+	
+	url.Append(KLimit);
+	url.AppendNum(KResultsMaxCount);
 	
 	iHttpClient->GetL(url);
 		
@@ -324,6 +342,20 @@ void CSearch::OnHTTPHeadersRecieved(const RHTTPTransaction /*aTransaction*/)
 	{
 
 	}
+
+TBool CSearch::AllResultsBounds(TBounds &aBounds)
+	{
+	if (!iResultsArr || !iResultsArr->Count())
+		return EFalse;
+	
+	aBounds = (*iResultsArr)[0].iBounds;
+	for (TInt i = /*0*/ 1; i < iResultsArr->Count(); i++)
+		{
+		aBounds.Join((*iResultsArr)[i].iBounds);
+		}
+	return ETrue;
+	}
+
 
 void MSearchObserver::OnSearchFailedL(TInt aErrCode)
 	{

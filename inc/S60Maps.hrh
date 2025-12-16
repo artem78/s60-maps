@@ -41,7 +41,8 @@ enum TS60MapsIds
 	ESetOsmTransportTileProvider	= /*ESetTileProviderBase + 2*/ 0x6500 + 2,
 	ESetOsmHumanitarianTileProvider	= /*ESetTileProviderBase + 3*/ 0x6500 + 3,
 	ESetOpenTopoMapTileProvider		= /*ESetTileProviderBase + 4*/ 0x6500 + 4,
-	ESetEsriTileProvider		    = /*ESetTileProviderBase + 5*/ 0x6500 + 5
+	ESetEsriTileProvider		    = /*ESetTileProviderBase + 5*/ 0x6500 + 5,
+	ESetOpenBusMapTileProvider		= /*ESetTileProviderBase + 5*/ 0x6500 + 6
 	};
 
 // Controls

@@ -24,6 +24,7 @@
 #include <akniconutils.h> // For CAknIcon
 #include <lbssatellite.h>
 #include "Utils.h"
+#include "Search.h"
 
 
 // Constants
@@ -296,8 +297,8 @@ class CSearchResultsLayer : public CMapLayerBase
 	// Constructor / destructor
 public:
 	~CSearchResultsLayer();
-	static CSearchResultsLayer* NewL(CMapControl* aMapView/*, aSearchResults*/);
-	static CSearchResultsLayer* NewLC(CMapControl* aMapView/*, aSearchResults*/);
+	static CSearchResultsLayer* NewL(CMapControl* aMapView);
+	static CSearchResultsLayer* NewLC(CMapControl* aMapView);
 
 private:
 	CSearchResultsLayer(CMapControl* aMapView);
@@ -309,12 +310,15 @@ public:
 	
 	// Own
 private:
-	//iSearchResults; // Not owned
 	CAknIcon* iIcon;
+	CAknIcon* iIconSelected;
 	
-	//void DrawL(CWindowGc &aGc);
-	//void DrawIcon(CWindowGc &aGc, ...);
-	//void DrawName(CWindowGc &aGc, ...);
+	void DrawIcon(CWindowGc &aGc, const TSearchResultItem &aSearchResult, TBool aSelected = EFalse);
+	void DrawTextWithBackgroundL(CWindowGc &aGc, const TSearchResultItem &aSearchResult);
+	void DrawBackgroundBoxL(CWindowGc &aGc, const TRect &aRect, const TPoint &aArrowTopPoint);
+	void DrawMultiLineText(CWindowGc &aGc, CArrayFix<TPtrC>* aLines, const CFont* aFont,
+			TInt aLineHeight, const TRect &aFirstLineRect); // With horizontal alignment centered
+	void IconRect(const TSearchResultItem &aSearchResult, TRect &aRect);
 	};
 
 

@@ -246,6 +246,16 @@ TBool StrUtils::EndsWith(const TDesC8& aStr, const TDesC8& aSubstr, TBool aIgnor
 	}
 */
 
+TInt StrUtils::MaxLineWidthInPixels(CArrayFix<TPtrC>* aLines, const CFont* aFont)
+	{
+	TInt result = 0;
+	for (TInt i = 0; i < aLines->Count(); i++)
+		{
+		result = Max(result, aFont->TextWidthInPixels((*aLines)[i]));
+		}
+	return result;
+	}
+
 
 // TBounds
 
@@ -295,7 +305,7 @@ void TBounds::Join(const TBounds &aCoordRect)
 		);
 	}
 
-void TBounds::Center(TCoordinate &aCoord)
+void TBounds::Center(TCoordinate &aCoord) const
 	{
 	aCoord.SetCoordinate(
 			(iTlCoord.Latitude() + iBrCoord.Latitude()) / 2,
@@ -695,6 +705,97 @@ void MiscUtils::WriteTUint64ToStreamL(RWriteStream &aStream, const TUint64 &aNum
 void MiscUtils::ReadTUint64FromStreamL(RReadStream &aStream, TUint64 &aNum)
 	{
 	aStream.ReadL((TUint8*)&aNum, sizeof(aNum));
+	}
+
+void MiscUtils::LanguageToIso639Code(TLanguage aLang, /*TDes*/ TBuf</*3*/2> &aCode)
+	{
+	const TInt ELangGalician = 103; // Not defined in s60v3 SDK
+	
+	aCode.Zero();
+	
+	switch (aLang)
+		{
+		case ELangEnglish:
+			{
+			aCode.Append('e');
+			aCode.Append('n');
+			//aCode.Append('g');
+			break;
+			}
+			
+		case ELangSpanish:
+			{
+			/*aCode.Append('s');
+			aCode.Append('p');
+			aCode.Append('a');*/
+			aCode.Append('e');
+			aCode.Append('s');
+			break;
+			}
+			
+		case ELangGalician:
+			{
+			aCode.Append('g');
+			aCode.Append('l');
+			//aCode.Append('g');
+			break;
+			}
+			
+		case ELangPortuguese:
+			{
+			/*aCode.Append('p');
+			aCode.Append('o');
+			aCode.Append('r');*/
+			aCode.Append('p');
+			aCode.Append('t');
+			break;
+			}
+			
+		case ELangRussian:
+			{
+			aCode.Append('r');
+			aCode.Append('u');
+			//aCode.Append('s');
+			break;
+			}
+			
+		case ELangPolish:
+			{
+			aCode.Append('p');
+			//aCode.Append('o');
+			aCode.Append('l');
+			break;
+			}
+			
+		case ELangHebrew:
+			{
+			aCode.Append('h');
+			aCode.Append('e');
+			//aCode.Append('b');
+			break;
+			}
+			
+		case ELangLatinAmericanSpanish: // todo: check code
+			{
+			/*aCode.Append('s'); // ?
+			aCode.Append('p'); // ?
+			aCode.Append('a'); // ?*/
+			aCode.Append('e'); // ?
+			aCode.Append('s'); // ?
+			break;
+			}
+			
+		case ELangUkrainian:
+			{
+			aCode.Append('u');
+			aCode.Append('k');
+			//aCode.Append('r');
+			break;
+			}
+			
+		default:
+			{} // supress compiller warnings
+		}
 	}
 
 

@@ -23,7 +23,6 @@
 #include <epos_cposlmareacriteria.h>
 #include "icons.mbg"
 #include "LBSSatelliteExtended.h"
-#include "Search.h"
 #include "MapView.h"
 #include <aknutils.h> 
 
@@ -347,7 +346,7 @@ void CUserPositionLayer::Draw(CWindowGc &aGc)
 	{
 	TCoordinateEx pos;
 	TInt r = iMapView->UserPosition(pos);
-	if (r == KErrNone && iMapView->CheckCoordVisibility(pos))
+	if (r == KErrNone && iMapView->CheckCoordVisibility(pos, 15))
 		{
 		TPoint screenPoint = iMapView->GeoCoordsToScreenCoords(pos);
 		
@@ -1355,6 +1354,7 @@ CSearchResultsLayer::CSearchResultsLayer(CMapControl* aMapView):
 
 CSearchResultsLayer::~CSearchResultsLayer()
 	{
+	delete iIconSelected;
 	delete iIcon;
 	}
 
@@ -1379,64 +1379,38 @@ void CSearchResultsLayer::ConstructL()
 	CS60MapsApplication* app = static_cast<CS60MapsApplication*>(appUi->Application());
 	
 	iIcon = app->LoadIconL(EMbmIconsLocation, EMbmIconsLocation_mask);
+	iIconSelected = app->LoadIconL(EMbmIconsLocation_selected, EMbmIconsLocation_mask);
 	}
 
 void CSearchResultsLayer::Draw(CWindowGc &aGc)
 	{
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CEikonEnv::Static()->AppUi());
 	
+	
 	// Check if any items to display
 	CSearch* search = appUi->MapView()->Search();
-	if (!/*iMapView->Search()*/ search)
+	if (!search)
 		return;
 	
-	const CArrayFix/*Seg*/<TSearchResultItem>* searchResArr = /*iMapView->Search()*/search->Results();
+	const CArrayFix<TSearchResultItem>* searchResArr = search->Results();
 	if (!searchResArr || !searchResArr->Count())
 		return;
 	
-	/*TRAPD(r, DrawL(aGc));
-	if (r != KErrNone)
-		{
-		DEBUG(_L("Leave with code %d"), r);
-		}*/
-	
-	//////
-	/*CArrayFixSeg<TSearchResultItem>* searchResArr = new (ELeave) CArrayFixSeg<TSearchResultItem>(10);
-	TSearchResultItem item;
-	
-	item.iName = _L("Result 1");
-	item.iCoord.SetCoordinate(39.9153, -75.2896);
-	searchResArr->AppendL(item);
-	
-	item.iName = _L("Result 2");
-	item.iCoord.SetCoordinate(39.8768, -75.3288);
-	searchResArr->AppendL(item);
-	
-	item.iName = _L("Result 3");
-	item.iCoord.SetCoordinate(39.9366, -75.3466);
-	searchResArr->AppendL(item);
-	
-	item.iName = _L("Result 4");
-	item.iCoord.SetCoordinate(39.94969, -75.34055);
-	searchResArr->AppendL(item);*/
-	//////
-	
-	/*aGc.SetPenColor(KRgbRed);
-	aGc.SetPenSize(TSize(5,5));
-	aGc.SetPenStyle(CGraphicsContext::ESolidPen);
-	*/
-	/*aGc.SetBrushColor(KRgbRed);
-	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);*/
-	//aGc.UseFont(iMapView->DefaultFont());
+
 	
 	TInt nearestItemIdx = -1;
 	TReal32 distance, minDistance = 99999999;
 	TCoordinate screenCenterCoord = iMapView->GetCenterCoordinate();
-	TSize iconSize = iIcon->Bitmap()->SizeInPixels();
 	TSearchResultItem item;
 	for (TInt i = 0; i < searchResArr->Count(); i++)
 		{
 		item = (*searchResArr)[i];
+		
+		// Skip out of bounds items
+		if (!iMapView->CheckCoordVisibility(item.iCoord, 30))
+			{
+			continue;
+			}
 		
 		// Calculate nearest to the screen center landmark index
 		distance = 99999999;
@@ -1450,73 +1424,141 @@ void CSearchResultsLayer::Draw(CWindowGc &aGc)
 			}
 		
 		
-		// Calculate icon position on the screen
-		//TSize iconSize = iIcon->Bitmap()->SizeInPixels();
-		TPoint resultPoint = iMapView->GeoCoordsToScreenCoords(item.iCoord);
-		TRect dstRect(resultPoint, iconSize);
-		dstRect.Move(-iconSize.iWidth / 2, -iconSize.iHeight);
-		
-		TRect srcRect(TPoint(0, 0), iconSize);
-		
 		// Draw icon
-		aGc.DrawBitmapMasked(dstRect, iIcon->Bitmap(), srcRect, iIcon->Mask(), 0);
+		DrawIcon(aGc, item);
 		}
 	
 	
-	// Draw text
 	if (nearestItemIdx > -1)
 		{
 		item = (*searchResArr)[nearestItemIdx];
 		TPoint resultPoint = iMapView->GeoCoordsToScreenCoords(item.iCoord);
-		TPoint screenCenterPoint = iMapView->GeoCoordsToScreenCoords(iMapView->GetCenterCoordinate());
+		TPoint screenCenterPoint = iMapView->GeoCoordsToScreenCoords(iMapView->GetCenterCoordinate());		
 		
 		/*TRect popupArea = TRect(resultPoint, TSize(0, 0));
 		const TInt areaSize = 30;
 		popupArea.Grow(areaSize / 2, areaSize / 2);*/
 		 
-		TRect popupArea(resultPoint, iconSize);
-		popupArea.Move(-iconSize.iWidth / 2, -iconSize.iHeight);
+		TRect popupArea;
+		IconRect(item, popupArea);
 		const TInt areaIndent = 10;
 		popupArea.Grow(areaIndent, areaIndent);
+		
 		////////////
 		/*aGc.SetPenStyle(CGraphicsContext::EDashedPen);
 		aGc.DrawRect(popupArea);*/
 		/////////
-		if (popupArea.Contains(screenCenterPoint))
+		
+		if (popupArea.Contains(screenCenterPoint)) // Check if showing popup needed
 			{
-			//const CFont* font = iMapView->SmallFont();
-			const CFont* font = iMapView->DefaultFont();
-			TInt baselineOffset = /*font->BaselineOffsetInPixels()*/ /*font->AscentInPixels()*/ font->FontMaxAscent();
-			const TRgb KTextColor(0x4040cd);
-			// Skip leading TAB (used for propper display in list)
-			TPtrC name(item.iName.Right(item.iName.Length() - 1));
-			TRect textRect(iMapView->Rect());
-			textRect.iTl.iY = resultPoint.iY + 10;
-			textRect.SetHeight(50);
-			textRect.Shrink(10, 0);
-			//////////
-			//aGc.DrawRect(textRect);
-			/////////
-			CArrayFix<TPtrC>* lines = new (ELeave) CArrayFixFlat<TPtrC>(10);
-			CleanupStack::PushL(lines);
-			AknTextUtils::WrapToArrayL(name, textRect.Width(), *iMapView->DefaultFont(), *lines);
-			aGc.UseFont(font);
-			for (TInt i = 0; i < lines->Count(); i++)
-				{
-				static_cast<CWindowGcEx*>(&aGc)->DrawOutlinedText((*lines)[i], textRect,
-						baselineOffset, CGraphicsContext::ECenter, 0, KTextColor);
-				textRect.Move(0, font->HeightInPixels() + 3);
-				}
-			aGc.DiscardFont();
-			CleanupStack::PopAndDestroy(lines);
+			// Draw selected icon over the others
+			DrawIcon(aGc, item, ETrue);
 			
+			// Draw text with box
+			TRAP_IGNORE(DrawTextWithBackgroundL(aGc, item));
 			}
 		}
-	//aGc.DiscardFont();
+	}
+
+void CSearchResultsLayer::DrawIcon(CWindowGc &aGc, const TSearchResultItem &aSearchResult,
+		TBool aSelected)
+	{
+	const CAknIcon* icon = aSelected ? iIconSelected : iIcon;
 	
-	/*//////
-	//delete searchResArr;
-	//////*/
+	// Calculate icon position on the screen
+	TRect dstRect;
+	IconRect(aSearchResult, dstRect);
+	
+	TRect srcRect(TPoint(0, 0), dstRect.Size());
+	
+	// Draw icon
+	aGc.DrawBitmapMasked(dstRect, icon->Bitmap(), srcRect, icon->Mask(), 0);
+	}
+
+void CSearchResultsLayer::DrawTextWithBackgroundL(CWindowGc &aGc,
+		const TSearchResultItem &aSearchResult)
+	{
+	//const CFont* font = iMapView->SmallFont();
+	const CFont* font = iMapView->DefaultFont();
+	const TRgb KTextAndBoxBorderColor(0x4040cd);
+	TRgb bgColor(KRgbWhite);
+	bgColor.SetAlpha(170);
+	
+	// Skip leading TAB (used for propper display in list)
+	TPtrC name(aSearchResult.iName.Right(aSearchResult.iName.Length() - 1));
+	TPoint resultPoint = iMapView->GeoCoordsToScreenCoords(aSearchResult.iCoord);
+	TRect firstLineRect(iMapView->Rect());
+	firstLineRect.iTl.iY = resultPoint.iY + 20;
+	firstLineRect.SetHeight(50);
+	firstLineRect.Shrink(/*15*/25, 0);
+		
+	CArrayFix<TPtrC>* lines = new (ELeave) CArrayFixFlat<TPtrC>(10);
+	CleanupStack::PushL(lines);
+	AknTextUtils::WrapToArrayL(name, firstLineRect.Width(), *font, *lines);
+	TInt maxLineWidth = StrUtils::MaxLineWidthInPixels(lines, font);
+	const TInt lineHeight = font->HeightInPixels() + 3;
+	TRect bgRect;
+	bgRect.iTl.iX = iMapView->Rect().Center().iX - maxLineWidth / 2;
+	bgRect.iTl.iY = firstLineRect.iTl.iY;
+	bgRect.SetWidth(maxLineWidth);
+	bgRect.SetHeight(lines->Count() * lineHeight);
+	bgRect.Grow(/*3*/ 12, 3);
+
+	aGc.SetPenColor(KTextAndBoxBorderColor);
+	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
+	aGc.SetBrushColor(bgColor);
+	
+	DrawBackgroundBoxL(aGc, bgRect, resultPoint);
+	DrawMultiLineText(aGc, lines, font, lineHeight, firstLineRect);
+	
+	CleanupStack::PopAndDestroy(lines);
+	}
+
+void CSearchResultsLayer::DrawBackgroundBoxL(CWindowGc &aGc, const TRect &aRect,
+		const TPoint &aArrowTopPoint)
+	{
+	const TInt KPointCount = 7; 
+	CArrayFix<TPoint>* points = new (ELeave) CArrayFixFlat<TPoint>(KPointCount);
+	CleanupStack::PushL(points);
+	const TInt KArrowHalfWidth = 7;
+	points->AppendL(TPoint(aRect.iBr.iX, aRect.iTl.iY));
+	points->AppendL(TPoint(aRect.iBr.iX, aRect.iBr.iY));
+	points->AppendL(TPoint(aRect.iTl.iX, aRect.iBr.iY));
+	points->AppendL(TPoint(aRect.iTl.iX, aRect.iTl.iY));
+	points->AppendL(TPoint(aRect.Center().iX - KArrowHalfWidth, aRect.iTl.iY));
+	points->AppendL(aArrowTopPoint);
+	points->AppendL(TPoint(aRect.Center().iX + KArrowHalfWidth, aRect.iTl.iY));
+	
+	aGc.DrawPolygon(points);
+	
+	CleanupStack::PopAndDestroy(points);
+	}
+
+void CSearchResultsLayer::DrawMultiLineText(CWindowGc &aGc, CArrayFix<TPtrC>* aLines,
+		const CFont* aFont, TInt aLineHeight, const TRect &aFirstLineRect)
+	{
+	TInt baselineOffset = /*aFont->BaselineOffsetInPixels()*/ /*aFont->AscentInPixels()*/ aFont->FontMaxAscent();
+	TRect lineRect = aFirstLineRect;
+	
+	aGc.SetBrushStyle(CGraphicsContext::ENullBrush); // Should be reset before text will be drawn
+	aGc.UseFont(aFont);
+	for (TInt i = 0; i < aLines->Count(); i++)
+		{
+		aGc.DrawText((*aLines)[i], lineRect, baselineOffset, CGraphicsContext::ECenter, 0);
+		lineRect.Move(0, aLineHeight);
+		}
+	aGc.DiscardFont();
+	}
+
+void CSearchResultsLayer::IconRect(const TSearchResultItem &aSearchResult, TRect &aRect)
+	{
+	const CAknIcon* icon = /*aSelected ? iIconSelected :*/ iIcon; // Assume both icons have the same size in pixels!
+	
+	// Calculate icon position on the screen
+	TPoint resultPoint = iMapView->GeoCoordsToScreenCoords(aSearchResult.iCoord);
+	TSize iconSize = icon->Bitmap()->SizeInPixels();
+	aRect = TRect(resultPoint, iconSize);
+	aRect.Move(-iconSize.iWidth / 2, -iconSize.iHeight);
 	}
 
 
