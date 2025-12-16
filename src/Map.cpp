@@ -1406,6 +1406,12 @@ void CSearchResultsLayer::Draw(CWindowGc &aGc)
 		{
 		item = (*searchResArr)[i];
 		
+		// Skip out of bounds items
+		if (!iMapView->CheckCoordVisibility(item.iCoord, 30))
+			{
+			continue;
+			}
+		
 		// Calculate nearest to the screen center landmark index
 		distance = 99999999;
 		if (screenCenterCoord.Distance(item.iCoord, distance) == KErrNone)
