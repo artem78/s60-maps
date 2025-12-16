@@ -223,8 +223,8 @@ private:
 public:
 	/*inline*/ TZoom GetZoom() const;
 	TCoordinate GetCenterCoordinate() const;
-	TBool CheckCoordVisibility(const TCoordinate &aCoord) const;
-	TBool CheckPointVisibility(const TPoint &aPoint) const;
+	TBool CheckCoordVisibility(const TCoordinate &aCoord, TInt aGoingBeyondToleranceInPx = 0) const;
+	TBool CheckPointVisibility(const TPoint &aPoint, TInt aGoingBeyondTolerance/*InPx*/ = 0) const;
 	TPoint GeoCoordsToScreenCoords(const TCoordinate &aCoord) const;
 	TCoordinate ScreenCoordsToGeoCoords(const TPoint &aPoint) const;
 	void Bounds(TBounds &aCoordRect) const;

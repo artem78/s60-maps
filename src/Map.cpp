@@ -346,7 +346,7 @@ void CUserPositionLayer::Draw(CWindowGc &aGc)
 	{
 	TCoordinateEx pos;
 	TInt r = iMapView->UserPosition(pos);
-	if (r == KErrNone && iMapView->CheckCoordVisibility(pos))
+	if (r == KErrNone && iMapView->CheckCoordVisibility(pos, 15))
 		{
 		TPoint screenPoint = iMapView->GeoCoordsToScreenCoords(pos);
 		

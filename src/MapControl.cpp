@@ -678,17 +678,18 @@ TCoordinate CMapControl::GetCenterCoordinate() const
 	return MapMath::ProjectionPointToGeoCoords(point, iZoom);
 	}
 
-TBool CMapControl::CheckCoordVisibility(const TCoordinate &aCoord) const
+TBool CMapControl::CheckCoordVisibility(const TCoordinate &aCoord, TInt aGoingBeyondToleranceInPx) const
 	{	
 	TPoint projectionPoint = MapMath::GeoCoordsToProjectionPoint(aCoord, iZoom);
 	TPoint screenPoint = ProjectionCoordsToScreenCoords(projectionPoint);
-	return CheckPointVisibility(screenPoint);
+	return CheckPointVisibility(screenPoint, aGoingBeyondToleranceInPx);
 	}
 
-TBool CMapControl::CheckPointVisibility(const TPoint &aPoint) const
+TBool CMapControl::CheckPointVisibility(const TPoint &aPoint, TInt aGoingBeyondToleranceInPx) const
 	{
 	TRect screenRect = Rect();
 	screenRect.Resize(1, 1);
+	screenRect.Grow(aGoingBeyondToleranceInPx, aGoingBeyondToleranceInPx);
 	return screenRect.Contains(aPoint);
 	}
 
