@@ -252,9 +252,11 @@ void CSearch::RunApiReqestL()
 	DEBUG(_L("begin"));
 	__ASSERT_DEBUG(iQuery != KNullDesC, Panic());
 	
+	const TInt KResultsMaxCount = 25; // Should not be more than Nominatim limit = 40
 	_LIT8(KApiBaseUrl, "https://nominatim.openstreetmap.org/search?format=json&q=");
 	_LIT8(KViewboxArg, "&viewbox=");
 	_LIT8(KLangArg, "&accept-language=");
+	_LIT8(KLimit, "&limit=");
 	
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
 	
@@ -272,7 +274,7 @@ void CSearch::RunApiReqestL()
 	
 	RBuf8 url;
 	url.CreateL(KApiBaseUrl().Length() + encodedQuery->Length() + KViewboxArg().Length() + 64
-			+ KLangArg().Length() + /*3*/2);
+			+ KLangArg().Length() + /*3*/2 + KLimit().Length() + 2);
 	CleanupClosePushL(url);
 	url = KApiBaseUrl;
 	url.Append(*encodedQuery);
@@ -292,6 +294,9 @@ void CSearch::RunApiReqestL()
 		url.Append(KLangArg);
 		url.Append(langCode);
 		}
+	
+	url.Append(KLimit);
+	url.AppendNum(KResultsMaxCount);
 	
 	iHttpClient->GetL(url);
 		
