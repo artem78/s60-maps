@@ -49,7 +49,7 @@ CSettings::CSettings() :
 		iLanguage(ELangEnglish),
 		iIsSignalIndicatorVisible(ETrue),
 		iIsScaleBarVisible(ETrue),
-		iSignalIndicatorType(ESignalIndicatorGeneralType),
+		iSignalIndicatorType(ESignalIndicatorPerSatelliteType),
 		iUseHttpsProxy(ETrue),
 		iHttpsProxyUrl(KDefaultHttpsProxyUrl),
 		iUseDiskCache(ETrue),
