@@ -56,7 +56,7 @@ void CSearch::ConstructL()
 	iHttpClient = CHTTPClient2::NewL(this,appUi->iSockServ, appUi->iConn);
 	
 	const TInt KGranularity = 10;
-	iResultsArr = new (ELeave) CArrayFixSeg<TSearchResultItem>(KGranularity);
+	iResultsArr = new (ELeave) CArrayFixFlat<TSearchResultItem>(KGranularity);
 	
 	DEBUG(_L("Constructor"));
 	}
@@ -218,6 +218,7 @@ void CSearch::ParseApiResponseL()
 		
 		iResultsArr->AppendL(result);
 		}
+	iResultsArr->Compress();
 	
 	CleanupStack::PopAndDestroy(2, parser);
 	
