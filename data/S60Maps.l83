@@ -1,16 +1,20 @@
 /*
 ========================================================================
  Name        : S60Maps.l83
+ Authors     : fizolas, rewyuto
+ Copyright   : 
+ Description : 
 ========================================================================
 */
-// localized strings for language: Latin American Spanish (83)
+// localized strings for language: Español - Hispanoamérica (83)
+
 CHARACTER_SET UTF8
 
-#define qtn_find_me "Buscar posición"
+#define qtn_find_me "Mi posición"
 //#define qtn_help "Ayuda"
 #define qtn_about "Acerca de"
 #define qtn_exit "Salir"
-#define qtn_tile_providers_title "Cambiar vista"	// todo: update!
+#define qtn_tile_providers_title "Cambiar vista"
 #define qtn_service_title "Cargador de mapas"
 #define qtn_tiles_cache_stats "Detalles de mapas"
 #define qtn_reset_tiles_cache "Eliminar mapas"
@@ -21,12 +25,12 @@ CHARACTER_SET UTF8
 //#define qtn_confirm_exit_dialog_title "Cerrar S60Maps"
 #define qtn_confirm_exit_dialog_text "¿Desea cerrar S60Maps?"
 #define qtn_done "¡Mapas eliminados!"
-#define qtn_stats_line "%S: %d archivos, %S\n"
-#define qtn_stats_total "Total: %d archivos, %S"
+#define qtn_stats_line "%S: %d archivo(s), %S\n"
+#define qtn_stats_total "Total: %d archivo(s), %S"
 
 // Added in version 1.4.0:
 
-#define qtn_positioning_disabled "¡Ubicación no disponible!"
+#define qtn_positioning_disabled "¡Posición no encontrada!"
 #define qtn_wait "Espere por favor..."
 #define qtn_meters_unit_short "m"
 #define qtn_kilometers_unit_short "km"
@@ -43,7 +47,7 @@ CHARACTER_SET UTF8
 
 // Added in version 1.6.0:
 
-#define qtn_goto "Buscar"
+#define qtn_goto "Explorar"
 #define qtn_landmark "Lugares de interés"
 #define qtn_coordinate "Coordenadas"
 #define qtn_latitude "Latitud"
@@ -64,45 +68,46 @@ CHARACTER_SET UTF8
 
 // Added in version 1.10:
 
-#define qtn_signal_indicator_type "Signal indicator type"
-#define qtn_signal_indicator_general_type "General"
-#define qtn_signal_indicator_per_satellite_type "Per satellite"
+#define qtn_signal_indicator_type "Íconos de señal"
+#define qtn_signal_indicator_general_type "Red, satélite"
+#define qtn_signal_indicator_per_satellite_type "Satélite"
 
 // Added in version 1.12
 
-#define qtn_use_https_proxy "HTTPS proxy"
-#define qtn_enabled "Enabled"
-#define qtn_disabled "Disabled"
-#define qtn_https_proxy_url "HTTPS proxy url"
-#define qtn_use_disk_cache "Cache tiles on disk"
+#define qtn_use_https_proxy "Servidor HTTPS"
+#define qtn_enabled "Activar"
+#define qtn_disabled "Desactivar"
+#define qtn_https_proxy_url "Dirección de servidor"
+#define qtn_use_disk_cache "Tiles temporales"
 
 // Added in version 1.13
 
-#define qtn_search "Search"
-#define qtn_search_results "Search results"
+#define qtn_search "Buscar"
+#define qtn_search_results "Coincidencias"
 
 // Added in version 1.14
 
-#define qtn_data_licences "Data licences"
-#define qtn_layer_fmt "\"%S\" layer"
-#define qtn_search_api "Search API"
-#define qtn_osm_contributors "OpenStreetMap contributors"
-#define qtn_map_data "map data"
-#define qtn_map_style "map style"
-#define qtn_positioning "Positioning"
+#define qtn_data_licences "Licencias"
+#define qtn_layer_fmt "Visor \"%S\""
+#define qtn_search_api "API de exploración"
+#define qtn_osm_contributors "Colaboradores de OpenStreetMap"
+#define qtn_map_data "datos"
+#define qtn_map_style "diseño"
+#define qtn_positioning "Posicionamiento"
 
 // Added in version 1.15
 
-#define qtn_no_results "No results!"
+#define qtn_no_results "¡No pudimos encontrar el lugar!"
 
 // Added in version 1.16
 
-#define qtn_create_landmark_dlg_title "New landmark"
-#define qtn_edit_landmark_dlg_title "Rename landmark"
-#define qtn_search_failed_fmt "Search failed! (%S)"
-#define qtn_traffic_counter "Traffic counter"
-#define qtn_traffic_counter_dlg_msg_fmt "Session:\n   recieved %S\n   sent %S\n\nTotal:\n   recieved %S\n   sent %S"
+#define qtn_create_landmark_dlg_title "Agregar favorito"
+#define qtn_edit_landmark_dlg_title "Renombrar favorito"
+#define qtn_search_failed_fmt "¡Error de búsqueda! (%S)"
+#define qtn_traffic_counter "Rastreador de datos"
+#define qtn_traffic_counter_dlg_msg_fmt "Sesión:\n   Recibid. %S\n   Enviados %S\n\nTotal:\n   Recibid. %S\n   Enviados %S"
 
 // Added in version 1.17
 
-#define qtn_clear_search_results "Clear search results"
+#define qtn_clear_search_results "Eliminar búsquedas"
+
