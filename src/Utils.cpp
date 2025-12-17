@@ -724,6 +724,7 @@ void MiscUtils::LanguageToIso639Code(TLanguage aLang, /*TDes*/ TBuf</*3*/2> &aCo
 			}
 			
 		case ELangSpanish:
+		case ELangLatinAmericanSpanish: // https://github.com/artem78/s60-maps/pull/64#issuecomment-3662888735
 			{
 			/*aCode.Append('s');
 			aCode.Append('p');
@@ -772,16 +773,6 @@ void MiscUtils::LanguageToIso639Code(TLanguage aLang, /*TDes*/ TBuf</*3*/2> &aCo
 			aCode.Append('h');
 			aCode.Append('e');
 			//aCode.Append('b');
-			break;
-			}
-			
-		case ELangLatinAmericanSpanish: // todo: check code
-			{
-			/*aCode.Append('s'); // ?
-			aCode.Append('p'); // ?
-			aCode.Append('a'); // ?*/
-			aCode.Append('e'); // ?
-			aCode.Append('s'); // ?
 			break;
 			}
 			
