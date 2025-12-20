@@ -144,7 +144,7 @@ void CS60MapsAppUi::ConstructL()
 	// https://wiki.openstreetmap.org/wiki/Esri
 	_LIT(KEsriCopyright, "Esri");
 	_LIT(KEsriCopyrightUrl, "http://www.esri.com/");
-	iAvailableTileProviders[5] = new (ELeave) TTileProvider(
+	iAvailableTileProviders[EEsriIdx] = new (ELeave) TTileProvider(
 			_L("esri"), _L(/*"Esri World Imagery (Clarity) Beta"*/ "Esri (Clarity) Beta"),
 			_L8("http://clarity.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/MapServer/tile/{$z}/{$y}/{$x}"),
 			0, 22,
@@ -158,14 +158,14 @@ void CS60MapsAppUi::ConstructL()
 		_LIT8(KProviderTileUrl, "https://tileserver.memomaps.de/tilegen/{$z}/{$x}/{$y}.png");
 		_LIT(KProviderCopyrightShort, "memomaps.de");
 		_LIT(KProviderCopyrightUrl, /*"https://www.openbusmap.org/"*/ "https://memomaps.de/");
-		iAvailableTileProviders[6] = new (ELeave) TTileProvider(
+		iAvailableTileProviders[EOpenBusMapIdx] = new (ELeave) TTileProvider(
 				KProviderId, KProviderName,
 				KProviderTileUrl,
 				0, 18,
 				KProviderCopyrightShort, KProviderCopyrightUrl);
 	}
 	
-	iActiveTileProvider = iAvailableTileProviders[0]; // Use first
+	iActiveTileProvider = iAvailableTileProviders[EOpenStreetMapIdx]; // Use OpenStreetMap default layer
 	
 	
 	iFileMan = CAsyncFileMan::NewL(CCoeEnv::Static()->FsSession(), this);
