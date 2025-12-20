@@ -172,14 +172,14 @@ void CS60MapsAppUi::ConstructL()
 		_LIT8(KProviderTileUrl, "https://tileserver.memomaps.de/tilegen/{$z}/{$x}/{$y}.png");
 		_LIT(KProviderCopyrightShort, "memomaps.de");
 		_LIT(KProviderCopyrightUrl, /*"https://www.openbusmap.org/"*/ "https://memomaps.de/");
-		iAvailableTileProviders[8] = new (ELeave) TTileProvider(
+		iAvailableTileProviders[EOpenBusMapIdx] = new (ELeave) TTileProvider(
 				KProviderId, KProviderName,
 				KProviderTileUrl,
 				0, 18,
 				KProviderCopyrightShort, KProviderCopyrightUrl);
 	}
 	
-	iActiveTileProvider = iAvailableTileProviders[0]; // Use first
+	iActiveTileProvider = iAvailableTileProviders[EOpenStreetMapIdx]; // Use OpenStreetMap default layer
 	
 	
 	iFileMan = CAsyncFileMan::NewL(CCoeEnv::Static()->FsSession(), this);
