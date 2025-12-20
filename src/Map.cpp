@@ -2307,7 +2307,7 @@ void CTileBitmapManagerItem::CreateBitmapIfNotExistL()
 
 TTileProvider::TTileProvider(const TDesC& anId, const TDesC& aTitle,
 		const TDesC8& anUrlTemplate, TZoom aMinZoom, TZoom aMaxZoom,
-		const TDesC& aCopyrightTextShort, const TDesC& aCopyrightText,
+		const TDesC& aCopyrightTextShort, /*const TDesC& aCopyrightText,*/
 		const TDesC& aCopyrightUrl)
 	{
 	iId.Copy(anId);
@@ -2316,14 +2316,14 @@ TTileProvider::TTileProvider(const TDesC& anId, const TDesC& aTitle,
 	iMinZoomLevel = aMinZoom;
 	iMaxZoomLevel = aMaxZoom;
 	iCopyrightTextShort = aCopyrightTextShort;
-	if (aCopyrightText.Length() == 0 && aCopyrightTextShort.Length() > 0)
-		{
+	/*if (aCopyrightText.Length() == 0 && aCopyrightTextShort.Length() > 0)
+		{*/
 		iCopyrightText = aCopyrightTextShort;
-		}
+		/*}
 	else
 		{
 		iCopyrightText = aCopyrightText;
-		}
+		}*/
 	iCopyrightUrl = aCopyrightUrl;
 	}
 

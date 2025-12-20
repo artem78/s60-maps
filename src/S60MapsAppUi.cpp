@@ -71,13 +71,12 @@ void CS60MapsAppUi::ConstructL()
 	// OpenStreetMap standard tile layer
 	// https://www.openstreetmap.org/
 	_LIT(KOsmCopyrightShort, "OpenStreetMap");
-	_LIT(KOsmCopyright, "OpenStreetMap contributors");
 	_LIT(KOsmCopyrightUrl, "https://www.openstreetmap.org/copyright");
 	iAvailableTileProviders[EOpenStreetMapIdx] = new (ELeave) TTileProvider(
 			_L("osm"), _L("OpenStreetMap"),
 			_L8("https://tile.openstreetmap.org/{$z}/{$x}/{$y}.png"),
 			0, 19,
-			KOsmCopyrightShort, KOsmCopyright, KOsmCopyrightUrl);
+			KOsmCopyrightShort, KOsmCopyrightUrl);
 	
 	// OpenCycleMap
 	// https://wiki.openstreetmap.org/wiki/OpenCycleMap
@@ -92,13 +91,12 @@ void CS60MapsAppUi::ConstructL()
 		openCycleMapUrl.AppendFormat(KApiKeyArgFmt, &KThunderForestApiKey);
 		}
 	_LIT(KThunderforestCopyrightShort, "OpenStreetMap & Thunderforest");
-	_LIT(KThunderforestCopyright, "map data: OpenStreetMap, map style: Thunderforest");
 	_LIT(KThunderforestCopyrightUrl, "https://www.thunderforest.com/");
 	iAvailableTileProviders[EOpenCycleMapIdx] = new (ELeave) TTileProvider(
 			_L("opencycle"), _L("OpenCycleMap"),
 			openCycleMapUrl,
 			0, 22,
-			KThunderforestCopyrightShort, KThunderforestCopyright, KThunderforestCopyrightUrl);
+			KThunderforestCopyrightShort, KThunderforestCopyrightUrl);
 	CleanupStack::PopAndDestroy(&openCycleMapUrl);
 	
 	// Transport Map
@@ -117,32 +115,30 @@ void CS60MapsAppUi::ConstructL()
 			_L("transport"), _L("Transport Map"),
 			transportMapUrl,
 			0, 22,
-			KThunderforestCopyrightShort, KThunderforestCopyright, KThunderforestCopyrightUrl);
+			KThunderforestCopyrightShort, KThunderforestCopyrightUrl);
 	CleanupStack::PopAndDestroy(&transportMapUrl);
 	
 	// Humanitarian Map
 	// https://wiki.openstreetmap.org/wiki/Humanitarian_map_style
 	// https://www.openstreetmap.org/?layers=H
 	_LIT(KHumanCopyrightShort, "Humanitarian OpenStreetMap team");
-	_LIT(KHumanCopyright, "map data: OpenStreetName, map style: Humanitarian OpenStreetMap team");
 	_LIT(KHumanCopyrightUrl, "https://www.hotosm.org/");
 	iAvailableTileProviders[EHumanitarianMapIdx] = new (ELeave) TTileProvider(
 			_L("humanitarian"), _L("Humanitarian"),
 			_L8("https://a.tile.openstreetmap.fr/hot/{$z}/{$x}/{$y}.png"),
 			0, 20,
-			KHumanCopyrightShort, KHumanCopyright, KHumanCopyrightUrl);
+			KHumanCopyrightShort, KHumanCopyrightUrl);
 	
 	// OpenTopoMap
 	// https://wiki.openstreetmap.org/wiki/OpenTopoMap
 	// https://opentopomap.org/
 	_LIT(KOpentopoCopyrightShort, "OpenTopoMap");
-	_LIT(KOpentopoCopyright, "map data: OpenStreetMap, map style: OpenTopoMap");
 	_LIT(KOpentopoCopyrightUrl, "https://opentopomap.org/");
 	iAvailableTileProviders[EOpenTopoMapIdx] = new (ELeave) TTileProvider(
 			_L("opentopomap"), _L("OpenTopoMap"),
 			_L8("https://tile.opentopomap.org/{$z}/{$x}/{$y}.png"),
 			0, /*17*/ 15,
-			KOpentopoCopyrightShort, KOpentopoCopyright, KOpentopoCopyrightUrl);
+			KOpentopoCopyrightShort, KOpentopoCopyrightUrl);
 	
 	// Esri World Imagery (Clarity) Beta
 	// https://wiki.openstreetmap.org/wiki/Esri
@@ -152,7 +148,7 @@ void CS60MapsAppUi::ConstructL()
 			_L("esri"), _L(/*"Esri World Imagery (Clarity) Beta"*/ "Esri (Clarity) Beta"),
 			_L8("http://clarity.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/MapServer/tile/{$z}/{$y}/{$x}"),
 			0, 22,
-			KEsriCopyright, KNullDesC, KEsriCopyrightUrl);
+			KEsriCopyright, KEsriCopyrightUrl);
 	
 	// ÖPNVKarte / OpenBusMap
 	// https://www.openbusmap.org/
@@ -161,13 +157,12 @@ void CS60MapsAppUi::ConstructL()
 		_LIT(KProviderId, "openbusmap");
 		_LIT8(KProviderTileUrl, "https://tileserver.memomaps.de/tilegen/{$z}/{$x}/{$y}.png");
 		_LIT(KProviderCopyrightShort, "memomaps.de");
-		_LIT(KProviderCopyright, "map: memomaps.de, map data: OpenStreetMap");
 		_LIT(KProviderCopyrightUrl, /*"https://www.openbusmap.org/"*/ "https://memomaps.de/");
 		iAvailableTileProviders[6] = new (ELeave) TTileProvider(
 				KProviderId, KProviderName,
 				KProviderTileUrl,
 				0, 18,
-				KProviderCopyrightShort, KProviderCopyright, KProviderCopyrightUrl);
+				KProviderCopyrightShort, KProviderCopyrightUrl);
 	}
 	
 	iActiveTileProvider = iAvailableTileProviders[0]; // Use first
