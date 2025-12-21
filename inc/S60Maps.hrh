@@ -13,6 +13,8 @@
 #define _UID3 0xED689B88
 
 // S60Maps enumerate command codes
+/* In addition to this enum tile provider change commands use ids
+   started from CMapView::KSetTileProviderCommandBaseId */
 enum TS60MapsIds
 	{
 	EFindMe = 0x6001, // start value must not be 0
@@ -33,16 +35,7 @@ enum TS60MapsIds
 	EReloadVisibleArea,
 	ESearch,
 	ETrafficCounter,
-	EClearSearchResults,
-	
-	ESetTileProviderBase = 0x6500, // Start id for tile providers
-	ESetOsmStandardTileProvider		= /*ESetTileProviderBase + 0*/ 0x6500 + 0,
-	ESetOsmCyclesTileProvider		= /*ESetTileProviderBase + 1*/ 0x6500 + 1,
-	ESetOsmTransportTileProvider	= /*ESetTileProviderBase + 2*/ 0x6500 + 2,
-	ESetOsmHumanitarianTileProvider	= /*ESetTileProviderBase + 3*/ 0x6500 + 3,
-	ESetOpenTopoMapTileProvider		= /*ESetTileProviderBase + 4*/ 0x6500 + 4,
-	ESetEsriTileProvider		    = /*ESetTileProviderBase + 5*/ 0x6500 + 5,
-	ESetOpenBusMapTileProvider		= /*ESetTileProviderBase + 5*/ 0x6500 + 6
+	EClearSearchResults
 	};
 
 // Controls
@@ -71,5 +64,20 @@ enum TS60MapsSettingItemIds
 	ESettingUseDiskCache,
 	ESettingPositioningEnabled
 	};
+
+// Tile providers
+enum TTileProviderIdx {
+	EOpenStreetMapIdx,
+	EOpenCycleMapIdx,
+	ETransportMapIdx,
+	EHumanitarianMapIdx,
+	EOpenTopoMapIdx,
+	EEsriIdx,
+	EOpenBusMapIdx,
+	
+	EFirstUnusedIdx // Do not delete this!
+};
+//const TInt KLastTileProviderIdx = EFirstUnusedIdx - 1;
+#define KLastTileProviderIdx EFirstUnusedIdx - 1
 
 #endif // __S60MAPS_HRH__

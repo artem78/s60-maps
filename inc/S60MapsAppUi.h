@@ -31,17 +31,6 @@
 #include <es_sock.h>
 
 
-enum TTileProviderIdx {
-	EOpenStreetMapIdx,
-	EOpenCycleMapIdx,
-	ETransportMapIdx,
-	EHumanitarianMapIdx,
-	EOpenTopoMapIdx,
-	EEsriIdx,
-	EOpenBusMapIdx
-};
-
-
 // FORWARD DECLARATIONS
 class CMapView;
 
