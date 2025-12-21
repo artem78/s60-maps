@@ -26,9 +26,10 @@ class TSearchResultItem;
 class CJsonParser;
 
 
-// CLASS DECLARATION
+// TYPES
+typedef CArrayFix<TSearchResultItem> CSearchResultArray;
 
-// todo: make type for array of TSearchResultItem
+// CLASS DECLARATION
 
 /**
  *  CSearch
@@ -84,7 +85,7 @@ private:
 	HBufC8* iResponseBuff;
 	MSearchObserver* iObserver;
 	TBounds iPreferredBounds;
-	CArrayFix<TSearchResultItem>* iResultsArr;
+	CSearchResultArray* iResultsArr;
 	
 	TBool RunQueryDialogL();
 	/*TBool*/ void RunResultsDialogL();
@@ -95,7 +96,7 @@ private:
 	
 public:
 	TBool RunL();
-	inline const CArrayFix<TSearchResultItem>* Results() const
+	inline const CSearchResultArray* Results() const
 		{ return iResultsArr; };
 	
 	/**
