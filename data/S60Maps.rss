@@ -848,7 +848,7 @@ RESOURCE DIALOG r_search_input_query_dlg
 RESOURCE DIALOG r_search_results_query_dialog
 	{
 	flags = EAknDialogSelectionList;
-	buttons = R_AVKON_SOFTKEYS_SELECT_CANCEL;
+	buttons = R_AVKON_SOFTKEYS_SELECT_BACK;
 	items =
 		{
 		DLG_LINE
