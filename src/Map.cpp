@@ -1392,7 +1392,7 @@ void CSearchResultsLayer::Draw(CWindowGc &aGc)
 	if (!search)
 		return;
 	
-	const CArrayFix<TSearchResultItem>* searchResArr = search->Results();
+	const CSearchResultArray* searchResArr = search->Results();
 	if (!searchResArr || !searchResArr->Count())
 		return;
 	
