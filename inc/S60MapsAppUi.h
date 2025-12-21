@@ -31,6 +31,10 @@
 #include <es_sock.h>
 
 
+// TYPES
+typedef TFixedArray<TTileProvider*, KLastTileProviderIdx + 1> TTileProviderArray;
+
+
 // FORWARD DECLARATIONS
 class CMapView;
 
@@ -139,7 +143,7 @@ public:
 	
 	// Custom properties and methods
 public:
-	inline const TFixedArray<TTileProvider*, 7>& AvailableTileProviders()
+	inline const TTileProviderArray& AvailableTileProviders()
 			{ return iAvailableTileProviders;  };
 	inline TTileProvider* /*Active*/TileProvider()
 			{ return iActiveTileProvider; };
@@ -166,7 +170,7 @@ private:
 	CRemConInterfaceSelector* iInterfaceSelector;
 	CRemConCoreApiTarget* iCoreTarget;
 	
-	TFixedArray<TTileProvider*, 7> iAvailableTileProviders;
+	TTileProviderArray iAvailableTileProviders;
 	//TBuf<64> iTileProviderId
 	TTileProvider* iActiveTileProvider;
 	
