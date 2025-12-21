@@ -21,6 +21,8 @@
 
 // CMapView
 
+const TInt CMapView::KSetTileProviderCommandBaseId = 0x6500;
+
 CMapView::CMapView()
 	{
 	}
@@ -109,22 +111,19 @@ void CMapView::DoDeactivate()
 
 void CMapView::HandleCommandL(TInt aCommand)
 	{
+	// Process tile provider change
+	if (aCommand >= TileProviderIdxToCommandId(0) and aCommand <= TileProviderIdxToCommandId(KLastTileProviderIdx))
+		{
+		HandleTileProviderChangeL(CommandIdToTileProviderIdx(aCommand));
+		return;
+		}
+	
+	
+	// Process other commands	
 	switch (aCommand)
 		{
 		case EFindMe:
 			HandleFindMeL();
-			break;
-			
-		case ESetOsmStandardTileProvider:
-		case ESetOsmCyclesTileProvider:
-		case ESetOsmHumanitarianTileProvider:
-		case ESetOsmTransportTileProvider:
-		case ESetOpenTopoMapTileProvider:
-		case ESetEsriClarityTileProvider:
-		case ESetOpenBusMapTileProvider:
-		case ESetOpenTopoMapBakTileProvider:
-		case ESetEsriTileProvider:
-			HandleTileProviderChangeL(aCommand - ESetTileProviderBase);
 			break;	
 			
 		case ETilesCacheStats:
@@ -241,7 +240,7 @@ void CMapView::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
 					
 			for (TInt idx = 0; idx < appUi->AvailableTileProviders().Count(); idx++)
 				{
-				TInt commandId = ESetTileProviderBase + idx;
+				TInt commandId = TileProviderIdxToCommandId(idx);
 				
 				CEikMenuPaneItem::SData menuItem;
 				menuItem.iCommandId = commandId;
