@@ -23,6 +23,7 @@ enum TS60MapsPanics
 	ES60MapsInvalidPosition, // e.g., lat/lon = NaN
 	ES60MapsInvalidResourceOffset,
 	ES60MapsInvaidSignalValuePanic,
+	ES60MapsBufferNotNullPanic,
 	ES60MapsUnknownPanic = 99999
 	};
 

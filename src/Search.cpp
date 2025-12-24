@@ -18,7 +18,8 @@
 #include "S60Maps.pan"
 #include "EscapeUtils.h"
 #include <utf.h>
-#include <aknnotewrappers.h> 
+#include <aknnotewrappers.h>
+#include "S60Maps.pan"
 
 
 CSearch::CSearch(MSearchObserver* aObserver)
@@ -297,6 +298,8 @@ void CSearch::RunApiReqestL()
 	
 	url.Append(KLimit);
 	url.AppendNum(KResultsMaxCount);
+	
+	__ASSERT_DEBUG(!iResponseBuff, Panic(ES60MapsBufferNotNullPanic));
 	
 	iHttpClient->GetL(url);
 		
