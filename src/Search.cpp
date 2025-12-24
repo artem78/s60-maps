@@ -61,7 +61,7 @@ void CSearch::ConstructL()
 	DEBUG(_L("Constructor"));
 	}
 
-TBool CSearch::RunL()
+TBool CSearch::StartNewSearchL()
 	{
 	if (!RunQueryDialogL())
 		return EFalse;

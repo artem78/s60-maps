@@ -95,7 +95,7 @@ private:
 	static void ParseJsonValueL(CJsonParser* aParser, const TDesC &aParam, TReal64 &aVal);
 	
 public:
-	TBool RunL();
+	TBool StartNewSearchL();
 	inline const CSearchResultArray* Results() const
 		{ return iResultsArr; };
 	

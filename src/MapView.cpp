@@ -718,7 +718,7 @@ void CMapView::HandleSearchL()
 	TBounds bounds;
 	iMapControl->Bounds(bounds);
 	iSearch->SetPreferredBounds(bounds);
-	iSearch->RunL();
+	iSearch->StartNewSearchL();
 	
 	DEBUG(_L("end"));
 	}
