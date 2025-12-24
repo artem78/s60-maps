@@ -48,19 +48,19 @@ public:
 	/**
 	 * Two-phased constructor.
 	 */
-	static CSearch* NewL(MSearchObserver* aObserver, const TBounds &aPreferredBounds);
+	static CSearch* NewL(MSearchObserver* aObserver);
 
 	/**
 	 * Two-phased constructor.
 	 */
-	static CSearch* NewLC(MSearchObserver* aObserver, const TBounds &aPreferredBounds);
+	static CSearch* NewLC(MSearchObserver* aObserver);
 
 private:
 
 	/**
 	 * Constructor for performing 1st stage construction
 	 */
-	CSearch(MSearchObserver* aObserver, const TBounds &aPreferredBounds);
+	CSearch(MSearchObserver* aObserver);
 
 	/**
 	 * EPOC default constructor for performing 2nd stage construction
@@ -106,6 +106,14 @@ public:
 	 * @return EFalse if no results, ETrue otherwise.
 	 */
 	TBool AllResultsBounds(TBounds &aBounds);
+	
+	/*
+	 * Clears result array and prepare CSearch for new request
+	 */
+	void Reset();
+	
+	inline void SetPreferredBounds(const TBounds &aBounds)
+		{ iPreferredBounds.SetCoords(aBounds.iTlCoord, aBounds.iBrCoord); };
 
 	};
 

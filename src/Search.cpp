@@ -21,10 +21,9 @@
 #include <aknnotewrappers.h> 
 
 
-CSearch::CSearch(MSearchObserver* aObserver, const TBounds &aPreferredBounds)
+CSearch::CSearch(MSearchObserver* aObserver)
 		: iObserver(aObserver)
 	{
-	iPreferredBounds.SetCoords(aPreferredBounds.iTlCoord, aPreferredBounds.iBrCoord);
 	}
 
 CSearch::~CSearch()
@@ -35,17 +34,17 @@ CSearch::~CSearch()
 	DEBUG(_L("Destructor"));
 	}
 
-CSearch* CSearch::NewLC(MSearchObserver* aObserver, const TBounds &aPreferredBounds)
+CSearch* CSearch::NewLC(MSearchObserver* aObserver)
 	{
-	CSearch* self = new (ELeave) CSearch(aObserver, aPreferredBounds);
+	CSearch* self = new (ELeave) CSearch(aObserver);
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	return self;
 	}
 
-CSearch* CSearch::NewL(MSearchObserver* aObserver, const TBounds &aPreferredBounds)
+CSearch* CSearch::NewL(MSearchObserver* aObserver)
 	{
-	CSearch* self = CSearch::NewLC(aObserver, aPreferredBounds);
+	CSearch* self = CSearch::NewLC(aObserver);
 	CleanupStack::Pop(); // self;
 	return self;
 	}
@@ -354,6 +353,15 @@ TBool CSearch::AllResultsBounds(TBounds &aBounds)
 		aBounds.Join((*iResultsArr)[i].iBounds);
 		}
 	return ETrue;
+	}
+
+void CSearch::Reset()
+	{
+	iResultsArr->Reset();
+	iQuery.Zero();
+	//iPreferredBounds ...
+	
+	DEBUG(_L("Reset"));
 	}
 
 
