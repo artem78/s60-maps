@@ -425,7 +425,7 @@ void CMapView::HandleAboutL()
 	msg.CreateL(2048);
 	msg.CleanupClosePushL();
 	TBuf<32> version;
-	version.Copy(KProgramVersion.Name());
+	StrUtils::VersionToStr(KProgramVersion, version);
 #ifdef _DEBUG
 	_LIT(KDebug, "DEBUG");
 	version.Append(' ');
