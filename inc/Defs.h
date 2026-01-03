@@ -4,6 +4,7 @@
 #define DEFS_H_
 
 // Main definitions
+_LIT(KProgramName, "S60Maps");
 const TVersion KProgramVersion(1, 18, 0);
 const TUint16 KConfigFileVersion = 15;
 
