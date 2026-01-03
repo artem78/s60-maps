@@ -75,6 +75,7 @@ public:
 	//static TBool EndsWith(const TDesC16& aStr, const TDesC16& aSubstr, TBool aIgnoreCase = EFalse);
 	//static TBool EndsWith(const TDesC8& aStr, const TDesC8& aSubstr, TBool aIgnoreCase = EFalse);
 	static TInt MaxLineWidthInPixels(CArrayFix<TPtrC>* aLines, const CFont* aFont);
+	static void VersionToStr(const TVersion &aVer, TDes &aDes);
 	};
 
 

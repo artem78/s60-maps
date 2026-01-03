@@ -256,6 +256,19 @@ TInt StrUtils::MaxLineWidthInPixels(CArrayFix<TPtrC>* aLines, const CFont* aFont
 	return result;
 	}
 
+void StrUtils::VersionToStr(const TVersion &aVer, TDes &aDes)
+	{
+	aDes.Zero();
+	aDes.AppendNum(aVer.iMajor);
+	aDes.Append('.');
+	aDes.AppendNum(aVer.iMinor);
+	if (aVer.iBuild)
+		{
+		aDes.Append('.');
+		aDes.AppendNum(aVer.iBuild);
+		}
+	}
+
 
 // TBounds
 

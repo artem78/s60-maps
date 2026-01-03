@@ -23,14 +23,15 @@ void CHTTPClient2::ConstructL(RSocketServ &aSockServ, RConnection &aConn)
 	CHTTPClient::ConstructL();
 	
 	// Set default user-agent
+	TBuf<16> progVer;
+	StrUtils::VersionToStr(KProgramVersion, progVer);
 	TBuf8<32> userAgent;
 	userAgent.Copy(KProgramName);
-	userAgent.Append(' ');
-	userAgent.Append('v');
-	userAgent.Append(KProgramVersion.Name());
+	userAgent.Append('/');
+	userAgent.Append(progVer);
 #ifdef _DEBUG
 	_LIT8(KDebugStr, "DEV");
-	userAgent.Append(' ');
+	userAgent.Append('-');
 	userAgent.Append(KDebugStr);
 #endif
 	SetUserAgentL(userAgent);

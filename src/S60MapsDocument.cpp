@@ -79,7 +79,9 @@ void CS60MapsDocument::ConstructL()
 	dateTimeBuff8.Append(_L8(__TIME__));
 	TBuf<32> dateTimeBuff;
 	dateTimeBuff.Copy(dateTimeBuff8);
-	INFO(_L("Program info: %S v%S, git: %S (branch %S), build: %S"), &KProgramName, &KProgramVersion.Name(),
+	TBuf<16> programVersion;
+	StrUtils::VersionToStr(KProgramVersion, programVersion);
+	INFO(_L("Program info: %S v%S, git: %S (branch %S), build: %S"), &KProgramName, &programVersion,
 			&KGITLongVersion, &KGITBranch, &dateTimeBuff);
 	
 	_LIT(KDateFmt, "%F%Y-%M-%D %H:%T:%S");
