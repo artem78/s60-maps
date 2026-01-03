@@ -10,6 +10,8 @@
 #ifndef __S60MAPS_PAN__
 #define __S60MAPS_PAN__
 
+#include "Defs.h"
+
 /** S60Maps application panic codes */
 enum TS60MapsPanics
 	{
@@ -26,8 +28,7 @@ enum TS60MapsPanics
 
 inline void Panic(TS60MapsPanics aReason = ES60MapsUnknownPanic)
 	{
-	_LIT(applicationName, "S60Maps");
-	User::Panic(applicationName, aReason);
+	User::Panic(KProgramName, aReason);
 	}
 
 #endif // __S60MAPS_PAN__

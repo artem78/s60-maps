@@ -477,7 +477,7 @@ void CMapView::HandleToggleLandmarksVisibility()
 void CMapView::HandleCreateLandmarkL()
 	{
 	_LIT(KDefaultLandmarkName, "Landmark");
-	_LIT(KLandmarkCategoryName, "S60Maps");
+	#define KLandmarkCategoryName KProgramName
 	
 	RBuf landmarkName;
 	landmarkName.CreateL(KPosLmMaxTextFieldLength);

@@ -24,7 +24,7 @@ void CHTTPClient2::ConstructL(RSocketServ &aSockServ, RConnection &aConn)
 	
 	// Set default user-agent
 	TBuf8<32> userAgent;
-	userAgent.Copy(_L8("S60Maps")); // ToDo: Move to constant
+	userAgent.Copy(KProgramName);
 	userAgent.Append(' ');
 	userAgent.Append('v');
 	userAgent.Append(KProgramVersion.Name());

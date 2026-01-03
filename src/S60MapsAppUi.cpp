@@ -997,8 +997,7 @@ void CS60MapsAppUi::EnablePositioningL()
 		return;
 		}
 	
-	_LIT(KPosRequestorName, "S60 Maps"); // ToDo: Move to global const
-	iPosRequestor = CPositionRequestor::NewL(this, KPosRequestorName);
+	iPosRequestor = CPositionRequestor::NewL(this, KProgramName);
 	iPosRequestor->Start();
 	}
 
