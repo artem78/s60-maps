@@ -933,7 +933,7 @@ void CS60MapsAppUi::DisableScreenSaver()
 		return;
 		}
 	
-	const TInt KMinScreenSaverTimeout = 5000000; // 5 seconds is minimal value on my phone
+	const TInt KMinScreenSaverTimeout = 5 * KSecond; // 5 seconds is minimal value on my phone
 												// ToDo: Is there system constant for this value?
 	TCallBack callback(ResetInactivityTimer, NULL);
 	if (iResetInactivityTimer->IsActive())
