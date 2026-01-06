@@ -33,6 +33,7 @@ Map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wiki/Symb
   - Spanish (Hispanoamérica)
   - Ukrainian
 - Both keypad and touch ui supports
+- Proxyfication of HTTPS requests if needed
 - Free and Open Source software
 
 ## Controls
@@ -108,7 +109,9 @@ After patch installed you need to **disable** "HTTPS proxy" option in s60maps se
 
 ### (2) Use https proxy
 
-This solution is easier and used by default. All http**S** requests pass via http proxy server. But this may slow down them. For enabling make sure option "HTTPS proxy" is **enabled** in s60maps settings.
+This solution is easier to use and enabled by default. All http**S** requests pass via http proxy server. Although in this case HTTP queries may be a little slower than directly. For enabling using proxyfication make sure option "HTTPS proxy" is **enabled** in s60maps settings.
+
+You may check proxy status [here](http://s60maps.publicvm.com:8088/proxy/status).
 
 ## How to build
 
@@ -143,3 +146,4 @@ This is Open Source software licensed under [GNU GPL v3.0](/LICENSE.txt)
 - [GPS Track recorder for Symbian OS](https://github.com/artem78/s60-gps-tracker#readme)
 - [Accuracy of GNSS data](https://wiki.openstreetmap.org/wiki/Accuracy_of_GNSS_data)
 - [MahoMaps - Yandex.Maps client for Symbian OS](https://github.com/mahomaps/mm-v1)
+
