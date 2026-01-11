@@ -102,13 +102,11 @@ This software was tested on:
 
 > **NOTE:** If you can test it works (or not) on other Series S60 devices or emulators, let me know. Also send me some screenshots in order to check a look on different sizes/orientations.
 
-## Download
+## Download and install
 
-- Download and install `*.sis` or `*.sisx` (*unsigned!*) package from [release page](../../../releases/latest/).
-- If your smartphone is locked (by default):
-  - Sign package with developer certificate ([details](https://digipassion.com/signing-sissisx-files-for-symbian-s60/));
-  - Install already signed package on your smartphone.
-- If your smartphone is unlocked ('rooted') you may install provided unsigned package directly.
+Download and install latest package file `S60Maps_vX_XX.sis` from [release page](../../../releases/latest/). Your phone need to be unlocked ('rooted') and you need to use ROM Patcher Plus with Install Server patch for installation process.
+
+![](images/rom_patcher_plus.png "")
 
 ## Technical details
 
