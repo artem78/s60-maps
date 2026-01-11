@@ -66,6 +66,8 @@ TBool CSearch::StartNewSearchL()
 	if (!RunQueryDialogL())
 		return EFalse;
 	
+	iWaitDialog = new (ELeave) CAknWaitDialog(REINTERPRET_CAST(CEikDialog**,&iWaitDialog), ETrue);
+	iWaitDialog->ExecuteLD(R_WAIT_DIALOG);
 	RunApiReqestL();
 	
 	return ETrue;
@@ -320,6 +322,10 @@ void CSearch::OnHTTPResponseDataChunkRecieved(const RHTTPTransaction /*aTransact
 	
 	if (anIsLastChunk)
 		{
+		// Close wait dialog
+		iWaitDialog->ProcessFinishedL();
+		iWaitDialog = NULL;
+		
 		RunResultsDialogL();
 		
 		delete iResponseBuff;
@@ -336,6 +342,10 @@ void CSearch::OnHTTPError(TInt aError, const RHTTPTransaction /*aTransaction*/)
 	{
 	delete iResponseBuff;
 	iResponseBuff = NULL;
+	
+	// Close wait dialog
+	iWaitDialog->ProcessFinishedL();
+	iWaitDialog = NULL;
 	
 	iObserver->OnSearchFailedL(aError);
 	}

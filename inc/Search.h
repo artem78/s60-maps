@@ -18,9 +18,10 @@
 #include "HTTPClient2.h"
 #include <badesca.h>
 #include "Utils.h"
+#include <aknwaitdialog.h>
 
 
-
+// Forward declarations
 class MSearchObserver;
 class TSearchResultItem;
 class CJsonParser;
@@ -86,6 +87,7 @@ private:
 	MSearchObserver* iObserver;
 	TBounds iPreferredBounds;
 	CSearchResultArray* iResultsArr;
+	CAknWaitDialog* iWaitDialog;
 	
 	TBool RunQueryDialogL();
 	/*TBool*/ void RunResultsDialogL();

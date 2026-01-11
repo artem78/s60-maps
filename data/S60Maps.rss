@@ -347,7 +347,7 @@ RESOURCE DIALOG r_confirm_dialog
 // General wait dialog
 RESOURCE DIALOG r_wait_dialog
 	{
-	flags = EAknWaitNoteFlags /*| EEikDialogFlagNotifyEsc*/;
+	flags = EAknWaitNoteFlags;
 	buttons = R_AVKON_SOFTKEYS_CANCEL;
 	items =
 		{
