@@ -344,11 +344,32 @@ RESOURCE DIALOG r_confirm_dialog
         };
     }*/
 
-// General wait dialog
+// General wait dialog (WITH "Cancel" button)
 RESOURCE DIALOG r_wait_dialog
 	{
 	flags = EAknWaitNoteFlags;
 	buttons = R_AVKON_SOFTKEYS_CANCEL;
+	items =
+		{
+		DLG_LINE
+			{
+			type = EAknCtNote;
+			id = ECacheClearingWaitDialog;
+			control= AVKON_NOTE
+				{
+				layout = EWaitLayout;
+				singular_label = qtn_wait;
+				animation = R_QGN_GRAF_WAIT_BAR_ANIM;
+				};
+			}
+		};
+	}
+
+// General uninterrupted wait dialog (WITHOUT "Cancel" button)
+RESOURCE DIALOG r_wait_dialog_uninterrupted
+	{
+	flags = EAknWaitNoteFlags;
+	buttons = R_AVKON_SOFTKEYS_EMPTY;
 	items =
 		{
 		DLG_LINE

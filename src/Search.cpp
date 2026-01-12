@@ -67,7 +67,7 @@ TBool CSearch::StartNewSearchL()
 		return EFalse;
 	
 	iWaitDialog = new (ELeave) CAknWaitDialog(REINTERPRET_CAST(CEikDialog**,&iWaitDialog), ETrue);
-	iWaitDialog->ExecuteLD(R_WAIT_DIALOG);
+	iWaitDialog->ExecuteLD(R_WAIT_DIALOG_UNINTERRUPTED);
 	RunApiReqestL();
 	
 	return ETrue;
