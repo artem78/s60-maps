@@ -1496,7 +1496,7 @@ void CSearchResultsLayer::DrawTextWithBackgroundL(CWindowGc &aGc,
 	const CFont* font = iMapView->DefaultFont();
 	const TRgb KTextAndBoxBorderColor(0x4040cd);
 	TRgb bgColor(KRgbWhite);
-	bgColor.SetAlpha(170);
+	bgColor.SetAlpha(195);
 	
 	// Skip leading TAB (used for propper display in list)
 	TPtrC name(aSearchResult.iName.Right(aSearchResult.iName.Length() - 1));
