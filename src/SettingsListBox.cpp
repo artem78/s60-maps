@@ -259,7 +259,7 @@ void CLanguageListSettingItem::LoadLanguageListL()
 				
 			case ELangUkrainian:
 				{
-				resourceId = R_LANG_UKRAINISN_NAME;
+				resourceId = R_LANG_UKRAINIAN_NAME;
 				break;
 				}
 				
