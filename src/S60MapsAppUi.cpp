@@ -82,7 +82,7 @@ void CS60MapsAppUi::ConstructL()
 	// OpenCycleMap
 	// https://wiki.openstreetmap.org/wiki/OpenCycleMap
 	// https://www.thunderforest.com/maps/opencyclemap/
-	_LIT8(KOpenCycleMapUrl, "http://tile.thunderforest.com/cycle/{$z}/{$x}/{$y}.png");
+	_LIT8(KOpenCycleMapUrl, "https://tile.thunderforest.com/cycle/{$z}/{$x}/{$y}.png");
 	RBuf8 openCycleMapUrl;
 	openCycleMapUrl.CreateMaxL(KOpenCycleMapUrl().Length() + KApiKeyArgFmt().Length() + KThunderForestApiKey().Length());
 	openCycleMapUrl.CleanupClosePushL();
@@ -104,7 +104,7 @@ void CS60MapsAppUi::ConstructL()
 	// Transport Map
 	// https://wiki.openstreetmap.org/wiki/Transport_Map
 	// https://www.thunderforest.com/maps/transport/
-	_LIT8(KTransportMapUrl, "http://tile.thunderforest.com/transport/{$z}/{$x}/{$y}.png");
+	_LIT8(KTransportMapUrl, "https://tile.thunderforest.com/transport/{$z}/{$x}/{$y}.png");
 	RBuf8 transportMapUrl;
 	transportMapUrl.CreateMaxL(KTransportMapUrl().Length() + KApiKeyArgFmt().Length() + KThunderForestApiKey().Length());
 	transportMapUrl.CleanupClosePushL();
