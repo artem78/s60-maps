@@ -253,6 +253,11 @@ RESOURCE MENU_PANE r_submenu_service
 			{
 			command = ETrafficCounter;
 			txt = qtn_traffic_counter;
+			},
+		MENU_ITEM
+			{
+			command = ECheckUpdates;
+			txt = qtn_check_for_updates;
 			}
 		};
 	}

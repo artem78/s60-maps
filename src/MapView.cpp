@@ -197,6 +197,12 @@ void CMapView::HandleCommandL(TInt aCommand)
 			HandleShowControlsDlgL();
 			break;
 			}
+
+		case ECheckUpdates:
+			{
+			HandleCheckUpdatesL();
+			break;
+			}
 			
 		default:
 			// Let the AppUi handle unknown for view commands
@@ -793,4 +799,30 @@ void CMapView::HandleShowControlsDlgL()
 	CleanupStack::Pop(dlg);
 	dlg->RunLD();
 	CleanupStack::PopAndDestroy(2, title);
+	}
+
+void CMapView::HandleCheckUpdatesL()
+	{
+	CUpdateChecker* updChecker = CUpdateChecker::NewL(this);
+	updChecker->LoadDataL();
+	}
+
+void CMapView::OnUpdateCheckSuccessL(const TDesC& aVersion, const TDesC& aDateTime, 
+		const TDesC& aDescription, const TDesC& aDownloadUrl)
+	{
+	_LIT(KMsgFmt, "New version %S from %S available!\r\n\r\n%S");
+	RBuf msg;
+	msg.CreateL(2048);
+	CleanupClosePushL(msg);
+	
+	msg.Format(KMsgFmt, &aVersion, &aDateTime, &aDescription);
+	iEikonEnv->AlertWin(msg);
+	
+	CleanupStack::PopAndDestroy();
+	}
+
+void CMapView::OnUpdateCheckFailedL()
+	{
+	_LIT(KMsg, "Check for update failed!");
+	iEikonEnv->AlertWin(KMsg);
 	}

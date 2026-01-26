@@ -116,3 +116,6 @@ SOURCEPATH ..\modules\s-json\JsonParser\src
 SOURCE ConsumeString.cpp JsonParser.cpp
 
 DEBUGLIBRARY commdb.lib
+
+SOURCEPATH ..\src
+SOURCE UpdateChecker.cpp
