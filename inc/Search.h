@@ -35,7 +35,7 @@ typedef CArrayFix<TSearchResultItem> CSearchResultArray;
  *  CSearch
  * 
  */
-class CSearch : public CBase, MHTTPClientObserver
+class CSearch : public CBase, public MHTTPClientObserver
 	{
 public:
 	// Constructors and destructor
