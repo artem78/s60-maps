@@ -122,6 +122,7 @@ void CMapView::HandleCommandL(TInt aCommand)
 		case ESetOpenTopoMapTileProvider:
 		case ESetEsriTileProvider:
 		case ESetOpenBusMapTileProvider:
+		case ESetOpenTopoMapBakTileProvider:
 			HandleTileProviderChangeL(aCommand - ESetTileProviderBase);
 			break;	
 			
