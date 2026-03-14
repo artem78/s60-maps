@@ -1,0 +1,109 @@
+/*
+========================================================================
+ Name        : S60Maps.l44
+ Author      : Albert_CidIV
+ Copyright   : 
+ Description : 
+========================================================================
+*/
+// localized strings for language: Catalan (44)
+
+// CHARACTER_SET UTF8
+
+#define qtn_find_me "Segueixi'm"
+#define qtn_about "Sobre"
+#define qtn_exit "Sortir"
+#define qtn_tile_providers_title "Complexitat de mapa"
+#define qtn_service_title "Servei"
+#define qtn_tiles_cache_stats "Estadístiques de les dades dels mapes"
+#define qtn_reset_tiles_cache "Esborra les dades dels mapes"
+#define qtn_confirm_reset_tiles_cache_dialog_text "Aquesta acció eliminarà totes les seves dades de memoria dels mapes. N'està segur?"
+#define qtn_about_dialog_title "Sobre"
+#define qtn_about_dialog_text "S60Maps Versió %S\nBuild: " __DATA__ " " __TEMPS__ "\nGit: %S\nAutor: %S\nWeb: %S\nGràcies a: %S i altres"
+#define qtn_confirm_exit_dialog_text "Està segur que vol sortir-ne?"
+#define qtn_done "Finalitzat!"
+#define qtn_stats_line "%S: %d arxius, %S"
+#define qtn_stats_total "Total: %d arxius, %S"
+
+// Added in version 1.4.0:
+
+#define qtn_positioning_unavailable "Posicionament no disponible!"
+#define qtn_wait "Esperi si us plau..."
+#define qtn_meters_unit_short "m"
+#define qtn_kilometers_unit_short "km"
+
+// Added in version 1.5.0:
+
+#define qtn_landmarks "Punts d'interès"
+#define qtn_display "Visualitza"
+#define qtn_create "Crea"
+#define qtn_rename "Canvia el nom"
+#define qtn_delete "Elimina"
+#define qtn_confirm_landmark_deletion "Delete \"%S\" fixar punt d'interès?"
+
+// Added in version 1.6:
+
+#define qtn_goto "Vés a..."
+#define qtn_landmark "Fixar punt d'interès"
+#define qtn_coordinate "Coordenada"
+#define qtn_latitude "Latitud"
+#define qtn_longitude "Longitud"
+
+// Added in version 1.7:
+
+#define qtn_settings "Configuració"
+#define qtn_language "Idioma"
+
+// Added in version 1.8:
+
+#define qtn_reload_visible_area "Recarregar l'àrea visible"
+#define qtn_show "Mostrar"
+#define qtn_hide "Amagar"
+#define qtn_signal_indicator "Indicador de la senyal GPS"
+#define qtn_scale_bar "Escala"
+
+// Added in version 1.10:
+
+#define qtn_signal_indicator_type "Indicador de tipus de senyar"
+#define qtn_signal_indicator_general_type "General"
+#define qtn_signal_indicator_per_satellite_type "Per satèl·lit"
+
+// Added in version 1.12
+
+#define qtn_use_https_proxy "Proxy d'HTTPS"
+#define qtn_enabled "Habilitat"
+#define qtn_disabled "Desabilitat"
+#define qtn_https_proxy_url "Url del proxy d'HHTPS"
+#define qtn_use_disk_cache "Bolcar quadres pre-renderitzats al disc (millora el temps de càrrega)"
+
+// Added in version 1.13
+
+#define qtn_search "Cerca"
+#define qtn_search_results "Resultats de la cerca"
+
+// Added in version 1.14
+
+#define qtn_data_licences "Llicències de dades"
+#define qtn_layer_fmt "\"%S\" capa"
+#define qtn_search_api "API de cerca"
+#define qtn_osm_contributors "contribuïdors d'OpenStreetMap"
+#define qtn_map_data "dades de mapa"
+#define qtn_map_style "estil de mapa"
+#define qtn_positioning "Posicionament"
+
+// Added in version 1.15
+
+#define qtn_no_results "No se n'ha trobat cap resultat!"
+
+// Added in version 1.16
+
+#define qtn_create_landmark_dlg_title "Fixar nou punt d'interès"
+#define qtn_edit_landmark_dlg_title "Reanomenar punt d'interès"
+#define qtn_search_failed_fmt "Cerca fallida! (%S)"
+#define qtn_traffic_counter "Comptador de trànsit"
+#define qtn_traffic_counter_dlg_msg_fmt "Sessió:\n   rebut %S\n   enviat %S\n\nTotal:\n   rebut %S\n   enviat %S"
+
+// Added in version 1.17
+
+#define qtn_clear_search_results "Eliminar els resultats de la cerca"
+

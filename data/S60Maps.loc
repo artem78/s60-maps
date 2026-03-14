@@ -36,3 +36,7 @@
 #ifdef LANGUAGE_103
 #include "S60Maps.l103"
 #endif
+
+#ifdef LANGUAGE_44
+#include "S60Maps.l44"
+#endif
