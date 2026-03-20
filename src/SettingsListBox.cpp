@@ -263,6 +263,12 @@ void CLanguageListSettingItem::LoadLanguageListL()
 				break;
 				}
 				
+			case ELangCatalan:
+				{
+				resourceId = R_LANG_CATALAN_NAME;
+				break;
+				}
+				
 			default:
 				{} // supress compiller warnings
 			}
