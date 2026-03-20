@@ -19,7 +19,7 @@
 #define qtn_reset_tiles_cache "Esborra les dades dels mapes"
 #define qtn_confirm_reset_tiles_cache_dialog_text "Aquesta acció eliminarà totes les seves dades de memoria dels mapes. N'està segur?"
 #define qtn_about_dialog_title "Sobre"
-#define qtn_about_dialog_text "S60Maps Versió %S\nBuild: " __DATA__ " " __TEMPS__ "\nGit: %S\nAutor: %S\nWeb: %S\nGràcies a: %S i altres"
+#define qtn_about_dialog_text "S60Maps Versió %S\nBuild: " __DATE__ " " __TIME__ "\nGit: %S\nAutor: %S\nWeb: %S\nGràcies a: %S i altres"
 #define qtn_confirm_exit_dialog_text "Està segur que vol sortir-ne?"
 #define qtn_done "Finalitzat!"
 #define qtn_stats_line "%S: %d arxius, %S"
