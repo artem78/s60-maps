@@ -32,6 +32,7 @@ Map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wiki/Symb
   - Hebrew
   - Spanish (Hispanoamérica)
   - Ukrainian
+  - Catalan
 - Both keypad and touch ui supports
 - Proxyfication of HTTPS requests if needed
 - Free and Open Source software
