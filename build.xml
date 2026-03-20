@@ -59,7 +59,8 @@
 		<!--<move file="${sis_dir}/S60Maps.sisx" tofile="${sis_dir}/S60Maps_${version}.sisx" overwrite="true" />-->
 	</target>
 	
-	<target name="source_zip" depends="clean" description="Makes complete archive with sources including submodules">
+	<!--<target name="source_zip" depends="clean" description="Makes complete archive with sources including submodules">-->
+	<target name="source_zip" description="Makes complete archive with sources including submodules">
 		<mkdir dir="${temp_dir}"/>
 		<mkdir dir="${sources_dir}"/>
 		<exec executable="git" dir="${sources_dir}" failonerror="true">
