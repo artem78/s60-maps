@@ -57,7 +57,7 @@ It's recommended, but not necessary to have [Git](https://git-scm.com/downloads)
   git checkout develop
   ```
   
-- **If you are not use Git** you may manualy download complete sources of last stable version [from release page](https://github.com/artem78/s60-maps/releases/latest). In `Assets` section find zip file named `S60Maps_full_sources_vX.XX.zip`. Unpack its content to `C:\Symbian\Carbide\workspace\s60-maps\` directory.
+- **If you are not use Git** you may manualy download complete sources of last stable version [from release page](https://github.com/artem78/s60-maps/releases/latest). In `Assets` section find zip file named `S60Maps_full_sources_vX.XX.zip`. Unpack `s60-maps` folder to `C:\Symbian\Carbide\workspace\` directory.
 
   ![][5]
 
