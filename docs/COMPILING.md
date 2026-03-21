@@ -11,7 +11,7 @@ Also works with Windows XP. Not sure about modern Windows versions. Anyway you c
 
 ## Java Runtime Environment
 
-If you already have Java Runtime Environment (JRE) installed you may skip this step. For download follow [this link](https://www.java.com/en/download/windows_offline.jsp).
+If you already have Java Runtime Environment (JRE) installed you may skip this step. For download follow [this link](https://www.java.com/ru/download/manual.jsp).
 
 
 ## S60 SDK
