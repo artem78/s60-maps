@@ -57,9 +57,11 @@ It's recommended, but not necessary to have [Git](https://git-scm.com/downloads)
   git checkout develop
   ```
   
-- **If you are not use Git** you may manualy download complete sources of last stable version [from release page](https://github.com/artem78/s60-maps/releases/latest). In `Asserts` section find zip file named `s60-maps_sources_vX.X.X.zip`. Unpack its content to `C:\Symbian\Carbide\workspace\s60-maps\` directory.
+- **If you are not use Git** you may manualy download complete sources of last stable version [from release page](https://github.com/artem78/s60-maps/releases/latest). In `Assets` section find zip file named `S60Maps_full_sources_vX.XX.zip`. Unpack its content to `C:\Symbian\Carbide\workspace\s60-maps\` directory.
 
   ![][5]
+
+  *Do not download GitHub predefined `Source code (zip or tar.gz)` assets! They are not complete and do not contains submodule files in `modules` directory.*
 
 Go to Carbide IDE. Open `File > Import`. Select `General > Existing Projects into Workspace` and press `Next`.
 
@@ -139,7 +141,7 @@ https://gist.github.com/artem78/cb2b9650af186844f7b5654964676284#howto
 [2]: images/compiling/20211201_172734_2.png
 [3]: images/compiling/20211201_173030_2.png
 [4]: images/compiling/20211201_173219_2.png
-[5]: images/compiling/release_2.png
+[5]: images/compiling/Screenshot_2026_03_21_16_22_59.png
 [6]: images/compiling/20211201_173339.png
 [7]: images/compiling/20211201_173422_2.png
 [8]: images/compiling/20211201_173521_2.png
