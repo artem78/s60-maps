@@ -38,7 +38,7 @@ enum TTileProviderIdx {
 	EHumanitarianMapIdx,
 	EOpenTopoMapIdx,
 	EOpenTopoMapBakIdx,
-	EEsriIdx,
+	EEsriClarityIdx,
 	EOpenBusMapIdx
 };
 
