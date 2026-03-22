@@ -151,11 +151,18 @@ void CS60MapsAppUi::ConstructL()
 			0, /*17*/ 15,
 			KOpentopoCopyrightShort, KOpentopoCopyright, KOpentopoCopyrightUrl);
 	
-	// Esri World Imagery (Clarity)
+	// Esri World Imagery
 	// https://wiki.openstreetmap.org/wiki/Esri
 	_LIT(KEsriCopyright, "Esri");
 	_LIT(KEsriCopyrightUrl, "http://www.esri.com/");
-	iAvailableTileProviders[6] = new (ELeave) TTileProvider(
+	iAvailableTileProviders[EEsriIdx] = new (ELeave) TTileProvider(
+			_L("esri"), _L(/*"Esri World Imagery"*/ "Esri"),
+			_L8("https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{$z}/{$y}/{$x}"),
+			0, 22,
+			KEsriCopyright, KNullDesC, KEsriCopyrightUrl);
+	
+	// Esri World Imagery (Clarity)
+	iAvailableTileProviders[EEsriClarityIdx] = new (ELeave) TTileProvider(
 			_L("esri_clarity"), _L(/*"Esri World Imagery (Clarity)"*/ "Esri (Clarity)"),
 			_L8("http://clarity.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/MapServer/tile/{$z}/{$y}/{$x}"),
 			0, 22,
@@ -170,7 +177,7 @@ void CS60MapsAppUi::ConstructL()
 		_LIT(KProviderCopyrightShort, "memomaps.de");
 		_LIT(KProviderCopyright, "map: memomaps.de, map data: OpenStreetMap");
 		_LIT(KProviderCopyrightUrl, /*"https://www.openbusmap.org/"*/ "https://memomaps.de/");
-		iAvailableTileProviders[7] = new (ELeave) TTileProvider(
+		iAvailableTileProviders[8] = new (ELeave) TTileProvider(
 				KProviderId, KProviderName,
 				KProviderTileUrl,
 				0, 18,
