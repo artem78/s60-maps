@@ -7,7 +7,7 @@
    viewBox="0 0 270 297"
    version="1.1"
    id="svg5"
-   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
    sodipodi:docname="coords.svg"
    inkscape:export-filename="coords.png"
    inkscape:export-xdpi="75.260002"
@@ -28,14 +28,15 @@
      inkscape:document-units="mm"
      showgrid="false"
      inkscape:zoom="0.42048261"
-     inkscape:cx="494.66969"
-     inkscape:cy="818.10756"
+     inkscape:cx="372.19137"
+     inkscape:cy="700.38568"
      inkscape:window-width="1440"
      inkscape:window-height="848"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="g8214-5-2" />
+     inkscape:current-layer="g8214-5-2"
+     inkscape:pageshadow="2" />
   <defs
      id="defs2">
     <marker
@@ -421,7 +422,7 @@
      width="136.54449"
      height="69.216103"
      x="34.29343"
-     y="181.22034" />
+     y="193.39101" />
   <g
      id="g8214-5-2"
      transform="translate(74.099437,81.964761)">
@@ -431,113 +432,136 @@
        width="36.929852"
        height="23.80418"
        x="11.108235"
-       y="123.45833" />
+       y="135.62906" />
     <circle
        style="fill:#0046ff;fill-opacity:1;fill-rule:evenodd;stroke-width:0.264583"
        id="path6585-2-9"
        cx="11.108235"
-       cy="123.45833"
+       cy="135.62906"
        r="1.8090571" />
     <circle
        style="fill:#0046ff;fill-opacity:1;fill-rule:evenodd;stroke-width:0.264583"
        id="path6585-5-8-3"
        cx="48.038086"
-       cy="147.26251"
+       cy="159.43318"
        r="1.8090571" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:6.35px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#0046ff;fill-opacity:1;stroke:none;stroke-width:0.264583"
        x="7.0988317"
-       y="120.62186"
+       y="132.7926"
        id="text7730-1-0"><tspan
          sodipodi:role="line"
          id="tspan7728-7-0"
          style="fill:#0046ff;fill-opacity:1;stroke-width:0.264583"
          x="7.0988317"
-         y="120.62186">TL</tspan></text>
+         y="132.7926">TL</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:6.35px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#0046ff;fill-opacity:1;stroke:none;stroke-width:0.264583"
        x="51.094971"
-       y="154.72424"
+       y="166.89491"
        id="text7734-4-0"><tspan
          sodipodi:role="line"
          id="tspan7732-6-8"
          style="fill:#0046ff;fill-opacity:1;stroke-width:0.264583"
          x="51.094971"
-         y="154.72424">BR</tspan></text>
+         y="166.89491">BR</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:7.76111px;line-height:1.25;font-family:'DejaVu Serif';-inkscape-font-specification:'DejaVu Serif';fill:#000000;fill-opacity:1;stroke-width:0.264583"
+       x="-42.611969"
+       y="-45.301571"
+       id="text5587"><tspan
+         sodipodi:role="line"
+         id="tspan5585"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.76111px;font-family:'DejaVu Serif';-inkscape-font-specification:'DejaVu Serif Bold';fill:#000000;fill-opacity:1;stroke-width:0.264583"
+         x="-42.611969"
+         y="-45.301571"
+         rotate="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0">Географические координаты</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:7.76111px;line-height:1.25;font-family:'DejaVu Serif';-inkscape-font-specification:'DejaVu Serif';fill:#000000;fill-opacity:1;stroke-width:0.264583"
+       x="-48.936733"
+       y="89.243469"
+       id="text12509"><tspan
+         sodipodi:role="line"
+         id="tspan12507"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.76111px;font-family:'DejaVu Serif';-inkscape-font-specification:'DejaVu Serif Bold';fill:#000000;fill-opacity:1;stroke-width:0.264583"
+         x="-48.936733"
+         y="89.243469">Координаты на экране/проекции</tspan></text>
   </g>
   <path
      style="font-variation-settings:normal;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.818174;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#marker1074-4);stop-color:#000000"
-     d="m 34.303125,182.1089 v 64.12991"
+     d="m 34.303125,194.27981 v 64.12991"
      id="path853-0"
      sodipodi:nodetypes="cc" />
   <path
      style="font-variation-settings:normal;fill:none;fill-opacity:1;stroke:#000000;stroke-width:1.16196;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-start:url(#RoundedArrow-7-8);stop-color:#000000"
-     d="M 163.72956,181.43234 H 34.385631"
+     d="M 163.72956,193.60325 H 34.385631"
      id="path853-1-7"
      sodipodi:nodetypes="cc" />
   <text
      xml:space="preserve"
      style="font-style:normal;font-weight:normal;font-size:6.35px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
      x="39.327335"
-     y="192.23199"
+     y="204.40266"
      id="text1531-2"><tspan
        sodipodi:role="line"
        id="tspan1529-0"
        style="stroke-width:0.264583"
        x="39.327335"
-       y="192.23199">0</tspan></text>
+       y="204.40266">0</tspan></text>
   <text
      xml:space="preserve"
      style="font-style:normal;font-weight:normal;font-size:6.35px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
      x="175.10872"
-     y="184.15642"
+     y="196.32709"
      id="text1531-2-1"><tspan
        sodipodi:role="line"
        id="tspan1529-0-4"
        style="stroke-width:0.264583"
        x="175.10872"
-       y="184.15642">X</tspan></text>
+       y="196.32709">X</tspan></text>
   <text
      xml:space="preserve"
      style="font-style:normal;font-weight:normal;font-size:6.35px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
      x="29.754902"
-     y="257.46255"
+     y="269.63358"
      id="text1531-2-9"><tspan
        sodipodi:role="line"
        id="tspan1529-0-3"
        style="stroke-width:0.264583"
        x="29.754902"
-       y="257.46255">Y</tspan></text>
+       y="269.63358">Y</tspan></text>
   <path
      style="font-variation-settings:normal;opacity:1;fill:none;fill-opacity:1;stroke:#0046ff;stroke-width:0.594827;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-start:url(#marker1074);marker-end:url(#marker1074);stop-color:#000000;stop-opacity:1"
-     d="M 87.685429,235.0559 H 119.69761"
+     d="M 87.685429,247.22681 H 119.69761"
      id="path512" />
   <path
      style="font-variation-settings:normal;fill:none;fill-opacity:1;stroke:#0046ff;stroke-width:0.477766;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-start:url(#marker1074-1);marker-end:url(#marker1074-1);stop-color:#000000"
-     d="m 130.923,207.08174 v 20.65214"
+     d="m 130.923,219.25265 v 20.65214"
      id="path512-4" />
   <text
      xml:space="preserve"
      style="font-style:normal;font-weight:normal;font-size:6.35px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#0046ff;fill-opacity:1;stroke:none;stroke-width:0.264583"
      x="79.07724"
-     y="243.44649"
+     y="255.61716"
      id="text1778"><tspan
        sodipodi:role="line"
        id="tspan1776"
        style="fill:#0046ff;fill-opacity:1;stroke-width:0.264583"
        x="79.07724"
-       y="243.44649">width / ширина</tspan></text>
+       y="255.61716">width / ширина</tspan></text>
   <text
      xml:space="preserve"
      style="font-style:normal;font-weight:normal;font-size:6.35px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#0046ff;fill-opacity:1;stroke:none;stroke-width:0.264583"
      x="135.18228"
-     y="218.90326"
+     y="231.07393"
      id="text1778-9"><tspan
        sodipodi:role="line"
        id="tspan1776-3"
        style="fill:#0046ff;fill-opacity:1;stroke-width:0.264583"
        x="135.18228"
-       y="218.90326">height / высота</tspan></text>
+       y="231.07393">height / высота</tspan></text>
 </svg>
