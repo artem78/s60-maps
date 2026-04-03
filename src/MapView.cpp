@@ -411,7 +411,7 @@ void CMapView::HandleHelpL()
 void CMapView::HandleAboutL()
 	{
 	_LIT(KAuthor,	"artem78 (megabyte1024@ya.ru)");
-	_LIT(KWebSite,	"https://github.com/artem78/s60-maps");
+	_LIT(KWebSite,	"<AknMessageQuery Link>https://github.com/artem78/s60-maps</AknMessageQuery Link>");
 	_LIT(KThanksTo,	"baranovskiykonstantin, Symbian9, Men770, fizolas, bent");
 	
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(AppUi());
@@ -445,7 +445,7 @@ void CMapView::HandleAboutL()
 	HBufC* searchApi = iEikonEnv->AllocReadResourceLC(R_SEARCH_API);
 	_LIT(KDataLicFmt, "\r\n\r\n%S:\r\n");
 	msg.AppendFormat(KDataLicFmt, &(*dataLicences));
-	_LIT(KCopyrightLineFmt, " - (c) %S (%S)\r\n");
+	_LIT(KCopyrightLineFmt, " - (c) %S (<AknMessageQuery Link>%S</AknMessageQuery Link>)\r\n");
 	RBuf copyrightLineFmt;
 	copyrightLineFmt.CreateL(layerFmt->Length() + KCopyrightLineFmt().Length());
 	CleanupClosePushL(copyrightLineFmt);
@@ -459,7 +459,7 @@ void CMapView::HandleAboutL()
 				&provider->iCopyrightText, &provider->iCopyrightUrl);
 		}
 	
-	_LIT(KCopyrightLineSearchFmt, "%S - (c) Nominatim (https://nominatim.openstreetmap.org)");
+	_LIT(KCopyrightLineSearchFmt, "%S - (c) Nominatim (<AknMessageQuery Link>https://nominatim.openstreetmap.org</AknMessageQuery Link>)");
 	msg.AppendFormat(KCopyrightLineSearchFmt, &(*searchApi));
 	CleanupStack::PopAndDestroy(4, dataLicences);
 	
