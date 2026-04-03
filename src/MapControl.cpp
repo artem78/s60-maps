@@ -476,6 +476,12 @@ TKeyResponse CMapControl::OfferKeyEventL(const TKeyEvent &aKeyEvent,
 				static_cast<CS60MapsAppUi*>(iAvkonAppUi)->MapView()->ProcessCommandL(ECreateOrRenameLandmark);
 				return EKeyWasConsumed;
 				}
+				
+			case '0':
+				{
+				static_cast<CS60MapsAppUi*>(iAvkonAppUi)->MapView()->ProcessCommandL(ESearch);
+				return EKeyWasConsumed;
+				}
 			}
 		}
 	

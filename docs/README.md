@@ -47,6 +47,7 @@ Map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wiki/Symb
 - Landmarks:
   - Create or rename: <kbd>5</kbd>
   - Delete: <kbd>C</kbd> (clear key)
+- Search: <kbd>0</kbd>
 
 ### Touchscreen
 
