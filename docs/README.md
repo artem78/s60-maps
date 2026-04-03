@@ -137,8 +137,9 @@ This is Open Source software licensed under [GNU GPL v3.0](/LICENSE.txt)
 
 - PayPal: megabyte1024@yandex.com
 - ETH Ethereum / Tether USDT: 0xB14C877b2eAF7E3b4b49df25039122C0545edA74
-- Webmoney WMZ: Z598881055273
+- Webmoney WMZ: [Z598881055273](https://pay.web.money/d/kgfx)
 - Sberbank card: 5469 4009 8490 5476
+- Юmoney (yoomoney): [4100 1195 0619 6001](https://yoomoney.ru/to/4100119506196001)
 
 ## See also
 
