@@ -153,6 +153,11 @@ RESOURCE MENU_PANE r_menu
 				},
 		MENU_ITEM
 				{
+				command = EShowHotkeys;
+				txt = qtn_hotkeys;
+				},
+		MENU_ITEM
+				{
 				command = EAbout;
 				txt = qtn_about;
 				},
@@ -498,6 +503,8 @@ RESOURCE TBUF r_edit_landmark_dlg_title { buf=qtn_edit_landmark_dlg_title; }
 RESOURCE TBUF r_search_failed_fmt { buf=qtn_search_failed_fmt; }
 RESOURCE TBUF r_traffic_counter { buf=qtn_traffic_counter; }
 RESOURCE TBUF r_traffic_counter_dlg_msg_fmt { buf=qtn_traffic_counter_dlg_msg_fmt; }
+RESOURCE TBUF r_hotkeys { buf=qtn_hotkeys; }
+RESOURCE TBUF r_hotkeys_info { buf=qtn_hotkeys_info; }
 
 
 // Language names

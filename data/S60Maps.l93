@@ -105,3 +105,8 @@ CHARACTER_SET UTF8
 // Added in version 1.17
 
 #define qtn_clear_search_results "Очистить рез. поиска"
+
+// Added in version X.XX
+
+#define qtn_hotkeys "Клавиши"
+#define qtn_hotkeys_info "Перемещение - стрелки или 2/4/6/8\r\nПриблизить  - громкость вверх или 3\r\nОтдалить - громкость вниз или 1\r\nСоздать/переименовать ориентир - 5\r\nУдалить ориентир - C (Клавиша очистки)\r\nПоиск - 0"

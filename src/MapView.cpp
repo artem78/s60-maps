@@ -193,6 +193,12 @@ void CMapView::HandleCommandL(TInt aCommand)
 			HandleClearSearchResultsL();
 			break;
 			
+		case EShowHotkeys:
+			{
+			HandleShowHotkeysL();
+			break;
+			}
+			
 		default:
 			// Let the AppUi handle unknown for view commands
 			AppUi()->HandleCommandL(aCommand);
@@ -769,4 +775,17 @@ void CMapView::HandleClearSearchResultsL()
 	{
 	delete iSearch;
 	iSearch = NULL;
+	}
+
+void CMapView::HandleShowHotkeysL()
+	{
+	HBufC* title = iEikonEnv->AllocReadResourceLC(R_HOTKEYS);
+	HBufC* msg = iEikonEnv->AllocReadResourceLC(R_HOTKEYS_INFO);
+	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
+	dlg->PrepareLC(R_QUERY_DIALOG);
+	dlg->QueryHeading()->SetTextL(*title);
+	dlg->SetMessageTextL(*msg);
+	CleanupStack::Pop(dlg);
+	dlg->RunLD();
+	CleanupStack::PopAndDestroy(2, title);
 	}

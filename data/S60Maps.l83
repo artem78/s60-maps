@@ -107,3 +107,8 @@ CHARACTER_SET UTF8
 
 #define qtn_clear_search_results "Eliminar búsquedas"
 
+
+// Added in version X.XX
+
+#define qtn_hotkeys "Hotkeys"
+#define qtn_hotkeys_info "Moving - arrows or 2/4/6/8\r\nZoom in  - volume up or 3\r\nZoom out - volume down or 1\r\nCreate/rename landmark - 5\r\nDelete landmark - C (Clear key)\r\nSearch - 0"
