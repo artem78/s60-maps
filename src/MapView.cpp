@@ -195,7 +195,7 @@ void CMapView::HandleCommandL(TInt aCommand)
 			
 		case EShowHotkeys:
 			{
-			HandleShowHotkeysL();
+			HandleShowControlsDlgL();
 			break;
 			}
 			
@@ -777,10 +777,10 @@ void CMapView::HandleClearSearchResultsL()
 	iSearch = NULL;
 	}
 
-void CMapView::HandleShowHotkeysL()
+void CMapView::HandleShowControlsDlgL()
 	{
-	HBufC* title = iEikonEnv->AllocReadResourceLC(R_HOTKEYS);
-	HBufC* msg = iEikonEnv->AllocReadResourceLC(R_HOTKEYS_INFO);
+	HBufC* title = iEikonEnv->AllocReadResourceLC(R_CONTROLS);
+	HBufC* msg = iEikonEnv->AllocReadResourceLC(R_CONTROLS_DLG_TEXT);
 	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
 	dlg->PrepareLC(R_QUERY_DIALOG);
 	dlg->QueryHeading()->SetTextL(*title);

@@ -108,5 +108,5 @@ CHARACTER_SET UTF8
 
 // Added in version X.XX
 
-#define qtn_hotkeys "Hotkeys"
-#define qtn_hotkeys_info "Moving - arrows or 2/4/6/8\r\nZoom in  - volume up or 3\r\nZoom out - volume down or 1\r\nCreate/rename landmark - 5\r\nDelete landmark - C (Clear key)\r\nSearch - 0"
+#define qtn_controls "Controls"
+#define qtn_controls_dlg_text "Keys:\n  Moving - arrows or 2/4/6/8\n  Zoom in  - volume up or 3\n  Zoom out - volume down or \n  Create/rename landmark - 5\n  Delete landmark - C (Clear key)\n  Search - 0\n\nTouchscreen:\n  Moving - touch side of the screen\n  Zoom out/it - swipe left/right\n  Show/hide softkeys - swipe up/down"
