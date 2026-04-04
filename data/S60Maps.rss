@@ -178,12 +178,18 @@ RESOURCE MENU_PANE r_submenu_goto
 			{
 			command = EGotoLandmark;
 			txt = qtn_landmark;
-			},
+			}
+//#if defined(__S60_30__)
+#if !defined(SYMBIAN_FLEXIBLE_ALARM) // symbian 9.1
+			// todo...
+#else // symbian >= 9.2
+		,
 		MENU_ITEM
 			{
 			command = EGotoCoordinate;
 			txt = qtn_coordinate;
 			}
+#endif
 		};
 	}
 
