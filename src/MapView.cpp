@@ -782,6 +782,7 @@ void CMapView::HandleShowControlsDlgL()
 	HBufC* title = iEikonEnv->AllocReadResourceLC(R_CONTROLS);
 	HBufC* msg = iEikonEnv->AllocReadResourceLC(R_CONTROLS_DLG_TEXT);
 	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
+	CleanupStack::PushL(dlg);
 	dlg->PrepareLC(R_QUERY_DIALOG);
 	dlg->QueryHeading()->SetTextL(*title);
 	dlg->SetMessageTextL(*msg);
