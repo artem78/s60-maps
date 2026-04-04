@@ -49,11 +49,29 @@ Map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wiki/Symb
   - Delete: <kbd>C</kbd> (clear key)
 
 ### Touchscreen
-
 - Touch *top* / *bottom* / *left* / *right side of the screen* — to move *up* / *down* / *left* / *right*
 - Touch *and hold* — to move continuously
 - Swipe *left* / *right* — to *zoom out* / *zoom in*
 - Swipe *up* / *down* — to *show* / *hide softkeys* (on-screen <kbd>Options</kbd> & <kbd>Exit</kbd>)
+
+```
++---------------------+ 
+|                     |
+|      Move Up        | 1/4
+|                     |
++----------+----------+ 
+|          |          |
+|          |          |
+|  Move    |   Move   | 2/4
+|  Left    |   Right  |
+|          |          |
+|          |          |
++---1/2----+---1/2----+
+|                     |
+|     Move Down       | 1/4
+|                     |
++---------------------+
+```
 
 ## Screenshots
 
