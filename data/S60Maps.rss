@@ -426,6 +426,10 @@ RESOURCE MENU_BAR r_landmarks_query_dialog_menubar
 	}
 
 // Location query dialog
+//#if defined(__S60_30__)
+#if !defined(SYMBIAN_FLEXIBLE_ALARM) // symbian 9.1
+// todo...
+#else // symbian >= 9.2
 RESOURCE DIALOG r_location_query_dialog
 	{
 	flags=EGeneralQueryFlags;
@@ -464,6 +468,7 @@ RESOURCE DIALOG r_location_query_dialog
 			}
 		};
 	}
+#endif
 
 
 // -----------------------------------------------------------------------------

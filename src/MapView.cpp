@@ -664,6 +664,10 @@ void CMapView::HandleGotoLandmarkL()
 
 void CMapView::HandleGotoCoordinateL()
 	{
+//#if defined(__S60_30__)
+#if !defined(SYMBIAN_FLEXIBLE_ALARM) // symbian 9.1
+	// todo: make this
+#else // symbian >= 9.2
 	TCoordinate coord = MapControl()->GetCenterCoordinate();
 	TPosition pos;
 	pos.SetCoordinate(coord.Latitude(), coord.Longitude());
@@ -674,6 +678,7 @@ void CMapView::HandleGotoCoordinateL()
 		MapControl()->SetFollowUser(EFalse);
 		MapControl()->MoveAndZoomIn(coord);
 		}
+#endif
 	}
 
 CPosLandmark* CMapView::GetNearestLandmarkAroundTheCenterL(TBool aPartial)
