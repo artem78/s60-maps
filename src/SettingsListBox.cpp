@@ -269,6 +269,12 @@ void CLanguageListSettingItem::LoadLanguageListL()
 				break;
 				}
 				
+			case ELangItalian:
+				{
+				resourceId = R_LANG_ITALIAN_NAME;
+				break;
+				}
+				
 			default:
 				{} // supress compiller warnings
 			}

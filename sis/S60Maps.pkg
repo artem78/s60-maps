@@ -38,6 +38,7 @@
 "$(EPOCROOT)Epoc32\data\z\resource\apps\S60Maps_0xED689B88.r93"		-"!:\resource\apps\S60Maps_0xED689B88.r93"
 "$(EPOCROOT)Epoc32\data\z\resource\apps\S60Maps_0xED689B88.r103"		-"!:\resource\apps\S60Maps_0xED689B88.r103"
 "$(EPOCROOT)Epoc32\data\z\resource\apps\S60Maps_0xED689B88.r44"		-"!:\resource\apps\S60Maps_0xED689B88.r44"
+"$(EPOCROOT)Epoc32\data\z\resource\apps\S60Maps_0xED689B88.r05"		-"!:\resource\apps\S60Maps_0xED689B88.r05"
 ;"$(EPOCROOT)Epoc32\data\z\resource\apps\S60Maps_0xED689B88.rsc"		-"!:\resource\apps\S60Maps_0xED689B88.rsc"
 "$(EPOCROOT)Epoc32\data\z\private\10003a3f\apps\S60Maps_0xED689B88_reg.rsc"	-"!:\private\10003a3f\import\apps\S60Maps_0xED689B88_reg.rsc"
 "$(EPOCROOT)Epoc32\data\z\resource\apps\S60Maps_0xED689B88.mif" -"!:\resource\apps\S60Maps_0xED689B88.mif"

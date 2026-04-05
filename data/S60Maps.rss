@@ -518,6 +518,7 @@ RESOURCE TBUF r_lang_hebrew_name	{ buf=qtn_lang_hebrew_name; }
 RESOURCE TBUF r_lang_lat_am_spanish_name	{ buf=qtn_lang_lat_am_spanish_name; }
 RESOURCE TBUF r_lang_ukrainisn_name	{ buf=qtn_lang_ukrainisn_name; }
 RESOURCE TBUF r_lang_catalan_name	{ buf=qtn_lang_catalan_name; }
+RESOURCE TBUF r_lang_italian_name	{ buf=qtn_lang_italian_name; }
 
 
 // ---------------------------------------------------------------------------- 

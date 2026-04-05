@@ -802,6 +802,13 @@ void MiscUtils::LanguageToIso639Code(TLanguage aLang, /*TDes*/ TBuf</*3*/2> &aCo
 			break;
 			}
 			
+		case ELangItalian:
+			{
+			aCode.Append('i');
+			aCode.Append('t');
+			break;
+			}
+			
 		default:
 			{} // supress compiller warnings
 		}

@@ -1,0 +1,114 @@
+/*
+========================================================================
+ Name        : S60Maps.l05
+ Author      : bovirus
+ Copyright   : 
+ Description : 
+========================================================================
+*/
+// localized strings for language: Italian (05)
+
+// CHARACTER_SET UTF8
+
+#define qtn_find_me "Seguimi"
+#define qtn_about "Info"
+#define qtn_exit "Esci"
+#define qtn_tile_providers_title "Livello mappa"
+#define qtn_service_title "Servizio"
+#define qtn_tiles_cache_stats "Statistiche cache mappa"
+#define qtn_reset_tiles_cache "Svuota cache mappa"
+#define qtn_confirm_reset_tiles_cache_dialog_text "Questa azione eliminerà tutta la cache delle mappe. Vuoi procedere?"
+#define qtn_about_dialog_title "Info"
+#define qtn_about_dialog_text "S60Maps Versione %S\nBuild: " __DATE__ " " __TIME__ "\nGit: %S\nAutore: %S\nSito web: %S\nGrazie a: %S e agli altri"
+#define qtn_confirm_exit_dialog_text "Vuoi uscire?"
+#define qtn_done "Fatto!"
+#define qtn_stats_line "%S: %d file, %S"
+#define qtn_stats_total "Totale: %d file, %S"
+
+// Added in version 1.4.0:
+
+#define qtn_positioning_unavailable "Posizionamento non disponibile!"
+#define qtn_wait "Attendi..."
+#define qtn_meters_unit_short "m"
+#define qtn_kilometers_unit_short "km"
+
+// Added in version 1.5.0:
+
+#define qtn_landmarks "Punti di riferimento"
+#define qtn_display "Visualizza"
+#define qtn_create "Crea"
+#define qtn_rename "Rinomina"
+#define qtn_delete "Elimina"
+#define qtn_confirm_landmark_deletion "Vuoi eliminare '%S' punti di riferimento?"
+
+// Added in version 1.6:
+
+#define qtn_goto "Vai..."
+#define qtn_landmark "Punto dio riferimento"
+#define qtn_coordinate "Coordinata"
+#define qtn_latitude "Latitudine"
+#define qtn_longitude "Longitudine"
+
+// Added in version 1.7:
+
+#define qtn_settings "Impostazioni"
+#define qtn_language "Lingua"
+
+// Added in version 1.8:
+
+#define qtn_reload_visible_area "Ricarica area visibile"
+#define qtn_show "Visualizza"
+#define qtn_hide "Nascondi"
+#define qtn_signal_indicator "Indicatore segnale GPS"
+#define qtn_scale_bar "Scale bar"
+
+// Added in version 1.10:
+
+#define qtn_signal_indicator_type "Tipo indicatore segnale"
+#define qtn_signal_indicator_general_type "Generale"
+#define qtn_signal_indicator_per_satellite_type "Per satellite"
+
+// Added in version 1.12
+
+#define qtn_use_https_proxy "Proxy HTTPS"
+#define qtn_enabled "Abilitato"
+#define qtn_disabled "Disabilitato"
+#define qtn_https_proxy_url "URL proxy HTTPS"
+#define qtn_use_disk_cache "Memorizza nella cache i riquadri nel disco"
+
+// Added in version 1.13
+
+#define qtn_search "Cerca"
+#define qtn_search_results "Risultati ricerca"
+
+// Added in version 1.14
+
+#define qtn_data_licences "Licenze dati"
+#define qtn_layer_fmt "'%S' livello"
+#define qtn_search_api "API ricerca"
+#define qtn_osm_contributors "Contributori OpenStreetMap"
+#define qtn_map_data "dati mappa"
+#define qtn_map_style "stile mappa"
+#define qtn_positioning "Posizionamento"
+
+// Added in version 1.15
+
+#define qtn_no_results "Nessun risultato!"
+
+// Added in version 1.16
+
+#define qtn_create_landmark_dlg_title "Nuovo punto di riferimento"
+#define qtn_edit_landmark_dlg_title "Rinomina punto di riferimento"
+#define qtn_search_failed_fmt "Ricerca fallita! (%S)"
+#define qtn_traffic_counter "Contatore traffico"
+#define qtn_traffic_counter_dlg_msg_fmt "Sessione:\n   ricevuti %S\n   inviati %S\n\nTotale:\n   ricevuti %S\n   inviati %S"
+
+// Added in version 1.17
+
+#define qtn_clear_search_results "Cancelal risultati ricerca"
+
+
+// Added in version X.XX
+
+#define qtn_controls "Controlli"
+#define qtn_controls_dlg_text "Tasti:\n  Movimento - frecce o 2/4/6/8\n  Zoom+  - volume+ o 3\n  Zoom- - volume- or \n  Crea/rinomina punto di riferimento - 5\n  Elimina punto di riferimento - C (azzera tasto)\n  Cerca - 0\n\nTouchscreen:\n  Spostamento - tocca lato sinistro dello schermo\n  Zoom-/it - swipe sinistro/destro\n  Visualizza/nascondi softkey - swipe su/giù"
