@@ -120,8 +120,10 @@ void CMapView::HandleCommandL(TInt aCommand)
 		case ESetOsmHumanitarianTileProvider:
 		case ESetOsmTransportTileProvider:
 		case ESetOpenTopoMapTileProvider:
-		case ESetEsriTileProvider:
+		case ESetEsriClarityTileProvider:
 		case ESetOpenBusMapTileProvider:
+		case ESetOpenTopoMapBakTileProvider:
+		case ESetEsriTileProvider:
 			HandleTileProviderChangeL(aCommand - ESetTileProviderBase);
 			break;	
 			
@@ -190,6 +192,12 @@ void CMapView::HandleCommandL(TInt aCommand)
 		case EClearSearchResults:
 			HandleClearSearchResultsL();
 			break;
+			
+		case EShowHotkeys:
+			{
+			HandleShowControlsDlgL();
+			break;
+			}
 			
 		default:
 			// Let the AppUi handle unknown for view commands
@@ -403,7 +411,7 @@ void CMapView::HandleHelpL()
 void CMapView::HandleAboutL()
 	{
 	_LIT(KAuthor,	"artem78 (megabyte1024@ya.ru)");
-	_LIT(KWebSite,	"https://github.com/artem78/s60-maps");
+	_LIT(KWebSite,	"<AknMessageQuery Link>https://github.com/artem78/s60-maps</AknMessageQuery Link>");
 	_LIT(KThanksTo,	"baranovskiykonstantin, Symbian9, Men770, fizolas, bent");
 	
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(AppUi());
@@ -437,7 +445,7 @@ void CMapView::HandleAboutL()
 	HBufC* searchApi = iEikonEnv->AllocReadResourceLC(R_SEARCH_API);
 	_LIT(KDataLicFmt, "\r\n\r\n%S:\r\n");
 	msg.AppendFormat(KDataLicFmt, &(*dataLicences));
-	_LIT(KCopyrightLineFmt, " - (c) %S (%S)\r\n");
+	_LIT(KCopyrightLineFmt, " - (c) %S (<AknMessageQuery Link>%S</AknMessageQuery Link>)\r\n");
 	RBuf copyrightLineFmt;
 	copyrightLineFmt.CreateL(layerFmt->Length() + KCopyrightLineFmt().Length());
 	CleanupClosePushL(copyrightLineFmt);
@@ -451,7 +459,7 @@ void CMapView::HandleAboutL()
 				&provider->iCopyrightText, &provider->iCopyrightUrl);
 		}
 	
-	_LIT(KCopyrightLineSearchFmt, "%S - (c) Nominatim (https://nominatim.openstreetmap.org)");
+	_LIT(KCopyrightLineSearchFmt, "%S - (c) Nominatim (<AknMessageQuery Link>https://nominatim.openstreetmap.org</AknMessageQuery Link>)");
 	msg.AppendFormat(KCopyrightLineSearchFmt, &(*searchApi));
 	CleanupStack::PopAndDestroy(4, dataLicences);
 	
@@ -656,6 +664,10 @@ void CMapView::HandleGotoLandmarkL()
 
 void CMapView::HandleGotoCoordinateL()
 	{
+//#if defined(__S60_30__)
+#if !defined(SYMBIAN_FLEXIBLE_ALARM) // symbian 9.1
+	// todo: make this
+#else // symbian >= 9.2
 	TCoordinate coord = MapControl()->GetCenterCoordinate();
 	TPosition pos;
 	pos.SetCoordinate(coord.Latitude(), coord.Longitude());
@@ -666,6 +678,7 @@ void CMapView::HandleGotoCoordinateL()
 		MapControl()->SetFollowUser(EFalse);
 		MapControl()->MoveAndZoomIn(coord);
 		}
+#endif
 	}
 
 CPosLandmark* CMapView::GetNearestLandmarkAroundTheCenterL(TBool aPartial)
@@ -767,4 +780,18 @@ void CMapView::HandleClearSearchResultsL()
 	{
 	delete iSearch;
 	iSearch = NULL;
+	}
+
+void CMapView::HandleShowControlsDlgL()
+	{
+	HBufC* title = iEikonEnv->AllocReadResourceLC(R_CONTROLS);
+	HBufC* msg = iEikonEnv->AllocReadResourceLC(R_CONTROLS_DLG_TEXT);
+	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
+	CleanupStack::PushL(dlg);
+	dlg->PrepareLC(R_QUERY_DIALOG);
+	dlg->QueryHeading()->SetTextL(*title);
+	dlg->SetMessageTextL(*msg);
+	CleanupStack::Pop(dlg);
+	dlg->RunLD();
+	CleanupStack::PopAndDestroy(2, title);
 	}

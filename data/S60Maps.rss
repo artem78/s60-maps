@@ -153,6 +153,11 @@ RESOURCE MENU_PANE r_menu
 				},
 		MENU_ITEM
 				{
+				command = EShowHotkeys;
+				txt = qtn_controls;
+				},
+		MENU_ITEM
+				{
 				command = EAbout;
 				txt = qtn_about;
 				},
@@ -173,12 +178,18 @@ RESOURCE MENU_PANE r_submenu_goto
 			{
 			command = EGotoLandmark;
 			txt = qtn_landmark;
-			},
+			}
+//#if defined(__S60_30__)
+#if !defined(SYMBIAN_FLEXIBLE_ALARM) // symbian 9.1
+			// todo...
+#else // symbian >= 9.2
+		,
 		MENU_ITEM
 			{
 			command = EGotoCoordinate;
 			txt = qtn_coordinate;
 			}
+#endif
 		};
 	}
 
@@ -421,6 +432,10 @@ RESOURCE MENU_BAR r_landmarks_query_dialog_menubar
 	}
 
 // Location query dialog
+//#if defined(__S60_30__)
+#if !defined(SYMBIAN_FLEXIBLE_ALARM) // symbian 9.1
+// todo...
+#else // symbian >= 9.2
 RESOURCE DIALOG r_location_query_dialog
 	{
 	flags=EGeneralQueryFlags;
@@ -459,6 +474,7 @@ RESOURCE DIALOG r_location_query_dialog
 			}
 		};
 	}
+#endif
 
 
 // -----------------------------------------------------------------------------
@@ -498,6 +514,8 @@ RESOURCE TBUF r_edit_landmark_dlg_title { buf=qtn_edit_landmark_dlg_title; }
 RESOURCE TBUF r_search_failed_fmt { buf=qtn_search_failed_fmt; }
 RESOURCE TBUF r_traffic_counter { buf=qtn_traffic_counter; }
 RESOURCE TBUF r_traffic_counter_dlg_msg_fmt { buf=qtn_traffic_counter_dlg_msg_fmt; }
+RESOURCE TBUF r_controls { buf=qtn_controls; }
+RESOURCE TBUF r_controls_dlg_text { buf=qtn_controls_dlg_text; }
 
 
 // Language names
@@ -511,6 +529,7 @@ RESOURCE TBUF r_lang_hebrew_name	{ buf=qtn_lang_hebrew_name; }
 RESOURCE TBUF r_lang_lat_am_spanish_name	{ buf=qtn_lang_lat_am_spanish_name; }
 RESOURCE TBUF r_lang_ukrainisn_name	{ buf=qtn_lang_ukrainisn_name; }
 RESOURCE TBUF r_lang_catalan_name	{ buf=qtn_lang_catalan_name; }
+RESOURCE TBUF r_lang_italian_name	{ buf=qtn_lang_italian_name; }
 
 
 // ---------------------------------------------------------------------------- 

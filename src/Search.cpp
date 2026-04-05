@@ -277,7 +277,7 @@ void CSearch::RunApiReqestL()
 	url.CreateL(KApiBaseUrl().Length() + encodedQuery->Length() + KViewboxArg().Length() + 64
 			+ KLangArg().Length() + /*3*/2 + KLimit().Length() + 2);
 	CleanupClosePushL(url);
-	url = KApiBaseUrl;
+	url.Copy(KApiBaseUrl);
 	url.Append(*encodedQuery);
 	url.Append(KViewboxArg);
 	url.AppendNum(iPreferredBounds.iTlCoord.Longitude(), realFmt); // lon1

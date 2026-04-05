@@ -37,7 +37,9 @@ enum TTileProviderIdx {
 	ETransportMapIdx,
 	EHumanitarianMapIdx,
 	EOpenTopoMapIdx,
+	EOpenTopoMapBakIdx,
 	EEsriIdx,
+	EEsriClarityIdx,
 	EOpenBusMapIdx
 };
 
@@ -150,7 +152,7 @@ public:
 	
 	// Custom properties and methods
 public:
-	inline const TFixedArray<TTileProvider*, 7>& AvailableTileProviders()
+	inline const TFixedArray<TTileProvider*, 9>& AvailableTileProviders()
 			{ return iAvailableTileProviders;  };
 	inline TTileProvider* /*Active*/TileProvider()
 			{ return iActiveTileProvider; };
@@ -177,7 +179,7 @@ private:
 	CRemConInterfaceSelector* iInterfaceSelector;
 	CRemConCoreApiTarget* iCoreTarget;
 	
-	TFixedArray<TTileProvider*, 7> iAvailableTileProviders;
+	TFixedArray<TTileProvider*, 9> iAvailableTileProviders;
 	//TBuf<64> iTileProviderId
 	TTileProvider* iActiveTileProvider;
 	

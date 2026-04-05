@@ -1024,7 +1024,21 @@ void CLandmarksLayer::DrawLandmarkName(CWindowGc &aGc, const CPosLandmark* aLand
 	nameRect.SetHeight(iMapView->DefaultFont()->HeightInPixels());
 	nameRect.Move(labelPoint);
 	
+//#if defined(__S60_30__)
+#if !defined(SYMBIAN_FLEXIBLE_ALARM) // symbian 9.1
+	TBool intersects = EFalse;
+	for (TInt i = 0; i < iNameRegion.Count(); i++)
+		{
+		if (iNameRegion[i].Intersects(nameRect))
+			{
+			intersects = ETrue;
+			break;
+			}
+		}
+	if (iMapView->Rect().Intersects(nameRect) && !intersects)
+#else // symbian >= 9.2
 	if (iMapView->Rect().Intersects(nameRect) && !iNameRegion.Intersects(nameRect))
+#endif
 		{ /* Draw landmark name only if it on visible part of the control
 			 and it doesn't overllap any of previous drawned names */
 		const TRgb KTextColor(21, 63, 92);

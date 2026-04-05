@@ -41,10 +41,11 @@ CLEANLIB : do_nothing
 
 RESOURCE : $(ICONTARGETFILENAME)
 
-# ToDo: Make compresed MIF (without /x flag) for Symbian 9.2 and newer
+# symbian 9.1    - without /x makes uncompressed file
+# symbian >= 9.2 - without /x makes compressed file
 $(ICONTARGETFILENAME) : $(ICONDIR)\qgn_menu_S60Maps.svg
 	mifconv $(ICONTARGETFILENAME) \
-		/x /c32 $(ICONDIR)\qgn_menu_S60Maps.svg
+		/c32 $(ICONDIR)\qgn_menu_S60Maps.svg
 
 FREEZE : do_nothing
 

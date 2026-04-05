@@ -15,7 +15,7 @@ Map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wiki/Symb
   - [Transport Map layer](https://wiki.openstreetmap.org/wiki/Transport_Map)
   - [Humanitarian Map layer](https://wiki.openstreetmap.org/wiki/Humanitarian_map_style)
   - [OpenTopoMap](https://wiki.openstreetmap.org/wiki/OpenTopoMap)
-  - [Esri World Imagery (Clarity) Beta](https://wiki.openstreetmap.org/wiki/Esri)
+  - [Esri World Imagery](https://wiki.openstreetmap.org/wiki/Esri)
   - [ÖPNVKarte (OpenBusMap)](https://wiki.openstreetmap.org/wiki/%C3%96PNVKarte)
 - Show phone location on the map using GPS
 - Can work without GPS (no positioning)
@@ -33,6 +33,7 @@ Map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wiki/Symb
   - Spanish (Hispanoamérica)
   - Ukrainian
   - Catalan
+  - Italian
 - Both keypad and touch ui supports
 - Proxyfication of HTTPS requests if needed
 - Free and Open Source software
@@ -47,6 +48,7 @@ Map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wiki/Symb
 - Landmarks:
   - Create or rename: <kbd>5</kbd>
   - Delete: <kbd>C</kbd> (clear key)
+- Search: <kbd>0</kbd>
 
 ### Touchscreen
 - Touch *top* / *bottom* / *left* / *right side of the screen* — to move *up* / *down* / *left* / *right*

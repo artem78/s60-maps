@@ -40,3 +40,8 @@
 #ifdef LANGUAGE_44
 #include "S60Maps.l44"
 #endif
+
+#ifdef LANGUAGE_05
+#include "S60Maps.l05"
+#endif
+

@@ -82,7 +82,7 @@ void CS60MapsAppUi::ConstructL()
 	// OpenCycleMap
 	// https://wiki.openstreetmap.org/wiki/OpenCycleMap
 	// https://www.thunderforest.com/maps/opencyclemap/
-	_LIT8(KOpenCycleMapUrl, "http://tile.thunderforest.com/cycle/{$z}/{$x}/{$y}.png");
+	_LIT8(KOpenCycleMapUrl, "https://tile.thunderforest.com/cycle/{$z}/{$x}/{$y}.png");
 	RBuf8 openCycleMapUrl;
 	openCycleMapUrl.CreateMaxL(KOpenCycleMapUrl().Length() + KApiKeyArgFmt().Length() + KThunderForestApiKey().Length());
 	openCycleMapUrl.CleanupClosePushL();
@@ -104,7 +104,7 @@ void CS60MapsAppUi::ConstructL()
 	// Transport Map
 	// https://wiki.openstreetmap.org/wiki/Transport_Map
 	// https://www.thunderforest.com/maps/transport/
-	_LIT8(KTransportMapUrl, "http://tile.thunderforest.com/transport/{$z}/{$x}/{$y}.png");
+	_LIT8(KTransportMapUrl, "https://tile.thunderforest.com/transport/{$z}/{$x}/{$y}.png");
 	RBuf8 transportMapUrl;
 	transportMapUrl.CreateMaxL(KTransportMapUrl().Length() + KApiKeyArgFmt().Length() + KThunderForestApiKey().Length());
 	transportMapUrl.CleanupClosePushL();
@@ -144,12 +144,26 @@ void CS60MapsAppUi::ConstructL()
 			0, /*17*/ 15,
 			KOpentopoCopyrightShort, KOpentopoCopyright, KOpentopoCopyrightUrl);
 	
-	// Esri World Imagery (Clarity) Beta
+	// OpenTopoMap - backup server
+	iAvailableTileProviders[EOpenTopoMapBakIdx] = new (ELeave) TTileProvider(
+			_L("opentopomap_bak"), _L("OpenTopoMap (Backup)"),
+			_L8("https://backup.opentopomap.org/{$z}/{$x}/{$y}.png"),
+			0, /*17*/ 15,
+			KOpentopoCopyrightShort, KOpentopoCopyright, KOpentopoCopyrightUrl);
+	
+	// Esri World Imagery
 	// https://wiki.openstreetmap.org/wiki/Esri
 	_LIT(KEsriCopyright, "Esri");
 	_LIT(KEsriCopyrightUrl, "http://www.esri.com/");
-	iAvailableTileProviders[5] = new (ELeave) TTileProvider(
-			_L("esri"), _L(/*"Esri World Imagery (Clarity) Beta"*/ "Esri (Clarity) Beta"),
+	iAvailableTileProviders[EEsriIdx] = new (ELeave) TTileProvider(
+			_L("esri"), _L(/*"Esri World Imagery"*/ "Esri"),
+			_L8("https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{$z}/{$y}/{$x}"),
+			0, 22,
+			KEsriCopyright, KNullDesC, KEsriCopyrightUrl);
+	
+	// Esri World Imagery (Clarity)
+	iAvailableTileProviders[EEsriClarityIdx] = new (ELeave) TTileProvider(
+			_L("esri_clarity"), _L(/*"Esri World Imagery (Clarity)"*/ "Esri (Clarity)"),
 			_L8("http://clarity.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/MapServer/tile/{$z}/{$y}/{$x}"),
 			0, 22,
 			KEsriCopyright, KNullDesC, KEsriCopyrightUrl);
@@ -163,7 +177,7 @@ void CS60MapsAppUi::ConstructL()
 		_LIT(KProviderCopyrightShort, "memomaps.de");
 		_LIT(KProviderCopyright, "map: memomaps.de, map data: OpenStreetMap");
 		_LIT(KProviderCopyrightUrl, /*"https://www.openbusmap.org/"*/ "https://memomaps.de/");
-		iAvailableTileProviders[6] = new (ELeave) TTileProvider(
+		iAvailableTileProviders[8] = new (ELeave) TTileProvider(
 				KProviderId, KProviderName,
 				KProviderTileUrl,
 				0, 18,
@@ -803,6 +817,7 @@ void CS60MapsAppUi::ChangeLanguageL(TLanguage aLang)
 	_LIT(KOpenTopo, "OpenTopoMap");
 	buff.Format(KCopyrightFmt, &*mapData, &KOsm, &*mapStyle, &KOpenTopo);
 	AvailableTileProviders()[EOpenTopoMapIdx]->iCopyrightText = buff;
+	AvailableTileProviders()[EOpenTopoMapBakIdx]->iCopyrightText = buff;
 	
 	_LIT(KMemoMaps, "memomaps.de");
 	buff.Format(KCopyrightFmt, &*mapData, &KOsm, &*mapStyle, &KMemoMaps);
@@ -1067,3 +1082,4 @@ TInt CS60MapsAppUi::GetTotalBytesTransferred(TBytesCount &aBytesRecieved, TBytes
 	}
 
 // End of File
+

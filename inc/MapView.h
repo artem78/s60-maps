@@ -90,6 +90,7 @@ private:
 	void HandleSearchL();
 	void HandleTrafficCounterL();
 	void HandleClearSearchResultsL();
+	void HandleShowControlsDlgL();
 	
 	// Others
 	CSearch* iSearch;

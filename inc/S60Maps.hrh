@@ -34,6 +34,7 @@ enum TS60MapsIds
 	ESearch,
 	ETrafficCounter,
 	EClearSearchResults,
+	EShowHotkeys,
 	
 	ESetTileProviderBase = 0x6500, // Start id for tile providers
 	ESetOsmStandardTileProvider		= /*ESetTileProviderBase + 0*/ 0x6500 + 0,
@@ -41,8 +42,10 @@ enum TS60MapsIds
 	ESetOsmTransportTileProvider	= /*ESetTileProviderBase + 2*/ 0x6500 + 2,
 	ESetOsmHumanitarianTileProvider	= /*ESetTileProviderBase + 3*/ 0x6500 + 3,
 	ESetOpenTopoMapTileProvider		= /*ESetTileProviderBase + 4*/ 0x6500 + 4,
-	ESetEsriTileProvider		    = /*ESetTileProviderBase + 5*/ 0x6500 + 5,
-	ESetOpenBusMapTileProvider		= /*ESetTileProviderBase + 5*/ 0x6500 + 6
+	ESetOpenTopoMapBakTileProvider	= /*ESetTileProviderBase + 5*/ 0x6500 + 5,
+	ESetEsriTileProvider			= /*ESetTileProviderBase + 6*/ 0x6500 + 6,
+	ESetEsriClarityTileProvider		= /*ESetTileProviderBase + 7*/ 0x6500 + 7,
+	ESetOpenBusMapTileProvider		= /*ESetTileProviderBase + 8*/ 0x6500 + 8
 	};
 
 // Controls

@@ -709,6 +709,8 @@ void MiscUtils::ReadTUint64FromStreamL(RReadStream &aStream, TUint64 &aNum)
 
 void MiscUtils::LanguageToIso639Code(TLanguage aLang, /*TDes*/ TBuf</*3*/2> &aCode)
 	{
+	//source: https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes (set 1)
+	
 	const TInt ELangGalician = 103; // Not defined in s60v3 SDK
 	
 	aCode.Zero();
@@ -790,6 +792,20 @@ void MiscUtils::LanguageToIso639Code(TLanguage aLang, /*TDes*/ TBuf</*3*/2> &aCo
 			aCode.Append('u');
 			aCode.Append('k');
 			//aCode.Append('r');
+			break;
+			}
+			
+		case ELangCatalan:
+			{
+			aCode.Append('c');
+			aCode.Append('a');
+			break;
+			}
+			
+		case ELangItalian:
+			{
+			aCode.Append('i');
+			aCode.Append('t');
 			break;
 			}
 			

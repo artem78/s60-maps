@@ -37,7 +37,7 @@ PRJ_MMPFILES
 	gnumakefile icons_scalable_dc.mk
 
 	// help compiler is not always available; see similar comment in *.pkg file
-	gnumakefile ../help/build_help.mk
+	//gnumakefile ../help/build_help.mk
 
 #endif
 
