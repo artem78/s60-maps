@@ -1,7 +1,7 @@
 /*
 ========================================================================
  Name        : S60Maps.l83
- Authors     : fizolas, rewyuto
+ Authors     : desconocido, rewyuto
  Copyright   : 
  Description : 
 ========================================================================
@@ -36,7 +36,7 @@ CHARACTER_SET UTF8
 
 #define qtn_landmarks "Lugares de interés"
 #define qtn_display "Mostrar"
-#define qtn_create "Crear"
+#define qtn_create "Agregar"
 #define qtn_rename "Renombrar"
 #define qtn_delete "Eliminar"
 #define qtn_confirm_landmark_deletion "¿Desea eliminar \"%S\"?"
@@ -64,8 +64,8 @@ CHARACTER_SET UTF8
 
 // Added in version 1.10:
 
-#define qtn_signal_indicator_type "Íconos de señal"
-#define qtn_signal_indicator_general_type "Red, satélite"
+#define qtn_signal_indicator_type "Indicadores GPS"
+#define qtn_signal_indicator_general_type "Señal, satélite"
 #define qtn_signal_indicator_per_satellite_type "Satélite"
 
 // Added in version 1.12
@@ -97,8 +97,8 @@ CHARACTER_SET UTF8
 
 // Added in version 1.16
 
-#define qtn_create_landmark_dlg_title "Agregar favorito"
-#define qtn_edit_landmark_dlg_title "Renombrar favorito"
+#define qtn_create_landmark_dlg_title "Agregar favorito:"
+#define qtn_edit_landmark_dlg_title "Renombrar favorito:"
 #define qtn_search_failed_fmt "¡Error de búsqueda! (%S)"
 #define qtn_traffic_counter "Rastreador de datos"
 #define qtn_traffic_counter_dlg_msg_fmt "Sesión:\n   Recibid. %S\n   Enviados %S\n\nTotal:\n   Recibid. %S\n   Enviados %S"
@@ -107,8 +107,7 @@ CHARACTER_SET UTF8
 
 #define qtn_clear_search_results "Eliminar búsquedas"
 
+// Added in version 1.20
 
-// Added in version X.XX
-
-#define qtn_controls "Controls"
-#define qtn_controls_dlg_text "Keys:\n  Moving - arrows or 2/4/6/8\n  Zoom in  - volume up or 3\n  Zoom out - volume down or \n  Create/rename landmark - 5\n  Delete landmark - C (Clear key)\n  Search - 0\n\nTouchscreen:\n  Moving - touch side of the screen\n  Zoom out/it - swipe left/right\n  Show/hide softkeys - swipe up/down"
+#define qtn_controls "Ayuda"
+#define qtn_controls_dlg_text "Teclado:\n  Mover - Navi o 2/4/6/8\n  Acercar - aumentar volumen o 3\n  Alejar - disminuir volumen o 1 \n  Agregar/renombrar favorito - 5\n  Eliminar favorito - C (Tecla borrar)\n  Buscar - 0\n\nPantalla táctil:\n  Mover - pulse las esquinas\n  Acercar/alejar - desliza a la izquierda/derecha\n  Mostrar/ocultar barra - desliza arriba/abajo"
