@@ -108,7 +108,7 @@
 #define qtn_clear_search_results "Eliminar els resultats de la cerca"
 
 
-// Added in version X.XX
+// Added in version 1.20
 
 #define qtn_controls "Controls"
 #define qtn_controls_dlg_text "Keys:\n  Moving - arrows or 2/4/6/8\n  Zoom in - volume up or 3\n  Zoom out - volume down or 1\n  Create/rename landmark - 5\n  Delete landmark - C (Clear key)\n  Search - 0\n\nTouchscreen:\n  Moving - touch side of the screen\n  Zoom out/it - swipe left/right\n  Show/hide softkeys - swipe up/down"
