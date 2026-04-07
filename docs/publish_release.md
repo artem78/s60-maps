@@ -59,4 +59,8 @@
    git push
    ```
 
-12) Всё, конец
+12) Желательно обновить таблицу состояния переводов [здесь](https://github.com/artem78/s60-maps/wiki/How-to-edit-or-create-new-translation#overview)
+    
+    скрипт - https://github.com/artem78/SymLocInsert/blob/master/TOOLS/get_translation_stats.py
+
+13) Всё, конец
