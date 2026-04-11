@@ -145,7 +145,7 @@ void CS60MapsAppUi::ConstructL()
 			_L("opentopomap_bak"), _L("OpenTopoMap (Backup)"),
 			_L8("https://backup.opentopomap.org/{$z}/{$x}/{$y}.png"),
 			0, /*17*/ 15,
-			KOpentopoCopyrightShort, KOpentopoCopyright, KOpentopoCopyrightUrl);
+			KOpentopoCopyrightShort, KOpentopoCopyrightUrl);
 	
 	// Esri World Imagery
 	// https://wiki.openstreetmap.org/wiki/Esri
@@ -155,7 +155,7 @@ void CS60MapsAppUi::ConstructL()
 			_L("esri"), _L(/*"Esri World Imagery"*/ "Esri"),
 			_L8("https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{$z}/{$y}/{$x}"),
 			0, 22,
-			KEsriCopyright, KNullDesC, KEsriCopyrightUrl);
+			KEsriCopyright, KEsriCopyrightUrl);
 	
 	// Esri World Imagery (Clarity)
 	iAvailableTileProviders[EEsriClarityIdx] = new (ELeave) TTileProvider(

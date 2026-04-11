@@ -73,7 +73,9 @@ enum TTileProviderIdx {
 	ETransportMapIdx,
 	EHumanitarianMapIdx,
 	EOpenTopoMapIdx,
+	EOpenTopoMapBakIdx,
 	EEsriIdx,
+	EEsriClarityIdx,
 	EOpenBusMapIdx,
 	
 	EFirstUnusedIdx // Do not delete this!
