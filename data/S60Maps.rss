@@ -153,13 +153,8 @@ RESOURCE MENU_PANE r_menu
 				},
 		MENU_ITEM
 				{
-				command = EShowHotkeys;
-				txt = qtn_controls;
-				},
-		MENU_ITEM
-				{
-				command = EAbout;
-				txt = qtn_about;
+				txt = qtn_help;
+				cascade = r_submenu_help;
 				},
 		MENU_ITEM
 				{
@@ -256,6 +251,26 @@ RESOURCE MENU_PANE r_submenu_service
 			}
 		};
 	}
+
+// Help submenu
+RESOURCE MENU_PANE r_submenu_help
+	{
+	items =
+		{
+MENU_ITEM
+		{
+		command = EShowHotkeys;
+		txt = qtn_controls;
+		},
+MENU_ITEM
+		{
+		command = EAbout;
+		txt = qtn_about;
+		}
+	};
+}
+
+
 
 // -----------------------------------------------------------------------------
 //

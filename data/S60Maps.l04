@@ -111,3 +111,7 @@ CHARACTER_SET UTF8
 
 #define qtn_controls "Ayuda"
 #define qtn_controls_dlg_text "Teclado:\n  Mover — desplazamiento o 2/4/6/8\n  Ampliar — subir volumen o 3\n  Reducir — bajar volumen o 1 \n  Añadir/renombrar favorito — 5\n  Borrar favorito — C (Tecla borrar)\n  Buscar — 0\n\nPantalla táctil:\n  Mover — toque las esquinas\n  Ampliar/reducir — arrastra a la izquierda/derecha\n  Mostrar/ocultar barra — arrastra arriba/abajo"
+
+// Added in version X.XX
+
+#define qtn_help "Help"
