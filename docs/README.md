@@ -87,6 +87,7 @@ This software was tested on:
   - `OK` [Nokia 5530 XM](https://en.wikipedia.org/wiki/Nokia_5530_XpressMusic) (thanks to [Baranovskiy Konstantin](https://github.com/baranovskiykonstantin))
   - `OK` [Nokia 5800](https://en.wikipedia.org/wiki/Nokia_5800_XpressMusic) (thanks to [fedor4ever](https://github.com/fedor4ever))
   - `OK` [Nokia C5-00 5MP](https://en.wikipedia.org/wiki/Nokia_C5-00) (thanks to [Men770](https://github.com/Men770))
+  - `OK` [Nokia E5-00](https://en.wikipedia.org/wiki/Nokia_E5-00) (thanks to Вячеслав Бессонoв)
   - `OK` [Nokia E7-00](https://en.wikipedia.org/wiki/Nokia_E7-00) (thanks to [maksimkaXclusive](https://github.com/maksimkaXclusive))
   - `OK` [Nokia E52](https://en.wikipedia.org/wiki/Nokia_E52/E55) (thanks to [Fizolas](https://github.com/fizolas))
   - `OK` [Nokia E63](https://en.wikipedia.org/wiki/Nokia_E63) (thanks to [Fizolas](https://github.com/fizolas))
