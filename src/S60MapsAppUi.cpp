@@ -137,14 +137,14 @@ void CS60MapsAppUi::ConstructL()
 	iAvailableTileProviders[EOpenTopoMapIdx] = new (ELeave) TTileProvider(
 			_L("opentopomap"), _L("OpenTopoMap"),
 			_L8("https://tile.opentopomap.org/{$z}/{$x}/{$y}.png"),
-			0, /*17*/ 15,
+			0, /*17*/ 15 /* todo: check 15 or 17? */,
 			KOpentopoCopyrightShort, KOpentopoCopyrightUrl);
 	
 	// OpenTopoMap - backup server
 	iAvailableTileProviders[EOpenTopoMapBakIdx] = new (ELeave) TTileProvider(
 			_L("opentopomap_bak"), _L("OpenTopoMap (Backup)"),
 			_L8("https://backup.opentopomap.org/{$z}/{$x}/{$y}.png"),
-			0, /*17*/ 15,
+			0, 15,
 			KOpentopoCopyrightShort, KOpentopoCopyrightUrl);
 	
 	// Esri World Imagery
