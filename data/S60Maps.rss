@@ -257,12 +257,17 @@ RESOURCE MENU_PANE r_submenu_help
 	{
 	items =
 		{
-MENU_ITEM
+	MENU_ITEM
 		{
 		command = EShowHotkeys;
 		txt = qtn_controls;
 		},
-MENU_ITEM
+	MENU_ITEM
+		{
+		command = EShowDataLicences;
+		txt = qtn_data_licences;
+		},
+	MENU_ITEM
 		{
 		command = EAbout;
 		txt = qtn_about;

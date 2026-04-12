@@ -198,6 +198,12 @@ void CMapView::HandleCommandL(TInt aCommand)
 			break;
 			}
 			
+		case EShowDataLicences:
+			{
+			HandleShowDataLicencesL();
+			break;
+			}
+			
 		default:
 			// Let the AppUi handle unknown for view commands
 			AppUi()->HandleCommandL(aCommand);
@@ -413,8 +419,6 @@ void CMapView::HandleAboutL()
 	_LIT(KWebSite,	"<AknMessageQuery Link>https://github.com/artem78/s60-maps</AknMessageQuery Link>");
 	_LIT(KThanksTo,	"baranovskiykonstantin, Symbian9, Men770, fizolas, bent");
 	
-	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(AppUi());
-	
 	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
 	dlg->PrepareLC(R_QUERY_DIALOG);
 	HBufC* title = iEikonEnv->AllocReadResourceLC(R_ABOUT_DIALOG_TITLE);
@@ -435,16 +439,25 @@ void CMapView::HandleAboutL()
 	_LIT(KFmt,"%S (%S)");
 	gitInfo.Format(KFmt, &KGITLongVersion, &KGITBranch);
 	iEikonEnv->Format128/*256*/(msg, R_ABOUT_DIALOG_TEXT, &version,
-			&gitInfo, &KAuthor, &KWebSite, &KThanksTo);
+			&gitInfo, &KAuthor, &KWebSite, &KThanksTo);	
 	
+	dlg->SetMessageTextL(msg);
+	CleanupStack::PopAndDestroy(&msg);
+	dlg->RunLD();
+	}
+
+void CMapView::HandleShowDataLicencesL()
+	{
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(AppUi());
 	
-	// Data licences
+	RBuf msg;
+	msg.CreateL(2048);
+	msg.CleanupClosePushL();
+	
 	HBufC* dataLicences = iEikonEnv->AllocReadResourceLC(R_DATA_LICENCES);
 	HBufC* layerFmt = iEikonEnv->AllocReadResourceLC(R_LAYER_FMT);
 	HBufC* searchApi = iEikonEnv->AllocReadResourceLC(R_SEARCH_API);
-	_LIT(KDataLicFmt, "\r\n\r\n%S:\r\n");
-	msg.AppendFormat(KDataLicFmt, &(*dataLicences));
-	_LIT(KCopyrightLineFmt, " \u2014 (c) %S (<AknMessageQuery Link>%S</AknMessageQuery Link>)\r\n");
+	_LIT(KCopyrightLineFmt, " \u2014 (c) %S\r\n<AknMessageQuery Link>%S</AknMessageQuery Link>\r\n\r\n");
 	RBuf copyrightLineFmt;
 	copyrightLineFmt.CreateL(layerFmt->Length() + KCopyrightLineFmt().Length());
 	CleanupClosePushL(copyrightLineFmt);
@@ -458,14 +471,21 @@ void CMapView::HandleAboutL()
 				&provider->iCopyrightText, &provider->iCopyrightUrl);
 		}
 	
-	_LIT(KCopyrightLineSearchFmt, "%S \u2014 (c) Nominatim (<AknMessageQuery Link>https://nominatim.openstreetmap.org</AknMessageQuery Link>)");
+	_LIT(KCopyrightLineSearchFmt, "%S \u2014 (c) Nominatim\r\n<AknMessageQuery Link>https://nominatim.openstreetmap.org</AknMessageQuery Link>");
 	msg.AppendFormat(KCopyrightLineSearchFmt, &(*searchApi));
 	CleanupStack::PopAndDestroy(4, dataLicences);
 	
+	HBufC* title = iEikonEnv->AllocReadResourceLC(R_DATA_LICENCES);
 	
+	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
+	CleanupStack::PushL(dlg);
+	dlg->PrepareLC(R_QUERY_DIALOG);
+	dlg->QueryHeading()->SetTextL(*title);
 	dlg->SetMessageTextL(msg);
-	CleanupStack::PopAndDestroy(&msg);
+	CleanupStack::Pop(dlg);
 	dlg->RunLD();
+	
+	CleanupStack::PopAndDestroy(2, &msg);
 	}
 	
 void CMapView::HandleToggleLandmarksVisibility()
