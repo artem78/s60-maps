@@ -78,6 +78,8 @@ Map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wiki/Symb
 ## Screenshots
 
 ![](images/demo_video.gif "Demo") ![](images/layers.gif "Different map layers") ![](images/position_and_landmarks.png "Main view with landmarks") ![](images/menu.png "Main menu") ![](images/landmarks_list.png "List of landmarks with filter") ![](images/settings.png "Settings window") ![](images/search.gif "Search") ![](images/search_details.png "Search results on the map")
+
+![](images/from_vyacheslav/Screenshot0004.jpg) ![](images/from_vyacheslav/Screenshot0005.jpg) ![](images/from_vyacheslav/Screenshot0007.jpg)
 ## Supported devices
 
 This software was tested on:
