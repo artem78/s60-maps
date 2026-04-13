@@ -75,7 +75,6 @@ public:
 	//static TBool EndsWith(const TDesC16& aStr, const TDesC16& aSubstr, TBool aIgnoreCase = EFalse);
 	//static TBool EndsWith(const TDesC8& aStr, const TDesC8& aSubstr, TBool aIgnoreCase = EFalse);
 	static TInt MaxLineWidthInPixels(CArrayFix<TPtrC>* aLines, const CFont* aFont);
-	static void VersionToStr(const TVersion &aVer, TDes &aDes);
 	};
 
 
@@ -174,6 +173,17 @@ public:
 	
     friend bool operator == (const TBounds &aCoordRect1, const TBounds &aCoordRect2);
     friend bool operator != (const TBounds &aCoordRect1, const TBounds &aCoordRect2);
+	};
+
+
+// Extended class for representation version info
+class TVersionEx : public TVersion
+	{
+public:
+	TVersionEx();
+	TVersionEx(const TVersion& aVer);
+	TVersionName Name() const /*override*/;
+	void Name(/*TVersionName&*/ TDes& aVerName) const;
 	};
 
 #endif // UTILS_H

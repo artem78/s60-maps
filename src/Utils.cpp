@@ -256,18 +256,6 @@ TInt StrUtils::MaxLineWidthInPixels(CArrayFix<TPtrC>* aLines, const CFont* aFont
 	return result;
 	}
 
-void StrUtils::VersionToStr(const TVersion &aVer, TDes &aDes)
-	{
-	aDes.Zero();
-	aDes.AppendNum(aVer.iMajor);
-	aDes.Append('.');
-	aDes.AppendNum(aVer.iMinor);
-	if (aVer.iBuild)
-		{
-		aDes.Append('.');
-		aDes.AppendNum(aVer.iBuild);
-		}
-	}
 
 
 // TBounds
@@ -889,3 +877,43 @@ void CWindowGcEx::DrawOutlinedText(const TDesC &aBuf,const TRect &aBox,TInt aBas
 	SetPenColor(aTextColor);
 	DrawText(aBuf, aBox, aBaselineOffset, aHoriz, aLeftMrg);
 	}
+
+
+// TVersionEx
+
+TVersionEx::TVersionEx()/*:
+		iMajor(0), iMinor(0), iBuild(0)*/
+	{
+	iMajor = 0;
+	iMinor = 0;
+	iBuild = 0;
+	}
+
+TVersionEx::TVersionEx(const TVersion& aVer)/*:
+		iMajor(aVer.iMajor), iMinor(aVer.iMinor), iBuild(aVer.iBuild)*/
+	{
+	iMajor = aVer.iMajor;
+	iMinor = aVer.iMinor;
+	iBuild = aVer.iBuild;
+	}
+
+TVersionName TVersionEx::Name() const
+	{
+	TVersionName buf;
+	Name(buf);
+	return buf;
+	}
+
+void TVersionEx::Name(/*TVersionName&*/TDes& aVerName) const
+	{
+	aVerName.Zero();
+	aVerName.AppendNum(iMajor);
+	aVerName.Append('.');
+	aVerName.AppendNum(iMinor);
+	if (iBuild)
+		{
+		aVerName.Append('.');
+		aVerName.AppendNum(iBuild);
+		}
+	}
+

@@ -23,8 +23,8 @@ void CHTTPClient2::ConstructL(RSocketServ &aSockServ, RConnection &aConn)
 	CHTTPClient::ConstructL();
 	
 	// Set default user-agent
-	TBuf<16> progVer;
-	StrUtils::VersionToStr(KProgramVersion, progVer);
+	TVersionName progVer;
+	static_cast<TVersionEx>(KProgramVersion).Name(progVer);
 	TBuf8<32> userAgent;
 	userAgent.Copy(KProgramName);
 	userAgent.Append('/');

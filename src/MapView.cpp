@@ -430,8 +430,8 @@ void CMapView::HandleAboutL()
 	RBuf msg;
 	msg.CreateL(2048);
 	msg.CleanupClosePushL();
-	TBuf<32> version;
-	StrUtils::VersionToStr(KProgramVersion, version);
+	TBuf<32> /*TVersionName*/ version;
+	static_cast<TVersionEx>(KProgramVersion).Name(version);
 #ifdef _DEBUG
 	_LIT(KDebug, "DEBUG");
 	version.Append(' ');
