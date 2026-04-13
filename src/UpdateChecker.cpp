@@ -110,6 +110,12 @@ void CUpdateChecker::ProcessResponseL()
 	_LIT(KSisUrlFmt, "[assets][%d][browser_download_url]");
 	_LIT(KDescrPath, "[body]");
 	_LIT(KAssetsPath, "[assets]");
+//#if defined(__S60_30__)
+#if !defined(SYMBIAN_FLEXIBLE_ALARM) // symbian 9.1
+	_LIT(KSearchStr, "symbian9.1");
+#else // symbian >= 9.2
+	_LIT(KSearchStr, "symbian9.2");
+#endif
 	
 	TBuf<16> tagName;
 	ParseJsonValueL(parser, KTagNamePath, tagName);
@@ -139,7 +145,10 @@ void CUpdateChecker::ProcessResponseL()
 			{
 			path.Format(KSisUrlFmt, i);
 			ParseJsonValueL(parser, path, url);
-			break;
+			if (StrUtils::Contains(url, KSearchStr, ETrue)) // filter by symbian version
+				{
+				break;
+				}
 			}
 		}
 	
