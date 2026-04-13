@@ -86,7 +86,7 @@ public:
 class MUpdateCheckerObserver
 	{
 protected:
-	virtual void OnUpdateCheckSuccessL(const TDesC& aVersion, const TDesC& aDateTime, 
+	virtual void OnUpdateCheckSuccessL(const TDesC& aVersion, const /*TTime&*/ TDesC& aDateTime, 
 			const TDesC& aDescription, const TDesC& aDownloadUrl) = 0;
 	virtual void OnUpdateCheckFailedL() = 0;
 	

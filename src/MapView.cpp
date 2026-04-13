@@ -807,18 +807,27 @@ void CMapView::HandleCheckUpdatesL()
 	updChecker->LoadDataL();
 	}
 
-void CMapView::OnUpdateCheckSuccessL(const TDesC& aVersion, const TDesC& aDateTime, 
-		const TDesC& aDescription, const TDesC& aDownloadUrl)
+void CMapView::OnUpdateCheckSuccessL(const TDesC& aVersion, const /*TTime&*/ TDesC& aDateTime, 
+		const TDesC& aDescription, const TDesC& /*aDownloadUrl*/)
 	{
-	_LIT(KMsgFmt, "New version %S from %S available!\r\n\r\n%S");
+	_LIT(KMsgFmt, "New version %S (%S) available!\r\n\r\n%S");
 	RBuf msg;
 	msg.CreateL(2048);
 	CleanupClosePushL(msg);
 	
-	msg.Format(KMsgFmt, &aVersion, &aDateTime, &aDescription);
-	iEikonEnv->AlertWin(msg);
+	TPtrC dateOnly(aDateTime.Left(10));
 	
-	CleanupStack::PopAndDestroy();
+	msg.Format(KMsgFmt, &aVersion, &dateOnly, &aDescription);
+	
+	//HBufC* title = iEikonEnv->AllocReadResourceLC(R_...);
+	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
+	CleanupStack::PushL(dlg);
+	dlg->PrepareLC(R_QUERY_DIALOG);
+	//dlg->QueryHeading()->SetTextL(*title);
+	dlg->SetMessageTextL(msg);
+	CleanupStack::Pop(dlg);
+	dlg->RunLD();
+	CleanupStack::PopAndDestroy(/*2,*/ &msg);
 	}
 
 void CMapView::OnUpdateCheckFailedL()
