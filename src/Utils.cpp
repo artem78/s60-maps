@@ -806,6 +806,14 @@ void MiscUtils::LanguageToIso639Code(TLanguage aLang, /*TDes*/ TBuf</*3*/2> &aCo
 		}
 	}
 
+void MiscUtils::OpenUrlInDefaultWebBrowser(const TDesC& aUrl)
+	{ // Based on https://github.com/b0bben/GagBook/blob/4f2102ad7ac7f7c48d06c1921b31565be1567dd7/src/qmlutils.cpp#L146
+	// todo: implement this!
+	////////
+	MiscUtils::DbgMsg(aUrl);
+	//////////
+	}
+
 
 // CWindowGcEx
 

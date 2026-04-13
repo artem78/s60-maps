@@ -808,7 +808,7 @@ void CMapView::HandleCheckUpdatesL()
 	}
 
 void CMapView::OnUpdateCheckSuccessL(const TVersionEx& aLatestVersion, const /*TTime&*/ TDesC& aDateTime, 
-		const TDesC& aDescription, const TDesC& /*aDownloadUrl*/)
+		const TDesC& aDescription, const TDesC& aDownloadUrl)
 	{
 	TBool isUpdateAvailable = aLatestVersion > static_cast<TVersionEx>(KProgramVersion);
 	
@@ -835,6 +835,20 @@ void CMapView::OnUpdateCheckSuccessL(const TVersionEx& aLatestVersion, const /*T
 		CleanupStack::Pop(dlg);
 		dlg->RunLD();
 		CleanupStack::PopAndDestroy(/*2,*/ &msg);
+		
+		
+		CAknQueryDialog* dlg2 = CAknQueryDialog::NewL();
+		CleanupStack::PushL(dlg2);
+		dlg2->PrepareLC(R_CONFIRM_DIALOG);
+		/*HBufC* msg = iEikonEnv->AllocReadResourceLC(R_...);
+		dlg2->SetPromptL(*msg);
+		CleanupStack::PopAndDestroy(); //msg*/
+		dlg2->SetPromptL(_L("Download?"));
+		CleanupStack::Pop(dlg2);
+		if (dlg2->RunLD() == EAknSoftkeyYes)
+			{
+			MiscUtils::OpenUrlInDefaultWebBrowser(aDownloadUrl);
+			}
 		}
 	else
 		{
