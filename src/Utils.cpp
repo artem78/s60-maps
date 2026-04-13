@@ -970,3 +970,46 @@ void TVersionEx::ParseL(const TDesC& aBuf)
 	User::LeaveIfError(lex.Val(num));
 	iBuild = num;
 	}
+
+TBool TVersionEx::operator == (const TVersionEx& aVer) const
+	{
+    return iMajor == aVer.iMajor
+    		and iMinor == aVer.iMinor
+    		and iBuild == aVer.iBuild;
+	}
+
+TBool TVersionEx::operator != (const TVersionEx& aVer) const
+	{
+    return not (*this == aVer);
+	}
+
+TBool TVersionEx::operator > (const TVersionEx& aVer) const
+	{
+	// major
+    if (iMajor > aVer.iMajor)
+    	{
+    	return ETrue;
+    	}
+    else if (iMajor < aVer.iMajor)
+    	{
+    	return EFalse;
+    	}
+    
+    // minor
+    if (iMinor > aVer.iMinor)
+    	{
+    	return ETrue;
+    	}
+    else if (iMinor < aVer.iMinor)
+    	{
+    	return EFalse;
+    	}
+    
+    // build
+    return iBuild > aVer.iBuild;
+	}
+
+TBool TVersionEx::operator < (const TVersionEx& aVer) const
+	{
+	return (*this != aVer) and (not (*this > aVer));
+	}

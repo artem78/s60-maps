@@ -807,30 +807,39 @@ void CMapView::HandleCheckUpdatesL()
 	updChecker->LoadDataL();
 	}
 
-void CMapView::OnUpdateCheckSuccessL(const TVersionEx& aVersion, const /*TTime&*/ TDesC& aDateTime, 
+void CMapView::OnUpdateCheckSuccessL(const TVersionEx& aLatestVersion, const /*TTime&*/ TDesC& aDateTime, 
 		const TDesC& aDescription, const TDesC& /*aDownloadUrl*/)
 	{
-	_LIT(KMsgFmt, "New version %S (%S) available!\r\n\r\n%S");
-	RBuf msg;
-	msg.CreateL(2048);
-	CleanupClosePushL(msg);
+	TBool isUpdateAvailable = aLatestVersion > static_cast<TVersionEx>(KProgramVersion);
 	
-	TVersionName ver;
-	aVersion.Name(ver);
-	
-	TPtrC dateOnly(aDateTime.Left(10));
-	
-	msg.Format(KMsgFmt, &ver, &dateOnly, &aDescription);
-	
-	//HBufC* title = iEikonEnv->AllocReadResourceLC(R_...);
-	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
-	CleanupStack::PushL(dlg);
-	dlg->PrepareLC(R_QUERY_DIALOG);
-	//dlg->QueryHeading()->SetTextL(*title);
-	dlg->SetMessageTextL(msg);
-	CleanupStack::Pop(dlg);
-	dlg->RunLD();
-	CleanupStack::PopAndDestroy(/*2,*/ &msg);
+	if (isUpdateAvailable)
+		{
+		_LIT(KMsgFmt, "New version %S (%S) available!\r\n\r\n%S");
+		RBuf msg;
+		msg.CreateL(2048);
+		CleanupClosePushL(msg);
+		
+		TVersionName ver;
+		aLatestVersion.Name(ver);
+		
+		TPtrC dateOnly(aDateTime.Left(10));
+		
+		msg.Format(KMsgFmt, &ver, &dateOnly, &aDescription);
+		
+		//HBufC* title = iEikonEnv->AllocReadResourceLC(R_...);
+		CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
+		CleanupStack::PushL(dlg);
+		dlg->PrepareLC(R_QUERY_DIALOG);
+		//dlg->QueryHeading()->SetTextL(*title);
+		dlg->SetMessageTextL(msg);
+		CleanupStack::Pop(dlg);
+		dlg->RunLD();
+		CleanupStack::PopAndDestroy(/*2,*/ &msg);
+		}
+	else
+		{
+		iEikonEnv->AlertWin(_L("No updates found. You use recent version."));
+		}
 	}
 
 void CMapView::OnUpdateCheckFailedL()

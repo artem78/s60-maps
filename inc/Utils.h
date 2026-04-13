@@ -186,6 +186,12 @@ public:
 	TVersionName Name() const /*override*/;
 	void Name(/*TVersionName&*/ TDes& aVerName) const;
 	void ParseL(const TDesC& aBuf);
+	
+	// operators
+    TBool operator == (const TVersionEx& aVer) const;
+    TBool operator != (const TVersionEx& aVer) const;
+    TBool operator > (const TVersionEx& aVer) const;
+    TBool operator < (const TVersionEx& aVer) const;
 	};
 
 #endif // UTILS_H
