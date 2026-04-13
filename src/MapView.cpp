@@ -847,7 +847,7 @@ void CMapView::OnUpdateCheckSuccessL(const TVersionEx& aLatestVersion, const /*T
 		CleanupStack::Pop(dlg2);
 		if (dlg2->RunLD() == EAknSoftkeyYes)
 			{
-			MiscUtils::OpenUrlInDefaultWebBrowser(aDownloadUrl);
+			MiscUtils::OpenUrlInDefaultWebBrowserL(aDownloadUrl);
 			}
 		}
 	else

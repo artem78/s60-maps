@@ -109,7 +109,7 @@ public:
 	static void ReadTUint64FromStreamL(RReadStream &aStream, TUint64 &aNum);
 	
 	static void LanguageToIso639Code(TLanguage aLang, /*TDes*/ TBuf</*3*/2> &aCode);
-	static void OpenUrlInDefaultWebBrowser(const TDesC& aUrl);
+	static void OpenUrlInDefaultWebBrowserL(const TDesC& aUrl);
 	};
 
 

@@ -8,6 +8,8 @@
 #include "Utils.h"
 #include <e32math.h>
 #include <aknglobalnote.h>
+#include <APGCLI.H> // for RApaLsSession
+#include <APGTASK.H> // for TApaTaskList
 
 TInt MathUtils::Digits(TInt aNum)
 	{
@@ -806,12 +808,61 @@ void MiscUtils::LanguageToIso639Code(TLanguage aLang, /*TDes*/ TBuf</*3*/2> &aCo
 		}
 	}
 
-void MiscUtils::OpenUrlInDefaultWebBrowser(const TDesC& aUrl)
+void MiscUtils::OpenUrlInDefaultWebBrowserL(const TDesC& aUrl)
 	{ // Based on https://github.com/b0bben/GagBook/blob/4f2102ad7ac7f7c48d06c1921b31565be1567dd7/src/qmlutils.cpp#L146
-	// todo: implement this!
-	////////
-	MiscUtils::DbgMsg(aUrl);
-	//////////
+	_LIT(KBrowserPrefix, "4 " );
+	static const TUid KUidBrowser = { 0x10008D39 };
+	
+	// convert url to encoded version of QString
+//    QString encUrl(QString::fromUtf8(url.toEncoded()));
+    // using qt_QString2TPtrC() based on
+    // <http://qt.gitorious.org/qt/qt/blobs/4.7/src/corelib/kernel/qcore_symbian_p.h#line102>
+//    TPtrC tUrl(TPtrC16(static_cast<const TUint16*>(encUrl.utf16()), encUrl.length()));
+
+    // Following code based on
+    // <http://www.developer.nokia.com/Community/Wiki/Launch_default_web_browser_using_Symbian_C%2B%2B>
+
+    // create a session with apparc server
+    RApaLsSession appArcSession;
+    User::LeaveIfError(appArcSession.Connect());
+    CleanupClosePushL<RApaLsSession>(appArcSession);
+
+    // get the default application uid for application/x-web-browse
+    _LIT8(KMimeWeb, "application/x-web-browse");
+    TDataType mimeDatatype(KMimeWeb);
+    TUid handlerUID;
+    appArcSession.AppForDataType(mimeDatatype, handlerUID);
+
+    // if UiD not found, use the native browser
+    if (handlerUID.iUid == 0 || handlerUID.iUid == -1)
+        handlerUID = KUidBrowser;
+
+    // Following code based on
+    // <http://qt.gitorious.org/qt/qt/blobs/4.7/src/gui/util/qdesktopservices_s60.cpp#line213>
+
+    HBufC* buf16 = HBufC::NewLC(aUrl.Length() + KBrowserPrefix.iTypeLength);
+    buf16->Des().Copy(KBrowserPrefix); // Prefix used to launch correct browser view
+    buf16->Des().Append(aUrl);
+
+    TApaTaskList taskList(CEikonEnv::Static()->WsSession());
+    TApaTask task = taskList.FindApp(handlerUID);
+    if (task.Exists())
+    	{
+        // Switch to existing browser instance
+        task.BringToForeground();
+        HBufC8* param8 = HBufC8::NewLC(buf16->Length());
+        param8->Des().Append(buf16->Des());
+        task.SendMessage(TUid::Uid( 0 ), *param8); // Uid is not used
+        CleanupStack::PopAndDestroy(param8);
+        }
+    else
+    	{
+        // Start a new browser instance
+        TThreadId id;
+        appArcSession.StartDocument(*buf16, handlerUID, id);
+    	}
+
+    CleanupStack::PopAndDestroy(2, &appArcSession);
 	}
 
 
