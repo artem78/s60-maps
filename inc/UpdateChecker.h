@@ -16,6 +16,7 @@
 #include <e32base.h>
 #include "HTTPClient2.h"
 #include "JsonParser.h"
+#include "Utils.h"
 
 
 // Forward declarations
@@ -86,7 +87,7 @@ public:
 class MUpdateCheckerObserver
 	{
 protected:
-	virtual void OnUpdateCheckSuccessL(const TDesC& aVersion, const /*TTime&*/ TDesC& aDateTime, 
+	virtual void OnUpdateCheckSuccessL(const TVersionEx& aVersion, const /*TTime&*/ TDesC& aDateTime, 
 			const TDesC& aDescription, const TDesC& aDownloadUrl) = 0;
 	virtual void OnUpdateCheckFailedL() = 0;
 	

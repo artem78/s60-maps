@@ -182,8 +182,10 @@ class TVersionEx : public TVersion
 public:
 	TVersionEx();
 	TVersionEx(const TVersion& aVer);
+	
 	TVersionName Name() const /*override*/;
 	void Name(/*TVersionName&*/ TDes& aVerName) const;
+	void ParseL(const TDesC& aBuf);
 	};
 
 #endif // UTILS_H

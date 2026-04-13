@@ -58,7 +58,7 @@ private:
 	
 	// From MUpdateCheckerObserver
 private:
-	virtual void OnUpdateCheckSuccessL(const TDesC& aVersion, const /*TTime&*/ TDesC& aDateTime, 
+	virtual void OnUpdateCheckSuccessL(const TVersionEx& aVersion, const /*TTime&*/ TDesC& aDateTime, 
 			const TDesC& aDescription, const TDesC& aDownloadUrl);
 	virtual void OnUpdateCheckFailedL();
 	

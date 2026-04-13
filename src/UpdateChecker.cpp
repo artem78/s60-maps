@@ -103,7 +103,7 @@ void CUpdateChecker::ProcessResponseL()
 
 	parser->StartDecodingL(*jsonData);
 	
-	_LIT(KVerPath, "[tag_name]");
+	_LIT(KTagNamePath, "[tag_name]");
 	_LIT(KDatePath, /*"[created_at]"*/ "[published_at]");
 	_LIT(KSisContType, "application/vnd.symbian.install");
 	_LIT(KContTypePathFmt, "[assets][%d][content_type]");
@@ -111,8 +111,11 @@ void CUpdateChecker::ProcessResponseL()
 	_LIT(KDescrPath, "[body]");
 	_LIT(KAssetsPath, "[assets]");
 	
-	TBuf<16> ver;
-	ParseJsonValueL(parser, KVerPath, ver);
+	TBuf<16> tagName;
+	ParseJsonValueL(parser, KTagNamePath, tagName);
+	
+	TVersionEx ver;
+	ver.ParseL(tagName);
 	
 	TBuf<32> dt;
 	ParseJsonValueL(parser, KDatePath, dt);

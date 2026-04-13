@@ -917,3 +917,56 @@ void TVersionEx::Name(/*TVersionName&*/TDes& aVerName) const
 		}
 	}
 
+void TVersionEx::ParseL(const TDesC& aBuf)
+	{
+	TLex lex(aBuf);
+	TInt num(0);
+	
+	iMajor = 0;
+	iMinor = 0;
+	iBuild = 0;
+	
+	lex.SkipSpace();
+	
+	// skip possible leading 'v' char
+	TChar ch = lex.Peek();
+	ch.LowerCase();
+	if (ch == 'v')
+		{
+		lex.Inc();
+		}
+	
+	// parse major
+	User::LeaveIfError(lex.Val(num));
+	iMajor = num;
+	
+	// parse minor
+	if (lex.Peek() == '.')
+		{
+		lex.Inc();
+		}
+	else
+		{
+		User::Leave(KErrBadDescriptor);
+		}
+	User::LeaveIfError(lex.Val(num));
+	iMinor = num;
+	
+	// parse build (if presents)
+	lex.SkipSpace();
+	if (lex.Eos())
+		{
+		iBuild = 0;
+		return;
+		}
+	if (lex.Peek() == '.')
+		{
+		lex.Inc();
+		}
+	else
+		{
+		User::Leave(KErrBadDescriptor);
+		}
+	User::LeaveIfError(lex.Val(num));
+	iBuild = num;
+	}

@@ -807,7 +807,7 @@ void CMapView::HandleCheckUpdatesL()
 	updChecker->LoadDataL();
 	}
 
-void CMapView::OnUpdateCheckSuccessL(const TDesC& aVersion, const /*TTime&*/ TDesC& aDateTime, 
+void CMapView::OnUpdateCheckSuccessL(const TVersionEx& aVersion, const /*TTime&*/ TDesC& aDateTime, 
 		const TDesC& aDescription, const TDesC& /*aDownloadUrl*/)
 	{
 	_LIT(KMsgFmt, "New version %S (%S) available!\r\n\r\n%S");
@@ -815,9 +815,12 @@ void CMapView::OnUpdateCheckSuccessL(const TDesC& aVersion, const /*TTime&*/ TDe
 	msg.CreateL(2048);
 	CleanupClosePushL(msg);
 	
+	TVersionName ver;
+	aVersion.Name(ver);
+	
 	TPtrC dateOnly(aDateTime.Left(10));
 	
-	msg.Format(KMsgFmt, &aVersion, &dateOnly, &aDescription);
+	msg.Format(KMsgFmt, &ver, &dateOnly, &aDescription);
 	
 	//HBufC* title = iEikonEnv->AllocReadResourceLC(R_...);
 	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
