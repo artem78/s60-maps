@@ -521,6 +521,10 @@ RESOURCE TBUF r_traffic_counter { buf=qtn_traffic_counter; }
 RESOURCE TBUF r_traffic_counter_dlg_msg_fmt { buf=qtn_traffic_counter_dlg_msg_fmt; }
 RESOURCE TBUF r_controls { buf=qtn_controls; }
 RESOURCE TBUF r_controls_dlg_text { buf=qtn_controls_dlg_text; }
+RESOURCE TBUF r_no_updates { buf=qtn_no_updates; }
+RESOURCE TBUF r_update_check_failed { buf=qtn_update_check_failed; }
+RESOURCE TBUF r_update_check_success_msg { buf=qtn_update_check_success_msg; }
+RESOURCE TBUF r_download_confirmation { buf=qtn_download_confirmation; }
 
 
 // Language names

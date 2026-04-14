@@ -817,17 +817,26 @@ void CMapView::OnUpdateCheckSuccessL(const TVersionEx& aLatestVersion, const /*T
 	
 	if (isUpdateAvailable)
 		{
-		_LIT(KMsgFmt, "New version %S (%S) available!\r\n\r\n%S");
+		HBufC* msgFmt = iEikonEnv->AllocReadResourceLC(R_UPDATE_CHECK_SUCCESS_MSG);
+		
 		RBuf msg;
 		msg.CreateL(2048);
 		CleanupClosePushL(msg);
 		
-		TVersionName ver;
-		aLatestVersion.Name(ver);
+		TVersionName availableVer;
+		aLatestVersion.Name(availableVer);
 		
 		TPtrC dateOnly(aDateTime.Left(10));
 		
-		msg.Format(KMsgFmt, &ver, &dateOnly, &aDescription);
+		TVersionName curVer;
+		static_cast<TVersionEx>(KProgramVersion).Name(curVer);
+		
+		msg.Format(*msgFmt, &availableVer, &dateOnly, &curVer);
+		msg.Append('\r');
+		msg.Append('\n');
+		msg.Append('\r');
+		msg.Append('\n');
+		msg.Append(aDescription);
 		
 		//HBufC* title = iEikonEnv->AllocReadResourceLC(R_...);
 		CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
@@ -837,16 +846,15 @@ void CMapView::OnUpdateCheckSuccessL(const TVersionEx& aLatestVersion, const /*T
 		dlg->SetMessageTextL(msg);
 		CleanupStack::Pop(dlg);
 		dlg->RunLD();
-		CleanupStack::PopAndDestroy(/*2,*/ &msg);
+		CleanupStack::PopAndDestroy(2, msgFmt);
 		
 		
 		CAknQueryDialog* dlg2 = CAknQueryDialog::NewL();
 		CleanupStack::PushL(dlg2);
 		dlg2->PrepareLC(R_CONFIRM_DIALOG);
-		/*HBufC* msg = iEikonEnv->AllocReadResourceLC(R_...);
-		dlg2->SetPromptL(*msg);
-		CleanupStack::PopAndDestroy(); //msg*/
-		dlg2->SetPromptL(_L("Download?"));
+		HBufC* msg2 = iEikonEnv->AllocReadResourceLC(R_DOWNLOAD_CONFIRMATION);
+		dlg2->SetPromptL(*msg2);
+		CleanupStack::PopAndDestroy(msg2);
 		CleanupStack::Pop(dlg2);
 		if (dlg2->RunLD() == EAknSoftkeyYes)
 			{
@@ -855,12 +863,15 @@ void CMapView::OnUpdateCheckSuccessL(const TVersionEx& aLatestVersion, const /*T
 		}
 	else
 		{
-		iEikonEnv->AlertWin(_L("No updates found. You use recent version."));
+		HBufC* msg = iEikonEnv->AllocReadResourceL/*C*/(R_NO_UPDATES);
+		iEikonEnv->AlertWin(*msg);
+		delete msg;
 		}
 	}
 
 void CMapView::OnUpdateCheckFailedL()
 	{
-	_LIT(KMsg, "Check for update failed!");
-	iEikonEnv->AlertWin(KMsg);
+	HBufC* msg = iEikonEnv->AllocReadResourceL/*C*/(R_UPDATE_CHECK_FAILED);
+	iEikonEnv->AlertWin(*msg);
+	delete msg;
 	}

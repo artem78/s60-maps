@@ -111,3 +111,11 @@ CHARACTER_SET UTF8
 
 #define qtn_controls "Ayuda"
 #define qtn_controls_dlg_text "Teclado:\n  Mover — Navi o 2/4/6/8\n  Acercar — aumentar volumen o 3\n  Alejar — disminuir volumen o 1 \n  Agregar/renombrar favorito — 5\n  Eliminar favorito — C (Tecla borrar)\n  Buscar — 0\n\nPantalla táctil:\n  Mover — pulse las esquinas\n  Acercar/alejar — desliza a la izquierda/derecha\n  Mostrar/ocultar barra — desliza arriba/abajo"
+
+// Added in version X.XX
+
+#define qtn_check_for_updates "Check for updates"
+#define qtn_no_updates "No updates found."
+#define qtn_update_check_failed "Check for updates failed!"
+#define qtn_update_check_success_msg "New version %S published %S available! Current is %S."
+#define qtn_download_confirmation "Download?"
