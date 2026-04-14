@@ -95,6 +95,8 @@ void CUpdateChecker::ProcessResponseL()
 	{
 	__ASSERT_DEBUG(iResponseBuff->Length(), Panic());
 	
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
+	
 	CJsonParser* parser = new (ELeave) CJsonParser();
 	CleanupStack::PushL(parser);
 	
@@ -162,7 +164,29 @@ void CUpdateChecker::ProcessResponseL()
 		downloadUrl.Set(KFallbackUrl);
 		}
 	
-	iObserver->OnUpdateCheckSuccessL(ver, dt, descr, downloadUrl);
+	if (appUi->Settings()->iUseHttpsProxy)
+		{ // proxify url
+		RBuf8 url8;
+		url8.CreateL(downloadUrl.Length());
+		CleanupClosePushL(url8);
+		url8.Copy(downloadUrl);
+		
+		HBufC8* urlProxified8 = CHTTPClient2::ProxyfiHttpsUrlL(url8);
+		CleanupStack::PushL(urlProxified8);
+		
+		RBuf urlProxified;
+		urlProxified.CreateL(urlProxified8->Length());
+		CleanupClosePushL(urlProxified);
+		urlProxified.Copy(*urlProxified8);
+		
+		iObserver->OnUpdateCheckSuccessL(ver, dt, descr, urlProxified);
+		
+		CleanupStack::PopAndDestroy(3, &url8);
+		}
+	else
+		{
+		iObserver->OnUpdateCheckSuccessL(ver, dt, descr, downloadUrl);
+		}
 	
 	CleanupStack::PopAndDestroy(4, parser);
 	}
