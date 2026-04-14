@@ -1403,9 +1403,6 @@ void CSearchResultsLayer::Draw(CWindowGc &aGc)
 	
 	// Check if any items to display
 	CSearch* search = appUi->MapView()->Search();
-	if (!search)
-		return;
-	
 	const CSearchResultArray* searchResArr = search->Results();
 	if (!searchResArr || !searchResArr->Count())
 		return;

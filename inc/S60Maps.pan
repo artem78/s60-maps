@@ -24,6 +24,7 @@ enum TS60MapsPanics
 	ES60MapsInvalidResourceOffset,
 	ES60MapsInvaidSignalValuePanic,
 	ES60MapsSisDownloadUrlNotFoundPanic, // for debug only
+	ES60MapsBufferNotNullPanic,
 	
 	ES60MapsUnknownPanic = 99999
 	};

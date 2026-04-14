@@ -18,9 +18,10 @@
 #include "HTTPClient2.h"
 #include <badesca.h>
 #include "Utils.h"
+#include <aknwaitdialog.h>
 
 
-
+// Forward declarations
 class MSearchObserver;
 class TSearchResultItem;
 class CJsonParser;
@@ -48,19 +49,19 @@ public:
 	/**
 	 * Two-phased constructor.
 	 */
-	static CSearch* NewL(MSearchObserver* aObserver, const TBounds &aPreferredBounds);
+	static CSearch* NewL(MSearchObserver* aObserver);
 
 	/**
 	 * Two-phased constructor.
 	 */
-	static CSearch* NewLC(MSearchObserver* aObserver, const TBounds &aPreferredBounds);
+	static CSearch* NewLC(MSearchObserver* aObserver);
 
 private:
 
 	/**
 	 * Constructor for performing 1st stage construction
 	 */
-	CSearch(MSearchObserver* aObserver, const TBounds &aPreferredBounds);
+	CSearch(MSearchObserver* aObserver);
 
 	/**
 	 * EPOC default constructor for performing 2nd stage construction
@@ -86,6 +87,7 @@ private:
 	MSearchObserver* iObserver;
 	TBounds iPreferredBounds;
 	CSearchResultArray* iResultsArr;
+	CAknWaitDialog* iWaitDialog;
 	
 	TBool RunQueryDialogL();
 	/*TBool*/ void RunResultsDialogL();
@@ -95,7 +97,7 @@ private:
 	static void ParseJsonValueL(CJsonParser* aParser, const TDesC &aParam, TReal64 &aVal);
 	
 public:
-	TBool RunL();
+	TBool StartNewSearchL();
 	inline const CSearchResultArray* Results() const
 		{ return iResultsArr; };
 	
@@ -106,6 +108,14 @@ public:
 	 * @return EFalse if no results, ETrue otherwise.
 	 */
 	TBool AllResultsBounds(TBounds &aBounds);
+	
+	/*
+	 * Clears result array and prepare CSearch for new request
+	 */
+	void Reset();
+	
+	inline void SetPreferredBounds(const TBounds &aBounds)
+		{ iPreferredBounds.SetCoords(aBounds.iTlCoord, aBounds.iBrCoord); };
 
 	};
 

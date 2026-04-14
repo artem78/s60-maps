@@ -70,6 +70,9 @@ void CMapView::ConstructL()
 	iMapControl->SetRect(AppUi()/*iAvkonAppUi*/->ApplicationRect()); // Need to resize the view to fullscreen*/
 	
 	iMapControl->SetFollowUser(ETrue);
+	
+	// Initialize search
+	iSearch = CSearch::NewL(this);
 	}
 
 TUid CMapView::Id() const
@@ -231,7 +234,7 @@ void CMapView::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
 				//);
 				aMenuPane->SetItemDimmed(EFindMe, !appUi->IsPositioningAvailableAndEnabled() || MapControl()->IsFollowingUser());
 				
-				TBool isVisible = iSearch && iSearch->Results() && iSearch->Results()->Count();
+				TBool isVisible = iSearch->Results() && iSearch->Results()->Count();
 				aMenuPane->SetItemDimmed(EClearSearchResults, !isVisible);
 				
 				break;
@@ -736,14 +739,13 @@ void CMapView::HandleSearchL()
 	{
 	DEBUG(_L("begin"));
 	
-	// delete search object if previously used
-	delete iSearch;
-	iSearch = NULL;
+	//Reset search object if previously used
+	iSearch->Reset();
 	
 	TBounds bounds;
 	iMapControl->Bounds(bounds);
-	iSearch = CSearch::NewL(this, bounds);
-	iSearch->RunL();
+	iSearch->SetPreferredBounds(bounds);
+	iSearch->StartNewSearchL();
 	
 	DEBUG(_L("end"));
 	}
@@ -804,8 +806,7 @@ void CMapView::HandleTrafficCounterL()
 
 void CMapView::HandleClearSearchResultsL()
 	{
-	delete iSearch;
-	iSearch = NULL;
+	iSearch->Reset();
 	}
 
 void CMapView::HandleShowControlsDlgL()
