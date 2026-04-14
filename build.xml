@@ -20,9 +20,12 @@
 	
 	<target name="clean" depends="init">
 		<!--<delete dir="${temp_dir}"/>-->
-		<delete file="sis/S60Maps.sis" />
-		<delete file="sis/S60Maps.sisx" />
-		<!--<delete dir="sis" includes="*.sis, *.sisx" />-->
+		<delete verbose="true">
+			<fileset dir="${basedir}/sis">
+				<include name="*.sis"/>
+				<include name="*.sisx"/>
+			</fileset>
+		</delete>
 		
 		<exec executable="${basedir}/group/abld.bat" dir="group" failonerror="true" failifexecutionfails="false">
 			<arg value="reallyclean" />
