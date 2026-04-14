@@ -107,7 +107,7 @@ void CUpdateChecker::ProcessResponseL()
 	_LIT(KDatePath, /*"[created_at]"*/ "[published_at]");
 	_LIT(KSisContType, "application/vnd.symbian.install");
 	_LIT(KContTypePathFmt, "[assets][%d][content_type]");
-	_LIT(KSisUrlFmt, "[assets][%d][browser_download_url]");
+	_LIT(KAssetUrlFmt, "[assets][%d][browser_download_url]");
 	_LIT(KDescrPath, "[body]");
 	_LIT(KAssetsPath, "[assets]");
 //#if defined(__S60_30__)
@@ -116,6 +116,7 @@ void CUpdateChecker::ProcessResponseL()
 #else // symbian >= 9.2
 	_LIT(KSearchStr, "symbian9.2");
 #endif
+	_LIT(KFallbackUrl, "https://github.com/artem78/s60-maps/releases/latest");
 	
 	TBuf<16> tagName;
 	ParseJsonValueL(parser, KTagNamePath, tagName);
@@ -131,9 +132,11 @@ void CUpdateChecker::ProcessResponseL()
 	CleanupClosePushL(descr);
 	ParseJsonValueL(parser, KDescrPath, descr);
 	
-	RBuf url;
-	url.CreateL(256);
-	CleanupClosePushL(url);
+	TPtrC downloadUrl(KNullDesC);
+	RBuf assetUrl;
+	assetUrl.CreateL(256);
+	CleanupClosePushL(assetUrl);
+	assetUrl.Zero();
 	TInt assetsCount = parser->GetParameterCount(KAssetsPath);
 	for (TInt i = 0; i < assetsCount; i++)
 		{
@@ -143,16 +146,23 @@ void CUpdateChecker::ProcessResponseL()
 		ParseJsonValueL(parser, path, contType);
 		if (contType == KSisContType) // skip possible other files except SIS
 			{
-			path.Format(KSisUrlFmt, i);
-			ParseJsonValueL(parser, path, url);
-			if (StrUtils::Contains(url, KSearchStr, ETrue)) // filter by symbian version
+			path.Format(KAssetUrlFmt, i);
+			ParseJsonValueL(parser, path, assetUrl);
+			if (StrUtils::Contains(assetUrl, KSearchStr, ETrue)) // filter by symbian version
 				{
+				downloadUrl.Set(assetUrl);
 				break;
 				}
 			}
 		}
 	
-	iObserver->OnUpdateCheckSuccessL(ver, dt, descr, url);
+	__ASSERT_DEBUG(downloadUrl.Length(), Panic(ES60MapsSisDownloadUrlNotFoundPanic));
+	if (!downloadUrl.Length())
+		{
+		downloadUrl.Set(KFallbackUrl);
+		}
+	
+	iObserver->OnUpdateCheckSuccessL(ver, dt, descr, downloadUrl);
 	
 	CleanupStack::PopAndDestroy(4, parser);
 	}
