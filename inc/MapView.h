@@ -14,11 +14,12 @@
 #include "MapControl.h"
 #include "Search.h"
 #include "S60Maps.hrh"
+#include "UpdateChecker.h"
 
 
 // Classes
 
-class CMapView : public CAknView, public MSearchObserver
+class CMapView : public CAknView, public MSearchObserver, public MUpdateCheckerObserver
 	{
 	// Constructors / destructors
 public:
@@ -54,6 +55,12 @@ private:
 	void OnSearchFinished(const TSearchResultItem &aResultData);
 	/*void OnSearchFailed();*/
 	void OnSearchClosed/*L*/();
+	
+	// From MUpdateCheckerObserver
+private:
+	virtual void OnUpdateCheckSuccessL(const TVersionEx& aVersion, const /*TTime&*/ TDesC& aDateTime, 
+			const TDesC& aDescription, const TDesC& aDownloadUrl);
+	virtual void OnUpdateCheckFailedL();
 	
 	
 	// Custom properties and methods
@@ -100,9 +107,11 @@ private:
 	void HandleClearSearchResultsL();
 	void HandleShowControlsDlgL();
 	void HandleShowDataLicencesL();
+	void HandleCheckUpdatesL();
 	
 	// Others
 	CSearch* iSearch;
+	CUpdateChecker* iUpdChecker; // "lazy" initialization
 
 	};
 

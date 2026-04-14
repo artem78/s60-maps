@@ -8,6 +8,8 @@
 #include "Utils.h"
 #include <e32math.h>
 #include <aknglobalnote.h>
+#include <APGCLI.H> // for RApaLsSession
+#include <APGTASK.H> // for TApaTaskList
 
 TInt MathUtils::Digits(TInt aNum)
 	{
@@ -256,18 +258,6 @@ TInt StrUtils::MaxLineWidthInPixels(CArrayFix<TPtrC>* aLines, const CFont* aFont
 	return result;
 	}
 
-void StrUtils::VersionToStr(const TVersion &aVer, TDes &aDes)
-	{
-	aDes.Zero();
-	aDes.AppendNum(aVer.iMajor);
-	aDes.Append('.');
-	aDes.AppendNum(aVer.iMinor);
-	if (aVer.iBuild)
-		{
-		aDes.Append('.');
-		aDes.AppendNum(aVer.iBuild);
-		}
-	}
 
 
 // TBounds
@@ -818,6 +808,63 @@ void MiscUtils::LanguageToIso639Code(TLanguage aLang, /*TDes*/ TBuf</*3*/2> &aCo
 		}
 	}
 
+void MiscUtils::OpenUrlInDefaultWebBrowserL(const TDesC& aUrl)
+	{ // Based on https://github.com/b0bben/GagBook/blob/4f2102ad7ac7f7c48d06c1921b31565be1567dd7/src/qmlutils.cpp#L146
+	_LIT(KBrowserPrefix, "4 " );
+	static const TUid KUidBrowser = { 0x10008D39 };
+	
+	// convert url to encoded version of QString
+//    QString encUrl(QString::fromUtf8(url.toEncoded()));
+    // using qt_QString2TPtrC() based on
+    // <http://qt.gitorious.org/qt/qt/blobs/4.7/src/corelib/kernel/qcore_symbian_p.h#line102>
+//    TPtrC tUrl(TPtrC16(static_cast<const TUint16*>(encUrl.utf16()), encUrl.length()));
+
+    // Following code based on
+    // <http://www.developer.nokia.com/Community/Wiki/Launch_default_web_browser_using_Symbian_C%2B%2B>
+
+    // create a session with apparc server
+    RApaLsSession appArcSession;
+    User::LeaveIfError(appArcSession.Connect());
+    CleanupClosePushL<RApaLsSession>(appArcSession);
+
+    // get the default application uid for application/x-web-browse
+    _LIT8(KMimeWeb, "application/x-web-browse");
+    TDataType mimeDatatype(KMimeWeb);
+    TUid handlerUID;
+    appArcSession.AppForDataType(mimeDatatype, handlerUID);
+
+    // if UiD not found, use the native browser
+    if (handlerUID.iUid == 0 || handlerUID.iUid == -1)
+        handlerUID = KUidBrowser;
+
+    // Following code based on
+    // <http://qt.gitorious.org/qt/qt/blobs/4.7/src/gui/util/qdesktopservices_s60.cpp#line213>
+
+    HBufC* buf16 = HBufC::NewLC(aUrl.Length() + KBrowserPrefix.iTypeLength);
+    buf16->Des().Copy(KBrowserPrefix); // Prefix used to launch correct browser view
+    buf16->Des().Append(aUrl);
+
+    TApaTaskList taskList(CEikonEnv::Static()->WsSession());
+    TApaTask task = taskList.FindApp(handlerUID);
+    if (task.Exists())
+    	{
+        // Switch to existing browser instance
+        task.BringToForeground();
+        HBufC8* param8 = HBufC8::NewLC(buf16->Length());
+        param8->Des().Append(buf16->Des());
+        task.SendMessage(TUid::Uid( 0 ), *param8); // Uid is not used
+        CleanupStack::PopAndDestroy(param8);
+        }
+    else
+    	{
+        // Start a new browser instance
+        TThreadId id;
+        appArcSession.StartDocument(*buf16, handlerUID, id);
+    	}
+
+    CleanupStack::PopAndDestroy(2, &appArcSession);
+	}
+
 
 // CWindowGcEx
 
@@ -888,4 +935,140 @@ void CWindowGcEx::DrawOutlinedText(const TDesC &aBuf,const TRect &aBox,TInt aBas
 	// Draw text
 	SetPenColor(aTextColor);
 	DrawText(aBuf, aBox, aBaselineOffset, aHoriz, aLeftMrg);
+	}
+
+
+// TVersionEx
+
+TVersionEx::TVersionEx()/*:
+		iMajor(0), iMinor(0), iBuild(0)*/
+	{
+	iMajor = 0;
+	iMinor = 0;
+	iBuild = 0;
+	}
+
+TVersionEx::TVersionEx(const TVersion& aVer)/*:
+		iMajor(aVer.iMajor), iMinor(aVer.iMinor), iBuild(aVer.iBuild)*/
+	{
+	iMajor = aVer.iMajor;
+	iMinor = aVer.iMinor;
+	iBuild = aVer.iBuild;
+	}
+
+TVersionName TVersionEx::Name() const
+	{
+	TVersionName buf;
+	Name(buf);
+	return buf;
+	}
+
+void TVersionEx::Name(/*TVersionName&*/TDes& aVerName) const
+	{
+	aVerName.Zero();
+	aVerName.AppendNum(iMajor);
+	aVerName.Append('.');
+	aVerName.AppendNum(iMinor);
+	if (iBuild)
+		{
+		aVerName.Append('.');
+		aVerName.AppendNum(iBuild);
+		}
+	}
+
+void TVersionEx::ParseL(const TDesC& aBuf)
+	{
+	TLex lex(aBuf);
+	TInt num(0);
+	
+	iMajor = 0;
+	iMinor = 0;
+	iBuild = 0;
+	
+	lex.SkipSpace();
+	
+	// skip possible leading 'v' char
+	TChar ch = lex.Peek();
+	ch.LowerCase();
+	if (ch == 'v')
+		{
+		lex.Inc();
+		}
+	
+	// parse major
+	User::LeaveIfError(lex.Val(num));
+	iMajor = num;
+	
+	// parse minor
+	if (lex.Peek() == '.')
+		{
+		lex.Inc();
+		}
+	else
+		{
+		User::Leave(KErrBadDescriptor);
+		}
+	User::LeaveIfError(lex.Val(num));
+	iMinor = num;
+	
+	// parse build (if presents)
+	lex.SkipSpace();
+	if (lex.Eos())
+		{
+		iBuild = 0;
+		return;
+		}
+	if (lex.Peek() == '.')
+		{
+		lex.Inc();
+		}
+	else
+		{
+		User::Leave(KErrBadDescriptor);
+		}
+	User::LeaveIfError(lex.Val(num));
+	iBuild = num;
+	}
+
+TBool TVersionEx::operator == (const TVersionEx& aVer) const
+	{
+    return iMajor == aVer.iMajor
+    		and iMinor == aVer.iMinor
+    		and iBuild == aVer.iBuild;
+	}
+
+TBool TVersionEx::operator != (const TVersionEx& aVer) const
+	{
+    return not (*this == aVer);
+	}
+
+TBool TVersionEx::operator > (const TVersionEx& aVer) const
+	{
+	// major
+    if (iMajor > aVer.iMajor)
+    	{
+    	return ETrue;
+    	}
+    else if (iMajor < aVer.iMajor)
+    	{
+    	return EFalse;
+    	}
+    
+    // minor
+    if (iMinor > aVer.iMinor)
+    	{
+    	return ETrue;
+    	}
+    else if (iMinor < aVer.iMinor)
+    	{
+    	return EFalse;
+    	}
+    
+    // build
+    return iBuild > aVer.iBuild;
+	}
+
+TBool TVersionEx::operator < (const TVersionEx& aVer) const
+	{
+	return (*this != aVer) and (not (*this > aVer));
 	}

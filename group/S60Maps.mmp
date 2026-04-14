@@ -69,7 +69,7 @@ LIBRARY		   efsrv.lib
 LIBRARY		   estor.lib
 LIBRARY        aknnotify.lib
 LIBRARY        hlplch.lib lbs.lib gdi.lib imageconversion.lib fbscli.lib bitgdi.lib http.lib bafl.lib inetprotutil.lib remconcoreapi.lib remconinterfacebase.lib ws32.lib charconv.lib hash.lib eikcoctl.lib
-LIBRARY        apgrfx.lib eikcdlg.lib eikctl.lib eposlandmarks.lib eposlmsearchlib.lib hwrmlightclient.lib aknicon.lib esock.lib
+LIBRARY        apgrfx.lib eikcdlg.lib eikctl.lib eposlandmarks.lib eposlmsearchlib.lib hwrmlightclient.lib aknicon.lib esock.lib apmime.lib
  
 
 
@@ -116,3 +116,6 @@ SOURCEPATH ..\modules\s-json\JsonParser\src
 SOURCE ConsumeString.cpp JsonParser.cpp
 
 DEBUGLIBRARY commdb.lib
+
+SOURCEPATH ..\src
+SOURCE UpdateChecker.cpp

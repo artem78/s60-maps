@@ -37,7 +37,8 @@ enum TS60MapsIds
 	ETrafficCounter,
 	EClearSearchResults,
 	EShowHotkeys,
-	EShowDataLicences
+	EShowDataLicences,
+	ECheckUpdates
 	};
 
 // Controls

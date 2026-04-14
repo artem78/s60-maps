@@ -114,3 +114,8 @@ CHARACTER_SET UTF8
 // Added in version X.XX
 
 #define qtn_help "Справка"
+#define qtn_check_for_updates "Проверить обновления"
+#define qtn_no_updates "Нет обновлений."
+#define qtn_update_check_failed "Ошибка проверки наличия обновлений!"
+#define qtn_update_check_success_msg "Доступно обновление %S от %S! Установленная версия: %S."
+#define qtn_download_confirmation "Загрузить?"

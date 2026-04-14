@@ -29,6 +29,7 @@ CMapView::CMapView()
 
 CMapView::~CMapView()
 	{
+	delete iUpdChecker;
 	delete iSearch;
 	delete iMapControl;
 	}
@@ -195,6 +196,12 @@ void CMapView::HandleCommandL(TInt aCommand)
 		case EShowHotkeys:
 			{
 			HandleShowControlsDlgL();
+			break;
+			}
+
+		case ECheckUpdates:
+			{
+			HandleCheckUpdatesL();
 			break;
 			}
 			
@@ -428,8 +435,8 @@ void CMapView::HandleAboutL()
 	RBuf msg;
 	msg.CreateL(2048);
 	msg.CleanupClosePushL();
-	TBuf<32> version;
-	StrUtils::VersionToStr(KProgramVersion, version);
+	TBuf<32> /*TVersionName*/ version;
+	static_cast<TVersionEx>(KProgramVersion).Name(version);
 #ifdef _DEBUG
 	_LIT(KDebug, "DEBUG");
 	version.Append(' ');
@@ -813,4 +820,78 @@ void CMapView::HandleShowControlsDlgL()
 	CleanupStack::Pop(dlg);
 	dlg->RunLD();
 	CleanupStack::PopAndDestroy(2, title);
+	}
+
+void CMapView::HandleCheckUpdatesL()
+	{
+	delete iUpdChecker; // delete previous instance
+	
+	iUpdChecker = CUpdateChecker::NewL(this);
+	iUpdChecker->LoadDataL();
+	}
+
+void CMapView::OnUpdateCheckSuccessL(const TVersionEx& aLatestVersion, const /*TTime&*/ TDesC& aDateTime, 
+		const TDesC& aDescription, const TDesC& aDownloadUrl)
+	{
+	TBool isUpdateAvailable = aLatestVersion > static_cast<TVersionEx>(KProgramVersion);
+	
+	if (isUpdateAvailable)
+		{
+		HBufC* msgFmt = iEikonEnv->AllocReadResourceLC(R_UPDATE_CHECK_SUCCESS_MSG);
+		
+		RBuf msg;
+		msg.CreateL(2048);
+		CleanupClosePushL(msg);
+		
+		TVersionName availableVer;
+		aLatestVersion.Name(availableVer);
+		
+		TPtrC dateOnly(aDateTime.Left(10));
+		
+		TVersionName curVer;
+		static_cast<TVersionEx>(KProgramVersion).Name(curVer);
+		
+		msg.Format(*msgFmt, &availableVer, &dateOnly, &curVer);
+		msg.Append('\r');
+		msg.Append('\n');
+		msg.Append('\r');
+		msg.Append('\n');
+		msg.Append(aDescription);
+		
+		//HBufC* title = iEikonEnv->AllocReadResourceLC(R_...);
+		CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
+		CleanupStack::PushL(dlg);
+		dlg->PrepareLC(R_QUERY_DIALOG);
+		//dlg->QueryHeading()->SetTextL(*title);
+		dlg->SetMessageTextL(msg);
+		CleanupStack::Pop(dlg);
+		dlg->RunLD();
+		CleanupStack::PopAndDestroy(2, msgFmt);
+		
+		
+		CAknQueryDialog* dlg2 = CAknQueryDialog::NewL();
+		CleanupStack::PushL(dlg2);
+		dlg2->PrepareLC(R_CONFIRM_DIALOG);
+		HBufC* msg2 = iEikonEnv->AllocReadResourceLC(R_DOWNLOAD_CONFIRMATION);
+		dlg2->SetPromptL(*msg2);
+		CleanupStack::PopAndDestroy(msg2);
+		CleanupStack::Pop(dlg2);
+		if (dlg2->RunLD() == EAknSoftkeyYes)
+			{
+			MiscUtils::OpenUrlInDefaultWebBrowserL(aDownloadUrl);
+			}
+		}
+	else
+		{
+		HBufC* msg = iEikonEnv->AllocReadResourceL/*C*/(R_NO_UPDATES);
+		iEikonEnv->AlertWin(*msg);
+		delete msg;
+		}
+	}
+
+void CMapView::OnUpdateCheckFailedL()
+	{
+	HBufC* msg = iEikonEnv->AllocReadResourceL/*C*/(R_UPDATE_CHECK_FAILED);
+	iEikonEnv->AlertWin(*msg);
+	delete msg;
 	}
