@@ -110,6 +110,7 @@ private:
 	
 	// Others
 	CSearch* iSearch;
+	CUpdateChecker* iUpdChecker; // "lazy" initialization
 
 	};
 

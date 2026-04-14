@@ -29,6 +29,7 @@ CMapView::CMapView()
 
 CMapView::~CMapView()
 	{
+	delete iUpdChecker;
 	delete iSearch;
 	delete iMapControl;
 	}
@@ -803,8 +804,10 @@ void CMapView::HandleShowControlsDlgL()
 
 void CMapView::HandleCheckUpdatesL()
 	{
-	CUpdateChecker* updChecker = CUpdateChecker::NewL(this);
-	updChecker->LoadDataL();
+	delete iUpdChecker; // delete previous instance
+	
+	iUpdChecker = CUpdateChecker::NewL(this);
+	iUpdChecker->LoadDataL();
 	}
 
 void CMapView::OnUpdateCheckSuccessL(const TVersionEx& aLatestVersion, const /*TTime&*/ TDesC& aDateTime, 
