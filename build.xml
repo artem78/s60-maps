@@ -175,7 +175,8 @@
         </replaceregexp>
 		
 		<!-- replace in *.lxx -->
-		<replaceregexp flags="i">
+		<!-- todo: ломается файл S60Maps.l57 (иврит). проверить с аттр. encoding="UTF-8" -->
+		<replaceregexp flags="i" encoding="UTF-8">
 			<fileset dir="${basedir}">
 				<include name="data/S60Maps.l??*"/>
 				<include name="src/Settings.cpp"/>
