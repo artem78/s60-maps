@@ -14,21 +14,22 @@ Make your pull request to the `develop` branch and do not touch `master`.
 
 Now we have these translations with various status of completion:
 
-|  Filename                             |        Language        |             Translated strings            |Translated up to the version|
+|                Filename               |        Language        |             Translated strings            |Translated up to the version|
 |---------------------------------------|------------------------|-------------------------------------------|----------------------------|
-| [data/S60Maps.l01](/data/S60Maps.l01) |       UK English       |62/62  ![](https://geps.dev/progress/100.0)|    **v1.20.1 (Latest)**    |
-| [data/S60Maps.l04](/data/S60Maps.l04) |   Castellano - España  |62/62  ![](https://geps.dev/progress/100.0)|    **v1.20.1 (Latest)**    |
-| [data/S60Maps.l05](/data/S60Maps.l05) |         Italian        |62/62  ![](https://geps.dev/progress/100.0)|    **v1.20.1 (Latest)**    |
-| [data/S60Maps.l13](/data/S60Maps.l13) |       Portuguese       | 36/62  ![](https://geps.dev/progress/58.1)|           v1.9.1           |
-| [data/S60Maps.l16](/data/S60Maps.l16) |         Russian        |62/62  ![](https://geps.dev/progress/100.0)|    **v1.20.1 (Latest)**    |
-| [data/S60Maps.l27](/data/S60Maps.l27) |        PL Polish       | 36/62  ![](https://geps.dev/progress/58.1)|           v1.9.1           |
-| [data/S60Maps.l44](/data/S60Maps.l44) |         Catalan        | 60/62  ![](https://geps.dev/progress/96.8)|            v1.19           |
-| [data/S60Maps.l57](/data/S60Maps.l57) |         Hebrew         | 14/62  ![](https://geps.dev/progress/22.6)|            v1.3            |
-| [data/S60Maps.l83](/data/S60Maps.l83) |Español - Hispanoamérica|62/62  ![](https://geps.dev/progress/100.0)|    **v1.20.1 (Latest)**    |
-| [data/S60Maps.l93](/data/S60Maps.l93) |        Ukrainian       | 36/62  ![](https://geps.dev/progress/58.1)|           v1.9.1           |
-|[data/S60Maps.l103](/data/S60Maps.l103)|        Galician        | 36/62  ![](https://geps.dev/progress/58.1)|           v1.9.1           |
+| [data/S60Maps.l01](/data/S60Maps.l01) |       UK English       |68/68  ![](https://geps.dev/progress/100.0)|    **v1.21.1 (Latest)**    |
+| [data/S60Maps.l04](/data/S60Maps.l04) |   Castellano - España  | 62/68  ![](https://geps.dev/progress/91.2)|           v1.20.1          |
+| [data/S60Maps.l05](/data/S60Maps.l05) |         Italian        |68/68  ![](https://geps.dev/progress/100.0)|    **v1.21.1 (Latest)**    |
+| [data/S60Maps.l13](/data/S60Maps.l13) |       Portuguese       | 36/68  ![](https://geps.dev/progress/52.9)|           v1.9.1           |
+| [data/S60Maps.l16](/data/S60Maps.l16) |         Russian        |68/68  ![](https://geps.dev/progress/100.0)|    **v1.21.1 (Latest)**    |
+| [data/S60Maps.l27](/data/S60Maps.l27) |        PL Polish       | 36/68  ![](https://geps.dev/progress/52.9)|           v1.9.1           |
+| [data/S60Maps.l44](/data/S60Maps.l44) |         Catalan        | 60/68  ![](https://geps.dev/progress/88.2)|            v1.19           |
+| [data/S60Maps.l57](/data/S60Maps.l57) |         Hebrew         | 14/68  ![](https://geps.dev/progress/20.6)|            v1.3            |
+| [data/S60Maps.l83](/data/S60Maps.l83) |Español - Hispanoamérica| 62/68  ![](https://geps.dev/progress/91.2)|           v1.20.1          |
+| [data/S60Maps.l93](/data/S60Maps.l93) |        Ukrainian       | 36/68  ![](https://geps.dev/progress/52.9)|           v1.9.1           |
+|[data/S60Maps.l103](/data/S60Maps.l103)|        Galician        | 36/68  ![](https://geps.dev/progress/52.9)|           v1.9.1           |
 
-*(Data updated at 2026-04-07)*
+*(Data updated at 2026-04-15)*
+
 
 **Some translations are very old and incomplete. You can update any of them or add new one!**
 
