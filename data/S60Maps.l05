@@ -105,7 +105,7 @@
 
 // Added in version 1.17
 
-#define qtn_clear_search_results "Cancelal risultati ricerca"
+#define qtn_clear_search_results "Cancella risultati ricerca"
 
 
 // Added in version 1.20
@@ -115,9 +115,9 @@
 
 // Added in version X.XX
 
-#define qtn_help "Help"
-#define qtn_check_for_updates "Check for updates"
-#define qtn_no_updates "No updates found."
-#define qtn_update_check_failed "Check for updates failed!"
-#define qtn_update_check_success_msg "New version %S published %S available! Current is %S."
-#define qtn_download_confirmation "Download?"
+#define qtn_help "Aiuto"
+#define qtn_check_for_updates "Controlla aggiornamenti"
+#define qtn_no_updates "Questa versione è aggiornata."
+#define qtn_update_check_failed "Controllo aggiornamenti fallito!"
+#define qtn_update_check_success_msg "Disponibile nuova versione %S pubblicata il %S!\nVersione attuale: %S."
+#define qtn_download_confirmation "Vuoi scaricarla?"
