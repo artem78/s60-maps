@@ -13,11 +13,13 @@
 #include <aknview.h>
 #include "MapControl.h"
 #include "Search.h"
+#include "S60Maps.hrh"
+#include "UpdateChecker.h"
 
 
 // Classes
 
-class CMapView : public CAknView, public MSearchObserver
+class CMapView : public CAknView, public MSearchObserver, public MUpdateCheckerObserver
 	{
 	// Constructors / destructors
 public:
@@ -54,6 +56,12 @@ private:
 	/*void OnSearchFailed();*/
 	void OnSearchClosed/*L*/();
 	
+	// From MUpdateCheckerObserver
+private:
+	virtual void OnUpdateCheckSuccessL(const TVersionEx& aVersion, const /*TTime&*/ TDesC& aDateTime, 
+			const TDesC& aDescription, const TDesC& aDownloadUrl);
+	virtual void OnUpdateCheckFailedL();
+	
 	
 	// Custom properties and methods
 public:
@@ -64,10 +72,17 @@ public:
 				{ return iSearch; };
 	
 private:
+	// Constants
+	static const TInt KSetTileProviderCommandBaseId; // Start id for tile provider change commands
+	
 	// Controls
 	CMapControl* iMapControl;
 	
 	CPosLandmark* GetNearestLandmarkAroundTheCenterL(TBool aPartial = ETrue); // The client takes ownership of the returned landmark object. Returns NULL if nothing found.
+	inline static TInt TileProviderIdxToCommandId(/*TTileProviderIdx*/ TInt aIdx)
+			{ return KSetTileProviderCommandBaseId + aIdx; };
+	inline static TTileProviderIdx CommandIdToTileProviderIdx(TInt aCommandId)
+			{ return TTileProviderIdx(aCommandId - KSetTileProviderCommandBaseId); };
 	
 	// Command handlers
 	void HandleFindMeL();
@@ -91,9 +106,12 @@ private:
 	void HandleTrafficCounterL();
 	void HandleClearSearchResultsL();
 	void HandleShowControlsDlgL();
+	void HandleShowDataLicencesL();
+	void HandleCheckUpdatesL();
 	
 	// Others
 	CSearch* iSearch;
+	CUpdateChecker* iUpdChecker; // "lazy" initialization
 
 	};
 

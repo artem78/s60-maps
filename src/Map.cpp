@@ -1403,10 +1403,7 @@ void CSearchResultsLayer::Draw(CWindowGc &aGc)
 	
 	// Check if any items to display
 	CSearch* search = appUi->MapView()->Search();
-	if (!search)
-		return;
-	
-	const CArrayFix<TSearchResultItem>* searchResArr = search->Results();
+	const CSearchResultArray* searchResArr = search->Results();
 	if (!searchResArr || !searchResArr->Count())
 		return;
 	
@@ -1496,7 +1493,7 @@ void CSearchResultsLayer::DrawTextWithBackgroundL(CWindowGc &aGc,
 	const CFont* font = iMapView->DefaultFont();
 	const TRgb KTextAndBoxBorderColor(0x4040cd);
 	TRgb bgColor(KRgbWhite);
-	bgColor.SetAlpha(170);
+	bgColor.SetAlpha(195);
 	
 	// Skip leading TAB (used for propper display in list)
 	TPtrC name(aSearchResult.iName.Right(aSearchResult.iName.Length() - 1));
@@ -2321,7 +2318,7 @@ void CTileBitmapManagerItem::CreateBitmapIfNotExistL()
 
 TTileProvider::TTileProvider(const TDesC& anId, const TDesC& aTitle,
 		const TDesC8& anUrlTemplate, TZoom aMinZoom, TZoom aMaxZoom,
-		const TDesC& aCopyrightTextShort, const TDesC& aCopyrightText,
+		const TDesC& aCopyrightTextShort, /*const TDesC& aCopyrightText,*/
 		const TDesC& aCopyrightUrl)
 	{
 	iId.Copy(anId);
@@ -2330,14 +2327,14 @@ TTileProvider::TTileProvider(const TDesC& anId, const TDesC& aTitle,
 	iMinZoomLevel = aMinZoom;
 	iMaxZoomLevel = aMaxZoom;
 	iCopyrightTextShort = aCopyrightTextShort;
-	if (aCopyrightText.Length() == 0 && aCopyrightTextShort.Length() > 0)
-		{
+	/*if (aCopyrightText.Length() == 0 && aCopyrightTextShort.Length() > 0)
+		{*/
 		iCopyrightText = aCopyrightTextShort;
-		}
+		/*}
 	else
 		{
 		iCopyrightText = aCopyrightText;
-		}
+		}*/
 	iCopyrightUrl = aCopyrightUrl;
 	}
 

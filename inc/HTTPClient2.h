@@ -40,7 +40,7 @@ private:
 											outside because was set in ContructL() */
 	
 	// New
-private:
+public:
 	static HBufC8* ProxyfiHttpsUrlL(const TDesC8 &aUrl);
 	};
 

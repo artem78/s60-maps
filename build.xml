@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
 <project name="S60Maps" default="make_sis">
+	<taskdef resource="net/sf/antcontrib/antlib.xml" />
+
 	<!-- Properties: -->
 	<property name="sources_dir" location="sources"/>
 	<!--<echo>${java.io.tmpdir}</echo>-->
@@ -9,7 +11,7 @@
 
 
 	<!-- Targets: -->
-	<target name="init">
+	<target name="init" depends="restore_api_keys">
 		<exec executable="devices" failonerror="true">
 			<arg value="-setdefault" />
 			<arg value="@S60_3rd_FP1:com.nokia.s60" />
@@ -18,9 +20,12 @@
 	
 	<target name="clean" depends="init">
 		<!--<delete dir="${temp_dir}"/>-->
-		<delete file="sis/S60Maps.sis" />
-		<delete file="sis/S60Maps.sisx" />
-		<!--<delete dir="sis" includes="*.sis, *.sisx" />-->
+		<delete verbose="true">
+			<fileset dir="${basedir}/sis">
+				<include name="*.sis"/>
+				<include name="*.sisx"/>
+			</fileset>
+		</delete>
 		
 		<exec executable="${basedir}/group/abld.bat" dir="group" failonerror="true" failifexecutionfails="false">
 			<arg value="reallyclean" />
@@ -84,14 +89,107 @@
 		<delete dir="${temp_dir}" />
 	</target>
 	
-	<!--<target name="rename_sis" depends="make_sis" description="Copy exists *.sis(x) files (should be manually build first in IDE) with adding current version to filename">
+	<!-- можно будет потом отключить, когда будет работать make_sis -->
+	<!-- 	<target name="rename_sis" depends="make_sis" description="Copy exists *.sis(x) files (should be manually build first in IDE) with adding current version to filename"> -->
+	<target name="rename_sis" description="Copy exists *.sis(x) files (should be manually build first in IDE) with adding current version to filename">
 		<property name="sis_dir" location="sis/" />
 		<exec executable="git" outputproperty="version" failonerror="true">
 			<arg value="describe"/>
-			<arg value="- - dirty"/>
+			<arg value="--dirty"/>
 		</exec>
-		<echo>Current version: ${version}</echo>
-		<copy file="${sis_dir}/S60Maps.sis" tofile="${sis_dir}/S60Maps_${version}.sis" overwrite="true" />
-		<copy file="${sis_dir}/S60Maps.sisx" tofile="${sis_dir}/S60Maps_${version}.sisx" overwrite="true" />
-	</target>-->
+		<propertyregex property="version.underscoped"
+               input="${version}"
+               regexp="[\W]+"
+               replace="_"/>
+		<echo>Current version: ${version} (${version.underscoped})</echo>
+		<!--<copy file="${sis_dir}/S60Maps.sis" tofile="${sis_dir}/S60Maps_${version}.sis" overwrite="true" />
+		<copy file="${sis_dir}/S60Maps.sisx" tofile="${sis_dir}/S60Maps_${version}.sisx" overwrite="true" />-->
+		
+		<move todir="${sis_dir}/releases" verbose="true" overwrite="true" failonerror="true">
+			<fileset dir="${sis_dir}">
+				<include name="*.sis"/>
+				<include name="*.sisx"/>
+			</fileset>
+			<mapper type="regexp" from="^(.+)(.sisx?)$$" to="\1_${version.underscoped}\2"/>
+		</move>
+	</target>
+	
+	<target name="inc_version" description="Increment version number and replace in files">
+		<input message="Increment MINOR (m) or BUILD (b) number?"
+			validargs="m,b"
+			addproperty="do.inc_ver"/>
+		<!--<echo>${do.inc_ver}</echo>-->
+		
+		
+		<loadfile property="defs_h_file" srcfile="${basedir}/inc/Defs.h" />
+		<!--<echo>${defs_h_file}</echo>-->
+		<for param="line" delimiter="${line.separator}" list="${defs_h_file}">
+			<sequential>
+				<propertyregex property="current_version.major" input="@{line}" regexp="KProgramVersion\((\d+),\s?(\d+),\s?(\d+)\)" select="\1" />
+				<propertyregex property="current_version.minor" input="@{line}" regexp="KProgramVersion\((\d+),\s?(\d+),\s?(\d+)\)" select="\2" />
+				<propertyregex property="current_version.build" input="@{line}" regexp="KProgramVersion\((\d+),\s?(\d+),\s?(\d+)\)" select="\3" />
+			</sequential>
+		</for>
+		
+		<var name="new_version.major" value="${current_version.major}" />
+		<var name="new_version.minor" value="${current_version.minor}" />
+		<var name="new_version.build" value="${current_version.build}" />
+		
+		<if><!-- build++ -->
+			<equals arg1="${do.inc_ver}" arg2="b" />
+			<then>
+				<echo>Increment BUILD</echo>
+				<math result="new_version.build" operand1="${new_version.build}" operation="+" operand2="1" datatype="int"/>
+			</then>
+		</if>
+		
+		<if><!-- build=0 minor++ -->
+			<equals arg1="${do.inc_ver}" arg2="m" />
+			<then>
+				<echo>Reset BUILD, increment MINOR</echo>
+				<math result="new_version.minor" operand1="${new_version.minor}" operation="+" operand2="1" datatype="int"/>
+				<var name="new_version.build" value="0" />
+			</then>
+		</if>
+		
+		<!-- trim zero build -->
+		<propertyregex property="new_version.as_text"
+               input="${new_version.major}.${new_version.minor}.${new_version.build}"
+               regexp="\.0$"
+               replace=""/>
+		
+		<echo>${current_version.major}.${current_version.minor}.${current_version.build} --&gt; ${new_version.major}.${new_version.minor}.${new_version.build} (${new_version.as_text})</echo>
+		
+		<!-- replace in defs.h -->
+		<!--<loadfile property="defs_h_file" srcFile="${defs_h_file}"/>-->
+        <replaceregexp file="${basedir}/inc/Defs.h" flags="">
+            <regexp pattern="KProgramVersion\((\d+),\s?(\d+),\s?(\d+)\)"/>
+            <substitution expression="KProgramVersion(${new_version.major}, ${new_version.minor}, ${new_version.build})" />
+        </replaceregexp>
+		
+		<!-- replace in *.pkg -->
+		<replaceregexp flags="">
+			<fileset dir="${basedir}/sis/" includes="*.pkg"/> 
+            <regexp pattern="(#\{&quot;S60Maps&quot;\},\(0xED689B88\)),\d+,\d+,\d+"/>
+            <substitution expression="\1,${new_version.major},${new_version.minor},${new_version.build}" />
+        </replaceregexp>
+		
+		<!-- replace in *.lxx -->
+		<replaceregexp flags="i">
+			<fileset dir="${basedir}">
+				<include name="data/S60Maps.l??*"/>
+				<include name="src/Settings.cpp"/>
+				<exclude name="*.bak"/>
+			</fileset>
+            <regexp pattern="(Added in version )[\.Xx]+" />
+            <substitution expression="\1${new_version.as_text}" />
+        </replaceregexp>
+		
+		<echo>Done!</echo>
+		<input>Press Return key to exit...</input>
+	</target>
+	
+	<target name="restore_api_keys" description="Copy ApiKeys.h.bak to ApiKeys.h">
+		<copy file="${basedir}/inc/ApiKeys.h.bak" tofile="${basedir}/inc/ApiKeys.h" overwrite="true" failonerror="true" />
+	</target>
 </project>

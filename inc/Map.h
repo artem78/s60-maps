@@ -497,7 +497,7 @@ class TTileProvider
 public:
 	TTileProvider(const TDesC& anId, const TDesC& aTitle, const TDesC8& anUrlTemplate,
 			TZoom aMinZoom, TZoom aMaxZoom, const TDesC& aCopyrightTextShort = KNullDesC,
-			const TDesC& aCopyrightText = KNullDesC, const TDesC& aCopyrightUrl = KNullDesC);
+			/*const TDesC& aCopyrightText = KNullDesC,*/ const TDesC& aCopyrightUrl = KNullDesC);
 
 	// Short string identifier of tile provider. Used in cache subdir name.
 	// Must be unique and do not contains any special symbols (allowed: a-Z, 0-9, - and _). 
