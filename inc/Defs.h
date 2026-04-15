@@ -5,7 +5,7 @@
 
 // Main definitions
 _LIT(KProgramName, "S60Maps");
-const TVersion KProgramVersion(1, 20, 1);
+const TVersion KProgramVersion(1, 21, 0);
 const TUint16 KConfigFileVersion = 15;
 
 // Debugging

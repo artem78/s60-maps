@@ -15,12 +15,12 @@ CHARACTER_SET UTF8
 #define qtn_exit "יציאה"
 #define qtn_tile_providers_title "מפות"	// todo: update!
 #define qtn_service_title "כלים"
-#define qtn_tiles_cache_stats "סטטיסטיקות מטמון מפה"
-#define qtn_reset_tiles_cache "נקה מטמון מפה"
-#define qtn_confirm_reset_tiles_cache_dialog_text "פעולה זו תמחק את כל המטמון ששמור לך. האם אתה בטוח?"
+#define qtn_tiles_cache_stats "ס�?�?יס�?יקות מ�?מון מפה"
+#define qtn_reset_tiles_cache "נקה מ�?מון מפה"
+#define qtn_confirm_reset_tiles_cache_dialog_text "פעולה זו תמחק את כל המ�?מון ששמור לך. האם אתה ב�?וח?"
 #define qtn_about_dialog_title "אודות"
-#define qtn_about_dialog_text "S60Maps גירסא %S\nזמן: " __DATE__ " " __TIME__ "\nגיט: %S\nתכנות: %S\nאתר: %S\nתודות: %S"
-#define qtn_confirm_exit_dialog_text "האם אתה בטוח שברצונך לצאת?"
+#define qtn_about_dialog_text "S60Maps גירסא %S\nזמן: " __DATE__ " " __TIME__ "\nגי�?: %S\nתכנות: %S\nאתר: %S\nתודות: %S"
+#define qtn_confirm_exit_dialog_text "האם אתה ב�?וח שברצונך לצאת?"
 #define qtn_done "בוצע!"
 #define qtn_stats_line "%S: %d קבצים, %S"
 #define qtn_stats_total "סך הכל: %d קבצים, %S"
@@ -114,7 +114,7 @@ CHARACTER_SET UTF8
 #define qtn_controls "Controls"
 #define qtn_controls_dlg_text "Keys:\n  Moving — arrows or 2/4/6/8\n  Zoom in — volume up or 3\n  Zoom out — volume down or 1\n  Create/rename landmark — 5\n  Delete landmark — C (Clear key)\n  Search — 0\n\nTouchscreen:\n  Moving — touch side of the screen\n  Zoom out/it — swipe left/right\n  Show/hide softkeys — swipe up/down"
 
-// Added in version X.XX
+// Added in version 1.21
 
 #define qtn_help "Help"
 #define qtn_check_for_updates "Check for updates"
