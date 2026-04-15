@@ -156,7 +156,9 @@
 		<propertyregex property="new_version.as_text"
                input="${new_version.major}.${new_version.minor}.${new_version.build}"
                regexp="\.0$"
-               replace=""/>
+               replace=""
+			   defaultValue="${new_version.major}.${new_version.minor}.${new_version.build}"
+			   override="true" />
 		
 		<echo>${current_version.major}.${current_version.minor}.${current_version.build} --&gt; ${new_version.major}.${new_version.minor}.${new_version.build} (${new_version.as_text})</echo>
 		
