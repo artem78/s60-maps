@@ -11,7 +11,7 @@
 
 
 	<!-- Targets: -->
-	<target name="init">
+	<target name="init" depends="restore_api_keys">
 		<exec executable="devices" failonerror="true">
 			<arg value="-setdefault" />
 			<arg value="@S60_3rd_FP1:com.nokia.s60" />
@@ -187,5 +187,9 @@
 		
 		<echo>Done!</echo>
 		<input>Press Return key to exit...</input>
+	</target>
+	
+	<target name="restore_api_keys" description="Copy ApiKeys.h.bak to ApiKeys.h">
+		<copy file="${basedir}/inc/ApiKeys.h.bak" tofile="${basedir}/inc/ApiKeys.h" overwrite="true" failonerror="true" />
 	</target>
 </project>

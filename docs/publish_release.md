@@ -4,6 +4,8 @@
 
 Для пункта 8 - `ant rename_sis`
 
+Для п. 5 - `ant restore_api_keys`
+
 1) Подтянуть все изменения, объединить ветки
    ```
    git checkout master
