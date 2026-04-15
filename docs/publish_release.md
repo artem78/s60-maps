@@ -48,7 +48,7 @@
    ```
    Ждём сообщения `BUILD SUCCESSFUL`, в папке `sources` получаем файл `S60Maps_full_sources_vX.XX.X.zip`
 
-10) Находим [тут](https://github.com/artem78/s60-maps/tags) последний тег, нажимаем `Create release`
+10) Находим [тут](https://github.com/artem78/s60-maps/tags) последний тег, нажимаем `Create release from tag`
    - Пишем, что изменилось
      ```
      Changes:
