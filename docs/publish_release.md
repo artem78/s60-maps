@@ -2,6 +2,8 @@
 
 Для пунктов 2-3 можно запустить `increment_version.bat`
 
+Для пункта 8 - `ant rename_sis`
+
 1) Подтянуть все изменения, объединить ветки
    ```
    git checkout master

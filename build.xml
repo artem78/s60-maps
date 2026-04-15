@@ -89,16 +89,30 @@
 		<delete dir="${temp_dir}" />
 	</target>
 	
-	<!--<target name="rename_sis" depends="make_sis" description="Copy exists *.sis(x) files (should be manually build first in IDE) with adding current version to filename">
+	<!-- можно будет потом отключить, когда будет работать make_sis -->
+	<!-- 	<target name="rename_sis" depends="make_sis" description="Copy exists *.sis(x) files (should be manually build first in IDE) with adding current version to filename"> -->
+	<target name="rename_sis" description="Copy exists *.sis(x) files (should be manually build first in IDE) with adding current version to filename">
 		<property name="sis_dir" location="sis/" />
 		<exec executable="git" outputproperty="version" failonerror="true">
 			<arg value="describe"/>
-			<arg value="- - dirty"/>
+			<arg value="--dirty"/>
 		</exec>
-		<echo>Current version: ${version}</echo>
-		<copy file="${sis_dir}/S60Maps.sis" tofile="${sis_dir}/S60Maps_${version}.sis" overwrite="true" />
-		<copy file="${sis_dir}/S60Maps.sisx" tofile="${sis_dir}/S60Maps_${version}.sisx" overwrite="true" />
-	</target>-->
+		<propertyregex property="version.underscoped"
+               input="${version}"
+               regexp="[\W]+"
+               replace="_"/>
+		<echo>Current version: ${version} (${version.underscoped})</echo>
+		<!--<copy file="${sis_dir}/S60Maps.sis" tofile="${sis_dir}/S60Maps_${version}.sis" overwrite="true" />
+		<copy file="${sis_dir}/S60Maps.sisx" tofile="${sis_dir}/S60Maps_${version}.sisx" overwrite="true" />-->
+		
+		<move todir="${sis_dir}/releases" verbose="true" overwrite="true" failonerror="true">
+			<fileset dir="${sis_dir}">
+				<include name="*.sis"/>
+				<include name="*.sisx"/>
+			</fileset>
+			<mapper type="regexp" from="^(.+)(.sisx?)$$" to="\1_${version.underscoped}\2"/>
+		</move>
+	</target>
 	
 	<target name="inc_version" description="Increment version number and replace in files">
 		<input message="Increment MINOR (m) or BUILD (b) number?"
