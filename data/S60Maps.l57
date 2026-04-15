@@ -113,3 +113,12 @@ CHARACTER_SET UTF8
 
 #define qtn_controls "Controls"
 #define qtn_controls_dlg_text "Keys:\n  Moving — arrows or 2/4/6/8\n  Zoom in — volume up or 3\n  Zoom out — volume down or 1\n  Create/rename landmark — 5\n  Delete landmark — C (Clear key)\n  Search — 0\n\nTouchscreen:\n  Moving — touch side of the screen\n  Zoom out/it — swipe left/right\n  Show/hide softkeys — swipe up/down"
+
+// Added in version X.XX
+
+#define qtn_help "Help"
+#define qtn_check_for_updates "Check for updates"
+#define qtn_no_updates "No updates found."
+#define qtn_update_check_failed "Check for updates failed!"
+#define qtn_update_check_success_msg "New version %S published %S available! Current is %S."
+#define qtn_download_confirmation "Download?"

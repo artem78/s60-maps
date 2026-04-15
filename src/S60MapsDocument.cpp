@@ -52,9 +52,14 @@ CS60MapsDocument* CS60MapsDocument::NewLC(CEikApplication& aApp)
 void CS60MapsDocument::ConstructL()
 	{
 #if LOGGING_ENABLED
-	_LIT(KLogFileName, "s60maps_log.txt");
+	_LIT(KLogFileName, "log.txt");
+	TBuf<32> logFileName;
+	logFileName.Copy(KProgramName);
+	logFileName.LowerCase();
+	logFileName.Append('_');
+	logFileName.Append(KLogFileName);
 	TFileName logFilePath;
-	static_cast<CS60MapsApplication *>(Application())->RelPathToAbsFromDataDir(KLogFileName, logFilePath);
+	static_cast<CS60MapsApplication *>(Application())->RelPathToAbsFromDataDir(logFileName, logFilePath);
 	TParse pathParser;
 	pathParser.Set(logFilePath, NULL, NULL);
 	BaflUtils::EnsurePathExistsL(CEikonEnv::Static()->FsSession(), pathParser.DriveAndPath());
@@ -74,7 +79,9 @@ void CS60MapsDocument::ConstructL()
 	dateTimeBuff8.Append(_L8(__TIME__));
 	TBuf<32> dateTimeBuff;
 	dateTimeBuff.Copy(dateTimeBuff8);
-	INFO(_L("Program info: S60Maps v%S, git: %S (branch %S), build: %S"), &KProgramVersion.Name(),
+	TVersionName programVersion;
+	static_cast<TVersionEx>(KProgramVersion).Name(programVersion);
+	INFO(_L("Program info: %S v%S, git: %S (branch %S), build: %S"), &KProgramName, &programVersion,
 			&KGITLongVersion, &KGITBranch, &dateTimeBuff);
 	
 	_LIT(KDateFmt, "%F%Y-%M-%D %H:%T:%S");

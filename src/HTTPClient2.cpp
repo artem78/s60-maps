@@ -23,14 +23,15 @@ void CHTTPClient2::ConstructL(RSocketServ &aSockServ, RConnection &aConn)
 	CHTTPClient::ConstructL();
 	
 	// Set default user-agent
+	TVersionName progVer;
+	static_cast<TVersionEx>(KProgramVersion).Name(progVer);
 	TBuf8<32> userAgent;
-	userAgent.Copy(_L8("S60Maps")); // ToDo: Move to constant
-	userAgent.Append(' ');
-	userAgent.Append('v');
-	userAgent.Append(KProgramVersion.Name());
+	userAgent.Copy(KProgramName);
+	userAgent.Append('/');
+	userAgent.Append(progVer);
 #ifdef _DEBUG
 	_LIT8(KDebugStr, "DEV");
-	userAgent.Append(' ');
+	userAgent.Append('-');
 	userAgent.Append(KDebugStr);
 #endif
 	SetUserAgentL(userAgent);

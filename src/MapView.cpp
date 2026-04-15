@@ -21,12 +21,15 @@
 
 // CMapView
 
+const TInt CMapView::KSetTileProviderCommandBaseId = 0x6500;
+
 CMapView::CMapView()
 	{
 	}
 
 CMapView::~CMapView()
 	{
+	delete iUpdChecker;
 	delete iSearch;
 	delete iMapControl;
 	}
@@ -67,6 +70,9 @@ void CMapView::ConstructL()
 	iMapControl->SetRect(AppUi()/*iAvkonAppUi*/->ApplicationRect()); // Need to resize the view to fullscreen*/
 	
 	iMapControl->SetFollowUser(ETrue);
+	
+	// Initialize search
+	iSearch = CSearch::NewL(this);
 	}
 
 TUid CMapView::Id() const
@@ -109,22 +115,19 @@ void CMapView::DoDeactivate()
 
 void CMapView::HandleCommandL(TInt aCommand)
 	{
+	// Process tile provider change
+	if (aCommand >= TileProviderIdxToCommandId(0) and aCommand <= TileProviderIdxToCommandId(KLastTileProviderIdx))
+		{
+		HandleTileProviderChangeL(CommandIdToTileProviderIdx(aCommand));
+		return;
+		}
+	
+	
+	// Process other commands	
 	switch (aCommand)
 		{
 		case EFindMe:
 			HandleFindMeL();
-			break;
-			
-		case ESetOsmStandardTileProvider:
-		case ESetOsmCyclesTileProvider:
-		case ESetOsmHumanitarianTileProvider:
-		case ESetOsmTransportTileProvider:
-		case ESetOpenTopoMapTileProvider:
-		case ESetEsriClarityTileProvider:
-		case ESetOpenBusMapTileProvider:
-		case ESetOpenTopoMapBakTileProvider:
-		case ESetEsriTileProvider:
-			HandleTileProviderChangeL(aCommand - ESetTileProviderBase);
 			break;	
 			
 		case ETilesCacheStats:
@@ -198,6 +201,18 @@ void CMapView::HandleCommandL(TInt aCommand)
 			HandleShowControlsDlgL();
 			break;
 			}
+
+		case ECheckUpdates:
+			{
+			HandleCheckUpdatesL();
+			break;
+			}
+			
+		case EShowDataLicences:
+			{
+			HandleShowDataLicencesL();
+			break;
+			}
 			
 		default:
 			// Let the AppUi handle unknown for view commands
@@ -219,7 +234,7 @@ void CMapView::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
 				//);
 				aMenuPane->SetItemDimmed(EFindMe, !appUi->IsPositioningAvailableAndEnabled() || MapControl()->IsFollowingUser());
 				
-				TBool isVisible = iSearch && iSearch->Results() && iSearch->Results()->Count();
+				TBool isVisible = iSearch->Results() && iSearch->Results()->Count();
 				aMenuPane->SetItemDimmed(EClearSearchResults, !isVisible);
 				
 				break;
@@ -241,7 +256,7 @@ void CMapView::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
 					
 			for (TInt idx = 0; idx < appUi->AvailableTileProviders().Count(); idx++)
 				{
-				TInt commandId = ESetTileProviderBase + idx;
+				TInt commandId = TileProviderIdxToCommandId(idx);
 				
 				CEikMenuPaneItem::SData menuItem;
 				menuItem.iCommandId = commandId;
@@ -414,8 +429,6 @@ void CMapView::HandleAboutL()
 	_LIT(KWebSite,	"<AknMessageQuery Link>https://github.com/artem78/s60-maps</AknMessageQuery Link>");
 	_LIT(KThanksTo,	"baranovskiykonstantin, Symbian9, Men770, fizolas, bent");
 	
-	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(AppUi());
-	
 	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
 	dlg->PrepareLC(R_QUERY_DIALOG);
 	HBufC* title = iEikonEnv->AllocReadResourceLC(R_ABOUT_DIALOG_TITLE);
@@ -425,8 +438,8 @@ void CMapView::HandleAboutL()
 	RBuf msg;
 	msg.CreateL(2048);
 	msg.CleanupClosePushL();
-	TBuf<32> version;
-	version.Copy(KProgramVersion.Name());
+	TBuf<32> /*TVersionName*/ version;
+	static_cast<TVersionEx>(KProgramVersion).Name(version);
 #ifdef _DEBUG
 	_LIT(KDebug, "DEBUG");
 	version.Append(' ');
@@ -436,16 +449,25 @@ void CMapView::HandleAboutL()
 	_LIT(KFmt,"%S (%S)");
 	gitInfo.Format(KFmt, &KGITLongVersion, &KGITBranch);
 	iEikonEnv->Format128/*256*/(msg, R_ABOUT_DIALOG_TEXT, &version,
-			&gitInfo, &KAuthor, &KWebSite, &KThanksTo);
+			&gitInfo, &KAuthor, &KWebSite, &KThanksTo);	
 	
+	dlg->SetMessageTextL(msg);
+	CleanupStack::PopAndDestroy(&msg);
+	dlg->RunLD();
+	}
+
+void CMapView::HandleShowDataLicencesL()
+	{
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(AppUi());
 	
-	// Data licences
+	RBuf msg;
+	msg.CreateL(2048);
+	msg.CleanupClosePushL();
+	
 	HBufC* dataLicences = iEikonEnv->AllocReadResourceLC(R_DATA_LICENCES);
 	HBufC* layerFmt = iEikonEnv->AllocReadResourceLC(R_LAYER_FMT);
 	HBufC* searchApi = iEikonEnv->AllocReadResourceLC(R_SEARCH_API);
-	_LIT(KDataLicFmt, "\r\n\r\n%S:\r\n");
-	msg.AppendFormat(KDataLicFmt, &(*dataLicences));
-	_LIT(KCopyrightLineFmt, " \u2014 (c) %S (<AknMessageQuery Link>%S</AknMessageQuery Link>)\r\n");
+	_LIT(KCopyrightLineFmt, " \u2014 (c) %S\r\n<AknMessageQuery Link>%S</AknMessageQuery Link>\r\n\r\n");
 	RBuf copyrightLineFmt;
 	copyrightLineFmt.CreateL(layerFmt->Length() + KCopyrightLineFmt().Length());
 	CleanupClosePushL(copyrightLineFmt);
@@ -459,14 +481,21 @@ void CMapView::HandleAboutL()
 				&provider->iCopyrightText, &provider->iCopyrightUrl);
 		}
 	
-	_LIT(KCopyrightLineSearchFmt, "%S \u2014 (c) Nominatim (<AknMessageQuery Link>https://nominatim.openstreetmap.org</AknMessageQuery Link>)");
+	_LIT(KCopyrightLineSearchFmt, "%S \u2014 (c) Nominatim\r\n<AknMessageQuery Link>https://nominatim.openstreetmap.org</AknMessageQuery Link>");
 	msg.AppendFormat(KCopyrightLineSearchFmt, &(*searchApi));
 	CleanupStack::PopAndDestroy(4, dataLicences);
 	
+	HBufC* title = iEikonEnv->AllocReadResourceLC(R_DATA_LICENCES);
 	
+	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
+	CleanupStack::PushL(dlg);
+	dlg->PrepareLC(R_QUERY_DIALOG);
+	dlg->QueryHeading()->SetTextL(*title);
 	dlg->SetMessageTextL(msg);
-	CleanupStack::PopAndDestroy(&msg);
+	CleanupStack::Pop(dlg);
 	dlg->RunLD();
+	
+	CleanupStack::PopAndDestroy(2, &msg);
 	}
 	
 void CMapView::HandleToggleLandmarksVisibility()
@@ -478,7 +507,7 @@ void CMapView::HandleToggleLandmarksVisibility()
 void CMapView::HandleCreateLandmarkL()
 	{
 	_LIT(KDefaultLandmarkName, "Landmark");
-	_LIT(KLandmarkCategoryName, "S60Maps");
+	#define KLandmarkCategoryName KProgramName
 	
 	RBuf landmarkName;
 	landmarkName.CreateL(KPosLmMaxTextFieldLength);
@@ -710,14 +739,13 @@ void CMapView::HandleSearchL()
 	{
 	DEBUG(_L("begin"));
 	
-	// delete search object if previously used
-	delete iSearch;
-	iSearch = NULL;
+	//Reset search object if previously used
+	iSearch->Reset();
 	
 	TBounds bounds;
 	iMapControl->Bounds(bounds);
-	iSearch = CSearch::NewL(this, bounds);
-	iSearch->RunL();
+	iSearch->SetPreferredBounds(bounds);
+	iSearch->StartNewSearchL();
 	
 	DEBUG(_L("end"));
 	}
@@ -778,8 +806,7 @@ void CMapView::HandleTrafficCounterL()
 
 void CMapView::HandleClearSearchResultsL()
 	{
-	delete iSearch;
-	iSearch = NULL;
+	iSearch->Reset();
 	}
 
 void CMapView::HandleShowControlsDlgL()
@@ -794,4 +821,78 @@ void CMapView::HandleShowControlsDlgL()
 	CleanupStack::Pop(dlg);
 	dlg->RunLD();
 	CleanupStack::PopAndDestroy(2, title);
+	}
+
+void CMapView::HandleCheckUpdatesL()
+	{
+	delete iUpdChecker; // delete previous instance
+	
+	iUpdChecker = CUpdateChecker::NewL(this);
+	iUpdChecker->LoadDataL();
+	}
+
+void CMapView::OnUpdateCheckSuccessL(const TVersionEx& aLatestVersion, const /*TTime&*/ TDesC& aDateTime, 
+		const TDesC& aDescription, const TDesC& aDownloadUrl)
+	{
+	TBool isUpdateAvailable = aLatestVersion > static_cast<TVersionEx>(KProgramVersion);
+	
+	if (isUpdateAvailable)
+		{
+		HBufC* msgFmt = iEikonEnv->AllocReadResourceLC(R_UPDATE_CHECK_SUCCESS_MSG);
+		
+		RBuf msg;
+		msg.CreateL(2048);
+		CleanupClosePushL(msg);
+		
+		TVersionName availableVer;
+		aLatestVersion.Name(availableVer);
+		
+		TPtrC dateOnly(aDateTime.Left(10));
+		
+		TVersionName curVer;
+		static_cast<TVersionEx>(KProgramVersion).Name(curVer);
+		
+		msg.Format(*msgFmt, &availableVer, &dateOnly, &curVer);
+		msg.Append('\r');
+		msg.Append('\n');
+		msg.Append('\r');
+		msg.Append('\n');
+		msg.Append(aDescription);
+		
+		//HBufC* title = iEikonEnv->AllocReadResourceLC(R_...);
+		CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
+		CleanupStack::PushL(dlg);
+		dlg->PrepareLC(R_QUERY_DIALOG);
+		//dlg->QueryHeading()->SetTextL(*title);
+		dlg->SetMessageTextL(msg);
+		CleanupStack::Pop(dlg);
+		dlg->RunLD();
+		CleanupStack::PopAndDestroy(2, msgFmt);
+		
+		
+		CAknQueryDialog* dlg2 = CAknQueryDialog::NewL();
+		CleanupStack::PushL(dlg2);
+		dlg2->PrepareLC(R_CONFIRM_DIALOG);
+		HBufC* msg2 = iEikonEnv->AllocReadResourceLC(R_DOWNLOAD_CONFIRMATION);
+		dlg2->SetPromptL(*msg2);
+		CleanupStack::PopAndDestroy(msg2);
+		CleanupStack::Pop(dlg2);
+		if (dlg2->RunLD() == EAknSoftkeyYes)
+			{
+			MiscUtils::OpenUrlInDefaultWebBrowserL(aDownloadUrl);
+			}
+		}
+	else
+		{
+		HBufC* msg = iEikonEnv->AllocReadResourceL/*C*/(R_NO_UPDATES);
+		iEikonEnv->AlertWin(*msg);
+		delete msg;
+		}
+	}
+
+void CMapView::OnUpdateCheckFailedL()
+	{
+	HBufC* msg = iEikonEnv->AllocReadResourceL/*C*/(R_UPDATE_CHECK_FAILED);
+	iEikonEnv->AlertWin(*msg);
+	delete msg;
 	}

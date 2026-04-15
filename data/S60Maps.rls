@@ -26,7 +26,7 @@ CHARACTER_SET UTF8
 #define qtn_lang_polish_name "Polski"
 #define qtn_lang_hebrew_name "עברית"
 #define qtn_lang_lat_am_spanish_name "Español (Hispanoamérica)"
-#define qtn_lang_ukrainisn_name "Українська"
+#define qtn_lang_ukrainian_name "Українська"
 #define qtn_lang_catalan_name "Catalan"
 #define qtn_lang_italian_name "Italiano"
 

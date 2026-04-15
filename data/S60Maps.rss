@@ -153,13 +153,8 @@ RESOURCE MENU_PANE r_menu
 				},
 		MENU_ITEM
 				{
-				command = EShowHotkeys;
-				txt = qtn_controls;
-				},
-		MENU_ITEM
-				{
-				command = EAbout;
-				txt = qtn_about;
+				txt = qtn_help;
+				cascade = r_submenu_help;
 				},
 		MENU_ITEM
 				{
@@ -253,9 +248,39 @@ RESOURCE MENU_PANE r_submenu_service
 			{
 			command = ETrafficCounter;
 			txt = qtn_traffic_counter;
+			},
+		MENU_ITEM
+			{
+			command = ECheckUpdates;
+			txt = qtn_check_for_updates;
 			}
 		};
 	}
+
+// Help submenu
+RESOURCE MENU_PANE r_submenu_help
+	{
+	items =
+		{
+	MENU_ITEM
+		{
+		command = EShowHotkeys;
+		txt = qtn_controls;
+		},
+	MENU_ITEM
+		{
+		command = EShowDataLicences;
+		txt = qtn_data_licences;
+		},
+	MENU_ITEM
+		{
+		command = EAbout;
+		txt = qtn_about;
+		}
+	};
+}
+
+
 
 // -----------------------------------------------------------------------------
 //
@@ -344,11 +369,32 @@ RESOURCE DIALOG r_confirm_dialog
         };
     }*/
 
-// General wait dialog
+// General wait dialog (WITH "Cancel" button)
 RESOURCE DIALOG r_wait_dialog
 	{
-	flags = EAknWaitNoteFlags /*| EEikDialogFlagNotifyEsc*/;
+	flags = EAknWaitNoteFlags;
 	buttons = R_AVKON_SOFTKEYS_CANCEL;
+	items =
+		{
+		DLG_LINE
+			{
+			type = EAknCtNote;
+			id = ECacheClearingWaitDialog;
+			control= AVKON_NOTE
+				{
+				layout = EWaitLayout;
+				singular_label = qtn_wait;
+				animation = R_QGN_GRAF_WAIT_BAR_ANIM;
+				};
+			}
+		};
+	}
+
+// General uninterrupted wait dialog (WITHOUT "Cancel" button)
+RESOURCE DIALOG r_wait_dialog_uninterrupted
+	{
+	flags = EAknWaitNoteFlags;
+	buttons = R_AVKON_SOFTKEYS_EMPTY;
 	items =
 		{
 		DLG_LINE
@@ -516,6 +562,10 @@ RESOURCE TBUF r_traffic_counter { buf=qtn_traffic_counter; }
 RESOURCE TBUF r_traffic_counter_dlg_msg_fmt { buf=qtn_traffic_counter_dlg_msg_fmt; }
 RESOURCE TBUF r_controls { buf=qtn_controls; }
 RESOURCE TBUF r_controls_dlg_text { buf=qtn_controls_dlg_text; }
+RESOURCE TBUF r_no_updates { buf=qtn_no_updates; }
+RESOURCE TBUF r_update_check_failed { buf=qtn_update_check_failed; }
+RESOURCE TBUF r_update_check_success_msg { buf=qtn_update_check_success_msg; }
+RESOURCE TBUF r_download_confirmation { buf=qtn_download_confirmation; }
 
 
 // Language names
@@ -527,7 +577,7 @@ RESOURCE TBUF r_lang_russian_name	{ buf=qtn_lang_russian_name; }
 RESOURCE TBUF r_lang_polish_name	{ buf=qtn_lang_polish_name; }
 RESOURCE TBUF r_lang_hebrew_name	{ buf=qtn_lang_hebrew_name; }
 RESOURCE TBUF r_lang_lat_am_spanish_name	{ buf=qtn_lang_lat_am_spanish_name; }
-RESOURCE TBUF r_lang_ukrainisn_name	{ buf=qtn_lang_ukrainisn_name; }
+RESOURCE TBUF r_lang_ukrainian_name	{ buf=qtn_lang_ukrainian_name; }
 RESOURCE TBUF r_lang_catalan_name	{ buf=qtn_lang_catalan_name; }
 RESOURCE TBUF r_lang_italian_name	{ buf=qtn_lang_italian_name; }
 
@@ -868,7 +918,7 @@ RESOURCE DIALOG r_search_input_query_dlg
 RESOURCE DIALOG r_search_results_query_dialog
 	{
 	flags = EAknDialogSelectionList;
-	buttons = R_AVKON_SOFTKEYS_SELECT_CANCEL;
+	buttons = R_AVKON_SOFTKEYS_SELECT_BACK;
 	items =
 		{
 		DLG_LINE

@@ -16,6 +16,7 @@
 
 #include <coemain.h>
 #include "FileUtils.h"
+#include "Defs.h"
 
 // ============================ MEMBER FUNCTIONS ===============================
 
@@ -53,15 +54,17 @@ void CS60MapsApplication::DataDir(TFileName &aDataDir) const
 	{
 #ifdef __WINSCW__
 	// Emulator do not have E drive, use C instead
-	_LIT(KProgramDataDir, "c:\\data\\S60Maps\\");
+	_LIT(KDataDir, "c:\\data\\");
 #else
 	// Change data directory to e:\data\S60Maps
 	// Note: program data need to be stored on E drive
 	// regardless of on which drive program installed
 	// because tiles cache will be use much space
-	_LIT(KProgramDataDir, "e:\\data\\S60Maps\\");
+	_LIT(KDataDir, "e:\\data\\");
 #endif
-	aDataDir.Copy(KProgramDataDir);
+	aDataDir.Copy(KDataDir);
+	aDataDir.Append(KProgramName);
+	aDataDir.Append('\\');
 	}
 
 void CS60MapsApplication::RelPathToAbsFromDataDir(const TDesC &aRelPath, TFileName &anAbsPath) const
