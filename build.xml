@@ -188,6 +188,37 @@
             <substitution expression="\1${new_version.as_text}" />
         </replaceregexp>
 		
+		<input message="Commit changes?"
+			validargs="y,n"
+			addproperty="do.commit"/>
+
+		<if>
+			<equals arg1="${do.commit}" arg2="y"/>
+			<then>
+				<exec executable="git" failonerror="true">
+					<arg value="reset"/>
+				</exec>
+				
+				<exec executable="git" failonerror="true">
+					<arg value="add"/>
+					<arg value="${basedir}/inc/Defs.h"/>
+					<arg value="${basedir}/data/S60Maps.l??*"/>
+					<arg value="${basedir}/src/Settings.cpp"/>
+					<arg value="${basedir}/sis/*.pkg"/>
+				</exec>
+				
+				<exec executable="git" failonerror="true">
+					<arg value="commit"/>
+					<arg value="-m"/>
+					<arg value="version increment (v${new_version.as_text})"/>
+				</exec>
+			</then>
+			<!--<else>
+				
+			</else>-->
+		</if>
+
+		
 		<echo>Done!</echo>
 		<input>Press Return key to exit...</input>
 	</target>

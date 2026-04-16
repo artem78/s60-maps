@@ -1,18 +1,12 @@
 # Небольшая памятка (для себя) по созданию новых релизов
 
-Для пунктов 2-3 можно запустить `increment_version.bat`
-
-Для пункта 8 - `ant rename_sis`
-
-Для п. 5 - `ant restore_api_keys`
-
 1) Подтянуть все изменения, объединить ветки
    ```
    git checkout master
    git pull
    git merge wip
    ```
-2) Обновить номер версии в 3-х местах
+2) Обновить номер версии в 3-х местах (Для пунктов 2-4 можно запустить `increment_version.bat`)
    - inc/defs.h (7 строка): `const TVersion KProgramVersion(X, XX, X);`
    - sis/S60Maps_symbian9.1.pkg (13 строка): `#{"S60Maps"},(0xED689B88),X,XX,X`
    - sis/S60Maps_symbian9.2-9.4.pkg (13 строка): `#{"S60Maps"},(0xED689B88),X,XX,X`
@@ -26,7 +20,7 @@
    git push
    ```
 
-5) Скопировать содержимое `inc/ApiKeys.h.bak` в `inc/ApiKeys.h`
+5) Скопировать содержимое `inc/ApiKeys.h.bak` в `inc/ApiKeys.h` (или выполнить команду  `ant restore_api_keys`)
 
 6) Собрать sis-пакет **для symbian 9.1**
    - Project => Build configurations => Set active => Phone **release** (GCCE) [**S60_3rd**]
@@ -37,7 +31,7 @@
 7) Собрать sis-пакет **для symbian 9.2 и выше**
    - Всё аналогично, только нужно выбрать Phone **release** (GCCE) [**S60_3rd_fp1**]
 
-8) Переместить файлы и добавить номер версии:
+8) Переместить файлы и добавить номер версии (или выполнить команду  `ant rename_sis`):
    - `sis/S60Maps_symbian9.1.sis` => `sis/releases/S60Maps_symbian9.1_vX_XX_X.sis`
    - `sis/S60Maps_symbian9.2-9.4.sis` => `sis/releases/S60Maps_symbian9.2-9.4_vX_XX_X.sis`
 
