@@ -17,7 +17,7 @@ CHARACTER_SET UTF8
 #define qtn_service_title "Servicios"
 #define qtn_tiles_cache_stats "Estadísticas de caché de mapas"
 #define qtn_reset_tiles_cache "Limpiar caché de mapas"
-#define qtn_confirm_reset_tiles_cache_dialog_text "Esta acción borrará todos los mapas del caché. ¿Seguro?"
+#define qtn_confirm_reset_tiles_cache_dialog_text "Borrará todos los mapas del caché. ¿Seguro?"
 #define qtn_about_dialog_title "S60Maps"
 #define qtn_about_dialog_text "Versión %S\nCompilación: " __DATE__ " " __TIME__ "\nGit: %S\nAutor: %S\nWeb: %S\nGracias a: %S y otros"
 #define qtn_confirm_exit_dialog_text "¿Estás seguro que quieres salir?"
@@ -39,15 +39,15 @@ CHARACTER_SET UTF8
 #define qtn_create "Crear"
 #define qtn_rename "Renombrar"
 #define qtn_delete "Borrar"
-#define qtn_confirm_landmark_deletion "Borrar \"%S\" marcador?"
+#define qtn_confirm_landmark_deletion "¿Borrar marcador \"%S\"?"
 
 // Added in version 1.6:
 
-#define qtn_goto "Ir a..."
+#define qtn_goto "Ir a"
 #define qtn_landmark "Sitios de interés"
 #define qtn_coordinate "Coordenadas"
-#define qtn_latitude "Latitud"
-#define qtn_longitude "Longitud"
+#define qtn_latitude "Latitud:"
+#define qtn_longitude "Longitud:"
 
 // Added in version 1.7:
 
@@ -110,13 +110,13 @@ CHARACTER_SET UTF8
 // Added in version 1.20
 
 #define qtn_controls "Ayuda"
-#define qtn_controls_dlg_text "Teclado:\n  Mover — desplazamiento o 2/4/6/8\n  Ampliar — subir volumen o 3\n  Reducir — bajar volumen o 1 \n  Añadir/renombrar favorito — 5\n  Borrar favorito — C (Tecla borrar)\n  Buscar — 0\n\nPantalla táctil:\n  Mover — toque las esquinas\n  Ampliar/reducir — arrastra a la izquierda/derecha\n  Mostrar/ocultar barra — arrastra arriba/abajo"
+#define qtn_controls_dlg_text "Teclado:\n  Mover - desplazamiento o 2/4/6/8\n  Ampliar - subir volumen o 3\n  Reducir - bajar volumen o 1 \n  Añadir/renombrar favorito - 5\n  Borrar favorito - C (Tecla borrar)\n  Buscar - 0\n\nPantalla táctil:\n  Mover - toque las esquinas\n  Ampliar/reducir - arrastra izquierda/derecha\n  Mostrar/ocultar barra - arrastra arriba/abajo"
 
 // Added in version 1.21
 
-#define qtn_help "Help"
-#define qtn_check_for_updates "Check for updates"
-#define qtn_no_updates "No updates found."
-#define qtn_update_check_failed "Check for updates failed!"
-#define qtn_update_check_success_msg "New version %S published %S available! Current is %S."
-#define qtn_download_confirmation "Download?"
+#define qtn_help "Otros"
+#define qtn_check_for_updates "Actualizac. software"
+#define qtn_no_updates "Actualizaciones no disponibles"
+#define qtn_update_check_failed "¡Falló la comprobación de actualizaciones!"
+#define qtn_update_check_success_msg "Nueva versión %S lanzado %S disponible! Versión instalada %S."
+#define qtn_download_confirmation "¿Quiere actualizar?"
