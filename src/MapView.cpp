@@ -18,6 +18,7 @@
 #include <epos_cposlandmarksearch.h>
 #include <aknselectionlist.h>
 #include <aknquerydialog.h>
+#include <aknnotewrappers.h>
 
 // CMapView
 
@@ -884,15 +885,17 @@ void CMapView::OnUpdateCheckSuccessL(const TVersionEx& aLatestVersion, const /*T
 		}
 	else
 		{
-		HBufC* msg = iEikonEnv->AllocReadResourceL/*C*/(R_NO_UPDATES);
-		iEikonEnv->AlertWin(*msg);
-		delete msg;
+		HBufC* msg = iEikonEnv->AllocReadResourceLC(R_NO_UPDATES);	
+		CAknInformationNote* note = new (ELeave) CAknInformationNote;
+		note->ExecuteLD(*msg);
+		CleanupStack::PopAndDestroy(msg);
 		}
 	}
 
 void CMapView::OnUpdateCheckFailedL()
 	{
-	HBufC* msg = iEikonEnv->AllocReadResourceL/*C*/(R_UPDATE_CHECK_FAILED);
-	iEikonEnv->AlertWin(*msg);
-	delete msg;
+	HBufC* msg = iEikonEnv->AllocReadResourceLC(R_UPDATE_CHECK_FAILED);
+	CAknErrorNote* note = new (ELeave) CAknErrorNote;
+	note->ExecuteLD(*msg);
+	CleanupStack::PopAndDestroy(msg);
 	}
