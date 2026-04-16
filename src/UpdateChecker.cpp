@@ -125,6 +125,9 @@ void CUpdateChecker::ProcessResponseL()
 	
 	TVersionEx ver;
 	ver.ParseL(tagName);
+#ifdef __WINSCW__
+	//ver.ParseL(_L("9.99")); // just for testing
+#endif
 	
 	TBuf<32> dt;
 	ParseJsonValueL(parser, KDatePath, dt);
