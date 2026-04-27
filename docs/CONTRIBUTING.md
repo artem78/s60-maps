@@ -32,6 +32,6 @@ Now we have these translations with various status of completion:
 
 **Some translations are very old and incomplete. You can update any of them or add new one!**
 
-If you can help with translation of S60Maps to your language please join this project on [Transifex.com](https://app.transifex.com/--334/s60maps/main/) (registration required, but this is absolutely free). Feel free to request new language if necessary.
+If you can help with translation of S60Maps to your language please join this project on [Transifex.com](https://explore.transifex.com/--334/s60maps/) (registration required, but this is absolutely free). Feel free to request new language if necessary.
 
 Alternatively you can edit translation source files directly with [this instructions](https://github.com/artem78/s60-maps/wiki/How-to-edit-or-create-new-translation).
