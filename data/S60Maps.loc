@@ -45,3 +45,6 @@
 #include "S60Maps.l05"
 #endif
 
+#ifdef LANGUAGE_09
+#include "S60Maps.l09"
+#endif
