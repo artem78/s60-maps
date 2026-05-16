@@ -29,5 +29,6 @@ CHARACTER_SET UTF8
 #define qtn_lang_ukrainian_name "Українська"
 #define qtn_lang_catalan_name "Catalan"
 #define qtn_lang_italian_name "Italiano"
+#define qtn_lang_finnish_name "Suomi" // Finnish
 
 // End of File

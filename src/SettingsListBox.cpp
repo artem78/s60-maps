@@ -275,6 +275,12 @@ void CLanguageListSettingItem::LoadLanguageListL()
 				break;
 				}
 				
+			case ELangFinnish:
+				{
+				resourceId = R_LANG_FINNISH_NAME;
+				break;
+				}
+				
 			default:
 				{} // supress compiller warnings
 			}

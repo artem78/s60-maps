@@ -580,6 +580,7 @@ RESOURCE TBUF r_lang_lat_am_spanish_name	{ buf=qtn_lang_lat_am_spanish_name; }
 RESOURCE TBUF r_lang_ukrainian_name	{ buf=qtn_lang_ukrainian_name; }
 RESOURCE TBUF r_lang_catalan_name	{ buf=qtn_lang_catalan_name; }
 RESOURCE TBUF r_lang_italian_name	{ buf=qtn_lang_italian_name; }
+RESOURCE TBUF r_lang_finnish_name	{ buf=qtn_lang_finnish_name; }
 
 
 // ---------------------------------------------------------------------------- 

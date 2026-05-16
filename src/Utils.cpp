@@ -803,6 +803,13 @@ void MiscUtils::LanguageToIso639Code(TLanguage aLang, /*TDes*/ TBuf</*3*/2> &aCo
 			break;
 			}
 			
+		case ELangFinnish:
+			{
+			aCode.Append('f');
+			aCode.Append('i');
+			break;
+			}
+			
 		default:
 			{} // supress compiller warnings
 		}

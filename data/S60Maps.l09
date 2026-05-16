@@ -1,0 +1,122 @@
+/*
+========================================================================
+ Name        : S60Maps.l09
+ Author      : rambovalle
+ Copyright   : 
+ Description : 
+========================================================================
+*/
+// localized strings for language: Finnish (09)
+CHARACTER_SET UTF8
+
+#define qtn_find_me "Seuraa minua"
+#define qtn_about "Tietoa"
+#define qtn_exit "Poistu"
+#define qtn_tile_providers_title "Karttataso"
+#define qtn_service_title "Toiminnot"
+#define qtn_tiles_cache_stats "Kartan välimuistin tilastot"
+#define qtn_reset_tiles_cache "Tyhjennä kartan välimuisti"
+#define qtn_confirm_reset_tiles_cache_dialog_text "Oletko varma, että haluat tyhjentää kartan välimuistin kokonaan?"
+#define qtn_about_dialog_title "Tietoa"
+#define qtn_about_dialog_text "S60Maps Versio %S\nBuild: " __DATE__ " " __TIME__ "\nGit: %S\nTekijä: %S\nWeb: %S\nKiitos: %S ja muut"
+#define qtn_confirm_exit_dialog_text "Haluatko varmasti poistua?"
+#define qtn_done "Valmis!"
+#define qtn_stats_line "%S: %d tiedostoa, %S"
+#define qtn_stats_total "Yhteensä: %d tiedostoa, %S"
+
+// Added in version 1.4.0:
+
+#define qtn_positioning_unavailable "Sijaintia ei voida määrittää!"
+#define qtn_wait "Odota..."
+#define qtn_meters_unit_short "m"
+#define qtn_kilometers_unit_short "km"
+
+// Added in version 1.5.0:
+
+#define qtn_landmarks "Maamerkit"
+#define qtn_display "Näytä"
+#define qtn_create "Luo"
+#define qtn_rename "Nimeä uudelleen"
+#define qtn_delete "Poista"
+#define qtn_confirm_landmark_deletion "Poista \"%S\" -maamerkki?"
+
+// Added in version 1.6:
+
+#define qtn_goto "Mene..."
+#define qtn_landmark "Maamerkki"
+#define qtn_coordinate "Koordinaatti"
+#define qtn_latitude "Leveysaste"
+#define qtn_longitude "Pituusaste"
+
+// Added in version 1.7:
+
+#define qtn_settings "Asetukset"
+#define qtn_language "Kieli"
+
+// Added in version 1.8:
+
+#define qtn_reload_visible_area "Päivitä näkyvä alue"
+#define qtn_show "Näytä"
+#define qtn_hide "Piilota"
+#define qtn_signal_indicator "GPS-signaalimittari"
+#define qtn_scale_bar "Mittakaavajana"
+
+// Added in version 1.10:
+
+#define qtn_signal_indicator_type "Signaalimittarin tyyppi"
+#define qtn_signal_indicator_general_type "Yleinen"
+#define qtn_signal_indicator_per_satellite_type "Satelliittikohtainen"
+
+// Added in version 1.12
+
+#define qtn_use_https_proxy "HTTPS-välityspalvelin"
+#define qtn_enabled "Päällä"
+#define qtn_disabled "Pois päältä"
+#define qtn_https_proxy_url "HTTPS-välityspalvelimen url-osoite"
+#define qtn_use_disk_cache "Tallenna välimuistin karttaruudut levylle"
+
+// Added in version 1.13
+
+#define qtn_search "Haku"
+#define qtn_search_results "Hakutulokset"
+
+// Added in version 1.14
+
+#define qtn_data_licences "Datan käyttöluvat"
+#define qtn_layer_fmt "\"%S\" taso"
+#define qtn_search_api "Haun ohjelmointirajapinta"
+#define qtn_osm_contributors "OpenStreetMap osallistujat"
+#define qtn_map_data "kartta data"
+#define qtn_map_style "kartta tyyli"
+#define qtn_positioning "Sijoittelu"
+
+// Added in version 1.15
+
+#define qtn_no_results "Ei tuloksia!"
+
+// Added in version 1.16
+
+#define qtn_create_landmark_dlg_title "Uusi maamerkki"
+#define qtn_edit_landmark_dlg_title "Nimeä maamerkki uudelleen"
+#define qtn_search_failed_fmt "Haku epäonnistui! (%S)"
+#define qtn_traffic_counter "Verkkoliikennelaskuri"
+#define qtn_traffic_counter_dlg_msg_fmt "Istunto:\n   vastaanotettu %S\n   lähetetty %S\n\nYhteensä:\n   vastaanotettu %S\n   lähetetty %S"
+
+// Added in version 1.17
+
+#define qtn_clear_search_results "Tyhjennä hakutulokset"
+
+
+// Added in version 1.20
+
+#define qtn_controls "Näppäimet"
+#define qtn_controls_dlg_text "Näppäimet:\n  Liikkuminen — nuolinäppäimet tai 2/4/6/8\n  Suurennus — äänenvoimakkuus lujemmalle tai 3\n  Pienennys — äänenvoimakkuus pienemmälle tai 1\n  Luo/nimeä maamerkki — 5\n  Poista maamerkki — C (Poistonäppäin)\n  Haku — 0\n\nKosketusnäyttö:\n  Liikkuminen — paina näytön reunaa\n  Suurenna/pienennä — pyyhkäise vasemmalle/oikealle\n  Näytä/piilota virtuaalinäppäimet — pyyhkäise ylös/alas"
+
+// Added in version 1.21
+
+#define qtn_help "Apua"
+#define qtn_check_for_updates "Etsi päivityksiä"
+#define qtn_no_updates "Ei uusia päivityksiä."
+#define qtn_update_check_failed "Uusien päivitysten etsiminen epäonnistui!"
+#define qtn_update_check_success_msg "Uusi versio %S julkaistu %S saatavilla! Nykyinen versio on %S."
+#define qtn_download_confirmation "Lataa?"
