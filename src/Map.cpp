@@ -181,6 +181,12 @@ void CTiledMapLayer::Draw(CWindowGc &aGc)
 	VisibleTiles(tiles);
 	for (TInt idx = 0; idx < tiles.Count(); idx++)
 		{
+		if (iBitmapMgr->IsTileDownloadFailed(tiles[idx]))
+			{
+			DrawErrorTile(aGc, tiles[idx]);
+			continue;
+			}
+		
 		CFbsBitmap* bitmap;
 		TInt err = iBitmapMgr->GetTileBitmap(tiles[idx], bitmap);
 		switch (err)
@@ -250,6 +256,24 @@ void CTiledMapLayer::DrawTile(CWindowGc &aGc, const TTile &aTile, const CFbsBitm
 
 	
 	aGc.DrawBitmap(destRect, aBitmap, srcRect);
+	}
+
+void CTiledMapLayer::DrawErrorTile(CWindowGc &aGc, const TTile &aTile)
+	{
+	TCoordinate coord = MapMath::TileToGeoCoords(aTile);
+	TPoint point = iMapView->GeoCoordsToScreenCoords(coord);
+	TRect destRect;
+	destRect.iTl = point;
+	destRect.SetSize(TSize(KTileSize, KTileSize));
+	TRect screenRect = iMapView->Rect();
+	if (!screenRect.Intersects(destRect)) // Check if tile is visible
+		return;
+	
+	aGc.SetPenColor(KRgbRed);
+	aGc.SetPenSize(TSize(/*1,1*/ 3,3));
+	aGc.DrawLine(destRect.iTl, destRect.iBr);
+	aGc.DrawLine(TPoint(destRect.iTl.iX, destRect.iBr.iY), TPoint(destRect.iBr.iX, destRect.iTl.iY));
+	aGc.DrawRect(destRect);
 	}
 
 void CTiledMapLayer::OnTileLoaded(const TTile &/*aTile*/, const CFbsBitmap */*aBitmap*/)
@@ -2109,6 +2133,8 @@ void CTileBitmapManager::OnHTTPError(TInt aError,
 	ERROR(_L("Failed to download tile %S, error: %d"), &iLoadingTile.AsDes(), aError);
 	iObserver->OnTileLoadingFailed(iLoadingTile, aError);
 	
+	Find(iLoadingTile)->SetDownloadFailed();
+	
 	iImgDecoder->Reset();
 	iState = /*TProcessingState::*/EIdle;
 	
@@ -2261,6 +2287,15 @@ void CTileBitmapManager::Delete(const TTile &aTile)
 		}
 	}
 
+TBool CTileBitmapManager::IsTileDownloadFailed(const TTile &aTile)
+	{
+	CTileBitmapManagerItem* item = Find(aTile);
+	if (!item)
+		return EFalse;
+	else
+		return item->IsDownloadFailed();
+	};
+
 // CTileBitmapManagerItem
 
 CTileBitmapManagerItem::~CTileBitmapManagerItem()
@@ -2291,7 +2326,8 @@ CTileBitmapManagerItem* CTileBitmapManagerItem::NewLC(const TTile &aTile)
 	}
 
 CTileBitmapManagerItem::CTileBitmapManagerItem(const TTile &aTile) :
-		iTile(aTile)
+		iTile(aTile),
+		iState(ENotReady)
 	{
 	// No implementation required
 	}

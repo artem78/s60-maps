@@ -114,6 +114,7 @@ private:
 	TTileProvider *iTileProvider;
 	void VisibleTiles(RArray<TTile> &aTiles); // Return list of visible tiles
 	void DrawTile(CWindowGc &aGc, const TTile &aTile, const CFbsBitmap *aBitmap);
+	void DrawErrorTile(CWindowGc &aGc, const TTile &aTile);
 	void DrawCopyrightText(CWindowGc &aGc);
 	
 public:
@@ -443,6 +444,7 @@ public:
 	TInt GetTileBitmap(const TTile &aTile, CFbsBitmap* &aBitmap);
 	void AddToLoading(const TTile &aTile, TBool aForce = EFalse);
 	void ChangeTileProvider(TTileProvider* aTileProvider, const TDesC &aCacheDir);
+	TBool IsTileDownloadFailed(const TTile &aTile);
 	
 // Friends
 	friend class CTileBitmapSaver;
@@ -471,13 +473,25 @@ private:
 private:
 	TTile iTile;
 	CFbsBitmap* iBitmap;
-	TBool iIsReady; // ETrue when image completely drawn and ready to use
+	
+	enum TState
+		{
+		ENotReady,
+		EReady, // when image completely drawn and ready to use
+		EDownloadFailed
+		};
+	
+	TState iState;
 public:
 	TTime iLastAccessTime;
 
 	void CreateBitmapIfNotExistL();
-	inline TBool IsReady() { return iIsReady && iBitmap != NULL; };
-	inline void SetReady() { iIsReady = ETrue; };
+	inline TBool IsReady() { return iState == EReady && iBitmap != NULL; };
+	inline void SetReady() { iState = EReady; };
+	inline TBool IsDownloadFailed()
+		{ return iState == EDownloadFailed; };
+	inline void SetDownloadFailed()
+		{ iState = EDownloadFailed; };
 	
 // Getters
 public:
