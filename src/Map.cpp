@@ -181,6 +181,24 @@ void CTiledMapLayer::Draw(CWindowGc &aGc)
 	VisibleTiles(tiles);
 	for (TInt idx = 0; idx < tiles.Count(); idx++)
 		{
+		if (iBitmapMgr->HasError(tiles[idx]))
+			{
+			_LIT(KFmt, "Error: %S");
+			const HBufC* err = iBitmapMgr->ErrMsg(tiles[idx]);
+			if (err == NULL)
+				continue;
+			
+			RBuf msg;
+			TInt r = msg.Create(KFmt().Length() + err->Length() + 20);
+			if (r == KErrNone)
+				{
+				msg.Format(KFmt, err);	
+				DrawError(aGc, tiles[idx], msg);
+				msg.Close();
+				}
+			continue;
+			}
+		
 		CFbsBitmap* bitmap;
 		TInt err = iBitmapMgr->GetTileBitmap(tiles[idx], bitmap);
 		switch (err)
@@ -252,9 +270,46 @@ void CTiledMapLayer::DrawTile(CWindowGc &aGc, const TTile &aTile, const CFbsBitm
 	aGc.DrawBitmap(destRect, aBitmap, srcRect);
 	}
 
+void CTiledMapLayer::DrawError(CWindowGc &aGc, const TTile &aTile, const TDesC &aErrMsg)
+	{
+	TCoordinate coord = MapMath::TileToGeoCoords(aTile);
+	TPoint point = iMapView->GeoCoordsToScreenCoords(coord);
+	TRect destRect;
+	destRect.iTl = point;
+	destRect.SetSize(TSize(KTileSize, KTileSize));
+	TRect screenRect = iMapView->Rect();
+	if (!screenRect.Intersects(destRect)) // Check if tile is visible
+		return;
+	
+	// Draw box
+	aGc.SetPenColor(KRgbRed);
+	//aGc.SetPenSize(TSize(/*1,1*/ 2,2));
+	aGc.SetBrushStyle(CGraphicsContext::ERearwardDiagonalHatchBrush);
+	aGc.SetBrushColor(KRgbWhite);
+	/*aGc.DrawLine(destRect.iTl, destRect.iBr);
+	aGc.DrawLine(TPoint(destRect.iTl.iX, destRect.iBr.iY), TPoint(destRect.iBr.iX, destRect.iTl.iY));*/
+	aGc.DrawRect(destRect);
+	
+	// Draw error message
+	destRect.Shrink(TSize(10, 10));
+	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
+	aGc.SetBrushColor(KRgbWhite);
+	const CFont* font = iMapView->/*DefaultFont()*/SmallFont();
+	aGc.UseFont(font);
+	aGc.DrawText(aErrMsg, destRect, (KTileSize + font->AscentInPixels()) / 2, CGraphicsContext::ECenter, 0);
+	aGc.DiscardFont();
+	
+	aGc.Reset();
+	}
+
 void CTiledMapLayer::OnTileLoaded(const TTile &/*aTile*/, const CFbsBitmap */*aBitmap*/)
 	{
 	//iMapView->DrawDeferred();
+	iMapView->DrawNow();
+	}
+
+void CTiledMapLayer::OnTileLoadingFailed(const TTile &/*aTile*/, TInt /*aErrCode*/)
+	{
 	iMapView->DrawNow();
 	}
 
@@ -2109,6 +2164,14 @@ void CTileBitmapManager::OnHTTPError(TInt aError,
 	ERROR(_L("Failed to download tile %S, error: %d"), &iLoadingTile.AsDes(), aError);
 	iObserver->OnTileLoadingFailed(iLoadingTile, aError);
 	
+	TBuf<64> errMsg;
+	MiscUtils::ErrorToDes(aError, errMsg);
+	errMsg.Append(' ');
+	errMsg.Append('(');
+	errMsg.AppendNum(aError);
+	errMsg.Append(')');
+	Find(iLoadingTile)->SetErrorMsg/*L*/(errMsg);
+	
 	iImgDecoder->Reset();
 	iState = /*TProcessingState::*/EIdle;
 	
@@ -2175,7 +2238,29 @@ void CTileBitmapManager::OnHTTPHeadersRecieved(
 	tmp.Copy(fieldVal.StrF().DesC());
 	DEBUG(_L("mime=%S"), &tmp);*/
 	
-	
+	TInt statusCode = aTransaction.Response().StatusCode();
+	if (statusCode < 400)
+		{} // Ok
+	else
+		{ // Error
+		RStringF statusStr = aTransaction.Response().StatusText();
+		/*TBuf<256> buf16;
+		buf16.Copy(statusStr.DesC());
+		DEBUG(_L("Status code: %d"), statusCode);
+		DEBUG(_L("Status string: %S"), &buf16);
+		buf16.Copy(aTransaction.Request().URI().UriDes());
+		DEBUG(_L("URL: %S"), &buf16);*/
+		TBuf<64> errMsg;
+		errMsg.Copy(statusStr.DesC());
+		errMsg.Append(' ');
+		errMsg.Append('(');
+		errMsg.AppendNum(statusCode);
+		errMsg.Append(')');
+		Find(iLoadingTile)->SetErrorMsg/*L*/(errMsg);
+		
+		iObserver->OnTileLoadingFailed(iLoadingTile, statusCode);
+		}
+
 	iImgDecoder->Reset();
 	iImgDecoder->OpenL(KNullDesC8, fieldVal.StrF().DesC());
 	}
@@ -2261,10 +2346,31 @@ void CTileBitmapManager::Delete(const TTile &aTile)
 		}
 	}
 
+TBool CTileBitmapManager::HasError(const TTile &aTile)
+	{
+	CTileBitmapManagerItem* item = Find(aTile);
+	if (!item)
+		return EFalse;
+	else
+		return item->HasError();
+	};
+
+
+const HBufC* CTileBitmapManager::ErrMsg(const TTile &aTile)
+	{
+	CTileBitmapManagerItem* item = Find(aTile);
+	if (!item)
+		return NULL;
+	else
+		return item->ErrorMsg();
+	}
+
 // CTileBitmapManagerItem
 
 CTileBitmapManagerItem::~CTileBitmapManagerItem()
 	{
+	delete iErrorMsg;
+	
 	// FixMe: Bitmap pointer maybe still used outside when deleting
 	delete iBitmap; // iBitmap already may be NULL
 	
@@ -2291,7 +2397,8 @@ CTileBitmapManagerItem* CTileBitmapManagerItem::NewLC(const TTile &aTile)
 	}
 
 CTileBitmapManagerItem::CTileBitmapManagerItem(const TTile &aTile) :
-		iTile(aTile)
+		iTile(aTile),
+		iState(ENotReady)
 	{
 	// No implementation required
 	}
@@ -2312,6 +2419,14 @@ void CTileBitmapManagerItem::CreateBitmapIfNotExistL()
 		TDisplayMode mode = EColor16M;
 		User::LeaveIfError(iBitmap->Create(size, mode));
 		}
+	}
+
+void CTileBitmapManagerItem::SetErrorMsg/*L*/(const TDesC& aErrMsg)
+	{
+	if (iErrorMsg) delete iErrorMsg;
+	
+	iState = EError;
+	iErrorMsg = aErrMsg.Alloc/*L*/();
 	}
 
 // TTileProvider

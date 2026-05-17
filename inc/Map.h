@@ -107,6 +107,7 @@ public:
 // From MTileBitmapManagerObserver
 public:
 	void OnTileLoaded(const TTile &aTile, const CFbsBitmap *aBitmap);
+	void OnTileLoadingFailed(const TTile &aTile, TInt aErrCode);
 	
 // Custom properties and methods
 private:
@@ -114,6 +115,7 @@ private:
 	TTileProvider *iTileProvider;
 	void VisibleTiles(RArray<TTile> &aTiles); // Return list of visible tiles
 	void DrawTile(CWindowGc &aGc, const TTile &aTile, const CFbsBitmap *aBitmap);
+	void DrawError(CWindowGc &aGc, const TTile &aTile, const TDesC &aErrMsg);
 	void DrawCopyrightText(CWindowGc &aGc);
 	
 public:
@@ -443,6 +445,8 @@ public:
 	TInt GetTileBitmap(const TTile &aTile, CFbsBitmap* &aBitmap);
 	void AddToLoading(const TTile &aTile, TBool aForce = EFalse);
 	void ChangeTileProvider(TTileProvider* aTileProvider, const TDesC &aCacheDir);
+	TBool HasError(const TTile &aTile);
+	const HBufC* ErrMsg(const TTile &aTile);
 	
 // Friends
 	friend class CTileBitmapSaver;
@@ -471,13 +475,29 @@ private:
 private:
 	TTile iTile;
 	CFbsBitmap* iBitmap;
-	TBool iIsReady; // ETrue when image completely drawn and ready to use
+	
+	enum TState
+		{
+		ENotReady,	// image is not loading/processing yet
+		EReady,		// when image completely drawn and ready to use
+		EError		// error when download or process image
+		};
+	
+	TState iState;
+	HBufC* iErrorMsg; // owned
+	
 public:
 	TTime iLastAccessTime;
 
 	void CreateBitmapIfNotExistL();
-	inline TBool IsReady() { return iIsReady && iBitmap != NULL; };
-	inline void SetReady() { iIsReady = ETrue; };
+	inline TBool IsReady() { return iState == EReady && iBitmap != NULL; };
+	inline void SetReady() { iState = EReady; };
+	inline TBool HasError()
+		{ return iState == EError; };
+	
+	void SetErrorMsg/*L*/(const TDesC& aErrMsg);
+	inline const HBufC* ErrorMsg()
+			{ return iErrorMsg; };
 	
 // Getters
 public:
