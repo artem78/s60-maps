@@ -445,7 +445,7 @@ public:
 	void AddToLoading(const TTile &aTile, TBool aForce = EFalse);
 	void ChangeTileProvider(TTileProvider* aTileProvider, const TDesC &aCacheDir);
 	TBool IsTileDownloadFailed(const TTile &aTile);
-	TInt DownloadErrCode(const TTile &aTile);
+	const HBufC* DownloadErrMsg(const TTile &aTile);
 	
 // Friends
 	friend class CTileBitmapSaver;
@@ -483,17 +483,20 @@ private:
 		};
 	
 	TState iState;
+	HBufC* iErrorMsg; // owned
+	
 public:
-	TTime iLastAccessTime;
-	TInt iErrorCode;
+	TTime iLastAccessTime;	
 
 	void CreateBitmapIfNotExistL();
 	inline TBool IsReady() { return iState == EReady && iBitmap != NULL; };
 	inline void SetReady() { iState = EReady; };
 	inline TBool IsDownloadFailed()
 		{ return iState == EDownloadFailed; };
-	inline void SetDownloadFailed(TInt aErrCode)
-		{ iState = EDownloadFailed; iErrorCode = aErrCode; };
+	
+	void SetDownloadFailedState(const TDesC& aErrMsg);
+	inline const HBufC* ErrorMsg()
+			{ return iErrorMsg; };
 	
 // Getters
 public:

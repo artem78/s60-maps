@@ -183,12 +183,10 @@ void CTiledMapLayer::Draw(CWindowGc &aGc)
 		{
 		if (iBitmapMgr->IsTileDownloadFailed(tiles[idx]))
 			{
-			TInt errCode = iBitmapMgr->DownloadErrCode(tiles[idx]);
-			TBuf<64> errStr;
-			MiscUtils::ErrorToDes(errCode, errStr);
-			TBuf<128> errMsg;
+			const HBufC* errMsg1 = iBitmapMgr->DownloadErrMsg(tiles[idx]);
+			TBuf<256> errMsg;
 			//errMsg.Format(_L("Failed to download tile %S: %S (%d)"), &tiles[idx].AsDes(), &errStr, errCode);
-			errMsg.Format(_L("Error: %S (%d)"), &errStr, errCode);
+			errMsg.Format(_L("Error: %S"), errMsg1);
 			
 			DrawError(aGc, tiles[idx], errMsg);
 			continue;
@@ -2145,7 +2143,13 @@ void CTileBitmapManager::OnHTTPError(TInt aError,
 	ERROR(_L("Failed to download tile %S, error: %d"), &iLoadingTile.AsDes(), aError);
 	iObserver->OnTileLoadingFailed(iLoadingTile, aError);
 	
-	Find(iLoadingTile)->SetDownloadFailed(aError);
+	TBuf<64> errMsg;
+	MiscUtils::ErrorToDes(aError, errMsg);
+	errMsg.Append(' ');
+	errMsg.Append('(');
+	errMsg.AppendNum(aError);
+	errMsg.Append(')');
+	Find(iLoadingTile)->SetDownloadFailedState(errMsg);
 	
 	iImgDecoder->Reset();
 	iState = /*TProcessingState::*/EIdle;
@@ -2213,7 +2217,31 @@ void CTileBitmapManager::OnHTTPHeadersRecieved(
 	tmp.Copy(fieldVal.StrF().DesC());
 	DEBUG(_L("mime=%S"), &tmp);*/
 	
-	
+	TInt statusCode = aTransaction.Response().StatusCode();
+	if (statusCode >= 200 && statusCode < 300)
+		{} // Ok
+	else
+		{ // Error
+		RStringF statusStr = aTransaction.Response().StatusText();
+		/*TBuf<256> buf16;
+		buf16.Copy(statusStr.DesC());
+		DEBUG(_L("Status code: %d"), statusCode);
+		DEBUG(_L("Status string: %S"), &buf16);
+		buf16.Copy(aTransaction.Request().URI().UriDes());
+		DEBUG(_L("URL: %S"), &buf16);*/
+		TBuf<64> errMsg;
+		/*errMsg.Zero();
+		errMsg.AppendNum(statusCode);
+		errMsg.Append(' ');
+		errMsg.(statusStr.DesC());*/
+		errMsg.Copy(statusStr.DesC());
+		errMsg.Append(' ');
+		errMsg.Append('(');
+		errMsg.AppendNum(statusCode);
+		errMsg.Append(')');
+		Find(iLoadingTile)->SetDownloadFailedState(errMsg);
+		}
+
 	iImgDecoder->Reset();
 	iImgDecoder->OpenL(KNullDesC8, fieldVal.StrF().DesC());
 	}
@@ -2308,19 +2336,22 @@ TBool CTileBitmapManager::IsTileDownloadFailed(const TTile &aTile)
 		return item->IsDownloadFailed();
 	};
 
-TInt CTileBitmapManager::DownloadErrCode(const TTile &aTile)
+
+const HBufC* CTileBitmapManager::DownloadErrMsg(const TTile &aTile)
 	{
 	CTileBitmapManagerItem* item = Find(aTile);
 	if (!item)
-		return KErrNotReady;
+		return NULL;
 	else
-		return item->iErrorCode;
+		return item->ErrorMsg();
 	}
 
 // CTileBitmapManagerItem
 
 CTileBitmapManagerItem::~CTileBitmapManagerItem()
 	{
+	delete iErrorMsg;
+	
 	// FixMe: Bitmap pointer maybe still used outside when deleting
 	delete iBitmap; // iBitmap already may be NULL
 	
@@ -2348,8 +2379,7 @@ CTileBitmapManagerItem* CTileBitmapManagerItem::NewLC(const TTile &aTile)
 
 CTileBitmapManagerItem::CTileBitmapManagerItem(const TTile &aTile) :
 		iTile(aTile),
-		iState(ENotReady),
-		iErrorCode(KErrNone)
+		iState(ENotReady)
 	{
 	// No implementation required
 	}
@@ -2370,6 +2400,14 @@ void CTileBitmapManagerItem::CreateBitmapIfNotExistL()
 		TDisplayMode mode = EColor16M;
 		User::LeaveIfError(iBitmap->Create(size, mode));
 		}
+	}
+
+void CTileBitmapManagerItem::SetDownloadFailedState(const TDesC& aErrMsg)
+	{
+	if (iErrorMsg) delete iErrorMsg;
+	
+	iState = EDownloadFailed;
+	iErrorMsg = aErrMsg.Alloc/*L*/();
 	}
 
 // TTileProvider
