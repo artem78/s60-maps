@@ -183,7 +183,14 @@ void CTiledMapLayer::Draw(CWindowGc &aGc)
 		{
 		if (iBitmapMgr->IsTileDownloadFailed(tiles[idx]))
 			{
-			DrawErrorTile(aGc, tiles[idx]);
+			TInt errCode = iBitmapMgr->DownloadErrCode(tiles[idx]);
+			TBuf<64> errStr;
+			MiscUtils::ErrorToDes(errCode, errStr);
+			TBuf<128> errMsg;
+			//errMsg.Format(_L("Failed to download tile %S: %S (%d)"), &tiles[idx].AsDes(), &errStr, errCode);
+			errMsg.Format(_L("Error: %S (%d)"), &errStr, errCode);
+			
+			DrawError(aGc, tiles[idx], errMsg);
 			continue;
 			}
 		
@@ -258,7 +265,7 @@ void CTiledMapLayer::DrawTile(CWindowGc &aGc, const TTile &aTile, const CFbsBitm
 	aGc.DrawBitmap(destRect, aBitmap, srcRect);
 	}
 
-void CTiledMapLayer::DrawErrorTile(CWindowGc &aGc, const TTile &aTile)
+void CTiledMapLayer::DrawError(CWindowGc &aGc, const TTile &aTile, const TDesC &aErrMsg)
 	{
 	TCoordinate coord = MapMath::TileToGeoCoords(aTile);
 	TPoint point = iMapView->GeoCoordsToScreenCoords(coord);
@@ -270,10 +277,15 @@ void CTiledMapLayer::DrawErrorTile(CWindowGc &aGc, const TTile &aTile)
 		return;
 	
 	aGc.SetPenColor(KRgbRed);
-	aGc.SetPenSize(TSize(/*1,1*/ 3,3));
-	aGc.DrawLine(destRect.iTl, destRect.iBr);
-	aGc.DrawLine(TPoint(destRect.iTl.iX, destRect.iBr.iY), TPoint(destRect.iBr.iX, destRect.iTl.iY));
+	aGc.SetPenSize(TSize(/*1,1*/ 2,2));
+	/*aGc.DrawLine(destRect.iTl, destRect.iBr);
+	aGc.DrawLine(TPoint(destRect.iTl.iX, destRect.iBr.iY), TPoint(destRect.iBr.iX, destRect.iTl.iY));*/
 	aGc.DrawRect(destRect);
+	
+	const CFont* font = iMapView->/*DefaultFont()*/SmallFont();
+	aGc.UseFont(font);
+	aGc.DrawText(aErrMsg, destRect, (KTileSize + font->AscentInPixels()) / 2, CGraphicsContext::ECenter, 0);
+	aGc.DiscardFont();
 	}
 
 void CTiledMapLayer::OnTileLoaded(const TTile &/*aTile*/, const CFbsBitmap */*aBitmap*/)
@@ -2133,7 +2145,7 @@ void CTileBitmapManager::OnHTTPError(TInt aError,
 	ERROR(_L("Failed to download tile %S, error: %d"), &iLoadingTile.AsDes(), aError);
 	iObserver->OnTileLoadingFailed(iLoadingTile, aError);
 	
-	Find(iLoadingTile)->SetDownloadFailed();
+	Find(iLoadingTile)->SetDownloadFailed(aError);
 	
 	iImgDecoder->Reset();
 	iState = /*TProcessingState::*/EIdle;
@@ -2296,6 +2308,15 @@ TBool CTileBitmapManager::IsTileDownloadFailed(const TTile &aTile)
 		return item->IsDownloadFailed();
 	};
 
+TInt CTileBitmapManager::DownloadErrCode(const TTile &aTile)
+	{
+	CTileBitmapManagerItem* item = Find(aTile);
+	if (!item)
+		return KErrNotReady;
+	else
+		return item->iErrorCode;
+	}
+
 // CTileBitmapManagerItem
 
 CTileBitmapManagerItem::~CTileBitmapManagerItem()
@@ -2327,7 +2348,8 @@ CTileBitmapManagerItem* CTileBitmapManagerItem::NewLC(const TTile &aTile)
 
 CTileBitmapManagerItem::CTileBitmapManagerItem(const TTile &aTile) :
 		iTile(aTile),
-		iState(ENotReady)
+		iState(ENotReady),
+		iErrorCode(KErrNone)
 	{
 	// No implementation required
 	}

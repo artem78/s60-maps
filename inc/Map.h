@@ -114,7 +114,7 @@ private:
 	TTileProvider *iTileProvider;
 	void VisibleTiles(RArray<TTile> &aTiles); // Return list of visible tiles
 	void DrawTile(CWindowGc &aGc, const TTile &aTile, const CFbsBitmap *aBitmap);
-	void DrawErrorTile(CWindowGc &aGc, const TTile &aTile);
+	void DrawError(CWindowGc &aGc, const TTile &aTile, const TDesC &aErrMsg);
 	void DrawCopyrightText(CWindowGc &aGc);
 	
 public:
@@ -445,6 +445,7 @@ public:
 	void AddToLoading(const TTile &aTile, TBool aForce = EFalse);
 	void ChangeTileProvider(TTileProvider* aTileProvider, const TDesC &aCacheDir);
 	TBool IsTileDownloadFailed(const TTile &aTile);
+	TInt DownloadErrCode(const TTile &aTile);
 	
 // Friends
 	friend class CTileBitmapSaver;
@@ -484,14 +485,15 @@ private:
 	TState iState;
 public:
 	TTime iLastAccessTime;
+	TInt iErrorCode;
 
 	void CreateBitmapIfNotExistL();
 	inline TBool IsReady() { return iState == EReady && iBitmap != NULL; };
 	inline void SetReady() { iState = EReady; };
 	inline TBool IsDownloadFailed()
 		{ return iState == EDownloadFailed; };
-	inline void SetDownloadFailed()
-		{ iState = EDownloadFailed; };
+	inline void SetDownloadFailed(TInt aErrCode)
+		{ iState = EDownloadFailed; iErrorCode = aErrCode; };
 	
 // Getters
 public:
