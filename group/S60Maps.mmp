@@ -118,4 +118,4 @@ SOURCE ConsumeString.cpp JsonParser.cpp
 DEBUGLIBRARY commdb.lib
 
 SOURCEPATH ..\src
-SOURCE UpdateChecker.cpp
+SOURCE UpdateChecker.cpp MapControlLayers.cpp

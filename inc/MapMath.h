@@ -19,6 +19,10 @@
 // Constants
 const TInt KTileSize = 256; // Standard tile height and width in pixels
 const TInt KMinProjectionCoordXY = 0;
+const TReal64 KMinLatitudeMapBound = -85.051129;
+const TReal64 KMaxLatitudeMapBound = 85.051129;
+const TReal64 KMinLongitudeMapBound = -180;
+const TReal64 KMaxLongitudeMapBound = 180;
 
 
 class TTile;
