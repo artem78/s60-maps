@@ -71,26 +71,52 @@ private:
 	};
 
 
+class CTileBitmapMemCacheItem;
+
+/*	Stores in memory bitmaps for tiles. When count of stored bitmaps
+	reach maximum limit, oldest one will be deleted before insert new. */
+class CTileBitmapMemCache: public CBase
+	{
+	// Constructor & Destructor
+public:
+	CTileBitmapMemCache(TInt aLimit);
+	~CTileBitmapMemCache();
+	
+	// New
+private:
+	TInt iLimit;
+	RPointerArray<CTileBitmapMemCacheItem> iItems;
+	void /*DeleteItem()*/ DeleteLeastUsedItem(); // Deletes one most rarely used item
+	
+public:
+	CTileBitmapMemCacheItem* Find(const TTile &aTile) const;
+	///*TInt*/ void Append/*L*/(const TTile &aTile);
+	CTileBitmapMemCacheItem* Append/*L*/(const TTile &aTile);
+	// @return Error codes: KErrNotFound, KErrNotReady or KErrNone
+	TInt GetTileBitmap(const TTile &aTile, CFbsBitmap* &aBitmap);
+	void Delete(const TTile &aTile);
+	TBool HasError(const TTile &aTile);
+	const HBufC* ErrMsg(const TTile &aTile);
+	inline void /*Reset*/Clear()
+		{ iItems.ResetAndDestroy(); };
+	};
+
 
 class TTileProvider;
 
-class CTileBitmapManagerItem;
-
-// Stores and loads bitmaps for tiles. When count of stored bitmaps
-// reach maximum limit, oldest one will be deleted before insert new.
 class CTileBitmapManager : public CActive, public MHTTPClientObserver
 	{
 // Base methods
 public:
 	~CTileBitmapManager();
 	static CTileBitmapManager* NewL(MTileBitmapManagerObserver *aObserver,
-			RFs aFs, TTileProvider* aTileProvider, const TDesC &aCacheDir, TInt aLimit = 50);
+			RFs aFs, TTileProvider* aTileProvider, const TDesC &aCacheDir);
 	static CTileBitmapManager* NewLC(MTileBitmapManagerObserver *aObserver,
-			RFs aFs, TTileProvider* aTileProvider, const TDesC &aCacheDir, TInt aLimit = 50);
+			RFs aFs, TTileProvider* aTileProvider, const TDesC &aCacheDir);
 
 private:
 	CTileBitmapManager(MTileBitmapManagerObserver *aObserver, RFs aFs,
-			TTileProvider* aTileProvider, TInt aLimit);
+			TTileProvider* aTileProvider);
 	void ConstructL(const TDesC &aCacheDir);
 	
 // From CActive
@@ -109,8 +135,7 @@ public:
 // Custom properties and methods
 private:
 	MTileBitmapManagerObserver *iObserver;
-	TInt iLimit;
-	RPointerArray<CTileBitmapManagerItem> iItems;
+	CTileBitmapMemCache* iBmpMemCache;
 	/*TInt*/ void Append/*L*/(const TTile &aTile); 
 	
 	RArray<TTile> /*iItemsForLoading*/ iItemsLoadingQueue;
@@ -132,8 +157,6 @@ private:
 	CFileTreeMapper* iFileMapper;
 	CTileBitmapSaver* iSaver;
 	
-	// @return Pointer to CTileBitmapManagerItem object or NULL if not found
-	CTileBitmapManagerItem* Find(const TTile &aTile) const;
 	void StartDownloadTileL(const TTile &aTile);
 	
 	// Save tile bitmap to file
@@ -145,15 +168,19 @@ private:
 	void TileFileName(const TTile &aTile, TFileName &aFileName) const;
 	TBool IsTileFileExists(const TTile &aTile) /*const*/;
 	void DeleteTileFile(const TTile &aTile);
-	void Delete(const TTile &aTile);
 	
 public:
+	/////////////
 	// @return Error codes: KErrNotFound, KErrNotReady or KErrNone
-	TInt GetTileBitmap(const TTile &aTile, CFbsBitmap* &aBitmap);
+	inline TInt GetTileBitmap(const TTile &aTile, CFbsBitmap* &aBitmap){return iBmpMemCache->GetTileBitmap(aTile, aBitmap);};
+	////////////////
 	void AddToLoading(const TTile &aTile, TBool aForce = EFalse);
 	void ChangeTileProvider(TTileProvider* aTileProvider, const TDesC &aCacheDir);
-	TBool HasError(const TTile &aTile);
-	const HBufC* ErrMsg(const TTile &aTile);
+	
+	///////////////
+	inline TBool HasError(const TTile &aTile){return iBmpMemCache->HasError(aTile);};
+	inline const HBufC* ErrMsg(const TTile &aTile) {return iBmpMemCache->ErrMsg(aTile);};
+	/////////////////
 	
 // Friends
 	friend class CTileBitmapSaver;
@@ -161,21 +188,21 @@ public:
 
 
 /* Links Tile`s x,y,z with CFbsBitmap loaded to image server.
- * Used in CTileBitmapManager class.
+ * Used in CTileBitmapMemCache class.
  * 
  * Initially bitmap pointer is NULL. You need to call CreateBitmapIfNotExistL()
  * before start drawing bitmap. After drawing complete, you need to call SetReady().
  */
-class CTileBitmapManagerItem : public CBase
+class CTileBitmapMemCacheItem : public CBase
 	{
 // Base methods
 public:
-	~CTileBitmapManagerItem();
-	static CTileBitmapManagerItem* NewL(const TTile &aTile);
-	static CTileBitmapManagerItem* NewLC(const TTile &aTile);
+	~CTileBitmapMemCacheItem();
+	static CTileBitmapMemCacheItem* NewL(const TTile &aTile);
+	static CTileBitmapMemCacheItem* NewLC(const TTile &aTile);
 
 private:
-	CTileBitmapManagerItem(const TTile &aTile);
+	CTileBitmapMemCacheItem(const TTile &aTile);
 	void ConstructL();
 
 // Custom properties and methods
