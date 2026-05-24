@@ -88,7 +88,7 @@ void CMapLayerDebugInfo::DrawInfoL(CWindowGc &aGc)
 			static_cast<const TPositionSatelliteInfoExtended*>(appUi->SatelliteInfo());
 	
 	TReal gdop = KNaN;
-	if (appUi->PositioningState() == EPositionRecieved && satInfo)
+	if (appUi->IsPositioningAvailable() && satInfo)
 		{
 		gdop = satInfo->GeometricDoP();
 		}
