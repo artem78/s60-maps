@@ -43,7 +43,9 @@ public:
 	static TTile ProjectionPointToTile(const TPoint &aPoint, TZoom aZoom);
 	static TPoint TileToProjectionPoint(const TTile &aTile);
 	static inline TInt MaxProjectionCoordXY(TZoom aZoom)
-		{ return MathUtils::Pow2(aZoom) * KTileSize - 1; }
+		{ return MathUtils::Pow2(aZoom) * KTileSize - 1; };
+	static inline TInt MaxTileXY(TZoom aZoom)
+		{ return MathUtils::Pow2(aZoom) - 1; };
 	};
 
 class TTile
@@ -60,6 +62,8 @@ public:
 	void AsDes(TDes8 &aDes) const;
 	const TBufC<32> AsDes() const;
 	const TBufC8<32> AsDes8() const;
+	
+	//TBool IsOutOfRange();
 	};
 
 #endif /* MAPMATH_H_ */

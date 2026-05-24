@@ -176,3 +176,9 @@ const TBufC8<32> TTile::AsDes8() const
 	buff8.Format(KFormat, (TInt) iX, (TInt) iY, (TInt)iZ);
 	return buff8;
 	}
+
+/*TBool TTile::IsOutOfRange()
+	{
+	TInt m = MapMath::MaxTileXY(iZ);
+	return iX > m or iY > m;
+	}*/

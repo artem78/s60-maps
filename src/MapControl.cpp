@@ -512,17 +512,30 @@ void CMapControl::Move(const TPoint &aPoint, TBool aSavePos)
 		viewRect.SetRect(Rect().iTl, Rect().iBr);
 		viewRect.Move(iTopLeftPosition);
 		
+		TInt dopuskX, dopuskY;
+		TInt projWH = maxXY + 1;
+		if (viewRect.Width() < projWH && viewRect.Height() < projWH)
+			{ // Map larger than screen, disallow goes out of bounds
+			dopuskX = 0;
+			dopuskY = 0;
+			}
+		else
+			{ // Map smaller than screen height or width, allow goes out of bounds with some value
+			dopuskX = viewRect.Width() / 2;
+			dopuskY = viewRect.Height() / 2;
+			}
+		
 		// Correct longitude when it goes out of bounds
-		if (viewRect.iTl.iY < 0)
-			iTopLeftPosition.iY = 0;
-		else if (viewRect.iBr.iY > maxXY)
-			iTopLeftPosition.iY = maxXY - viewRect.Height() + 1;
+		if (viewRect.iTl.iY < -dopuskY)
+			iTopLeftPosition.iY = -dopuskY;
+		else if (viewRect.iBr.iY > maxXY + dopuskY)
+			iTopLeftPosition.iY = maxXY + dopuskY - viewRect.Height() + 1;
 		
 		// Correct latitude when it goes out of bounds
-		if (viewRect.iTl.iX < 0)
-			iTopLeftPosition.iX = 0;
-		else if (viewRect.iBr.iX > maxXY)
-			iTopLeftPosition.iX = maxXY - viewRect.Width() + 1;
+		if (viewRect.iTl.iX < -dopuskX)
+			iTopLeftPosition.iX = -dopuskX;
+		else if (viewRect.iBr.iX > maxXY + dopuskX)
+			iTopLeftPosition.iX = maxXY + dopuskX - viewRect.Width() + 1;
 		
 		if (iTopLeftPosition != oldPoint) // Check if position really changed
 			DrawDelayed();
