@@ -232,9 +232,9 @@ void CTiledMapLayer::VisibleTiles(RArray<TTile> &aTiles)
 	//DEBUG(_L("VisibleTiles:   tl=%S  br=%S"), &topLeftTile.AsDes(), &bottomRightTile.AsDes());
 	TUint x, y, maxXY;
 	maxXY = MapMath::MaxTileXY(iMapView->GetZoom());
-	for (y = topLeftTile.iY; y <= Min(bottomRightTile.iY, maxXY); y++)
+	for (y = topLeftTile.iY; y <= bottomRightTile.iY; y++)
 		{
-		for (x = topLeftTile.iX; x <= Min(bottomRightTile.iX, maxXY); x++)
+		for (x = topLeftTile.iX; x <= bottomRightTile.iX; x++)
 			{
 			TTile tile;
 			tile.iX = x;
@@ -545,9 +545,9 @@ void CTileBorderAndXYZLayer::VisibleTiles(RArray<TTile> &aTiles)
 	iMapView->Bounds(topLeftTile, bottomRightTile);
 	TUint x, y, maxXY;
 	maxXY = MapMath::MaxTileXY(iMapView->GetZoom());
-	for (y = topLeftTile.iY; y <= Min(bottomRightTile.iY, maxXY); y++)
+	for (y = topLeftTile.iY; y <= bottomRightTile.iY; y++)
 		{
-		for (x = topLeftTile.iX; x <= Min(bottomRightTile.iX, maxXY); x++)
+		for (x = topLeftTile.iX; x <= bottomRightTile.iX; x++)
 			{
 			TTile tile;
 			tile.iX = x;

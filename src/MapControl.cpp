@@ -736,8 +736,24 @@ TPoint CMapControl::ScreenCoordsToProjectionCoords(const TPoint &aPoint) const
 
 void CMapControl::Bounds(TBounds &aCoordRect) const
 	{
-	aCoordRect.iTlCoord = ScreenCoordsToGeoCoords(Rect().iTl);
-	aCoordRect.iBrCoord = ScreenCoordsToGeoCoords(Rect().iBr - TPoint(1, 1));
+	/*aCoordRect.iTlCoord = ScreenCoordsToGeoCoords(Rect().iTl);
+	aCoordRect.iBrCoord = ScreenCoordsToGeoCoords(Rect().iBr - TPoint(1, 1));*/
+	
+	// fix possible out of range
+	TPoint tl = ScreenCoordsToProjectionCoords(Rect().iTl);
+	TPoint br = ScreenCoordsToProjectionCoords(Rect().iBr - TPoint(1, 1));
+	const /*TUint*/ TInt maxProjXY = MapMath::MaxProjectionCoordXY(GetZoom());
+	if (tl.iX < 0)
+		tl.iX = 0;
+	if (tl.iY < 0)
+		tl.iY = 0;
+	if (br.iX > maxProjXY)
+		br.iX = maxProjXY;
+	if (br.iY > maxProjXY)
+		br.iY = maxProjXY;
+	br += TPoint(1,1);
+	aCoordRect.iTlCoord = MapMath::ProjectionPointToGeoCoords(tl, GetZoom());
+	aCoordRect.iBrCoord = MapMath::ProjectionPointToGeoCoords(br, GetZoom());
 	}
 
 void CMapControl::Bounds(TTile &aTopLeftTile, TTile &aBottomRightTile) const
@@ -746,6 +762,18 @@ void CMapControl::Bounds(TTile &aTopLeftTile, TTile &aBottomRightTile) const
 	TPoint bottomRightProjection = ScreenCoordsToProjectionCoords(Rect().iBr - TPoint(1, 1));
 	aTopLeftTile = MapMath::ProjectionPointToTile(topLeftProjection, GetZoom());
 	aBottomRightTile = MapMath::ProjectionPointToTile(bottomRightProjection, GetZoom());
+	
+	// fix possible out of range
+	const TUint maxTileXY = MapMath::MaxTileXY(GetZoom());
+	const TInt maxProjXY = MapMath::MaxProjectionCoordXY(GetZoom());
+	if (topLeftProjection.iX < 0)
+		aTopLeftTile.iX = 0;
+	if (topLeftProjection.iY < 0)
+		aTopLeftTile.iY = 0;
+	if (bottomRightProjection.iX > maxProjXY)
+		aBottomRightTile.iX = maxTileXY;
+	if (bottomRightProjection.iY > maxProjXY)
+		aBottomRightTile.iY = maxTileXY;
 	}
 
 void CMapControl::UpdateUserPosition()
