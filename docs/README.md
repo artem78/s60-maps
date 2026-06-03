@@ -140,6 +140,11 @@ This solution is easier to use and enabled by default. All http**S** requests pa
 
 You may check proxy status [here](http://s60maps.publicvm.com:8088/proxy/status).
 
+If you have any problems using https proxy open program settings and try to set ip address instead of hostname in proxy url:
+```
+http://37.77.105.179:8088/proxy?url=
+```
+
 ## How to build
 
 Read [docs/COMPILING.md](/docs/COMPILING.md)
