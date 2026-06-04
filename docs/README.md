@@ -82,7 +82,7 @@ Map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wiki/Symb
 
 ![](images/from_vyacheslav/Screenshot0004.jpg) ![](images/from_vyacheslav/Screenshot0005.jpg) ![](images/from_vyacheslav/Screenshot0007.jpg)
 
-[<img src="images/s60v30_emulator.png" alt="Running in emulator for S60v3.0 in Windows" height="300">](images/s60v30_emulator.png)
+[<img src="images/s60v30_emulator.png" alt="Running in emulator for S60v3.0 in Windows" height="300">](images/s60v30_emulator.png) [<img src="images/s60v5_emulator.png" alt="Running in emulator for S60v5 in Windows" height="300">](images/s60v5_emulator.png)
 
 ## Supported devices
 
