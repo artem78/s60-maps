@@ -27,8 +27,8 @@ void MTileBitmapManagerObserver::OnTileLoadingFailed(const TTile &/*aTile*/, TIn
 
 _LIT(KSaverThreadName, "TileSaverThread");
 
-CTileBitmapSaver::CTileBitmapSaver(CTileBitmapManager* aMgr) :
-		iMgr(aMgr),
+CTileBitmapSaver::CTileBitmapSaver(CTileDiskCache* aDiskCache) :
+		iDiskCache(aDiskCache),
 		iThreadId(0),
 		iItemsInQueue(0)
 	{
@@ -67,17 +67,17 @@ CTileBitmapSaver::~CTileBitmapSaver()
 	iQueue.Close();
 	}
 
-CTileBitmapSaver* CTileBitmapSaver::NewLC(CTileBitmapManager* aMgr)
+CTileBitmapSaver* CTileBitmapSaver::NewLC(CTileDiskCache* aDiskCache)
 	{
-	CTileBitmapSaver* self = new (ELeave) CTileBitmapSaver(aMgr);
+	CTileBitmapSaver* self = new (ELeave) CTileBitmapSaver(aDiskCache);
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	return self;
 	}
 
-CTileBitmapSaver* CTileBitmapSaver::NewL(CTileBitmapManager* aMgr)
+CTileBitmapSaver* CTileBitmapSaver::NewL(CTileDiskCache* aDiskCache)
 	{
-	CTileBitmapSaver* self = CTileBitmapSaver::NewLC(aMgr);
+	CTileBitmapSaver* self = CTileBitmapSaver::NewLC(aDiskCache);
 	CleanupStack::Pop(); // self;
 	return self;
 	}
@@ -185,7 +185,7 @@ TInt CTileBitmapSaver::ThreadFunction(TAny* anArg)
 void CTileBitmapSaver::SaveL(const TSaverQueryItem &anItem, RFs &aFs)
 	{
 	TFileName tileFileName;
-	iMgr->TileFileName(anItem.iTile, tileFileName);
+	iDiskCache->TileFileName(anItem.iTile, tileFileName);
 	BaflUtils::EnsurePathExistsL(aFs, tileFileName);
 	
 	RFile file;
@@ -332,11 +332,10 @@ const HBufC* CTileBitmapMemCache::ErrMsg(const TTile &aTile)
 // CTileBitmapManager
 
 CTileBitmapManager::CTileBitmapManager(MTileBitmapManagerObserver *aObserver,
-		RFs aFs, TTileProvider* aTileProvider) :
+		TTileProvider* aTileProvider) :
 		CActive(EPriorityStandard),
 		iObserver(aObserver),
 		iState(/*TProcessingState::*/EIdle),
-		iFs(aFs),
 		iTileProvider(aTileProvider)
 	{
 	// No implementation required
@@ -344,9 +343,8 @@ CTileBitmapManager::CTileBitmapManager(MTileBitmapManagerObserver *aObserver,
 
 CTileBitmapManager::~CTileBitmapManager()
 	{
-	delete iSaver;
+	delete iDiskCache;
 	// cancel()
-	delete iFileMapper;
 	delete iImgDecoder;
 	iItemsLoadingQueue.Close();
 	delete iBmpMemCache;
@@ -356,9 +354,9 @@ CTileBitmapManager::~CTileBitmapManager()
 CTileBitmapManager* CTileBitmapManager::NewLC(MTileBitmapManagerObserver *aObserver,
 		RFs aFs, TTileProvider* aTileProvider, const TDesC &aCacheDir)
 	{
-	CTileBitmapManager* self = new (ELeave) CTileBitmapManager(aObserver, aFs, aTileProvider);
+	CTileBitmapManager* self = new (ELeave) CTileBitmapManager(aObserver, aTileProvider);
 	CleanupStack::PushL(self);
-	self->ConstructL(aCacheDir);
+	self->ConstructL(aCacheDir, aFs);
 	return self;
 	}
 
@@ -370,7 +368,7 @@ CTileBitmapManager* CTileBitmapManager::NewL(MTileBitmapManagerObserver *aObserv
 	return self;
 	}
 
-void CTileBitmapManager::ConstructL(const TDesC &aCacheDir)
+void CTileBitmapManager::ConstructL(const TDesC &aCacheDir, RFs aFs)
 	{
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
 #ifdef __WINSCW__
@@ -390,11 +388,9 @@ void CTileBitmapManager::ConstructL(const TDesC &aCacheDir)
 	iBmpMemCache = new (ELeave) CTileBitmapMemCache(KMaxItemsInMemCache);
 	iItemsLoadingQueue = RArray<TTile>(KMaxItemsInDownloadQueue);
 	
-	iImgDecoder = CBufferedImageDecoder::NewL(iFs);
+	iImgDecoder = CBufferedImageDecoder::NewL(aFs);
 	
-	iFileMapper = CFileTreeMapper::NewL(aCacheDir, 2, 1, ETrue);
-	iSaver = CTileBitmapSaver::NewL(this);
-	// ToDo: Start saver thread only when needed (at first downloaded tile)
+	iDiskCache = CTileDiskCache::NewL(aFs, aCacheDir);
 	
 	CActiveScheduler::Add(this);
 	}
@@ -408,7 +404,7 @@ void CTileBitmapManager::AddToLoading(const TTile &aTile, TBool aForce)
 		DEBUG(_L("Try to reload %S"), &aTile.AsDes());
 		
 		// Remove tile from disk and bitmap cache
-		DeleteTileFile(aTile);
+		iDiskCache->DeleteTileFile(aTile);
 		iBmpMemCache->Delete(aTile);
 		
 		Append(aTile);
@@ -430,10 +426,10 @@ void CTileBitmapManager::AddToLoading(const TTile &aTile, TBool aForce)
 	if (iState == EIdle)
 		{
 		// Try to find on disk first
-		if (appUi->Settings()->iUseDiskCache && IsTileFileExists(aTile))
+		if (appUi->Settings()->iUseDiskCache && iDiskCache->IsTileFileExists(aTile))
 			{
 			item->CreateBitmapIfNotExistL();
-			TRAPD(r, LoadBitmapL(aTile, item->Bitmap()));
+			TRAPD(r, iDiskCache->LoadBitmapL(aTile, item->Bitmap()));
 			if (r == KErrNone)
 				{
 				item->SetReady();
@@ -517,7 +513,7 @@ void CTileBitmapManager::RunL()
 		
 		if (appUi->Settings()->iUseDiskCache)
 			{
-			SaveBitmapInBackgroundL(iLoadingTile, item->Bitmap());
+			iDiskCache->SaveBitmapInBackgroundL(iLoadingTile, item->Bitmap());
 			}
 		}
 	else
@@ -724,46 +720,6 @@ void CTileBitmapManager::OnHTTPHeadersRecieved(
 	iImgDecoder->OpenL(KNullDesC8, fieldVal.StrF().DesC());
 	}
 
-void CTileBitmapManager::SaveBitmapInBackgroundL(const TTile &aTile, /*const*/ CFbsBitmap *aBitmap)
-	{
-	iSaver->AppendL(aTile, aBitmap);
-	}
-
-void CTileBitmapManager::LoadBitmapL(const TTile &aTile, CFbsBitmap *aBitmap)
-	{	
-	TFileName tileFileName;
-	TileFileName(aTile, tileFileName);
-	
-	RFile file;
-	User::LeaveIfError(file.Open(iFs, tileFileName, EFileRead | EFileShareReadersOnly));
-	CleanupClosePushL(file);
-	User::LeaveIfError(aBitmap->Load(file));	
-	CleanupStack::PopAndDestroy(&file);
-	INFO(_L("Bitmap for %S sucessfully loaded from file \"%S\""), &aTile.AsDes(), &tileFileName);
-	}
-
-TBool CTileBitmapManager::IsTileFileExists(const TTile &aTile) /*const*/
-	{
-	TFileName tileFileName;
-	TileFileName(aTile, tileFileName);
-	return BaflUtils::FileExists(iFs, tileFileName);
-	}
-
-void CTileBitmapManager::TileFileName(const TTile &aTile, TFileName &aFileName) const
-	{
-	_LIT(KMBMExtension, ".mbm");
-	
-	/*TFileName*/ TBuf<32> originalFileName;
-	originalFileName.AppendNum(aTile.iZ);
-	originalFileName.Append('_');
-	originalFileName.AppendNum(aTile.iX);
-	originalFileName.Append('_');
-	originalFileName.AppendNum(aTile.iY);
-	originalFileName.Append(KMBMExtension);
-	
-	iFileMapper->GetFilePath(originalFileName, aFileName);
-	}
-
 void CTileBitmapManager::ChangeTileProvider(TTileProvider* aTileProvider,
 		const TDesC &aCacheDir)
 	{
@@ -779,18 +735,7 @@ void CTileBitmapManager::ChangeTileProvider(TTileProvider* aTileProvider,
 	//iItems.ResetAndDestroy();
 	iBmpMemCache->Clear();
 	iTileProvider = aTileProvider;
-	iFileMapper->SetBaseDir(aCacheDir);
-	}
-
-void CTileBitmapManager::DeleteTileFile(const TTile &aTile)
-	{
-	TFileName tileFileName;
-	TileFileName(aTile, tileFileName);
-	/*TInt r =*/ iFs.Delete(tileFileName);
-	/*if (r != KErrNone)
-		{
-		
-		}*/
+	iDiskCache->SetCacheDir(aCacheDir);
 	}
 
 
@@ -1073,4 +1018,80 @@ TCoordinateEx::TCoordinateEx(const TCoordinate &aCoord) /*:
 	iAltitude  = aCoord.Altitude();
 	iCourse    = KNaN;
 	iHorAccuracy = KNaN;
+	}
+
+
+// CTileDiskCache
+
+CTileDiskCache* CTileDiskCache::NewL(RFs &aFs, const TDesC &aCacheDir)
+	{
+	CTileDiskCache* self = new (ELeave) CTileDiskCache(aFs);
+	CleanupStack::PushL(self);
+	self->ConstructL(aCacheDir);
+	CleanupStack::Pop(); // self;
+	return self;
+	}
+
+CTileDiskCache::CTileDiskCache(RFs &aFs)
+		:iFs(aFs)
+	{
+	}
+
+void CTileDiskCache::ConstructL(const TDesC &aCacheDir)
+	{
+	iFileMapper = CFileTreeMapper::NewL(aCacheDir, 2, 1, ETrue);
+	iSaver = CTileBitmapSaver::NewL(this);
+	// ToDo: Start saver thread only when needed (at first downloaded tile)
+	}
+
+CTileDiskCache::~CTileDiskCache()
+	{
+	delete iSaver;
+	delete iFileMapper;
+	}
+
+void CTileDiskCache::LoadBitmapL(const TTile &aTile, CFbsBitmap *aBitmap)
+	{	
+	TFileName tileFileName;
+	TileFileName(aTile, tileFileName);
+	
+	RFile file;
+	User::LeaveIfError(file.Open(iFs, tileFileName, EFileRead | EFileShareReadersOnly));
+	CleanupClosePushL(file);
+	User::LeaveIfError(aBitmap->Load(file));	
+	CleanupStack::PopAndDestroy(&file);
+	INFO(_L("Bitmap for %S sucessfully loaded from file \"%S\""), &aTile.AsDes(), &tileFileName);
+	}
+
+TBool CTileDiskCache::IsTileFileExists(const TTile &aTile) /*const*/
+	{
+	TFileName tileFileName;
+	TileFileName(aTile, tileFileName);
+	return BaflUtils::FileExists(iFs, tileFileName);
+	}
+
+void CTileDiskCache::TileFileName(const TTile &aTile, TFileName &aFileName) const
+	{
+	_LIT(KMBMExtension, ".mbm");
+	
+	/*TFileName*/ TBuf<32> originalFileName;
+	originalFileName.AppendNum(aTile.iZ);
+	originalFileName.Append('_');
+	originalFileName.AppendNum(aTile.iX);
+	originalFileName.Append('_');
+	originalFileName.AppendNum(aTile.iY);
+	originalFileName.Append(KMBMExtension);
+	
+	iFileMapper->GetFilePath(originalFileName, aFileName);
+	}
+
+void CTileDiskCache::DeleteTileFile(const TTile &aTile)
+	{
+	TFileName tileFileName;
+	TileFileName(aTile, tileFileName);
+	/*TInt r =*/ iFs.Delete(tileFileName);
+	/*if (r != KErrNone)
+		{
+		
+		}*/
 	}

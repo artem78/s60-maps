@@ -44,16 +44,17 @@ public:
 // Class for save tile bitmaps in separate thread
 // for improve bad performance on some phones
 
+class CTileDiskCache;
 class CTileBitmapSaver: public CBase
 	{
 	// Constructors/destructors
 public:
 	~CTileBitmapSaver();
-	static CTileBitmapSaver* NewL(CTileBitmapManager* aMgr);
-	static CTileBitmapSaver* NewLC(CTileBitmapManager* aMgr);
+	static CTileBitmapSaver* NewL(CTileDiskCache* aDiskCache);
+	static CTileBitmapSaver* NewLC(CTileDiskCache* aDiskCache);
 
 private:
-	CTileBitmapSaver(CTileBitmapManager* aMgr);
+	CTileBitmapSaver(CTileDiskCache* aDiskCache);
 	void ConstructL();
 	
 	// Custom
@@ -61,7 +62,7 @@ public:
 	void AppendL(const TTile &aTile, CFbsBitmap *aBitmap);
 	
 private:
-	CTileBitmapManager* iMgr;
+	CTileDiskCache* iDiskCache;
 	RMsgQueue<TSaverQueryItem> iQueue;
 	TInt iItemsInQueue;
 	TThreadId iThreadId;
@@ -103,8 +104,10 @@ public:
 
 
 class TTileProvider;
+class CTileDiskCache;
 
 class CTileBitmapManager : public CActive, public MHTTPClientObserver
+// todo: rename to CTileDownloader in the future
 	{
 // Base methods
 public:
@@ -115,9 +118,9 @@ public:
 			RFs aFs, TTileProvider* aTileProvider, const TDesC &aCacheDir);
 
 private:
-	CTileBitmapManager(MTileBitmapManagerObserver *aObserver, RFs aFs,
+	CTileBitmapManager(MTileBitmapManagerObserver *aObserver,
 			TTileProvider* aTileProvider);
-	void ConstructL(const TDesC &aCacheDir);
+	void ConstructL(const TDesC &aCacheDir, RFs aFs);
 	
 // From CActive
 	void RunL();
@@ -134,14 +137,13 @@ public:
 	
 // Custom properties and methods
 private:
-	MTileBitmapManagerObserver *iObserver;
+	MTileBitmapManagerObserver* iObserver;
 	CTileBitmapMemCache* iBmpMemCache;
 	/*TInt*/ void Append/*L*/(const TTile &aTile); 
 	
 	RArray<TTile> /*iItemsForLoading*/ iItemsLoadingQueue;
 	CHTTPClient2* iHTTPClient;
 	TTileProvider* iTileProvider;
-	//TFileName iCacheDir;
 	//TBool iIsLoading;
 	enum TProcessingState
 		{
@@ -151,23 +153,11 @@ private:
 		};
 	TProcessingState iState;
 	CBufferedImageDecoder* iImgDecoder;
-	RFs iFs;
 	TTile iLoadingTile;
 	TBool iIsOfflineMode;
-	CFileTreeMapper* iFileMapper;
-	CTileBitmapSaver* iSaver;
+	CTileDiskCache* iDiskCache;
 	
 	void StartDownloadTileL(const TTile &aTile);
-	
-	// Save tile bitmap to file
-	void SaveBitmapInBackgroundL(const TTile &aTile, /*const*/ CFbsBitmap *aBitmap);
-	
-	// Restore tile bitmap from file
-	void LoadBitmapL(const TTile &aTile, CFbsBitmap *aBitmap) /*const*/;
-	
-	void TileFileName(const TTile &aTile, TFileName &aFileName) const;
-	TBool IsTileFileExists(const TTile &aTile) /*const*/;
-	void DeleteTileFile(const TTile &aTile);
 	
 public:
 	/////////////
@@ -181,9 +171,6 @@ public:
 	inline TBool HasError(const TTile &aTile){return iBmpMemCache->HasError(aTile);};
 	inline const HBufC* ErrMsg(const TTile &aTile) {return iBmpMemCache->ErrMsg(aTile);};
 	/////////////////
-	
-// Friends
-	friend class CTileBitmapSaver;
 	};
 
 
@@ -305,6 +292,37 @@ public:
 		{ iHorAccuracy = aHorAccuracy; }
 	
 	//operator TCoordinate() const;
+	};
+
+
+// Reads tiles from the file system (cache on disk).
+class CTileDiskCache /*CTileFSCache*/ : public CBase
+	{
+	// Constructor / Destructor
+public:
+	static CTileDiskCache* NewL(RFs &aFs, const TDesC &aCacheDir);
+	~CTileDiskCache();
+
+private:
+	CTileDiskCache(RFs &aFs);
+	void ConstructL(const TDesC &aCacheDir);
+	
+	// New members
+private:
+	RFs iFs;
+	CTileBitmapSaver* iSaver;
+	CFileTreeMapper* iFileMapper;
+	
+public:
+	void LoadBitmapL /*LoadBitmapFromFileL*/ /*ReadBitmapFromDiskL*/ (const TTile &aTile, CFbsBitmap *aBitmap) /*const*/;
+	inline void SaveBitmapInBackgroundL(const TTile &aTile, /*const*/ CFbsBitmap *aBitmap)
+		{ iSaver->AppendL(aTile, aBitmap); };
+	void TileFileName(const TTile &aTile, TFileName &aFileName) const;
+	TBool IsTileFileExists(const TTile &aTile) /*const*/;
+	void DeleteTileFile(const TTile &aTile);
+	inline void SetCacheDir(const TDesC &aCacheDir)
+		{ iFileMapper->SetBaseDir(aCacheDir); };
+
 	};
 
 
