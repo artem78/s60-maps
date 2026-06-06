@@ -88,8 +88,8 @@ public:
 	
 // Custom properties and methods
 private:
-	CTileBitmapManager *iBitmapMgr;
-	TTileProvider *iTileProvider;
+	CTileBitmapManager* iBitmapMgr;
+	TTileProvider* iTileProvider;
 	void VisibleTiles(RArray<TTile> &aTiles); // Return list of visible tiles
 	void DrawTile(CWindowGc &aGc, const TTile &aTile, const CFbsBitmap *aBitmap);
 	void DrawError(CWindowGc &aGc, const TTile &aTile, const TDesC &aErrMsg);
