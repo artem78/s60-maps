@@ -1063,7 +1063,7 @@ void CTileDiskCache::LoadBitmapL(const TTile &aTile, CFbsBitmap *aBitmap)
 	INFO(_L("Bitmap for %S sucessfully loaded from file \"%S\""), &aTile.AsDes(), &tileFileName);
 	}
 
-TBool CTileDiskCache::IsTileFileExists(const TTile &aTile) /*const*/
+TBool CTileDiskCache::IsTileFileExists(const TTile &aTile) const
 	{
 	TFileName tileFileName;
 	TileFileName(aTile, tileFileName);

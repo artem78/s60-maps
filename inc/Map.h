@@ -318,7 +318,7 @@ public:
 	inline void SaveBitmapInBackgroundL(const TTile &aTile, /*const*/ CFbsBitmap *aBitmap)
 		{ iSaver->AppendL(aTile, aBitmap); };
 	void TileFileName(const TTile &aTile, TFileName &aFileName) const;
-	TBool IsTileFileExists(const TTile &aTile) /*const*/;
+	TBool IsTileFileExists(const TTile &aTile) const;
 	void DeleteTileFile(const TTile &aTile);
 	inline void SetCacheDir(const TDesC &aCacheDir)
 		{ iFileMapper->SetBaseDir(aCacheDir); };
