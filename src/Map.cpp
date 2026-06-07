@@ -526,14 +526,7 @@ void CTileBitmapManager::RunL()
 	iImgDecoder->Reset();
 	iState = /*TProcessingState::*/EIdle;
 	
-	// Start download next tile in queue
-	if (iItemsLoadingQueue.Count())
-		{
-		TTile tile = iItemsLoadingQueue[0]; 
-		iItemsLoadingQueue.Remove(0);
-		
-		StartDownloadTileL(tile);
-		}
+	GoToNextTileInQueueL();
 	}
 
 /*TInt CTileBitmapManager::RunError(TInt aError)
@@ -662,15 +655,8 @@ void CTileBitmapManager::OnHTTPError(TInt aError,
 			
 		default:
 			{
-			// Start download next tile in queue
-			if (iItemsLoadingQueue.Count())
-				{
-				TTile tile = iItemsLoadingQueue[0]; 
-				iItemsLoadingQueue.Remove(0);
-				
-				StartDownloadTileL(tile);
-				}
-
+			GoToNextTileInQueueL();
+			
 			break;
 			}
 		}
@@ -736,6 +722,18 @@ void CTileBitmapManager::ChangeTileProvider(TTileProvider* aTileProvider,
 	iBmpMemCache->Clear();
 	iTileProvider = aTileProvider;
 	iDiskCache->SetCacheDir(aCacheDir);
+	}
+
+void CTileBitmapManager::GoToNextTileInQueueL()
+	{
+	// Start download next tile in queue
+	if (iItemsLoadingQueue.Count())
+		{
+		TTile tile = iItemsLoadingQueue[0]; 
+		iItemsLoadingQueue.Remove(0);
+		
+		StartDownloadTileL(tile);
+		}
 	}
 
 

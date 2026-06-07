@@ -158,6 +158,7 @@ private:
 	CTileDiskCache* iDiskCache;
 	
 	void StartDownloadTileL(const TTile &aTile);
+	void GoToNextTileInQueueL();
 	
 public:
 	/////////////
