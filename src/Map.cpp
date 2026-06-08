@@ -17,7 +17,7 @@
 
 
 // MTileBitmapManagerObserver
-void MTileBitmapManagerObserver::OnTileLoadingFailed(const TTile &/*aTile*/, TInt /*aErrCode*/)
+void MTileBitmapManagerObserver::OnTileLoadingFailed()
 	{
 	// No any action by default
 	}
@@ -509,7 +509,7 @@ void CTileBitmapManager::RunL()
 		item->SetReady();
 		
 		INFO(_L("Tile %S downloaded and decoded"), &iLoadingTile.AsDes());
-		iObserver->OnTileLoaded(iLoadingTile, item->Bitmap());
+		iObserver->OnTileLoaded();
 		
 		if (appUi->Settings()->iUseDiskCache)
 			{
@@ -519,7 +519,7 @@ void CTileBitmapManager::RunL()
 	else
 		{
 		ERROR(_L("Image decoding error: %d"), iStatus.Int());
-		iObserver->OnTileLoadingFailed(iLoadingTile, iStatus.Int());
+		iObserver->OnTileLoadingFailed();
 		}
 	
 	
@@ -610,7 +610,7 @@ void CTileBitmapManager::OnHTTPError(TInt aError,
 	{
 	//ERROR(_L("HTTP error: %d"), aError);
 	ERROR(_L("Failed to download tile %S, error: %d"), &iLoadingTile.AsDes(), aError);
-	iObserver->OnTileLoadingFailed(iLoadingTile, aError);
+	iObserver->OnTileLoadingFailed();
 	
 	
 	_LIT(KHttpErrMsg,"HTTP error");
@@ -695,7 +695,7 @@ void CTileBitmapManager::OnHTTPHeadersRecieved(
 		errMsg.Append(')');
 		SetErrorForProcessingTile(errMsg);
 		
-		iObserver->OnTileLoadingFailed(iLoadingTile, statusCode);
+		iObserver->OnTileLoadingFailed();
 		}
 
 	iImgDecoder->Reset();

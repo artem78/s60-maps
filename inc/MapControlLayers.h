@@ -83,8 +83,8 @@ public:
 	
 // From MTileBitmapManagerObserver
 public:
-	void OnTileLoaded(const TTile &aTile, const CFbsBitmap *aBitmap);
-	void OnTileLoadingFailed(const TTile &aTile, TInt aErrCode);
+	void OnTileLoaded();
+	void OnTileLoadingFailed();
 	
 // Custom properties and methods
 private:

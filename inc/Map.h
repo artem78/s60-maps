@@ -26,8 +26,8 @@ class CTileBitmapManager;
 class MTileBitmapManagerObserver
 	{
 public:
-	virtual void OnTileLoaded(const TTile &aTile, const CFbsBitmap *aBitmap) = 0;
-	virtual void OnTileLoadingFailed(const TTile &aTile, TInt aErrCode);
+	virtual void OnTileLoaded() = 0;
+	virtual void OnTileLoadingFailed();
 	};
 
 

@@ -299,13 +299,13 @@ void CTiledMapLayer::DrawError(CWindowGc &aGc, const TTile &aTile, const TDesC &
 	aGc.Reset();
 	}
 
-void CTiledMapLayer::OnTileLoaded(const TTile &/*aTile*/, const CFbsBitmap */*aBitmap*/)
+void CTiledMapLayer::OnTileLoaded()
 	{
 	//iMapView->DrawDeferred();
 	iMapView->DrawNow();
 	}
 
-void CTiledMapLayer::OnTileLoadingFailed(const TTile &/*aTile*/, TInt /*aErrCode*/)
+void CTiledMapLayer::OnTileLoadingFailed()
 	{
 	iMapView->DrawNow();
 	}
