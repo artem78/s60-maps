@@ -612,13 +612,9 @@ void CTileBitmapManager::OnHTTPError(TInt aError,
 	ERROR(_L("Failed to download tile %S, error: %d"), &iLoadingTile.AsDes(), aError);
 	iObserver->OnTileLoadingFailed(iLoadingTile, aError);
 	
-	TBuf<64> errMsg;
-	MiscUtils::ErrorToDes(aError, errMsg);
-	errMsg.Append(' ');
-	errMsg.Append('(');
-	errMsg.AppendNum(aError);
-	errMsg.Append(')');
-	iBmpMemCache->Find(iLoadingTile)->SetErrorMsg/*L*/(errMsg);
+	
+	_LIT(KHttpErrMsg,"HTTP error");
+	SetErrorForProcessingTile(KHttpErrMsg, aError);
 	
 	iImgDecoder->Reset();
 	iState = /*TProcessingState::*/EIdle;
@@ -697,7 +693,7 @@ void CTileBitmapManager::OnHTTPHeadersRecieved(
 		errMsg.Append('(');
 		errMsg.AppendNum(statusCode);
 		errMsg.Append(')');
-		iBmpMemCache->Find(iLoadingTile)->SetErrorMsg/*L*/(errMsg);
+		SetErrorForProcessingTile(errMsg);
 		
 		iObserver->OnTileLoadingFailed(iLoadingTile, statusCode);
 		}
@@ -734,6 +730,37 @@ void CTileBitmapManager::GoToNextTileInQueueL()
 		
 		StartDownloadTileL(tile);
 		}
+	}
+
+void CTileBitmapManager::SetErrorForProcessingTile/*L*/(const TDesC &aErrMsg)
+	{
+	CTileBitmapMemCacheItem* item = iBmpMemCache->Find(iLoadingTile);
+	
+	if (item)
+		{
+		item->SetErrorMsg/*L*/(aErrMsg);
+		}
+	}
+
+void CTileBitmapManager::SetErrorForProcessingTile/*L*/(const TDesC &aErrMsg, TInt aErrCode)
+	{
+	TBuf<32> err;
+	MiscUtils::ErrorToDes(aErrCode, err);
+	
+	RBuf msg;
+	msg.Create/*L*/(aErrMsg.Length() + err.Length() + 20);
+	
+	msg.Append(aErrMsg);
+	msg.Append(' ');
+	msg.Append('(');
+	msg.Append(err);
+	msg.Append(' ');
+	msg.AppendNum(aErrCode);
+	msg.Append(')');
+	
+	SetErrorForProcessingTile(msg);
+	
+	msg.Close();
 	}
 
 

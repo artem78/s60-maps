@@ -159,6 +159,8 @@ private:
 	
 	void StartDownloadTileL(const TTile &aTile);
 	void GoToNextTileInQueueL();
+	void SetErrorForProcessingTile/*L*/(const TDesC &aErrMsg);
+	void SetErrorForProcessingTile/*L*/(const TDesC &aErrMsg, TInt aErrCode);
 	
 public:
 	/////////////
