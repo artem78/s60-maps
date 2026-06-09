@@ -278,19 +278,21 @@ void CTiledMapLayer::DrawError(CWindowGc &aGc, const TTile &aTile, const TDesC &
 	if (!screenRect.Intersects(destRect)) // Check if tile is visible
 		return;
 	
+	const TRgb KBgColor(0x3333CC);
+	const TRgb KBorderColor(0x000098);
+	const TRgb KFontColor(KRgbWhite);
+	
 	// Draw box
-	aGc.SetPenColor(KRgbRed);
-	//aGc.SetPenSize(TSize(/*1,1*/ 2,2));
-	aGc.SetBrushStyle(CGraphicsContext::ERearwardDiagonalHatchBrush);
-	aGc.SetBrushColor(KRgbWhite);
-	/*aGc.DrawLine(destRect.iTl, destRect.iBr);
-	aGc.DrawLine(TPoint(destRect.iTl.iX, destRect.iBr.iY), TPoint(destRect.iBr.iX, destRect.iTl.iY));*/
+	aGc.SetPenStyle(CGraphicsContext::ESolidPen);
+	aGc.SetPenColor(KBorderColor);
+	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
+	aGc.SetBrushColor(KBgColor);
 	aGc.DrawRect(destRect);
 	
 	// Draw error message
 	destRect.Shrink(TSize(10, 10));
-	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
-	aGc.SetBrushColor(KRgbWhite);
+	aGc.Reset();
+	aGc.SetPenColor(KFontColor);
 	const CFont* font = iMapView->/*DefaultFont()*/SmallFont();
 	aGc.UseFont(font);
 	aGc.DrawText(aErrMsg, destRect, (KTileSize + font->AscentInPixels()) / 2, CGraphicsContext::ECenter, 0);
