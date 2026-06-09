@@ -135,6 +135,12 @@ public:
 	virtual void OnHTTPError(TInt aError, const RHTTPTransaction aTransaction);
 	virtual void OnHTTPHeadersRecieved(const RHTTPTransaction aTransaction);
 	
+// Leaving wrappers
+private:
+	virtual void OnHTTPResponseDataChunkRecievedL(const RHTTPTransaction aTransaction,
+			const TDesC8 &aDataChunk, TInt anOverallDataSize, TBool anIsLastChunk);
+	void OnHTTPHeadersRecievedL(const RHTTPTransaction aTransaction);
+	
 // Custom properties and methods
 private:
 	MTileBitmapManagerObserver* iObserver;

@@ -547,7 +547,7 @@ TInt CTileBitmapManager::RunError(TInt aError)
 	return KErrNone;
 	}
 
-void CTileBitmapManager::OnHTTPResponseDataChunkRecieved(
+void CTileBitmapManager::OnHTTPResponseDataChunkRecievedL(
 		const RHTTPTransaction aTransaction, const TDesC8 &aDataChunk,
 		TInt /*anOverallDataSize*/, TBool /*anIsLastChunk*/)
 	{
@@ -597,6 +597,20 @@ void CTileBitmapManager::OnHTTPResponseDataChunkRecieved(
 	//iImgDecoder->ContinueConvert();
 	
 	DEBUG(_L("CTileBitmapManager::OnHTTPResponseDataChunkRecieved end"));
+	}
+
+void CTileBitmapManager::OnHTTPResponseDataChunkRecieved(
+		const RHTTPTransaction aTransaction, const TDesC8 &aDataChunk,
+		TInt anOverallDataSize, TBool anIsLastChunk)
+	{
+	TRAPD(r, OnHTTPResponseDataChunkRecievedL(aTransaction, aDataChunk,
+			anOverallDataSize, anIsLastChunk));
+	if (r != KErrNone)
+		{
+		WARNING(_L("CTileBitmapManager::OnHTTPResponseDataChunkRecievedL leaved with code %d"), r);
+		
+		// ...
+		}
 	}
 
 // HTTP-запрос успешно завершён
@@ -681,10 +695,10 @@ void CTileBitmapManager::OnHTTPError(TInt aError,
 	DEBUG(_L("CTileBitmapManager::OnHTTPError end"));
 	}
 
-void CTileBitmapManager::OnHTTPHeadersRecieved(
+void CTileBitmapManager::OnHTTPHeadersRecievedL(
 		const RHTTPTransaction aTransaction)
 	{
-	DEBUG(_L("CTileBitmapManager::OnHTTPHeadersRecieved begin"));
+	DEBUG(_L("CTileBitmapManager::OnHTTPHeadersRecievedL begin"));
 	//DEBUG(_L("HTTP headers recieved"));
 	
 	RStringPool strP = aTransaction.Session().StringPool();
@@ -725,7 +739,18 @@ void CTileBitmapManager::OnHTTPHeadersRecieved(
 	iImgDecoder->Reset();
 	iImgDecoder->OpenL(KNullDesC8, fieldVal.StrF().DesC());
 	
-	DEBUG(_L("CTileBitmapManager::OnHTTPHeadersRecieved end"));
+	DEBUG(_L("CTileBitmapManager::OnHTTPHeadersRecievedL end"));
+	}
+
+void CTileBitmapManager::OnHTTPHeadersRecieved(const RHTTPTransaction aTransaction)
+	{
+	TRAPD(r, OnHTTPHeadersRecievedL(aTransaction));
+	if (r != KErrNone)
+		{
+		DEBUG(_L("CTileBitmapManager::OnHTTPHeadersRecievedL leaved with code %d"), r);
+		
+		// ...
+		}
 	}
 
 void CTileBitmapManager::ChangeTileProvider(TTileProvider* aTileProvider,
