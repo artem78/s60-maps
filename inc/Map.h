@@ -125,7 +125,7 @@ private:
 // From CActive
 	void RunL();
 	void DoCancel();
-	//TInt RunError(TInt aError);
+	TInt RunError(TInt aError);
 
 // From MHTTPClientObserver
 public:

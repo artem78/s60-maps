@@ -490,13 +490,15 @@ void CTileBitmapManager::DoCancel()
 	iImgDecoder->Cancel();
 	}
 
+// вызывается после завершения декодирования (успешного или нет)
 void CTileBitmapManager::RunL()
 	{
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
 	
-	DEBUG(_L("CTileBitmapManager::RunL"));
+	DEBUG(_L("CTileBitmapManager::RunL begin"));
+	DEBUG(_L("iStatus.Int() = %d"), iStatus.Int());
 	if (iStatus.Int() == KErrNone)
-		{
+		{ // тайл успешно загружен и декодирован
 		/*CFbsBitmap* bitmap;
 		TInt r = GetTileBitmap(iLoadingTile, bitmap);
 		__ASSERT_DEBUG(r == KErrNone, User::Leave(KErrNotFound));
@@ -516,8 +518,12 @@ void CTileBitmapManager::RunL()
 			iDiskCache->SaveBitmapInBackgroundL(iLoadingTile, item->Bitmap());
 			}
 		}
+	/*else if (iStatus.Int() == KErrUnderflow)
+		{ // ещё получено недостаточно данных для завершения декодирования
+		// ...
+		}*/
 	else
-		{
+		{ // ошибка декодирования
 		ERROR(_L("Image decoding error: %d"), iStatus.Int());
 		iObserver->OnTileLoadingFailed();
 		}
@@ -527,18 +533,26 @@ void CTileBitmapManager::RunL()
 	iState = /*TProcessingState::*/EIdle;
 	
 	GoToNextTileInQueueL();
+	DEBUG(_L("CTileBitmapManager::RunL end"));
 	}
 
-/*TInt CTileBitmapManager::RunError(TInt aError)
+// вызывается, если в RunL() произошёл сброс
+TInt CTileBitmapManager::RunError(TInt aError)
 	{
-	return aError;
-	}*/
+	//DEBUG(_L("CTileBitmapManager::RunL leaved with error=%d"), aError);
+	DEBUG(_L("CTileBitmapManager::RunError(aError=%d) begin"), aError);
+	// ...
+	DEBUG(_L("CTileBitmapManager::RunError end"));
+	//return aError;
+	return KErrNone;
+	}
 
 void CTileBitmapManager::OnHTTPResponseDataChunkRecieved(
 		const RHTTPTransaction aTransaction, const TDesC8 &aDataChunk,
 		TInt /*anOverallDataSize*/, TBool /*anIsLastChunk*/)
 	{
-	DEBUG(_L("HTTP chunk recieved"));
+	DEBUG(_L("CTileBitmapManager::OnHTTPResponseDataChunkRecieved begin"));
+	//DEBUG(_L("HTTP chunk recieved"));
 	
 	// Checking that mime-type is PNG or JPG
 	// (If any error (for example: 404 Not Found) chunk may contains
@@ -581,11 +595,16 @@ void CTileBitmapManager::OnHTTPResponseDataChunkRecieved(
 	
 	//iImgDecoder->AppendDataL(aDataChunk);
 	//iImgDecoder->ContinueConvert();
+	
+	DEBUG(_L("CTileBitmapManager::OnHTTPResponseDataChunkRecieved end"));
 	}
 
+// HTTP-запрос успешно завершён
+// (вызывается после успешного получения последней части данных HTTP ответа)
 void CTileBitmapManager::OnHTTPResponse(const RHTTPTransaction /*aTransaction*/)
 	{
-	DEBUG(_L("HTTP response success"));
+	DEBUG(_L("CTileBitmapManager::OnHTTPResponse begin"));
+	//DEBUG(_L("HTTP response success"));
 	
 	iState = /*TProcessingState::*/EDecoding;
 	
@@ -603,11 +622,14 @@ void CTileBitmapManager::OnHTTPResponse(const RHTTPTransaction /*aTransaction*/)
 	iImgDecoder->Convert(&this->iStatus, /**bitmap*/ *item->Bitmap(), 0);
 	//iImgDecoder->ContinueConvert(&this->iStatus);
 	SetActive();
+	DEBUG(_L("CTileBitmapManager::OnHTTPResponse end"));
 	}
 
+// HTTP-запрос завершён с ошибкой
 void CTileBitmapManager::OnHTTPError(TInt aError,
 		const RHTTPTransaction /*aTransaction*/)
 	{
+	DEBUG(_L("CTileBitmapManager::OnHTTPError(aError=%d) begin"), aError);
 	//ERROR(_L("HTTP error: %d"), aError);
 	ERROR(_L("Failed to download tile %S, error: %d"), &iLoadingTile.AsDes(), aError);
 	iObserver->OnTileLoadingFailed();
@@ -656,12 +678,14 @@ void CTileBitmapManager::OnHTTPError(TInt aError,
 			break;
 			}
 		}
+	DEBUG(_L("CTileBitmapManager::OnHTTPError end"));
 	}
 
 void CTileBitmapManager::OnHTTPHeadersRecieved(
 		const RHTTPTransaction aTransaction)
 	{
-	DEBUG(_L("HTTP headers recieved"));
+	DEBUG(_L("CTileBitmapManager::OnHTTPHeadersRecieved begin"));
+	//DEBUG(_L("HTTP headers recieved"));
 	
 	RStringPool strP = aTransaction.Session().StringPool();
 	RHTTPHeaders respHeaders = aTransaction.Response().GetHeaderCollection();
@@ -700,6 +724,8 @@ void CTileBitmapManager::OnHTTPHeadersRecieved(
 
 	iImgDecoder->Reset();
 	iImgDecoder->OpenL(KNullDesC8, fieldVal.StrF().DesC());
+	
+	DEBUG(_L("CTileBitmapManager::OnHTTPHeadersRecieved end"));
 	}
 
 void CTileBitmapManager::ChangeTileProvider(TTileProvider* aTileProvider,
@@ -720,9 +746,10 @@ void CTileBitmapManager::ChangeTileProvider(TTileProvider* aTileProvider,
 	iDiskCache->SetCacheDir(aCacheDir);
 	}
 
+// Start download next tile in queue (if not empty)
 void CTileBitmapManager::GoToNextTileInQueueL()
 	{
-	// Start download next tile in queue
+	DEBUG(_L("CTileBitmapManager::GoToNextTileInQueueL begin"));
 	if (iItemsLoadingQueue.Count())
 		{
 		TTile tile = iItemsLoadingQueue[0]; 
@@ -730,10 +757,13 @@ void CTileBitmapManager::GoToNextTileInQueueL()
 		
 		StartDownloadTileL(tile);
 		}
+	DEBUG(_L("CTileBitmapManager::GoToNextTileInQueueL end"));
 	}
 
 void CTileBitmapManager::SetErrorForProcessingTile/*L*/(const TDesC &aErrMsg)
 	{
+	ERROR(_L("Tile %S downloading/decoding failed with message: \"%S\""),
+			&iLoadingTile.AsDes(), &aErrMsg);
 	CTileBitmapMemCacheItem* item = iBmpMemCache->Find(iLoadingTile);
 	
 	if (item)
