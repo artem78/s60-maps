@@ -67,6 +67,23 @@ void CS60MapsAppUi::ConstructL()
 	//User::LeaveIfError(iConn.Start()); //will be called later on first request
 	
 	// Set several predefined available tiles providers
+	
+#ifdef DEBUG_ENABLE_TEST_TILE_PROVIDER
+	// Debug tile provider for testing purposes
+	// https://github.com/artem78/tilegen
+	{
+		_LIT(KProviderName, "!!! TEST !!!");
+		_LIT(KProviderId, "test");
+		_LIT8(KProviderTileUrl, "http://192.168.0.108:5050/tile/{$z}/{$x}/{$y}");
+		_LIT(KProviderCopyrightShort, "");
+		_LIT(KProviderCopyrightUrl, "");
+		iAvailableTileProviders[ETestMapIdx] = new (ELeave) TTileProvider(
+				KProviderId, KProviderName,
+				KProviderTileUrl,
+				0, /*18*/ 22,
+				KProviderCopyrightShort, KProviderCopyrightUrl);
+	}
+#endif
 
 	// OpenStreetMap standard tile layer
 	// https://www.openstreetmap.org/

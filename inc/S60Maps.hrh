@@ -70,6 +70,9 @@ enum TS60MapsSettingItemIds
 
 // Tile providers
 enum TTileProviderIdx {
+#ifdef DEBUG_ENABLE_TEST_TILE_PROVIDER
+	ETestMapIdx,
+#endif
 	EOpenStreetMapIdx,
 	EOpenCycleMapIdx,
 	ETransportMapIdx,
