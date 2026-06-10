@@ -31,11 +31,19 @@ public:
 	};
 
 
+enum TImageFormat
+	{
+	EImgFmtMbm, // for compatibility with older program versions (for reading only)
+	EImgFmtPng,
+	EImgFmtJpeg
+	};
+
 class TSaverQueryItem
 	{
 public:
 	TTile iTile;
-	CFbsBitmap *iBitmap;
+	HBufC8* iRawData; // not owned
+	TImageFormat iFmt;
 	
 	TBool iShouldStop; // If true, thread processing will be stopped on this item
 	};
@@ -59,7 +67,12 @@ private:
 	
 	// Custom
 public:
-	void AppendL(const TTile &aTile, CFbsBitmap *aBitmap);
+	/* Adds item to the saving queue
+	 * 
+	 * @param aRawData	Binary data which will be written to the file.
+	 * 					Ownership transferred to this class and later
+	 * 					after saving completes it will be destroyed automatically */
+	void AppendL(const TTile &aTile, HBufC8* aRawData, TImageFormat aFmt);
 	
 private:
 	CTileDiskCache* iDiskCache;
@@ -162,6 +175,9 @@ private:
 	TTile iLoadingTile;
 	TBool iIsOfflineMode;
 	CTileDiskCache* iDiskCache;
+	RBuf8 iRawData; /* todo: seems we can read data from iImgDecoder->FrameData(0)
+						instead of use this excess buffer */
+	TImageFormat iImgFmt;
 	
 	void StartDownloadTileL(const TTile &aTile);
 	void GoToNextTileInQueueL();
@@ -215,6 +231,7 @@ private:
 	
 	TState iState;
 	HBufC* iErrorMsg; // owned
+	RBuf8 iRawData;
 	
 public:
 	TTime iLastAccessTime;
@@ -324,9 +341,10 @@ private:
 	
 public:
 	void LoadBitmapL /*LoadBitmapFromFileL*/ /*ReadBitmapFromDiskL*/ (const TTile &aTile, CFbsBitmap *aBitmap) /*const*/;
-	inline void SaveBitmapInBackgroundL(const TTile &aTile, /*const*/ CFbsBitmap *aBitmap)
-		{ iSaver->AppendL(aTile, aBitmap); };
-	void TileFileName(const TTile &aTile, TFileName &aFileName) const;
+	inline void SaveBitmapInBackgroundL(const TTile &aTile, HBufC8* aRawData, TImageFormat aFmt)
+		{ iSaver->AppendL(aTile, aRawData, aFmt); };
+	void TileFileName(const TTile &aTile, TFileName &aFileName,
+			/*const TDesC& aFileExt,*/ TImageFormat aFmt=EImgFmtMbm) const;
 	TBool IsTileFileExists(const TTile &aTile) const;
 	void DeleteTileFile(const TTile &aTile);
 	inline void SetCacheDir(const TDesC &aCacheDir)
