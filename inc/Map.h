@@ -33,6 +33,8 @@ public:
 
 enum TImageFormat
 	{
+	EImgFmtUnknown,
+	
 	EImgFmtMbm, // for compatibility with older program versions (for reading only)
 	EImgFmtPng,
 	EImgFmtJpeg
@@ -111,8 +113,12 @@ public:
 	void Delete(const TTile &aTile);
 	TBool HasError(const TTile &aTile);
 	const HBufC* ErrMsg(const TTile &aTile);
-	inline void /*Reset*/Clear()
-		{ iItems.ResetAndDestroy(); };
+	/*inline*/ void /*Reset*/Clear()
+		/*{ iItems.ResetAndDestroy(); }*/;
+	/* with "inline" sucessfully compiles for emulator, but for phone gives error:
+	 *     note: neither the destructor nor the class-specific operator delete will be called,
+	 *     even if they are declared when the class is defined. 
+	 * seems due to CTileBitmapMemCacheItem forward declaration used */
 	};
 
 
@@ -349,6 +355,7 @@ public:
 	void DeleteTileFile(const TTile &aTile);
 	inline void SetCacheDir(const TDesC &aCacheDir)
 		{ iFileMapper->SetBaseDir(aCacheDir); };
+	TImageFormat DetermineFileFormat(const TTile &aTile) const;
 
 	};
 

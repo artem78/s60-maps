@@ -21,6 +21,9 @@ _LIT(KMbmFileExtension,  "mbm");
 _LIT(KPngFileExtension,  "png");
 _LIT(KJpegFileExtension, "jpg");
 
+_LIT8(KPNGMimeType, "image/png");
+_LIT8(KJPEGMimeType, "image/jpeg");
+
 
 // MTileBitmapManagerObserver
 void MTileBitmapManagerObserver::OnTileLoadingFailed()
@@ -332,6 +335,11 @@ const HBufC* CTileBitmapMemCache::ErrMsg(const TTile &aTile)
 		return item->ErrorMsg();
 	}
 
+void CTileBitmapMemCache::Clear()
+	{
+	iItems.ResetAndDestroy();
+	}
+
 
 // CTileBitmapManager
 
@@ -564,9 +572,7 @@ void CTileBitmapManager::OnHTTPResponseDataChunkRecievedL(
 	if (r != KErrNone)
 		return;
 	
-	_LIT8(KPNGMimeType, "image/png");
 	RStringF pngMimeType = strP.OpenFStringL(KPNGMimeType);
-	_LIT8(KJPEGMimeType, "image/jpeg");
 	RStringF jpegMimeType = strP.OpenFStringL(KJPEGMimeType);
 	if (fieldVal.StrF() == pngMimeType)
 		{
@@ -1154,23 +1160,60 @@ CTileDiskCache::~CTileDiskCache()
 	}
 
 void CTileDiskCache::LoadBitmapL(const TTile &aTile, CFbsBitmap *aBitmap)
-	{	
-	TFileName tileFileName;
-	TileFileName(aTile, tileFileName);
+	{
+	// todo: make asyncronous
 	
-	RFile file;
-	User::LeaveIfError(file.Open(iFs, tileFileName, EFileRead | EFileShareReadersOnly));
-	CleanupClosePushL(file);
-	User::LeaveIfError(aBitmap->Load(file));	
-	CleanupStack::PopAndDestroy(&file);
+	TImageFormat fmt = DetermineFileFormat(aTile);
+	if (fmt == EImgFmtUnknown)
+		{
+		User::Leave(/*KErrNotSupported*/ KErrNotFound);
+		}
+	
+	TFileName tileFileName;
+	TileFileName(aTile, tileFileName, fmt);
+	
+	if (fmt == EImgFmtMbm) // MBM reading is simpler - image decoder not needed
+		{
+		RFile file;
+		User::LeaveIfError(file.Open(iFs, tileFileName, EFileRead | EFileShareReadersOnly));
+		CleanupClosePushL(file);
+		User::LeaveIfError(aBitmap->Load(file));	
+		CleanupStack::PopAndDestroy(&file);
+		}
+	
+	else // PNG/JPG
+		{
+		TPtrC8 mime(KNullDesC8);
+		switch (fmt)
+			{
+			case EImgFmtPng:
+				mime.Set(KPNGMimeType);
+				break;
+				
+			case EImgFmtJpeg:
+				mime.Set(KJPEGMimeType);
+				break;
+				
+			default:
+			break;
+			}
+		
+		// CImageDecoder* decoder = CImageDecoder::FileNewL(fs, aFileName);
+		CImageDecoder* decoder = CImageDecoder::FileNewL(iFs, tileFileName, mime, CImageDecoder::EOptionAlwaysThread);
+		CleanupStack::PushL(decoder);
+		TRequestStatus status;
+		decoder->Convert(&status, *aBitmap, 0);
+		User::WaitForRequest(status);
+		User::LeaveIfError(status.Int());
+		CleanupStack::PopAndDestroy(decoder);
+		}
+	
 	INFO(_L("Bitmap for %S sucessfully loaded from file \"%S\""), &aTile.AsDes(), &tileFileName);
 	}
 
 TBool CTileDiskCache::IsTileFileExists(const TTile &aTile) const
 	{
-	TFileName tileFileName;
-	TileFileName(aTile, tileFileName);
-	return BaflUtils::FileExists(iFs, tileFileName);
+	return DetermineFileFormat(aTile) != EImgFmtUnknown;
 	}
 
 void CTileDiskCache::TileFileName(const TTile &aTile, TFileName &aFileName,
@@ -1218,4 +1261,33 @@ void CTileDiskCache::DeleteTileFile(const TTile &aTile)
 		{
 		
 		}*/
+	}
+
+TImageFormat CTileDiskCache::DetermineFileFormat(const TTile &aTile) const
+	{
+	TFileName tileFileName;
+	
+	// try PNG (most common)
+	TileFileName(aTile, tileFileName, EImgFmtPng);
+	if (BaflUtils::FileExists(iFs, tileFileName))
+		{
+		return EImgFmtPng;
+		}
+	
+	// try JPEG (usually used for satellites view)
+	TileFileName(aTile, tileFileName, EImgFmtJpeg);
+	if (BaflUtils::FileExists(iFs, tileFileName))
+		{
+		return EImgFmtJpeg;
+		}
+	
+	/* try MBM (fallback for compatibility with data created
+	   earlier with previous versions of the program) */
+	TileFileName(aTile, tileFileName, EImgFmtMbm);
+	if (BaflUtils::FileExists(iFs, tileFileName))
+		{
+		return EImgFmtMbm;
+		}
+	
+	return EImgFmtUnknown; // file not found
 	}
