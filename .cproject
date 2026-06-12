@@ -79,7 +79,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="CarbideConfigurationDataProvider">
-				<SIS_BUILDER_DATA_ID CREATESTUBSTORAGE="false" ENABLEDSTORAGE="true" PARTIALUPGRADESTORAGE="false" PKGFILESTORAGE="C:\Symbian\Carbide\workspace\S60Maps\sis\S60Maps_symbian9.2-9.4.pkg" SIGNINGTYPESTORAGE="1"/>
+				<SIS_BUILDER_DATA_ID CREATESTUBSTORAGE="false" ENABLEDSTORAGE="true" PARTIALUPGRADESTORAGE="false" PKGFILESTORAGE="sis\S60Maps_symbian9.2-9.4.pkg" SIGNINGTYPESTORAGE="1"/>
 				<ENV_VAR_DATA_ID/>
 				<ARGUMENTS_DATA_ID ABLDFREEZEARGSSTORAGE="-r"/>
 			</storageModule>
@@ -189,7 +189,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="CarbideConfigurationDataProvider">
-				<SIS_BUILDER_DATA_ID CREATESTUBSTORAGE="false" ENABLEDSTORAGE="true" PARTIALUPGRADESTORAGE="false" PKGFILESTORAGE="C:\Symbian\Carbide\workspace\S60Maps\sis\S60Maps_symbian9.1.pkg" SIGNINGTYPESTORAGE="1"/>
+				<SIS_BUILDER_DATA_ID CREATESTUBSTORAGE="false" ENABLEDSTORAGE="true" PARTIALUPGRADESTORAGE="false" PKGFILESTORAGE="sis\S60Maps_symbian9.1.pkg" SIGNINGTYPESTORAGE="1"/>
 				<ENV_VAR_DATA_ID/>
 				<ARGUMENTS_DATA_ID ABLDFREEZEARGSSTORAGE="-r"/>
 			</storageModule>
