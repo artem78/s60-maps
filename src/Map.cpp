@@ -481,6 +481,7 @@ void CTileBitmapManager::StartDownloadTileL(const TTile &aTile)
 	
 	iState = /*TProcessingState::*/EDownloading;
 	iLoadingTile = aTile;
+	iImgFmt = EImgFmtUnknown;
 	
 	RBuf8 tileUrl;
 	const TInt KReserveLength = 30; // For variables substitution
@@ -558,38 +559,6 @@ void CTileBitmapManager::OnHTTPResponseDataChunkRecievedL(
 	{
 	DEBUG(_L("CTileBitmapManager::OnHTTPResponseDataChunkRecieved begin"));
 	//DEBUG(_L("HTTP chunk recieved"));
-	
-	// Checking that mime-type is PNG or JPG
-	// (If any error (for example: 404 Not Found) chunk may contains
-	// HTML/text data instead correct image. In this case, 
-	// we need to skip any processing.)
-	RStringPool strP = aTransaction.Session().StringPool();
-	RHTTPHeaders respHeaders = aTransaction.Response().GetHeaderCollection();
-	RStringF fieldName = strP.StringF(HTTP::EContentType, RHTTPSession::GetTable());
-	THTTPHdrVal fieldVal;
-	TInt r = respHeaders.GetField(fieldName, 0, fieldVal);
-	__ASSERT_DEBUG(r == KErrNone, Panic(ES60MapsNoRequiredHeaderInResponse)); // Unlikely if response don`t contains Content-Type header
-	if (r != KErrNone)
-		return;
-	
-	RStringF pngMimeType = strP.OpenFStringL(KPNGMimeType);
-	RStringF jpegMimeType = strP.OpenFStringL(KJPEGMimeType);
-	if (fieldVal.StrF() == pngMimeType)
-		{
-		iImgFmt = EImgFmtPng;
-		}
-	else if (fieldVal.StrF() == jpegMimeType)
-		{
-		iImgFmt = EImgFmtJpeg;
-		}
-	else
-		{
-		pngMimeType.Close();
-		jpegMimeType.Close();
-		return; // Skip other types exept PNG or JPG
-		}
-	pngMimeType.Close();
-	jpegMimeType.Close();
 	
 	
 	// alloc full memory before write first data chunk
@@ -728,18 +697,7 @@ void CTileBitmapManager::OnHTTPHeadersRecievedL(
 	DEBUG(_L("CTileBitmapManager::OnHTTPHeadersRecievedL begin"));
 	//DEBUG(_L("HTTP headers recieved"));
 	
-	RStringPool strP = aTransaction.Session().StringPool();
-	RHTTPHeaders respHeaders = aTransaction.Response().GetHeaderCollection();
-	RStringF fieldName = strP.StringF(HTTP::EContentType, RHTTPSession::GetTable());
-	THTTPHdrVal fieldVal;
-	TInt r = respHeaders.GetField(fieldName, 0, fieldVal);
-	__ASSERT_DEBUG(r == KErrNone, Panic(ES60MapsNoRequiredHeaderInResponse)); // Unlikely if response don`t contains Content-Type header
-	if (r != KErrNone)
-		return;
-	/*TBuf<32> tmp;
-	tmp.Copy(fieldVal.StrF().DesC());
-	DEBUG(_L("mime=%S"), &tmp);*/
-	
+	// Check status code
 	TInt statusCode = aTransaction.Response().StatusCode();
 	if (statusCode < 400)
 		{} // Ok
@@ -762,9 +720,42 @@ void CTileBitmapManager::OnHTTPHeadersRecievedL(
 		
 		iObserver->OnTileLoadingFailed();
 		}
+	
+	// Check that mime-type is PNG or JPG
+	RStringPool strP = aTransaction.Session().StringPool();
+	RHTTPHeaders respHeaders = aTransaction.Response().GetHeaderCollection();
+	RStringF contTypeFieldName = strP.StringF(HTTP::EContentType, RHTTPSession::GetTable());
+	THTTPHdrVal contTypeFieldVal;
+	TInt r = respHeaders.GetField(contTypeFieldName, 0, contTypeFieldVal);
+	__ASSERT_DEBUG(r == KErrNone, Panic(ES60MapsNoRequiredHeaderInResponse)); // Unlikely if response don`t contains Content-Type header
+	if (r != KErrNone)
+		return;
+	/*TBuf<32> tmp;
+	tmp.Copy(fieldVal.StrF().DesC());
+	DEBUG(_L("mime=%S"), &tmp);*/
+	
+	RStringF pngMimeType = strP.OpenFStringL(KPNGMimeType);
+	RStringF jpegMimeType = strP.OpenFStringL(KJPEGMimeType);
+	if (contTypeFieldVal.StrF() == pngMimeType)
+		{
+		iImgFmt = EImgFmtPng;
+		}
+	else if (contTypeFieldVal.StrF() == jpegMimeType)
+		{
+		iImgFmt = EImgFmtJpeg;
+		}
+	else
+		{
+		pngMimeType.Close();
+		jpegMimeType.Close();
+		return; // Skip other types except PNG or JPG
+		}
+	pngMimeType.Close();
+	jpegMimeType.Close();
 
+	// Set image format to decoder
 	iImgDecoder->Reset();
-	iImgDecoder->OpenL(KNullDesC8, fieldVal.StrF().DesC());
+	iImgDecoder->OpenL(KNullDesC8, contTypeFieldVal.StrF().DesC());
 	
 	iRawData.Close();
 	
