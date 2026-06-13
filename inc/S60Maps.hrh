@@ -29,6 +29,7 @@ enum TS60MapsIds
 	ERenameLandmark,
 	ECreateOrRenameLandmark,
 	EDeleteLandmark,
+	EGoto, // used only for toggle "go to" menu pane visibility
 	EGotoLandmark,
 	EGotoCoordinate,
 	ESettings,
