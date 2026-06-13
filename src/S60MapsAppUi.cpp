@@ -1092,5 +1092,29 @@ TInt CS60MapsAppUi::GetTotalBytesTransferred(TBytesCount &aBytesRecieved, TBytes
 	return r;
 	}
 
+TBool CS60MapsAppUi::LandmarkDbIsNotEmptyL()
+	{	
+	User::LeaveIfNull(iLandmarksDb);
+	CPosLmItemIterator* landmarkIterator = LandmarkDb()->LandmarkIteratorL();
+	User::LeaveIfNull(landmarkIterator);
+	CleanupStack::PushL(landmarkIterator);
+	TBool res = landmarkIterator->NumOfItemsL() > 0;
+	CleanupStack::PopAndDestroy(/*landmarkIterator*/);
+	
+	return res;
+	}
+
+TBool CS60MapsAppUi::LandmarkDbIsNotEmpty()
+	{
+	TBool res;
+	TRAPD(r, res = LandmarkDbIsNotEmptyL());
+	if (KErrNone != r)
+		{
+		return EFalse;
+		}
+	
+	return res;
+	}
+
 // End of File
 

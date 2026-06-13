@@ -243,10 +243,7 @@ void CMapView::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
 			
 		case R_SUBMENU_GOTO:
 			{
-			CPosLmItemIterator* landmarkIterator = appUi->LandmarkDb()->LandmarkIteratorL();
-			if (!(landmarkIterator && landmarkIterator->NumOfItemsL() > 0))
-				aMenuPane->SetItemDimmed(EGotoLandmark, ETrue);
-			delete landmarkIterator;
+			aMenuPane->SetItemDimmed(EGotoLandmark, not appUi->LandmarkDbIsNotEmpty());
 			
 			break;
 			}
