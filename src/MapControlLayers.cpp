@@ -179,19 +179,18 @@ void CTiledMapLayer::Draw(CWindowGc &aGc)
 		
 		if (iBitmapMgr->HasError(tile))
 			{
-			_LIT(KFmt, "Error: %S");
-			const HBufC* err = iBitmapMgr->ErrMsg(tile);
-			if (err == NULL)
-				continue;
-			
-			RBuf msg;
-			TInt r = msg.Create(KFmt().Length() + err->Length() + 20);
-			if (r == KErrNone)
+			const HBufC* errMsg = iBitmapMgr->ErrMsg(tile);
+			if (errMsg)
 				{
-				msg.Format(KFmt, err);	
-				DrawError(aGc, tile, msg);
-				msg.Close();
+				DrawError(aGc, tile, *errMsg);
 				}
+			else
+				{
+				//_LIT(KDefErrMsg, "Unknown error");
+				_LIT(KDefErrMsg, "Error!");
+				DrawError(aGc, tile, KDefErrMsg);
+				}
+			
 			continue;
 			}
 		

@@ -355,6 +355,7 @@ CTileBitmapManager::CTileBitmapManager(MTileBitmapManagerObserver *aObserver,
 
 CTileBitmapManager::~CTileBitmapManager()
 	{
+	iRawData.Close();
 	delete iDiskCache;
 	// cancel()
 	delete iImgDecoder;
@@ -506,15 +507,18 @@ void CTileBitmapManager::DoCancel()
 // вызывается после завершения декодирования (успешного или нет)
 void CTileBitmapManager::RunL()
 	{
+	// todo...
+	
 	DEBUG(_L("CTileBitmapManager::RunL begin"));
 	DEBUG(_L("iStatus.Int() = %d"), iStatus.Int());
+	
 	if (iStatus.Int() == KErrNone)
 		{ // тайл успешно загружен и декодирован
-		/*CFbsBitmap* bitmap;
-		TInt r = GetTileBitmap(iLoadingTile, bitmap);
-		__ASSERT_DEBUG(r == KErrNone, User::Leave(KErrNotFound));
-		CTileBitmapMemCacheItem* item = Find(iLoadingTile);
-		__ASSERT_DEBUG(item != NULL, User::Leave(KErrNotFound));*/
+//		/*CFbsBitmap* bitmap;
+//		TInt r = GetTileBitmap(iLoadingTile, bitmap);
+//		__ASSERT_DEBUG(r == KErrNone, User::Leave(KErrNotFound));
+//		CTileBitmapMemCacheItem* item = Find(iLoadingTile);
+//		__ASSERT_DEBUG(item != NULL, User::Leave(KErrNotFound));*/
 		CTileBitmapMemCacheItem* item = iBmpMemCache->Find(iLoadingTile);
 		__ASSERT_DEBUG(item != NULL, Panic(ES60MapsTileBitmapManagerItemNotFoundPanic));
 		__ASSERT_DEBUG(item->Bitmap() != NULL, Panic(ES60MapsTileBitmapIsNullPanic));
@@ -530,9 +534,23 @@ void CTileBitmapManager::RunL()
 		}*/
 	else
 		{ // ошибка декодирования
-		ERROR(_L("Image decoding error: %d"), iStatus.Int());
+		//ERROR(_L("Image decoding error: %d"), iStatus.Int());
+		_LIT(KErrMsg,"Image decoding error");
+		SetErrorForProcessingTile(KErrMsg, iStatus.Int());
+		iState = EError;
 		iObserver->OnTileLoadingFailed();
 		}
+	
+//	if (iState != EError)
+//		{
+//		item->SetReady();
+//		INFO(_L("Tile %S downloaded and decoded"), &iLoadingTile.AsDes());
+//		iObserver->OnTileLoaded();
+//		}
+//	else
+//		{
+//		iObserver->OnTileLoadingFailed();
+//		}
 	
 	
 	iImgDecoder->Reset();
@@ -547,7 +565,8 @@ TInt CTileBitmapManager::RunError(TInt aError)
 	{
 	//DEBUG(_L("CTileBitmapManager::RunL leaved with error=%d"), aError);
 	DEBUG(_L("CTileBitmapManager::RunError(aError=%d) begin"), aError);
-	// ...
+	iState = EError;
+	//...
 	DEBUG(_L("CTileBitmapManager::RunError end"));
 	//return aError;
 	return KErrNone;
@@ -557,7 +576,7 @@ void CTileBitmapManager::OnHTTPResponseDataChunkRecievedL(
 		const RHTTPTransaction aTransaction, const TDesC8 &aDataChunk,
 		TInt anOverallDataSize, TBool /*anIsLastChunk*/)
 	{
-	DEBUG(_L("CTileBitmapManager::OnHTTPResponseDataChunkRecieved begin"));
+	DEBUG(_L("CTileBitmapManager::OnHTTPResponseDataChunkRecievedL begin"));
 	//DEBUG(_L("HTTP chunk recieved"));
 	
 	
@@ -585,30 +604,35 @@ void CTileBitmapManager::OnHTTPResponseDataChunkRecievedL(
 	//iImgDecoder->AppendDataL(aDataChunk);
 	//iImgDecoder->ContinueConvert();
 	
-	DEBUG(_L("CTileBitmapManager::OnHTTPResponseDataChunkRecieved end"));
+	DEBUG(_L("CTileBitmapManager::OnHTTPResponseDataChunkRecievedL end"));
 	}
 
 void CTileBitmapManager::OnHTTPResponseDataChunkRecieved(
 		const RHTTPTransaction aTransaction, const TDesC8 &aDataChunk,
 		TInt anOverallDataSize, TBool anIsLastChunk)
 	{
+	if (iState == EError)
+		{
+		return;
+		}
+	
 	TRAPD(r, OnHTTPResponseDataChunkRecievedL(aTransaction, aDataChunk,
 			anOverallDataSize, anIsLastChunk));
 	if (r != KErrNone)
 		{
-		WARNING(_L("CTileBitmapManager::OnHTTPResponseDataChunkRecievedL leaved with code %d"), r);
+		ERROR(_L("CTileBitmapManager::OnHTTPResponseDataChunkRecievedL leaved with code %d"), r);
 		
-		// ...
+		iState = EError;
 		}
 	}
 
 // HTTP-запрос успешно завершён
 // (вызывается после успешного получения последней части данных HTTP ответа)
-void CTileBitmapManager::OnHTTPResponse(const RHTTPTransaction /*aTransaction*/)
+void CTileBitmapManager::OnHTTPResponseL(const RHTTPTransaction /*aTransaction*/)
 	{
-	DEBUG(_L("CTileBitmapManager::OnHTTPResponse begin"));
+	DEBUG(_L("CTileBitmapManager::OnHTTPResponseL begin"));
 	//DEBUG(_L("HTTP response success"));
-	
+
 	iState = /*TProcessingState::*/EDecoding;
 	
 	// Start convert PNG/JPG to CFbsBitmap
@@ -632,7 +656,29 @@ void CTileBitmapManager::OnHTTPResponse(const RHTTPTransaction /*aTransaction*/)
 	iImgDecoder->Convert(&this->iStatus, /**bitmap*/ *item->Bitmap(), 0);
 	//iImgDecoder->ContinueConvert(&this->iStatus);
 	SetActive();
-	DEBUG(_L("CTileBitmapManager::OnHTTPResponse end"));
+	
+	DEBUG(_L("CTileBitmapManager::OnHTTPResponseL end"));
+	}
+
+void CTileBitmapManager::OnHTTPResponse(const RHTTPTransaction aTransaction)
+	{
+	if (iState != EError)
+		{
+		TRAPD(r, OnHTTPResponseL(aTransaction));
+		if (r != KErrNone)
+			{
+			ERROR(_L("CTileBitmapManager::OnHTTPResponseLL leaved with code %d"), r);
+			
+			iState = EError;
+			}
+		}
+	
+	if (iState == EError)
+		{		
+		iObserver->OnTileLoadingFailed();
+		iState = EIdle;
+		GoToNextTileInQueueL();
+		}
 	}
 
 // HTTP-запрос завершён с ошибкой
@@ -640,54 +686,49 @@ void CTileBitmapManager::OnHTTPError(TInt aError,
 		const RHTTPTransaction /*aTransaction*/)
 	{
 	DEBUG(_L("CTileBitmapManager::OnHTTPError(aError=%d) begin"), aError);
-	//ERROR(_L("HTTP error: %d"), aError);
+
 	ERROR(_L("Failed to download tile %S, error: %d"), &iLoadingTile.AsDes(), aError);
-	iObserver->OnTileLoadingFailed();
 	
-	
-	_LIT(KHttpErrMsg,"HTTP error");
-	SetErrorForProcessingTile(KHttpErrMsg, aError);
-	
-	iImgDecoder->Reset();
-	iState = /*TProcessingState::*/EIdle;
-	
-	
-	switch (aError)
+	if (iState != EError)
 		{
-		case KErrCancel:
-		case KErrNotReady:
+		iState = EError;
+		_LIT(KHttpErrMsg,"HTTP error");
+		SetErrorForProcessingTile(KHttpErrMsg, aError);
+		}
+	else
+		{
+		switch (aError)
 			{
-			// If access point not provided switch to offline mode
-			
-			// ToDo: This code may be thrown in other cases. Try to find better way
-			// to determine if IAP have been choosed or not.
-			
-			// FixMe: Access point choosing dialog appears several times in a row
-			// (in my case: 2 in emulator, 5-6 on the phone) and only after that
-			// we can catch cancel in this callback
-			// https://github.com/artem78/s60-maps/issues/4
-			iIsOfflineMode = ETrue;
-			INFO(_L("Switched to Offline Mode"));
-			iItemsLoadingQueue.Reset(); // Clear queue of loading tiles
-			
-			break;
-			}
-		
-		case KErrAbort: // Request aborted
-			{
-			INFO(_L("HTTP request cancelled"));
-			// No any further action
-			
-			break;
-			}
-			
-		default:
-			{
-			GoToNextTileInQueueL();
-			
-			break;
+			case KErrCancel:
+			case KErrNotReady:
+				{
+				// If access point not provided switch to offline mode
+				
+				// ToDo: This code may be thrown in other cases. Try to find better way
+				// to determine if IAP have been choosed or not.
+				
+				// FixMe: Access point choosing dialog appears several times in a row
+				// (in my case: 2 in emulator, 5-6 on the phone) and only after that
+				// we can catch cancel in this callback
+				// https://github.com/artem78/s60-maps/issues/4
+				iIsOfflineMode = ETrue;
+				INFO(_L("Switched to Offline Mode"));
+				iItemsLoadingQueue.Reset(); // Clear queue of loading tiles
+				
+				break;
+				}
 			}
 		}
+	
+	iImgDecoder->Reset();
+	
+	iObserver->OnTileLoadingFailed();
+	if (not iIsOfflineMode)
+		{
+		iState = EIdle;
+		TRAP_IGNORE(GoToNextTileInQueueL());
+		}
+	
 	DEBUG(_L("CTileBitmapManager::OnHTTPError end"));
 	}
 
@@ -699,26 +740,22 @@ void CTileBitmapManager::OnHTTPHeadersRecievedL(
 	
 	// Check status code
 	TInt statusCode = aTransaction.Response().StatusCode();
-	if (statusCode < 400)
-		{} // Ok
-	else
-		{ // Error
+	if (statusCode >= 400)
+		{ // Server Error
 		RStringF statusStr = aTransaction.Response().StatusText();
-		/*TBuf<256> buf16;
-		buf16.Copy(statusStr.DesC());
-		DEBUG(_L("Status code: %d"), statusCode);
-		DEBUG(_L("Status string: %S"), &buf16);
-		buf16.Copy(aTransaction.Request().URI().UriDes());
-		DEBUG(_L("URL: %S"), &buf16);*/
-		TBuf<64> errMsg;
+		RBuf errMsg;
+		errMsg.CreateL(statusStr.DesC().Length() + 10);
 		errMsg.Copy(statusStr.DesC());
 		errMsg.Append(' ');
 		errMsg.Append('(');
 		errMsg.AppendNum(statusCode);
 		errMsg.Append(')');
-		SetErrorForProcessingTile(errMsg);
 		
-		iObserver->OnTileLoadingFailed();
+		iState = EError;
+		SetErrorForProcessingTile(errMsg);
+		errMsg.Close();
+		//return;
+		User::Leave(KErrGeneral);
 		}
 	
 	// Check that mime-type is PNG or JPG
@@ -728,14 +765,17 @@ void CTileBitmapManager::OnHTTPHeadersRecievedL(
 	THTTPHdrVal contTypeFieldVal;
 	TInt r = respHeaders.GetField(contTypeFieldName, 0, contTypeFieldVal);
 	__ASSERT_DEBUG(r == KErrNone, Panic(ES60MapsNoRequiredHeaderInResponse)); // Unlikely if response don`t contains Content-Type header
-	if (r != KErrNone)
-		return;
+	/*if (r != KErrNone)
+		return;*/
+	User::LeaveIfError(r);
 	/*TBuf<32> tmp;
 	tmp.Copy(fieldVal.StrF().DesC());
 	DEBUG(_L("mime=%S"), &tmp);*/
 	
 	RStringF pngMimeType = strP.OpenFStringL(KPNGMimeType);
+	CleanupClosePushL(pngMimeType);
 	RStringF jpegMimeType = strP.OpenFStringL(KJPEGMimeType);
+	CleanupClosePushL(jpegMimeType);
 	if (contTypeFieldVal.StrF() == pngMimeType)
 		{
 		iImgFmt = EImgFmtPng;
@@ -745,13 +785,17 @@ void CTileBitmapManager::OnHTTPHeadersRecievedL(
 		iImgFmt = EImgFmtJpeg;
 		}
 	else
-		{
-		pngMimeType.Close();
-		jpegMimeType.Close();
-		return; // Skip other types except PNG or JPG
+		{ // Skip other types except PNG or JPG
+		iImgFmt = EImgFmtUnknown;
+		_LIT(KErrMsg,"Unsupported type ");
+		TBuf<64> errMsg;
+		errMsg.Copy(contTypeFieldVal.StrF().DesC());
+		errMsg.Insert(0, KErrMsg);
+		iState = EError;
+		SetErrorForProcessingTile(errMsg);
+		User::Leave(KErrNotSupported);
 		}
-	pngMimeType.Close();
-	jpegMimeType.Close();
+	CleanupStack::PopAndDestroy(2, &pngMimeType);
 
 	// Set image format to decoder
 	iImgDecoder->Reset();
@@ -764,12 +808,17 @@ void CTileBitmapManager::OnHTTPHeadersRecievedL(
 
 void CTileBitmapManager::OnHTTPHeadersRecieved(const RHTTPTransaction aTransaction)
 	{
+	if (iState == EError)
+		{
+		return;
+		}
+	
 	TRAPD(r, OnHTTPHeadersRecievedL(aTransaction));
 	if (r != KErrNone)
 		{
-		DEBUG(_L("CTileBitmapManager::OnHTTPHeadersRecievedL leaved with code %d"), r);
+		ERROR(_L("CTileBitmapManager::OnHTTPHeadersRecievedL leaved with code %d"), r);
 		
-		// ...
+		iState = EError;
 		}
 	}
 

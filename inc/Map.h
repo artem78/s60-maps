@@ -156,8 +156,9 @@ public:
 	
 // Leaving wrappers
 private:
-	virtual void OnHTTPResponseDataChunkRecievedL(const RHTTPTransaction aTransaction,
+	void OnHTTPResponseDataChunkRecievedL(const RHTTPTransaction aTransaction,
 			const TDesC8 &aDataChunk, TInt anOverallDataSize, TBool anIsLastChunk);
+	void OnHTTPResponseL(const RHTTPTransaction aTransaction);
 	void OnHTTPHeadersRecievedL(const RHTTPTransaction aTransaction);
 	
 // Custom properties and methods
@@ -172,6 +173,7 @@ private:
 	//TBool iIsLoading;
 	enum TProcessingState
 		{
+		EError, /*EFailed*/
 		EIdle,
 		EDownloading,
 		EDecoding
