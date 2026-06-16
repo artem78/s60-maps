@@ -14,7 +14,6 @@
 
 #include "MapMath.h"
 #include <e32math.h>
-#include "Map.h"
 
 
 // Constants
@@ -33,7 +32,7 @@ void MapMath::PixelsToMeters(const TReal64 &aLatitude, TZoom aZoom, TUint aPixel
 	//TInt p = 2 ** (aZoom + 8);
 	TInt p = MathUtils::Pow2(aZoom + 8);
 	aHorizontalDistance = aPixels * KEquatorLength * c / p;
-	aVerticalDistance = (Abs(KMinLatitudeMapBound) + Abs(KMinLatitudeMapBound)) /*~170deg*/
+	aVerticalDistance = (KMaxLatitudeMapBound - KMinLatitudeMapBound) /*~170deg*/
 			* KDegToRad * KEarthRadiusMinor / p * aPixels; 
 	}
 
@@ -55,7 +54,7 @@ void MapMath::MetersToPixels(const TReal64 &aLatitude, TZoom aZoom, TReal32 aDis
 	TInt p = MathUtils::Pow2(aZoom + 8);
 	TReal horPixels, vertPixels;
 	horPixels  = aDistance * p / (KEquatorLength * c);
-	vertPixels = aDistance / ((Abs(KMinLatitudeMapBound) + Abs(KMinLatitudeMapBound)) /*~170deg*/
+	vertPixels = aDistance / ((KMaxLatitudeMapBound - KMinLatitudeMapBound) /*~170deg*/
 			* KDegToRad * KEarthRadiusMinor / p);
 	Math::Round(horPixels, horPixels, 0);
 	Math::Round(vertPixels, vertPixels, 0);
@@ -177,3 +176,9 @@ const TBufC8<32> TTile::AsDes8() const
 	buff8.Format(KFormat, (TInt) iX, (TInt) iY, (TInt)iZ);
 	return buff8;
 	}
+
+/*TBool TTile::IsOutOfRange()
+	{
+	TInt m = MapMath::MaxTileXY(iZ);
+	return iX > m or iY > m;
+	}*/

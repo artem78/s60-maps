@@ -15,7 +15,7 @@
 
 #include <lbsposition.h>
 #include "MapMath.h"
-#include "Map.h"
+#include "MapControlLayers.h"
 #include "Defs.h"
 #include <s32strm.h>
 #include "Utils.h"

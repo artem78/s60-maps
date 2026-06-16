@@ -8,325 +8,44 @@
 #ifndef MAP_H_
 #define MAP_H_
 
-//#include "MapControl.h"
 #include <w32std.h>
-#include <lbsposition.h>
 #include <f32file.h>
 #include <fbs.h>
 #include <imageconversion.h>
-#include "MapMath.h"
+#include "MapMath.h"		// For TTile
 #include <e32base.h>
-#include <e32std.h>		// For RTimer
 #include "HttpClient2.h"
 #include "FileUtils.h"
 #include <e32msgqueue.h>
-#include <epos_cposlandmarkdatabase.h>
-#include <akniconutils.h> // For CAknIcon
-#include <lbssatellite.h>
-#include "Utils.h"
-#include "Search.h"
-
-
-// Constants
-const TReal64 KMinLatitudeMapBound = -85.051129;
-const TReal64 KMaxLatitudeMapBound = 85.051129;
-const TReal64 KMinLongitudeMapBound = -180;
-const TReal64 KMaxLongitudeMapBound = 180;
 
 
 // Forward declaration
-class CMapControl;
-
-
-// Classes
-
-class CMapLayerBase : public CBase
-	{
-protected:
-	CMapControl* iMapView;
-public:
-	CMapLayerBase(/*const*/ CMapControl* aMapView);
-	virtual void Draw(CWindowGc &aGc) = 0;
-	};
-
-
-#ifdef DEBUG_SHOW_ADDITIONAL_INFO
-// Debug layer with additional info
-class CMapLayerDebugInfo : public CMapLayerBase
-	{
-	// Constructor/destructor
-private:
-	CMapLayerDebugInfo(/*const*/ CMapControl* aMapView);
-	void ConstructL();
-	
-public:
-	static CMapLayerDebugInfo* NewL(CMapControl* aMapView);
-	static CMapLayerDebugInfo* NewLC(CMapControl* aMapView);
-	~CMapLayerDebugInfo();
-	
-	// From CMapLayerBase
-public:
-	void Draw(CWindowGc &aGc);
-	
-	// Own
-private:
-	TInt iRedrawingsCount;
-
-	void DrawInfoL(CWindowGc &aGc);
-	};
-#endif
-
 class CTileBitmapManager;
-//class MTileBitmapManagerObserver;
-class TTileProvider;
+
 
 class MTileBitmapManagerObserver
 	{
 public:
-	virtual void OnTileLoaded(const TTile &aTile, const CFbsBitmap *aBitmap) = 0;
-	virtual void OnTileLoadingFailed(const TTile &aTile, TInt aErrCode);
+	virtual void OnTileLoaded() = 0;
+	virtual void OnTileLoadingFailed();
 	};
 
-// Class for drawing map tiles
-class CTiledMapLayer : public CMapLayerBase, public MTileBitmapManagerObserver
+
+enum TImageFormat
 	{
-// Base methods
-public:
-	~CTiledMapLayer();
-	static CTiledMapLayer* NewL(CMapControl* aMapView, TTileProvider* aTileProvider);
-	static CTiledMapLayer* NewLC(CMapControl* aMapView, TTileProvider* aTileProvider);
-
-private:
-	CTiledMapLayer(CMapControl* aMapView);
-	void ConstructL(TTileProvider* aTileProvider);
+	EImgFmtUnknown,
 	
-// From CMapLayerBase
-public:
-	void Draw(CWindowGc &aGc);
-	
-// From MTileBitmapManagerObserver
-public:
-	void OnTileLoaded(const TTile &aTile, const CFbsBitmap *aBitmap);
-	
-// Custom properties and methods
-private:
-	CTileBitmapManager *iBitmapMgr;
-	TTileProvider *iTileProvider;
-	void VisibleTiles(RArray<TTile> &aTiles); // Return list of visible tiles
-	void DrawTile(CWindowGc &aGc, const TTile &aTile, const CFbsBitmap *aBitmap);
-	void DrawCopyrightText(CWindowGc &aGc);
-	
-public:
-	void SetTileProviderL(TTileProvider* aTileProvider);
-	void ReloadVisibleAreaL();
+	EImgFmtMbm, // for compatibility with older program versions (for reading only)
+	EImgFmtPng,
+	EImgFmtJpeg
 	};
-
-
-// Displays user location
-class CUserPositionLayer : public CMapLayerBase
-	{
-// From CMapLayerBase
-public:
-	CUserPositionLayer(/*const*/ CMapControl* aMapView);
-	void Draw(CWindowGc &aGc);
-	
-// Own methods
-private:
-	void DrawAccuracyCircle(CWindowGc &aGc, const TPoint &aScreenPos, TSize aSize);
-	void DrawDirectionMarkL(CWindowGc &aGc, const TPoint &aScreenPos, TReal aRotation);
-	void DrawRoundMark(CWindowGc &aGc, const TPoint &aScreenPos);
-	};
-
-
-#ifdef DEBUG_SHOW_TILE_BORDER_AND_XYZ
-// Debug layer for drawing tile`s border and x/y/z values.
-// May be used as stub.
-class CTileBorderAndXYZLayer : public CMapLayerBase
-	{
-// From CMapLayerBase
-public:
-	CTileBorderAndXYZLayer(CMapControl* aMapView);
-	void Draw(CWindowGc &aGc);
-
-// Custom properties and methods
-private:
-	void VisibleTiles(RArray<TTile> &aTiles); // Return list of visible tiles
-	void DrawTile(CWindowGc &aGc, const TTile &aTile);
-	
-	};
-#endif
-
-
-class CScaleBarLayer : public CMapLayerBase
-	{
-	// Constructor / destructor
-public:
-	~CScaleBarLayer();
-	static CScaleBarLayer* NewL(CMapControl* aMapView);
-	static CScaleBarLayer* NewLC(CMapControl* aMapView);
-
-private:
-	CScaleBarLayer(CMapControl* aMapView);
-	void ConstructL();
-	
-	// From CMapLayerBase
-public:
-	void Draw(CWindowGc &aGc);
-	
-	// Own
-private:
-	HBufC* iMetersUnit;
-	HBufC* iKilometersUnit;
-	
-	void GetOptimalLength(TInt &optimalLength, TReal32 &optimalDistance);
-	
-public:
-	void ReloadStringsFromResourceL();
-	
-	};
-
-class CLandmarksLayer : public CMapLayerBase
-	{
-	// Constructor / destructor
-public:
-	~CLandmarksLayer();
-	static CLandmarksLayer* NewL(CMapControl* aMapView, CPosLandmarkDatabase* aLmDb);
-	static CLandmarksLayer* NewLC(CMapControl* aMapView, CPosLandmarkDatabase* aLmDb);
-
-private:
-	CLandmarksLayer(CMapControl* aMapView, CPosLandmarkDatabase* aLmDb);
-	void ConstructL();
-	
-	// From CMapLayerBase
-public:
-	void Draw(CWindowGc &aGc);
-	
-	// Own
-private:
-	CPosLandmarkDatabase* iLandmarksDb; // Not owned
-	CAknIcon* iIcon;
-	
-	TBounds iCachedArea; // Area for which landmarks are loaded
-	CArrayPtr<CPosLandmark>* iCachedLandmarks; // May be NULL if no landmarks
-	TBool iReloadNeeded; // Used for indication if landmarks may be changed outside (for ex. created/deleted/renamed)
-	TZoom iZoom;
-	/*RRegion*/ RRegionBuf<20> iNameRegion;
-#ifdef __WINSCW__
-	// For debug only
-	TInt iVisibleIconsCount;
-#endif
-	
-	void ReloadLandmarksListL(); // ToDo: Is moving to another class needed?
-	void DrawL(CWindowGc &aGc);
-	void DrawLandmarks(CWindowGc &aGc);
-	void DrawLandmarkIcon(CWindowGc &aGc, const CPosLandmark* aLandmark);
-	void DrawLandmarkName(CWindowGc &aGc, const CPosLandmark* aLandmark);
-	
-public:
-	inline void NotifyLandmarksUpdated() { iReloadNeeded = ETrue; };
-	};
-
-
-class CCrosshairLayer : public CMapLayerBase
-	{
-	// Constructor / Destructor
-public:
-	CCrosshairLayer(CMapControl* aMapView);
-	
-	// From CMapLayerBase
-public:
-	void Draw(CWindowGc &aGc);
-	};
-
-
-class CSignalIndicatorLayer : public CMapLayerBase
-	{	
-	// Constructor / Destructor
-public:
-	static CSignalIndicatorLayer* NewL(CMapControl* aMapView);
-	static CSignalIndicatorLayer* NewLC(CMapControl* aMapView);
-	~CSignalIndicatorLayer();
-
-private:
-	CSignalIndicatorLayer(CMapControl* aMapView);
-	void ConstructL();
-	
-	// From CMapLayerBase
-public:
-	void Draw(CWindowGc &aGc);
-	
-	// New
-private:
-	enum TSignalStrength
-		{
-		ESignalNone,
-		ESignalVeryLow,
-		ESignalLow,
-		ESignalMedium,
-		ESignalGood,
-		ESignalVeryGood,
-		ESignalHigh
-		};
-	
-	// Constants for bars settings ("K" prefix used instead of "E" for enums)
-	enum {
-		KBarWidth		= 4,
-		KStartBarHeight	= 5,
-		KBarBorderWidth	= 1,
-		KBarsSpacing	= 2,
-		KBarHeightIncremement	= 3,
-		KBarsCount		= ESignalHigh - ESignalVeryLow + 1,
-		KBarsTotalWidth		= KBarsCount * KBarWidth + (KBarsCount - 1) * KBarsSpacing,
-		KBarsTotalHeight	= KStartBarHeight + (KBarsCount - 1) * KBarHeightIncremement
-	};
-
-	CAknIcon* iSatelliteIcon;
-	
-	void DrawBarsV1(CWindowGc &aGc, TSignalStrength aBarsCount);
-	TRect DrawBarsV2(CWindowGc &aGc, const TPoint &aTopRight, const TPositionSatelliteInfo &aSatInfo);
-	void DrawSatelliteIcon(CWindowGc &aGc, const TPoint &aPos);
-	
-	/* Converts signal strength value to real number in range [0,1], where 0 = no signal and 1 = maximum signal */
-	static TReal32 SignalStrengthToReal(TInt aSignalStrength);
-	
-	};
-
-
-class CSearchResultsLayer : public CMapLayerBase
-	{
-	// Constructor / destructor
-public:
-	~CSearchResultsLayer();
-	static CSearchResultsLayer* NewL(CMapControl* aMapView);
-	static CSearchResultsLayer* NewLC(CMapControl* aMapView);
-
-private:
-	CSearchResultsLayer(CMapControl* aMapView);
-	void ConstructL();
-	
-	// From CMapLayerBase
-public:
-	void Draw(CWindowGc &aGc);
-	
-	// Own
-private:
-	CAknIcon* iIcon;
-	CAknIcon* iIconSelected;
-	
-	void DrawIcon(CWindowGc &aGc, const TSearchResultItem &aSearchResult, TBool aSelected = EFalse);
-	void DrawTextWithBackgroundL(CWindowGc &aGc, const TSearchResultItem &aSearchResult);
-	void DrawBackgroundBoxL(CWindowGc &aGc, const TRect &aRect, const TPoint &aArrowTopPoint);
-	void DrawMultiLineText(CWindowGc &aGc, CArrayFix<TPtrC>* aLines, const CFont* aFont,
-			TInt aLineHeight, const TRect &aFirstLineRect); // With horizontal alignment centered
-	void IconRect(const TSearchResultItem &aSearchResult, TRect &aRect);
-	};
-
 
 class TSaverQueryItem
 	{
 public:
 	TTile iTile;
-	CFbsBitmap *iBitmap;
+	HBufC8* iRawData; // not owned
+	TImageFormat iFmt;
 	
 	TBool iShouldStop; // If true, thread processing will be stopped on this item
 	};
@@ -335,24 +54,30 @@ public:
 // Class for save tile bitmaps in separate thread
 // for improve bad performance on some phones
 
+class CTileDiskCache;
 class CTileBitmapSaver: public CBase
 	{
 	// Constructors/destructors
 public:
 	~CTileBitmapSaver();
-	static CTileBitmapSaver* NewL(CTileBitmapManager* aMgr);
-	static CTileBitmapSaver* NewLC(CTileBitmapManager* aMgr);
+	static CTileBitmapSaver* NewL(CTileDiskCache* aDiskCache);
+	static CTileBitmapSaver* NewLC(CTileDiskCache* aDiskCache);
 
 private:
-	CTileBitmapSaver(CTileBitmapManager* aMgr);
+	CTileBitmapSaver(CTileDiskCache* aDiskCache);
 	void ConstructL();
 	
 	// Custom
 public:
-	void AppendL(const TTile &aTile, CFbsBitmap *aBitmap);
+	/* Adds item to the saving queue
+	 * 
+	 * @param aRawData	Binary data which will be written to the file.
+	 * 					Ownership transferred to this class and later
+	 * 					after saving completes it will be destroyed automatically */
+	void AppendL(const TTile &aTile, HBufC8* aRawData, TImageFormat aFmt);
 	
 private:
-	CTileBitmapManager* iMgr;
+	CTileDiskCache* iDiskCache;
 	RMsgQueue<TSaverQueryItem> iQueue;
 	TInt iItemsInQueue;
 	TThreadId iThreadId;
@@ -362,32 +87,64 @@ private:
 	};
 
 
+class CTileBitmapMemCacheItem;
+
+/*	Stores in memory bitmaps for tiles. When count of stored bitmaps
+	reach maximum limit, oldest one will be deleted before insert new. */
+class CTileBitmapMemCache: public CBase
+	{
+	// Constructor & Destructor
+public:
+	CTileBitmapMemCache(TInt aLimit);
+	~CTileBitmapMemCache();
+	
+	// New
+private:
+	TInt iLimit;
+	RPointerArray<CTileBitmapMemCacheItem> iItems;
+	void /*DeleteItem()*/ DeleteLeastUsedItem(); // Deletes one most rarely used item
+	
+public:
+	CTileBitmapMemCacheItem* Find(const TTile &aTile) const;
+	///*TInt*/ void Append/*L*/(const TTile &aTile);
+	CTileBitmapMemCacheItem* Append/*L*/(const TTile &aTile);
+	// @return Error codes: KErrNotFound, KErrNotReady or KErrNone
+	TInt GetTileBitmap(const TTile &aTile, CFbsBitmap* &aBitmap);
+	void Delete(const TTile &aTile);
+	TBool HasError(const TTile &aTile);
+	const HBufC* ErrMsg(const TTile &aTile);
+	/*inline*/ void /*Reset*/Clear()
+		/*{ iItems.ResetAndDestroy(); }*/;
+	/* with "inline" sucessfully compiles for emulator, but for phone gives error:
+	 *     note: neither the destructor nor the class-specific operator delete will be called,
+	 *     even if they are declared when the class is defined. 
+	 * seems due to CTileBitmapMemCacheItem forward declaration used */
+	};
+
 
 class TTileProvider;
+class CTileDiskCache;
 
-class CTileBitmapManagerItem;
-
-// Stores and loads bitmaps for tiles. When count of stored bitmaps
-// reach maximum limit, oldest one will be deleted before insert new.
 class CTileBitmapManager : public CActive, public MHTTPClientObserver
+// todo: rename to CTileDownloader in the future
 	{
 // Base methods
 public:
 	~CTileBitmapManager();
 	static CTileBitmapManager* NewL(MTileBitmapManagerObserver *aObserver,
-			RFs aFs, TTileProvider* aTileProvider, const TDesC &aCacheDir, TInt aLimit = 50);
+			RFs aFs, TTileProvider* aTileProvider, const TDesC &aCacheDir);
 	static CTileBitmapManager* NewLC(MTileBitmapManagerObserver *aObserver,
-			RFs aFs, TTileProvider* aTileProvider, const TDesC &aCacheDir, TInt aLimit = 50);
+			RFs aFs, TTileProvider* aTileProvider, const TDesC &aCacheDir);
 
 private:
-	CTileBitmapManager(MTileBitmapManagerObserver *aObserver, RFs aFs,
-			TTileProvider* aTileProvider, TInt aLimit);
-	void ConstructL(const TDesC &aCacheDir);
+	CTileBitmapManager(MTileBitmapManagerObserver *aObserver,
+			TTileProvider* aTileProvider);
+	void ConstructL(const TDesC &aCacheDir, RFs aFs);
 	
 // From CActive
 	void RunL();
 	void DoCancel();
-	//TInt RunError(TInt aError);
+	TInt RunError(TInt aError);
 
 // From MHTTPClientObserver
 public:
@@ -397,87 +154,105 @@ public:
 	virtual void OnHTTPError(TInt aError, const RHTTPTransaction aTransaction);
 	virtual void OnHTTPHeadersRecieved(const RHTTPTransaction aTransaction);
 	
+// Leaving wrappers
+private:
+	void OnHTTPResponseDataChunkRecievedL(const RHTTPTransaction aTransaction,
+			const TDesC8 &aDataChunk, TInt anOverallDataSize, TBool anIsLastChunk);
+	void OnHTTPResponseL(const RHTTPTransaction aTransaction);
+	void OnHTTPHeadersRecievedL(const RHTTPTransaction aTransaction);
+	
 // Custom properties and methods
 private:
-	MTileBitmapManagerObserver *iObserver;
-	TInt iLimit;
-	RPointerArray<CTileBitmapManagerItem> iItems;
+	MTileBitmapManagerObserver* iObserver;
+	CTileBitmapMemCache* iBmpMemCache;
 	/*TInt*/ void Append/*L*/(const TTile &aTile); 
 	
 	RArray<TTile> /*iItemsForLoading*/ iItemsLoadingQueue;
 	CHTTPClient2* iHTTPClient;
 	TTileProvider* iTileProvider;
-	//TFileName iCacheDir;
 	//TBool iIsLoading;
 	enum TProcessingState
 		{
+		EError, /*EFailed*/
 		EIdle,
 		EDownloading,
 		EDecoding
 		};
 	TProcessingState iState;
 	CBufferedImageDecoder* iImgDecoder;
-	RFs iFs;
 	TTile iLoadingTile;
 	TBool iIsOfflineMode;
-	CFileTreeMapper* iFileMapper;
-	CTileBitmapSaver* iSaver;
+	CTileDiskCache* iDiskCache;
+	RBuf8 iRawData; /* todo: seems we can read data from iImgDecoder->FrameData(0)
+						instead of use this excess buffer */
+	TImageFormat iImgFmt;
 	
-	// @return Pointer to CTileBitmapManagerItem object or NULL if not found
-	CTileBitmapManagerItem* Find(const TTile &aTile) const;
 	void StartDownloadTileL(const TTile &aTile);
-	
-	// Save tile bitmap to file
-	void SaveBitmapInBackgroundL(const TTile &aTile, /*const*/ CFbsBitmap *aBitmap);
-	
-	// Restore tile bitmap from file
-	void LoadBitmapL(const TTile &aTile, CFbsBitmap *aBitmap) /*const*/;
-	
-	void TileFileName(const TTile &aTile, TFileName &aFileName) const;
-	TBool IsTileFileExists(const TTile &aTile) /*const*/;
-	void DeleteTileFile(const TTile &aTile);
-	void Delete(const TTile &aTile);
+	void GoToNextTileInQueueL();
+	void SetErrorForProcessingTile/*L*/(const TDesC &aErrMsg);
+	void SetErrorForProcessingTile/*L*/(const TDesC &aErrMsg, TInt aErrCode);
 	
 public:
+	/////////////
 	// @return Error codes: KErrNotFound, KErrNotReady or KErrNone
-	TInt GetTileBitmap(const TTile &aTile, CFbsBitmap* &aBitmap);
+	inline TInt GetTileBitmap(const TTile &aTile, CFbsBitmap* &aBitmap){return iBmpMemCache->GetTileBitmap(aTile, aBitmap);};
+	////////////////
 	void AddToLoading(const TTile &aTile, TBool aForce = EFalse);
 	void ChangeTileProvider(TTileProvider* aTileProvider, const TDesC &aCacheDir);
 	
-// Friends
-	friend class CTileBitmapSaver;
+	///////////////
+	inline TBool HasError(const TTile &aTile){return iBmpMemCache->HasError(aTile);};
+	inline const HBufC* ErrMsg(const TTile &aTile) {return iBmpMemCache->ErrMsg(aTile);};
+	/////////////////
 	};
 
 
 /* Links Tile`s x,y,z with CFbsBitmap loaded to image server.
- * Used in CTileBitmapManager class.
+ * Used in CTileBitmapMemCache class.
  * 
  * Initially bitmap pointer is NULL. You need to call CreateBitmapIfNotExistL()
  * before start drawing bitmap. After drawing complete, you need to call SetReady().
  */
-class CTileBitmapManagerItem : public CBase
+class CTileBitmapMemCacheItem : public CBase
 	{
 // Base methods
 public:
-	~CTileBitmapManagerItem();
-	static CTileBitmapManagerItem* NewL(const TTile &aTile);
-	static CTileBitmapManagerItem* NewLC(const TTile &aTile);
+	~CTileBitmapMemCacheItem();
+	static CTileBitmapMemCacheItem* NewL(const TTile &aTile);
+	static CTileBitmapMemCacheItem* NewLC(const TTile &aTile);
 
 private:
-	CTileBitmapManagerItem(const TTile &aTile);
+	CTileBitmapMemCacheItem(const TTile &aTile);
 	void ConstructL();
 
 // Custom properties and methods
 private:
 	TTile iTile;
 	CFbsBitmap* iBitmap;
-	TBool iIsReady; // ETrue when image completely drawn and ready to use
+	
+	enum TState
+		{
+		ENotReady,	// image is not loading/processing yet
+		EReady,		// when image completely drawn and ready to use
+		EError		// error when download or process image
+		};
+	
+	TState iState;
+	HBufC* iErrorMsg; // owned
+	RBuf8 iRawData;
+	
 public:
 	TTime iLastAccessTime;
 
 	void CreateBitmapIfNotExistL();
-	inline TBool IsReady() { return iIsReady && iBitmap != NULL; };
-	inline void SetReady() { iIsReady = ETrue; };
+	inline TBool IsReady() { return iState == EReady && iBitmap != NULL; };
+	inline void SetReady() { iState = EReady; };
+	inline TBool HasError()
+		{ return iState == EError; };
+	
+	void SetErrorMsg/*L*/(const TDesC& aErrMsg);
+	inline const HBufC* ErrorMsg()
+			{ return iErrorMsg; };
 	
 // Getters
 public:
@@ -551,6 +326,39 @@ public:
 		{ iHorAccuracy = aHorAccuracy; }
 	
 	//operator TCoordinate() const;
+	};
+
+
+// Reads tiles from the file system (cache on disk).
+class CTileDiskCache /*CTileFSCache*/ : public CBase
+	{
+	// Constructor / Destructor
+public:
+	static CTileDiskCache* NewL(RFs &aFs, const TDesC &aCacheDir);
+	~CTileDiskCache();
+
+private:
+	CTileDiskCache(RFs &aFs);
+	void ConstructL(const TDesC &aCacheDir);
+	
+	// New members
+private:
+	RFs iFs;
+	CTileBitmapSaver* iSaver;
+	CFileTreeMapper* iFileMapper;
+	
+public:
+	void LoadBitmapL /*LoadBitmapFromFileL*/ /*ReadBitmapFromDiskL*/ (const TTile &aTile, CFbsBitmap *aBitmap) /*const*/;
+	inline void SaveBitmapInBackgroundL(const TTile &aTile, HBufC8* aRawData, TImageFormat aFmt)
+		{ iSaver->AppendL(aTile, aRawData, aFmt); };
+	void TileFileName(const TTile &aTile, TFileName &aFileName,
+			/*const TDesC& aFileExt,*/ TImageFormat aFmt=EImgFmtMbm) const;
+	TBool IsTileFileExists(const TTile &aTile) const;
+	void DeleteTileFile(const TTile &aTile);
+	inline void SetCacheDir(const TDesC &aCacheDir)
+		{ iFileMapper->SetBaseDir(aCacheDir); };
+	TImageFormat DetermineFileFormat(const TTile &aTile) const;
+
 	};
 
 

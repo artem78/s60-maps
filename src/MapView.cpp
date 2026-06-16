@@ -168,6 +168,10 @@ void CMapView::HandleCommandL(TInt aCommand)
 		case EDeleteLandmark:
 			HandleDeleteLandmarkL();
 			break;
+			
+		case EGoto:
+			// no any action required
+			break;
 
 		case EGotoLandmark:
 			HandleGotoLandmarkL();
@@ -238,15 +242,19 @@ void CMapView::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
 				TBool isVisible = iSearch->Results() && iSearch->Results()->Count();
 				aMenuPane->SetItemDimmed(EClearSearchResults, !isVisible);
 				
+				// symbian 9.1 fix: prevent display empty "go to" when "go to/landmark" is hidden
+				//#if defined(__S60_30__)
+				#if !defined(SYMBIAN_FLEXIBLE_ALARM) // symbian 9.1
+					aMenuPane->SetItemDimmed(EGoto, not appUi->LandmarkDbIsNotEmpty());
+				#endif
+				
 				break;
 			}
 			
 		case R_SUBMENU_GOTO:
 			{
-			CPosLmItemIterator* landmarkIterator = appUi->LandmarkDb()->LandmarkIteratorL();
-			if (!(landmarkIterator && landmarkIterator->NumOfItemsL() > 0))
-				aMenuPane->SetItemDimmed(EGotoLandmark, ETrue);
-			delete landmarkIterator;
+			// hides "go to/landmark" if landmarks DB is empty
+			aMenuPane->SetItemDimmed(EGotoLandmark, not appUi->LandmarkDbIsNotEmpty());
 			
 			break;
 			}

@@ -78,7 +78,7 @@ void CUpdateChecker::OnHTTPResponse(const RHTTPTransaction /*aTransaction*/)
 	// empty
 	}
 
-void CUpdateChecker::OnHTTPError(TInt aError, const RHTTPTransaction /*aTransaction*/)
+void CUpdateChecker::OnHTTPError(TInt /*aError*/, const RHTTPTransaction /*aTransaction*/)
 	{
 	delete iResponseBuff;
 	iResponseBuff = NULL;

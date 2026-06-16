@@ -512,17 +512,30 @@ void CMapControl::Move(const TPoint &aPoint, TBool aSavePos)
 		viewRect.SetRect(Rect().iTl, Rect().iBr);
 		viewRect.Move(iTopLeftPosition);
 		
+		TInt dopuskX, dopuskY;
+		TInt projWH = maxXY + 1;
+		if (viewRect.Width() < projWH && viewRect.Height() < projWH)
+			{ // Map larger than screen, disallow goes out of bounds
+			dopuskX = 0;
+			dopuskY = 0;
+			}
+		else
+			{ // Map smaller than screen height or width, allow goes out of bounds with some value
+			dopuskX = viewRect.Width() / 2;
+			dopuskY = viewRect.Height() / 2;
+			}
+		
 		// Correct longitude when it goes out of bounds
-		if (viewRect.iTl.iY < 0)
-			iTopLeftPosition.iY = 0;
-		else if (viewRect.iBr.iY > maxXY)
-			iTopLeftPosition.iY = maxXY - viewRect.Height() + 1;
+		if (viewRect.iTl.iY < -dopuskY)
+			iTopLeftPosition.iY = -dopuskY;
+		else if (viewRect.iBr.iY > maxXY + dopuskY)
+			iTopLeftPosition.iY = maxXY + dopuskY - viewRect.Height() + 1;
 		
 		// Correct latitude when it goes out of bounds
-		if (viewRect.iTl.iX < 0)
-			iTopLeftPosition.iX = 0;
-		else if (viewRect.iBr.iX > maxXY)
-			iTopLeftPosition.iX = maxXY - viewRect.Width() + 1;
+		if (viewRect.iTl.iX < -dopuskX)
+			iTopLeftPosition.iX = -dopuskX;
+		else if (viewRect.iBr.iX > maxXY + dopuskX)
+			iTopLeftPosition.iX = maxXY + dopuskX - viewRect.Width() + 1;
 		
 		if (iTopLeftPosition != oldPoint) // Check if position really changed
 			DrawDelayed();
@@ -723,8 +736,24 @@ TPoint CMapControl::ScreenCoordsToProjectionCoords(const TPoint &aPoint) const
 
 void CMapControl::Bounds(TBounds &aCoordRect) const
 	{
-	aCoordRect.iTlCoord = ScreenCoordsToGeoCoords(Rect().iTl);
-	aCoordRect.iBrCoord = ScreenCoordsToGeoCoords(Rect().iBr - TPoint(1, 1));
+	/*aCoordRect.iTlCoord = ScreenCoordsToGeoCoords(Rect().iTl);
+	aCoordRect.iBrCoord = ScreenCoordsToGeoCoords(Rect().iBr - TPoint(1, 1));*/
+	
+	// fix possible out of range
+	TPoint tl = ScreenCoordsToProjectionCoords(Rect().iTl);
+	TPoint br = ScreenCoordsToProjectionCoords(Rect().iBr - TPoint(1, 1));
+	const /*TUint*/ TInt maxProjXY = MapMath::MaxProjectionCoordXY(GetZoom());
+	if (tl.iX < 0)
+		tl.iX = 0;
+	if (tl.iY < 0)
+		tl.iY = 0;
+	if (br.iX > maxProjXY)
+		br.iX = maxProjXY;
+	if (br.iY > maxProjXY)
+		br.iY = maxProjXY;
+	br += TPoint(1,1);
+	aCoordRect.iTlCoord = MapMath::ProjectionPointToGeoCoords(tl, GetZoom());
+	aCoordRect.iBrCoord = MapMath::ProjectionPointToGeoCoords(br, GetZoom());
 	}
 
 void CMapControl::Bounds(TTile &aTopLeftTile, TTile &aBottomRightTile) const
@@ -733,6 +762,18 @@ void CMapControl::Bounds(TTile &aTopLeftTile, TTile &aBottomRightTile) const
 	TPoint bottomRightProjection = ScreenCoordsToProjectionCoords(Rect().iBr - TPoint(1, 1));
 	aTopLeftTile = MapMath::ProjectionPointToTile(topLeftProjection, GetZoom());
 	aBottomRightTile = MapMath::ProjectionPointToTile(bottomRightProjection, GetZoom());
+	
+	// fix possible out of range
+	const TUint maxTileXY = MapMath::MaxTileXY(GetZoom());
+	const TInt maxProjXY = MapMath::MaxProjectionCoordXY(GetZoom());
+	if (topLeftProjection.iX < 0)
+		aTopLeftTile.iX = 0;
+	if (topLeftProjection.iY < 0)
+		aTopLeftTile.iY = 0;
+	if (bottomRightProjection.iX > maxProjXY)
+		aBottomRightTile.iX = maxTileXY;
+	if (bottomRightProjection.iY > maxProjXY)
+		aBottomRightTile.iY = maxTileXY;
 	}
 
 void CMapControl::UpdateUserPosition()

@@ -161,6 +161,8 @@ public:
 	
 	void ShowStatusPaneAndHideMapControlL(TInt aPaneTitleResourceId);
 	void HideStatusPaneAndShowMapControlL();
+	
+	TBool LandmarkDbIsNotEmptyL();
 
 private:
 	CSettings* iSettings;
@@ -254,6 +256,8 @@ public:
 	TInt GetSessionBytesTransferred(TBytesCount &aBytesRecieved, TBytesCount &aBytesSent) const; // fixme: on EMULATOR always aBytesRecieved = aBytesSent = 0!
 	TInt GetTotalBytesTransferred(TBytesCount &aBytesRecieved, TBytesCount &aBytesSent) const;
 	
+	// Checks if landmark DB has any items. If empty or any error returns EFalse.
+	TBool LandmarkDbIsNotEmpty();
 	};
 
 #endif // __S60MAPSAPPUI_h__
