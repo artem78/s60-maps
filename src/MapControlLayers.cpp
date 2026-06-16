@@ -175,10 +175,12 @@ void CTiledMapLayer::Draw(CWindowGc &aGc)
 	VisibleTiles(tiles);
 	for (TInt idx = 0; idx < tiles.Count(); idx++)
 		{
-		if (iBitmapMgr->HasError(tiles[idx]))
+		const TTile tile = tiles[idx];
+		
+		if (iBitmapMgr->HasError(tile))
 			{
 			_LIT(KFmt, "Error: %S");
-			const HBufC* err = iBitmapMgr->ErrMsg(tiles[idx]);
+			const HBufC* err = iBitmapMgr->ErrMsg(tile);
 			if (err == NULL)
 				continue;
 			
@@ -187,28 +189,28 @@ void CTiledMapLayer::Draw(CWindowGc &aGc)
 			if (r == KErrNone)
 				{
 				msg.Format(KFmt, err);	
-				DrawError(aGc, tiles[idx], msg);
+				DrawError(aGc, tile, msg);
 				msg.Close();
 				}
 			continue;
 			}
 		
 		CFbsBitmap* bitmap;
-		TInt err = iBitmapMgr->GetTileBitmap(tiles[idx], bitmap);
+		TInt err = iBitmapMgr->GetTileBitmap(tile, bitmap);
 		switch (err)
 			{
 			case KErrNone:
 				{
-				DrawTile(aGc, tiles[idx], bitmap);
+				DrawTile(aGc, tile, bitmap);
 				break;
 				}
 				
 			case KErrNotFound:
 				{
-				iBitmapMgr->AddToLoading(tiles[idx]);
-				TInt err = iBitmapMgr->GetTileBitmap(tiles[idx], bitmap);
+				iBitmapMgr->AddToLoading(tile);
+				TInt err = iBitmapMgr->GetTileBitmap(tile, bitmap);
 				if (KErrNone == err)
-					DrawTile(aGc, tiles[idx], bitmap);
+					DrawTile(aGc, tile, bitmap);
 				break;
 				}
 				
