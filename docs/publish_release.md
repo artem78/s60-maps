@@ -15,7 +15,7 @@
 
 4) Сделать commit и push
    ```
-   commit -a -m 'vX.XX.X'
+   git commit -a -m 'vX.XX.X'
    git tag -a vX.XX.X
    git push
    ```
