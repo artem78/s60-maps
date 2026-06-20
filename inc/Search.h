@@ -116,6 +116,9 @@ public:
 	
 	inline void SetPreferredBounds(const TBounds &aBounds)
 		{ iPreferredBounds.SetCoords(aBounds.iTlCoord, aBounds.iBrCoord); };
+	
+	inline TBool HasResults()
+		{ return iResultsArr and iResultsArr->Count(); }
 
 	};
 

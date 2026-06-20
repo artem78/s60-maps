@@ -239,7 +239,7 @@ void CMapView::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
 				//);
 				aMenuPane->SetItemDimmed(EFindMe, !appUi->IsPositioningAvailableAndEnabled() || MapControl()->IsFollowingUser());
 				
-				TBool isVisible = iSearch->Results() && iSearch->Results()->Count();
+				TBool isVisible = iSearch->HasResults();
 				aMenuPane->SetItemDimmed(EClearSearchResults, !isVisible);
 				
 				// symbian 9.1 fix: prevent display empty "go to" when "go to/landmark" is hidden

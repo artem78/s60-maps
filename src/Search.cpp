@@ -359,7 +359,7 @@ void CSearch::OnHTTPHeadersRecieved(const RHTTPTransaction /*aTransaction*/)
 
 TBool CSearch::AllResultsBounds(TBounds &aBounds)
 	{
-	if (!iResultsArr || !iResultsArr->Count())
+	if (not HasResults())
 		return EFalse;
 	
 	aBounds = (*iResultsArr)[0].iBounds;
