@@ -147,7 +147,7 @@ private:
 	TInt RunError(TInt aError);
 
 // From MHTTPClientObserver
-public:
+private:
 	virtual void OnHTTPResponseDataChunkRecieved(const RHTTPTransaction aTransaction,
 			const TDesC8 &aDataChunk, TInt anOverallDataSize, TBool anIsLastChunk);
 	virtual void OnHTTPResponse(const RHTTPTransaction aTransaction);
