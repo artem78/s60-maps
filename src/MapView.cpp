@@ -219,6 +219,12 @@ void CMapView::HandleCommandL(TInt aCommand)
 			break;
 			}
 			
+		case EShowSearchResultList:
+			{
+			HandleShowSearchResListL();
+			break;
+			}
+			
 		default:
 			// Let the AppUi handle unknown for view commands
 			AppUi()->HandleCommandL(aCommand);
@@ -241,6 +247,7 @@ void CMapView::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
 				
 				TBool isVisible = iSearch->HasResults();
 				aMenuPane->SetItemDimmed(EClearSearchResults, !isVisible);
+				aMenuPane->SetItemDimmed(EShowSearchResultList, !isVisible);
 				
 				// symbian 9.1 fix: prevent display empty "go to" when "go to/landmark" is hidden
 				//#if defined(__S60_30__)
@@ -906,4 +913,9 @@ void CMapView::OnUpdateCheckFailedL()
 	CAknErrorNote* note = new (ELeave) CAknErrorNote;
 	note->ExecuteLD(*msg);
 	CleanupStack::PopAndDestroy(msg);
+	}
+
+void CMapView::HandleShowSearchResListL()
+	{
+	iSearch->ShowResultDlgL();
 	}

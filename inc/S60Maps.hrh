@@ -39,7 +39,8 @@ enum TS60MapsIds
 	EClearSearchResults,
 	EShowHotkeys,
 	EShowDataLicences,
-	ECheckUpdates
+	ECheckUpdates,
+	EShowSearchResultList
 	};
 
 // Controls

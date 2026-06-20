@@ -121,3 +121,7 @@
 #define qtn_update_check_failed "Check for updates failed!"
 #define qtn_update_check_success_msg "New version %S published %S available! Current is %S."
 #define qtn_download_confirmation "Download?"
+
+// Added in version X.XX
+
+#define qtn_show_search_results "Search results"

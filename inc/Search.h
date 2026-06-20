@@ -119,6 +119,11 @@ public:
 	
 	inline TBool HasResults()
 		{ return iResultsArr and iResultsArr->Count(); }
+	
+	/*
+	 * Shows dialog with list of search results. Do nothing if no results.
+	 * */
+	void ShowResultDlgL();
 
 	};
 

@@ -108,6 +108,7 @@ private:
 	void HandleShowControlsDlgL();
 	void HandleShowDataLicencesL();
 	void HandleCheckUpdatesL();
+	void HandleShowSearchResListL();
 	
 	// Others
 	CSearch* iSearch;
