@@ -79,7 +79,9 @@ TBool CSearch::RunQueryDialogL()
 	
 	CAknTextQueryDialog* dlg = new (ELeave) CAknTextQueryDialog(iQuery);
 	dlg->SetMaxLength(iQuery.MaxLength());
-	TBool res = dlg->ExecuteLD(R_SEARCH_INPUT_QUERY_DLG) == EAknSoftkeySearch;
+	TInt key = dlg->ExecuteLD(R_SEARCH_INPUT_QUERY_DLG);
+	TBool res = key == EAknSoftkeySearch or key == EAknSoftkeyOk or key == EAknSoftkeySelect;
+	//TBool res = key != EAknSoftkeyCancel; // panic
 	if (res)
 		{
 		DEBUG(_L("Search query: %S"), &iQuery);
