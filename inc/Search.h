@@ -90,7 +90,7 @@ private:
 	CAknWaitDialog* iWaitDialog;
 	
 	TBool RunQueryDialogL();
-	/*TBool*/ void RunResultsDialogL();
+	/*TBool*/ void ProcessApiResponseAndShowResultDlgL();
 	void ParseApiResponseL();
 	void RunApiReqestL();
 	static void ParseJsonValueL(CJsonParser* aParser, const TDesC &aParam, TDes &aVal);
@@ -131,9 +131,9 @@ public:
 class MSearchObserver
 	{
 protected:
-	virtual void OnSearchFinished(const TSearchResultItem &aResultData) = 0;
+	virtual void OnSearchResultChosen(const TSearchResultItem &aResultData) = 0;
 	virtual void OnSearchFailedL(TInt aError);
-	virtual void OnSearchClosed/*L*/() = 0;
+	virtual void OnSearchDlgClosed/*L*/() = 0;
 	
 	friend class CSearch;
 	};

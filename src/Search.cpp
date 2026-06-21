@@ -91,7 +91,7 @@ TBool CSearch::RunQueryDialogL()
 	return res;	
 	}
 
-void CSearch::RunResultsDialogL()
+void CSearch::ProcessApiResponseAndShowResultDlgL()
 	{
 	DEBUG(_L("begin"));
 	
@@ -113,7 +113,7 @@ void CSearch::RunResultsDialogL()
 		
 		case 1:
 			{ // go directly to single result
-			iObserver->OnSearchFinished(iResultsArr->At(0));
+			iObserver->OnSearchResultChosen(iResultsArr->At(0));
 			
 			break;
 			}
@@ -294,7 +294,7 @@ void CSearch::OnHTTPResponseDataChunkRecieved(const RHTTPTransaction /*aTransact
 		iWaitDialog->ProcessFinishedL();
 		iWaitDialog = NULL;
 		
-		RunResultsDialogL();
+		ProcessApiResponseAndShowResultDlgL();
 		
 		delete iResponseBuff;
 		iResponseBuff = NULL;
@@ -379,11 +379,11 @@ void CSearch::ShowResultDlgL()
 				iResultsArr->At(chosenItem).iCoord.Latitude(),
 				iResultsArr->At(chosenItem).iCoord.Longitude());
 		
-		iObserver->OnSearchFinished(iResultsArr->At(chosenItem));
+		iObserver->OnSearchResultChosen(iResultsArr->At(chosenItem));
 		}
 	else
 		{
-		iObserver->OnSearchClosed();
+		iObserver->OnSearchDlgClosed();
 		}
 	}
 

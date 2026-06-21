@@ -124,4 +124,4 @@
 
 // Added in version X.XX
 
-#define qtn_show_search_results "Search results"
+#define qtn_search_results "Search results"

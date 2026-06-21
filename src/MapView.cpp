@@ -766,7 +766,7 @@ void CMapView::HandleSearchL()
 	DEBUG(_L("end"));
 	}
 
-void CMapView::OnSearchFinished(const TSearchResultItem &aResultData)
+void CMapView::OnSearchResultChosen(const TSearchResultItem &aResultData)
 	{
 	MapControl()->SetFollowUser(EFalse);
 	MapControl()->MoveAndZoomToBounds(aResultData.iBounds);
@@ -775,7 +775,7 @@ void CMapView::OnSearchFinished(const TSearchResultItem &aResultData)
 	//iSearch = NULL;
 	}
 
-void CMapView::OnSearchClosed/*L*/()
+void CMapView::OnSearchDlgClosed/*L*/()
 	{
 	TBounds maxBounds;
 	if (iSearch->AllResultsBounds(maxBounds))

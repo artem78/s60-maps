@@ -114,7 +114,7 @@ RESOURCE MENU_PANE r_menu
 		MENU_ITEM
 				{
 				command = EShowSearchResultList;
-				txt = qtn_show_search_results;
+				txt = qtn_search_results;
 				},
 		MENU_ITEM
 				{
