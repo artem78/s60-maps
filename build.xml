@@ -195,6 +195,17 @@
             <substitution expression="\1${new_version.as_text}" />
         </replaceregexp>
 		
+		<echo/>
+		<echo>======== BEGIN CHANGES DIFF ========</echo>
+		<echo/>
+		<exec executable="git" failonerror="true">
+			<arg value="diff"/>
+			<!-- <arg value="- -word-diff"/> -->
+		</exec>
+		<echo/>
+		<echo>========= END CHANGES DIFF =========</echo>
+		<echo/>
+		
 		<input message="Commit changes?"
 			validargs="y,n"
 			addproperty="do.commit"/>
