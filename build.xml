@@ -1,6 +1,13 @@
 <?xml version="1.0"?>
 <project name="S60Maps" default="make_sis">
 	<taskdef resource="net/sf/antcontrib/antlib.xml" />
+	<!--
+		Внимание!
+		
+		Требуется установить ANT Contrib:
+			- Скачать https://sourceforge.net/projects/ant-contrib/files/ant-contrib/1.0b3/ant-contrib-1.0b3-bin.zip/download
+			- Из архива распаковать файл ant-contrib-1.0b3.jar в папку $ANT_HOME/lib
+	-->
 
 	<!-- Properties: -->
 	<property name="sources_dir" location="sources"/>
