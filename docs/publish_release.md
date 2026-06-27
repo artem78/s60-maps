@@ -2,9 +2,10 @@
 
 1) Подтянуть все изменения, объединить ветки
    ```
+   git checkout -- .cproject
    git checkout master
    git pull
-   git merge wip
+   git merge develop
    ```
 2) Обновить номер версии в 3-х местах (Для пунктов 2-4 можно запустить `increment_version.bat`)
    - inc/defs.h (7 строка): `const TVersion KProgramVersion(X, XX, X);`
