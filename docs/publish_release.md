@@ -60,8 +60,10 @@
    git push
    ```
 
-12) Желательно обновить таблицу состояния переводов [здесь](https://github.com/artem78/s60-maps/blob/master/docs/CONTRIBUTING.md#localization)
+12) Обновить переводы на transifex (**todo: написать как**)
+
+13) Желательно обновить таблицу состояния переводов [здесь](https://github.com/artem78/s60-maps/blob/master/docs/CONTRIBUTING.md#localization)
     
     скрипт - https://github.com/artem78/SymLocInsert/blob/master/TOOLS/get_translation_stats.py
 
-13) Всё, конец
+14) Всё, конец
