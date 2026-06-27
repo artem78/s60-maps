@@ -219,6 +219,12 @@ void CMapView::HandleCommandL(TInt aCommand)
 			break;
 			}
 			
+		case EShowSearchResultList:
+			{
+			HandleShowSearchResListL();
+			break;
+			}
+			
 		default:
 			// Let the AppUi handle unknown for view commands
 			AppUi()->HandleCommandL(aCommand);
@@ -239,8 +245,9 @@ void CMapView::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
 				//);
 				aMenuPane->SetItemDimmed(EFindMe, !appUi->IsPositioningAvailableAndEnabled() || MapControl()->IsFollowingUser());
 				
-				TBool isVisible = iSearch->Results() && iSearch->Results()->Count();
+				TBool isVisible = iSearch->HasResults();
 				aMenuPane->SetItemDimmed(EClearSearchResults, !isVisible);
+				aMenuPane->SetItemDimmed(EShowSearchResultList, !isVisible);
 				
 				// symbian 9.1 fix: prevent display empty "go to" when "go to/landmark" is hidden
 				//#if defined(__S60_30__)
@@ -759,7 +766,7 @@ void CMapView::HandleSearchL()
 	DEBUG(_L("end"));
 	}
 
-void CMapView::OnSearchFinished(const TSearchResultItem &aResultData)
+void CMapView::OnSearchResultChosen(const TSearchResultItem &aResultData)
 	{
 	MapControl()->SetFollowUser(EFalse);
 	MapControl()->MoveAndZoomToBounds(aResultData.iBounds);
@@ -768,7 +775,7 @@ void CMapView::OnSearchFinished(const TSearchResultItem &aResultData)
 	//iSearch = NULL;
 	}
 
-void CMapView::OnSearchClosed/*L*/()
+void CMapView::OnSearchDlgClosed/*L*/()
 	{
 	TBounds maxBounds;
 	if (iSearch->AllResultsBounds(maxBounds))
@@ -906,4 +913,9 @@ void CMapView::OnUpdateCheckFailedL()
 	CAknErrorNote* note = new (ELeave) CAknErrorNote;
 	note->ExecuteLD(*msg);
 	CleanupStack::PopAndDestroy(msg);
+	}
+
+void CMapView::HandleShowSearchResListL()
+	{
+	iSearch->ShowResultDlgL();
 	}

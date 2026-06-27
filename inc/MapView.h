@@ -52,9 +52,9 @@ private:
 	
 	// From MSearchObserver
 private:
-	void OnSearchFinished(const TSearchResultItem &aResultData);
+	void OnSearchResultChosen(const TSearchResultItem &aResultData);
 	/*void OnSearchFailed();*/
-	void OnSearchClosed/*L*/();
+	void OnSearchDlgClosed/*L*/();
 	
 	// From MUpdateCheckerObserver
 private:
@@ -108,6 +108,7 @@ private:
 	void HandleShowControlsDlgL();
 	void HandleShowDataLicencesL();
 	void HandleCheckUpdatesL();
+	void HandleShowSearchResListL();
 	
 	// Others
 	CSearch* iSearch;

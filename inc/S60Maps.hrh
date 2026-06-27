@@ -15,7 +15,7 @@
 // S60Maps enumerate command codes
 /* In addition to this enum tile provider change commands use ids
    started from CMapView::KSetTileProviderCommandBaseId */
-enum TS60MapsIds
+enum TS60MapsCommandIds
 	{
 	EFindMe = 0x6001, // start value must not be 0
 #ifdef _HELP_AVAILABLE_
@@ -39,7 +39,8 @@ enum TS60MapsIds
 	EClearSearchResults,
 	EShowHotkeys,
 	EShowDataLicences,
-	ECheckUpdates
+	ECheckUpdates,
+	EShowSearchResultList
 	};
 
 // Controls

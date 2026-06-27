@@ -1456,10 +1456,10 @@ void CSearchResultsLayer::Draw(CWindowGc &aGc)
 	
 	// Check if any items to display
 	CSearch* search = appUi->MapView()->Search();
-	const CSearchResultArray* searchResArr = search->Results();
-	if (!searchResArr || !searchResArr->Count())
+	if (not search->HasResults())
 		return;
 	
+	const CSearchResultArray* searchResArr = search->Results();	
 
 	
 	TInt nearestItemIdx = -1;

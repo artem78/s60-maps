@@ -20,6 +20,8 @@
 #include <utf.h>
 #include <aknnotewrappers.h>
 #include "S60Maps.pan"
+#include <aknlists.h>	// for CAknSingleStyleListBox
+#include <eikclbd.h>	// for CColumnListBoxData
 
 
 CSearch::CSearch(MSearchObserver* aObserver)
@@ -79,7 +81,9 @@ TBool CSearch::RunQueryDialogL()
 	
 	CAknTextQueryDialog* dlg = new (ELeave) CAknTextQueryDialog(iQuery);
 	dlg->SetMaxLength(iQuery.MaxLength());
-	TBool res = dlg->ExecuteLD(R_SEARCH_INPUT_QUERY_DLG) == EAknSoftkeySearch;
+	TInt key = dlg->ExecuteLD(R_SEARCH_INPUT_QUERY_DLG);
+	TBool res = key == EAknSoftkeySearch or key == EAknSoftkeyOk or key == EAknSoftkeySelect;
+	//TBool res = key != EAknSoftkeyCancel; // panic
 	if (res)
 		{
 		DEBUG(_L("Search query: %S"), &iQuery);
@@ -89,13 +93,9 @@ TBool CSearch::RunQueryDialogL()
 	return res;	
 	}
 
-void CSearch::RunResultsDialogL()
+void CSearch::ProcessApiResponseAndShowResultDlgL()
 	{
 	DEBUG(_L("begin"));
-	
-	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(iAvkonAppUi);
-	
-	const TInt KGranularity = 10;
 	
 	ParseApiResponseL();
 	
@@ -115,44 +115,14 @@ void CSearch::RunResultsDialogL()
 		
 		case 1:
 			{ // go directly to single result
-			iObserver->OnSearchFinished(iResultsArr->At(0));
+			iObserver->OnSearchResultChosen(iResultsArr->At(0));
 			
 			break;
 			}
 		
 		default:
 			{ // show choosing list if more than one result
-			CPtrCArray* namesArray = new (ELeave) CPtrCArray(KGranularity);
-			CleanupStack::PushL(namesArray);
-			
-			for (TInt i = 0; i < iResultsArr->Count(); i++)
-				{
-				namesArray->AppendL(TPtrC(iResultsArr->At(i).iName));
-				}
-			
-			TInt chosenItem = -1;
-			CAknSelectionListDialog* dlg = CAknSelectionListDialog::NewL(chosenItem, namesArray,
-					R_SEARCH_RESULTS_QUERY_DIALOG_MENUBAR);
-			appUi->ShowStatusPaneAndHideMapControlL(R_SEARCH_RESULTS);
-			TBool res = dlg->ExecuteLD(R_SEARCH_RESULTS_QUERY_DIALOG) != 0;
-			appUi->HideStatusPaneAndShowMapControlL();
-			
-			CleanupStack::PopAndDestroy(namesArray);
-			
-			if (res)
-				{
-				DEBUG(_L("Selected name=%S idx=%d lat=%f lon=%f"), &iResultsArr->At(chosenItem).iName,
-						chosenItem,
-						iResultsArr->At(chosenItem).iCoord.Latitude(),
-						iResultsArr->At(chosenItem).iCoord.Longitude());
-				
-				iObserver->OnSearchFinished(iResultsArr->At(chosenItem));
-				}
-			else
-				{
-				iObserver->OnSearchClosed();
-				}
-			
+			ShowResultDlgL();
 			break;
 			}
 		}
@@ -326,7 +296,7 @@ void CSearch::OnHTTPResponseDataChunkRecieved(const RHTTPTransaction /*aTransact
 		iWaitDialog->ProcessFinishedL();
 		iWaitDialog = NULL;
 		
-		RunResultsDialogL();
+		ProcessApiResponseAndShowResultDlgL();
 		
 		delete iResponseBuff;
 		iResponseBuff = NULL;
@@ -357,7 +327,7 @@ void CSearch::OnHTTPHeadersRecieved(const RHTTPTransaction /*aTransaction*/)
 
 TBool CSearch::AllResultsBounds(TBounds &aBounds)
 	{
-	if (!iResultsArr || !iResultsArr->Count())
+	if (not HasResults())
 		return EFalse;
 	
 	aBounds = (*iResultsArr)[0].iBounds;
@@ -375,6 +345,52 @@ void CSearch::Reset()
 	//iPreferredBounds ...
 	
 	DEBUG(_L("Reset"));
+	}
+
+void CSearch::ShowResultDlgL()
+	{
+	if (not HasResults())
+		return;
+	
+	//MiscUtils::DbgMsg(_L("CSearch::ShowResultDlgL()"));
+	
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(iAvkonAppUi);
+	const TInt KGranularity = 10;
+	
+	CPtrCArray* namesArray = new (ELeave) CPtrCArray(KGranularity);
+	CleanupStack::PushL(namesArray);
+	
+	for (TInt i = 0; i < iResultsArr->Count(); i++)
+		{
+		namesArray->AppendL(TPtrC(iResultsArr->At(i).iName));
+		}
+	
+	TInt chosenItem = -1;
+	CAknSelectionListDialog* dlg = CAknSelectionListDialog::NewL(chosenItem, namesArray,
+			R_SEARCH_RESULTS_QUERY_DIALOG_MENUBAR);
+	dlg->PrepareLC(R_SEARCH_RESULTS_QUERY_DIALOG);
+	CAknSingleStyleListBox* list = /*static_cast*/dynamic_cast<CAknSingleStyleListBox*>(dlg->Control(ESelectionListControl));
+	User::LeaveIfNull(list); // just to be sure
+	list->ItemDrawer()->ColumnData()->EnableMarqueeL(ETrue);
+	appUi->ShowStatusPaneAndHideMapControlL(R_SEARCH_RESULTS);
+	TBool res = dlg->RunLD() != 0;
+	appUi->HideStatusPaneAndShowMapControlL();
+	
+	CleanupStack::PopAndDestroy(namesArray);
+	
+	if (res)
+		{
+		DEBUG(_L("Selected name=%S idx=%d lat=%f lon=%f"), &iResultsArr->At(chosenItem).iName,
+				chosenItem,
+				iResultsArr->At(chosenItem).iCoord.Latitude(),
+				iResultsArr->At(chosenItem).iCoord.Longitude());
+		
+		iObserver->OnSearchResultChosen(iResultsArr->At(chosenItem));
+		}
+	else
+		{
+		iObserver->OnSearchDlgClosed();
+		}
 	}
 
 
