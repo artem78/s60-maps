@@ -97,7 +97,7 @@
 	</target>
 	
 	<!-- можно будет потом отключить, когда будет работать make_sis -->
-	<!-- 	<target name="rename_sis" depends="make_sis" description="Copy exists *.sis(x) files (should be manually build first in IDE) with adding current version to filename"> -->
+	<!--	<target name="rename_sis" depends="make_sis" description="Copy exists *.sis(x) files (should be manually build first in IDE) with adding current version to filename"> -->
 	<target name="rename_sis" description="Copy exists *.sis(x) files (should be manually build first in IDE) with adding current version to filename">
 		<property name="sis_dir" location="sis/" />
 		<exec executable="git" outputproperty="version" failonerror="true">
@@ -105,9 +105,9 @@
 			<arg value="--dirty"/>
 		</exec>
 		<propertyregex property="version.underscoped"
-               input="${version}"
-               regexp="[\W]+"
-               replace="_"/>
+			input="${version}"
+			regexp="[\W]+"
+			replace="_"/>
 		<echo>Current version: ${version} (${version.underscoped})</echo>
 		<!--<copy file="${sis_dir}/S60Maps.sis" tofile="${sis_dir}/S60Maps_${version}.sis" overwrite="true" />
 		<copy file="${sis_dir}/S60Maps.sisx" tofile="${sis_dir}/S60Maps_${version}.sisx" overwrite="true" />-->
@@ -161,27 +161,27 @@
 		
 		<!-- trim zero build -->
 		<propertyregex property="new_version.as_text"
-               input="${new_version.major}.${new_version.minor}.${new_version.build}"
-               regexp="\.0$"
-               replace=""
-			   defaultValue="${new_version.major}.${new_version.minor}.${new_version.build}"
-			   override="true" />
+			input="${new_version.major}.${new_version.minor}.${new_version.build}"
+			regexp="\.0$"
+			replace=""
+			defaultValue="${new_version.major}.${new_version.minor}.${new_version.build}"
+			override="true" />
 		
 		<echo>${current_version.major}.${current_version.minor}.${current_version.build} --&gt; ${new_version.major}.${new_version.minor}.${new_version.build} (${new_version.as_text})</echo>
 		
 		<!-- replace in defs.h -->
 		<!--<loadfile property="defs_h_file" srcFile="${defs_h_file}"/>-->
-        <replaceregexp file="${basedir}/inc/Defs.h" flags="">
-            <regexp pattern="KProgramVersion\((\d+),\s?(\d+),\s?(\d+)\)"/>
-            <substitution expression="KProgramVersion(${new_version.major}, ${new_version.minor}, ${new_version.build})" />
-        </replaceregexp>
+		<replaceregexp file="${basedir}/inc/Defs.h" flags="">
+			<regexp pattern="KProgramVersion\((\d+),\s?(\d+),\s?(\d+)\)"/>
+			<substitution expression="KProgramVersion(${new_version.major}, ${new_version.minor}, ${new_version.build})" />
+		</replaceregexp>
 		
 		<!-- replace in *.pkg -->
 		<replaceregexp flags="">
 			<fileset dir="${basedir}/sis/" includes="*.pkg"/> 
-            <regexp pattern="(#\{&quot;S60Maps&quot;\},\(0xED689B88\)),\d+,\d+,\d+"/>
-            <substitution expression="\1,${new_version.major},${new_version.minor},${new_version.build}" />
-        </replaceregexp>
+			<regexp pattern="(#\{&quot;S60Maps&quot;\},\(0xED689B88\)),\d+,\d+,\d+"/>
+			<substitution expression="\1,${new_version.major},${new_version.minor},${new_version.build}" />
+		</replaceregexp>
 		
 		<!-- replace in *.lxx -->
 		<!-- todo: ломается файл S60Maps.l57 (иврит). проверить с аттр. encoding="UTF-8" -->
@@ -191,9 +191,9 @@
 				<include name="src/Settings.cpp"/>
 				<exclude name="*.bak"/>
 			</fileset>
-            <regexp pattern="(Added in version )[\.Xx]+" />
-            <substitution expression="\1${new_version.as_text}" />
-        </replaceregexp>
+			<regexp pattern="(Added in version )[\.Xx]+" />
+			<substitution expression="\1${new_version.as_text}" />
+		</replaceregexp>
 		
 		<echo/>
 		<echo>======== BEGIN CHANGES DIFF ========</echo>
