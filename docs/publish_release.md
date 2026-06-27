@@ -26,7 +26,8 @@
 6) Собрать sis-пакет **для symbian 9.1**
    - Project => Build configurations => Set active => Phone **release** (GCCE) [**S60_3rd**]
    - Project => Clean...
-   ![](/docs/images/create_release/2026-04-06_130830.png)
+     
+     ![](/docs/images/create_release/2026-04-06_130830.png)
    - Через некоторое время в окошке "Console" должно появиться `***SIS Creation Complete`
 
 7) Собрать sis-пакет **для symbian 9.2 и выше**
@@ -36,9 +37,8 @@
    - `sis/S60Maps_symbian9.1.sis` => `sis/releases/S60Maps_symbian9.1_vX_XX_X.sis`
    - `sis/S60Maps_symbian9.2-9.4.sis` => `sis/releases/S60Maps_symbian9.2-9.4_vX_XX_X.sis`
 
-9) Собрать архив с полными исходниками
+9) Собрать архив с полными исходниками (перед выполнением не забываем сделать `git push`)
    ```
-   cd "C:\Symbian\Carbide\workspace\S60Maps"
    ant source_zip
    ```
    Ждём сообщения `BUILD SUCCESSFUL`, в папке `sources` получаем файл `S60Maps_full_sources_vX.XX.X.zip`
@@ -53,9 +53,9 @@
    - Прикрепляем полученные 3 файла (2 sis и zip-архив)
    - Жмём кнопку `Publish release`
 
-11) Вернуться на ту ветку, где были и обновить её
+11) Вернуться на ту ветку, где были (рабочую ветку) и обновить её
    ```
-   git checkout wip
+   git checkout develop
    git merge master --ff-only
    git push
    ```
