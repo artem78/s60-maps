@@ -122,6 +122,6 @@
 #define qtn_update_check_success_msg "New version %S published %S available! Current is %S."
 #define qtn_download_confirmation "Download?"
 
-// Added in version X.XX
+// Added in version 1.23
 
 #define qtn_search_results "Search results"

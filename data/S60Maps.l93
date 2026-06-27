@@ -120,6 +120,6 @@ CHARACTER_SET UTF8
 #define qtn_update_check_success_msg "Доступно обновление %S от %S! Установленная версия: %S."
 #define qtn_download_confirmation "Загрузить?"
 
-// Added in version X.XX
+// Added in version 1.23
 
 #define qtn_search_results "Результаты поиска"

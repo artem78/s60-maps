@@ -121,6 +121,6 @@ CHARACTER_SET UTF8
 #define qtn_update_check_success_msg "Nueva versión %S lanzado %S disponible! Versión instalada %S."
 #define qtn_download_confirmation "¿Quiere actualizar?"
 
-// Added in version X.XX
+// Added in version 1.23
 
 #define qtn_search_results "Search results"
