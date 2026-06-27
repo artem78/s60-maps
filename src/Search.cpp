@@ -369,7 +369,9 @@ void CSearch::ShowResultDlgL()
 	CAknSelectionListDialog* dlg = CAknSelectionListDialog::NewL(chosenItem, namesArray,
 			R_SEARCH_RESULTS_QUERY_DIALOG_MENUBAR);
 	dlg->PrepareLC(R_SEARCH_RESULTS_QUERY_DIALOG);
-	((CAknSingleStyleListBox*)dlg->Control(ESelectionListControl))->ItemDrawer()->ColumnData()->EnableMarqueeL(ETrue);
+	CAknSingleStyleListBox* list = /*static_cast*/dynamic_cast<CAknSingleStyleListBox*>(dlg->Control(ESelectionListControl));
+	User::LeaveIfNull(list); // just to be sure
+	list->ItemDrawer()->ColumnData()->EnableMarqueeL(ETrue);
 	appUi->ShowStatusPaneAndHideMapControlL(R_SEARCH_RESULTS);
 	TBool res = dlg->RunLD() != 0;
 	appUi->HideStatusPaneAndShowMapControlL();
