@@ -20,6 +20,8 @@
 #include <utf.h>
 #include <aknnotewrappers.h>
 #include "S60Maps.pan"
+#include <aknlists.h>	// for CAknSingleStyleListBox
+#include <eikclbd.h>	// for CColumnListBoxData
 
 
 CSearch::CSearch(MSearchObserver* aObserver)
@@ -366,8 +368,10 @@ void CSearch::ShowResultDlgL()
 	TInt chosenItem = -1;
 	CAknSelectionListDialog* dlg = CAknSelectionListDialog::NewL(chosenItem, namesArray,
 			R_SEARCH_RESULTS_QUERY_DIALOG_MENUBAR);
+	dlg->PrepareLC(R_SEARCH_RESULTS_QUERY_DIALOG);
+	((CAknSingleStyleListBox*)dlg->Control(ESelectionListControl))->ItemDrawer()->ColumnData()->EnableMarqueeL(ETrue);
 	appUi->ShowStatusPaneAndHideMapControlL(R_SEARCH_RESULTS);
-	TBool res = dlg->ExecuteLD(R_SEARCH_RESULTS_QUERY_DIALOG) != 0;
+	TBool res = dlg->RunLD() != 0;
 	appUi->HideStatusPaneAndShowMapControlL();
 	
 	CleanupStack::PopAndDestroy(namesArray);
