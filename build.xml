@@ -114,6 +114,7 @@
 		
 		<move todir="${sis_dir}/releases" verbose="true" overwrite="true" failonerror="true">
 			<fileset dir="${sis_dir}">
+				<depth max="0" />
 				<include name="*.sis"/>
 				<include name="*.sisx"/>
 			</fileset>
