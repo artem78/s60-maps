@@ -243,5 +243,8 @@
 	
 	<target name="restore_api_keys" description="Copy ApiKeys.h.bak to ApiKeys.h">
 		<copy file="${basedir}/inc/ApiKeys.h.bak" tofile="${basedir}/inc/ApiKeys.h" overwrite="true" failonerror="true" />
+		
+		<echo>Done!</echo>
+		<input>Press Return key to exit...</input>
 	</target>
 </project>
