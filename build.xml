@@ -169,6 +169,7 @@
 			override="true" />
 		
 		<echo>${current_version.major}.${current_version.minor}.${current_version.build} --&gt; ${new_version.major}.${new_version.minor}.${new_version.build} (${new_version.as_text})</echo>
+		<sleep seconds="3"/>
 		
 		<!-- replace in defs.h -->
 		<!--<loadfile property="defs_h_file" srcFile="${defs_h_file}"/>-->
@@ -207,7 +208,7 @@
 		<echo>========= END CHANGES DIFF =========</echo>
 		<echo/>
 		
-		<input message="Commit changes?"
+		<input message="Commit changes and create tag?"
 			validargs="y,n"
 			addproperty="do.commit"/>
 
@@ -224,6 +225,7 @@
 					<arg value="${basedir}/data/S60Maps.l??*"/>
 					<arg value="${basedir}/src/Settings.cpp"/>
 					<arg value="${basedir}/sis/*.pkg"/>
+					<!-- остальные файлы можно пропустить -->
 				</exec>
 				
 				<exec executable="git" failonerror="true">
@@ -231,6 +233,22 @@
 					<arg value="-m"/>
 					<arg value="version increment (v${new_version.as_text})"/>
 				</exec>
+				
+				<!-- добавление тега версии -->
+				<exec executable="git" failonerror="true">
+					<arg value="tag"/>
+					
+					<arg value="-a" />
+					<arg value="v${new_version.as_text}" />
+					
+					<arg value="-m"/>
+					<arg value="v${new_version.as_text}"/>
+				</exec>
+				
+				<!-- push -->
+				<!--<exec executable="git" failonerror="true">
+					<arg value="push" />
+				</exec>-->
 			</then>
 			<!--<else>
 				
