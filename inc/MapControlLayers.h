@@ -301,4 +301,23 @@ private:
 	void IconRect(const TSearchResultItem &aSearchResult, TRect &aRect);
 	};
 
+
+class CRouteLayer : public CMapLayerBase
+	{
+	// Constructor / destructor
+public:
+	~CRouteLayer();
+	static CRouteLayer* NewL(CMapControl* aMapView);
+	static CRouteLayer* NewLC(CMapControl* aMapView);
+
+private:
+	CRouteLayer(CMapControl* aMapView);
+	void ConstructL();
+	
+	// From CMapLayerBase
+public:
+	void Draw(CWindowGc &aGc);
+	};
+
+
 #endif // MAPCONTROLLAYERS_H

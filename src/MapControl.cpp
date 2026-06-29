@@ -31,6 +31,7 @@ enum TMapLayerId
 #endif	
 	ELandmarksLayerId,
 	ESearchResultLayerId,
+	ERouteLayerId,
 	EUserPositionLayerId,
 	EScaleBarLayerId,
 #ifdef DEBUG_SHOW_ADDITIONAL_INFO
@@ -162,6 +163,7 @@ void CMapControl::ConstructL(const TRect& aRect, const TCoordinate &aInitialPosi
 #endif
 	iLayers.Append(CLandmarksLayer::NewL(this, appUi->LandmarkDb()));
 	iLayers.Append(CSearchResultsLayer::NewL(this));
+	iLayers.Append(CRouteLayer::NewL(this));
 	iLayers.Append(new (ELeave) CUserPositionLayer(this));
 	iLayers.Append(CScaleBarLayer::NewL(this));
 #ifdef DEBUG_SHOW_ADDITIONAL_INFO

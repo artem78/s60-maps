@@ -1624,3 +1624,41 @@ void CSearchResultsLayer::IconRect(const TSearchResultItem &aSearchResult, TRect
 	aRect = TRect(resultPoint, iconSize);
 	aRect.Move(-iconSize.iWidth / 2, -iconSize.iHeight);
 	}
+
+
+// CRouteLayer
+
+CRouteLayer::CRouteLayer(CMapControl* aMapView):
+		CMapLayerBase(aMapView)
+	{
+	}
+
+CRouteLayer::~CRouteLayer()
+	{
+	//...
+	}
+
+CRouteLayer* CRouteLayer::NewLC(CMapControl* aMapView)
+	{
+	CRouteLayer* self = new (ELeave) CRouteLayer(aMapView);
+	CleanupStack::PushL(self);
+	self->ConstructL();
+	return self;
+	}
+
+CRouteLayer* CRouteLayer::NewL(CMapControl* aMapView)
+	{
+	CRouteLayer* self = CRouteLayer::NewLC(aMapView);
+	CleanupStack::Pop(); // self;
+	return self;
+	}
+
+void CRouteLayer::ConstructL()
+	{
+	//...
+	}
+
+void CRouteLayer::Draw(CWindowGc &aGc)
+	{
+	///
+	}
