@@ -15,6 +15,7 @@
 #include "Search.h"
 #include "S60Maps.hrh"
 #include "UpdateChecker.h"
+#include "Routing.h"
 
 
 // Classes
@@ -70,6 +71,8 @@ public:
 				{ return iMapControl; };
 	inline CSearch* Search()
 				{ return iSearch; };
+	inline CRouting* Routing()
+		{ return iRouting; }
 	
 private:
 	// Constants
@@ -115,6 +118,8 @@ private:
 	// Others
 	CSearch* iSearch;
 	CUpdateChecker* iUpdChecker; // "lazy" initialization
+	CRouting* iRouting;
+	
 
 	};
 

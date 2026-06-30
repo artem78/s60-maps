@@ -30,6 +30,7 @@ CMapView::CMapView()
 
 CMapView::~CMapView()
 	{
+	delete iRouting;
 	delete iUpdChecker;
 	delete iSearch;
 	delete iMapControl;
@@ -74,6 +75,8 @@ void CMapView::ConstructL()
 	
 	// Initialize search
 	iSearch = CSearch::NewL(this);
+	
+	iRouting = CRouting::NewL();
 	}
 
 TUid CMapView::Id() const
@@ -934,14 +937,12 @@ void CMapView::HandleShowSearchResListL()
 
 void CMapView::HandleRouteSetSourceL()
 	{
-	TCoordinate coord = MapControl()->GetCenterCoordinate();
-
-	//...
+	iRouting->SetSource(MapControl()->GetCenterCoordinate());
+	iRouting->FindRoute();
 	}
 
 void CMapView::HandleRouteSetDestinationL()
 	{
-	TCoordinate coord = MapControl()->GetCenterCoordinate();
-
-	//...
+	iRouting->SetDestination(MapControl()->GetCenterCoordinate());
+	iRouting->FindRoute();
 	}
