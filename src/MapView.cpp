@@ -240,6 +240,12 @@ void CMapView::HandleCommandL(TInt aCommand)
 			break;
 			}
 			
+		case ERouteClear:
+			{
+			HandleRouteClearL();
+			break;
+			}
+			
 		default:
 			// Let the AppUi handle unknown for view commands
 			AppUi()->HandleCommandL(aCommand);
@@ -315,6 +321,14 @@ void CMapView::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
 			delete nearestLandmark;
 			aMenuPane->SetItemDimmed(ERenameLandmark, !isDisplayEditOrDeleteLandmark);
 			aMenuPane->SetItemDimmed(EDeleteLandmark, !isDisplayEditOrDeleteLandmark);
+			
+			break;
+			}
+			
+		case R_SUBMENU_ROUTE:
+			{
+			TBool isVisible = Routing()->Track() and Routing()->Track()->Count();
+			aMenuPane->SetItemDimmed(ERouteClear, not isVisible);
 			
 			break;
 			}
@@ -945,4 +959,9 @@ void CMapView::HandleRouteSetDestinationL()
 	{
 	iRouting->SetDestination(MapControl()->GetCenterCoordinate());
 	iRouting->FindRoute();
+	}
+
+void CMapView::HandleRouteClearL()
+	{
+	iRouting->Reset();
 	}

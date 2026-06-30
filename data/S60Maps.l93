@@ -125,3 +125,4 @@ CHARACTER_SET UTF8
 #define qtn_route "Маршрут"
 #define qtn_from "Отсюда"
 #define qtn_to "Сюда"
+#define qtn_clear "Очистить"

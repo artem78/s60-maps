@@ -42,7 +42,8 @@ enum TS60MapsCommandIds
 	ECheckUpdates,
 	EShowSearchResultList,
 	ERouteSetSource,
-	ERouteSetDestination
+	ERouteSetDestination,
+	ERouteClear
 	};
 
 // Controls

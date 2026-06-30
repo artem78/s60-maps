@@ -309,6 +309,12 @@ RESOURCE MENU_PANE r_submenu_route
 			command = ERouteSetDestination;
 			txt = qtn_to;
 			}
+		,
+		MENU_ITEM
+			{
+			command = ERouteClear;
+			txt = qtn_clear;
+			}
 		};
 	}
 
