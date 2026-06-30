@@ -302,6 +302,8 @@ private:
 	};
 
 
+class CTrack;
+
 class CRouteLayer : public CMapLayerBase
 	{
 	// Constructor / destructor
@@ -313,11 +315,47 @@ public:
 private:
 	CRouteLayer(CMapControl* aMapView);
 	void ConstructL();
+	CTrack* iTrack;
 	
 	// From CMapLayerBase
 public:
 	void Draw(CWindowGc &aGc);
+	
+	// New members
+private:
+	void DrawL(CWindowGc &aGc);
 	};
+
+
+/* Class for track (array of TCoordinate) */
+class CTrack : public CBase
+	{
+	// Constructor / Destructor
+public:
+	static CTrack* NewL();
+	~CTrack();
+
+private:
+	CTrack();
+	void ConstructL();
+
+	// New members
+private:
+	RArray<TCoordinate> iPoints;
+
+public:
+	void AddPointL(const TCoordinate& aCoord);
+	inline TInt Count()
+		{ return iPoints.Count(); };
+	inline void GetPoint(TCoordinate &aCoord, TInt aIdx)
+		{ aCoord = iPoints[aIdx]; };
+
+//	// Operators override
+//public:
+//	const TCoordinate& operator[](TInt anIndex) const;
+//	
+	};
+
 
 
 #endif // MAPCONTROLLAYERS_H

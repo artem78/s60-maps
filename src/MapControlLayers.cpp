@@ -1635,7 +1635,7 @@ CRouteLayer::CRouteLayer(CMapControl* aMapView):
 
 CRouteLayer::~CRouteLayer()
 	{
-	//...
+	delete iTrack;
 	}
 
 CRouteLayer* CRouteLayer::NewLC(CMapControl* aMapView)
@@ -1655,10 +1655,91 @@ CRouteLayer* CRouteLayer::NewL(CMapControl* aMapView)
 
 void CRouteLayer::ConstructL()
 	{
-	//...
+	iTrack = CTrack::NewL();
+	
+	///////////////
+	iTrack->AddPointL(TCoordinate(51.511310, 0.043393));
+	iTrack->AddPointL(TCoordinate(51.511243, 0.042854));
+	iTrack->AddPointL(TCoordinate(51.511585, 0.042666));
+	iTrack->AddPointL(TCoordinate(51.511806, 0.042658));
+	iTrack->AddPointL(TCoordinate(51.511852, 0.043041));
+	iTrack->AddPointL(TCoordinate(51.511866, 0.043111));
+	iTrack->AddPointL(TCoordinate(51.512058, 0.043387));
+	
+	////////////////
+	}
+
+void CRouteLayer::DrawL(CWindowGc &aGc)
+	{	
+	// prepare array of route points
+	
+	const TInt KGranularity = 50;
+	CArrayFix<TPoint>* points = new (ELeave) CArrayFixFlat<TPoint>(KGranularity);
+	CleanupStack::PushL(points);
+	
+	TPoint p;
+	for (TInt i = 0; i < iTrack->Count() - 1; i++)
+		{// p = iMapView->GeoCoordsToScreenCoords(iTrack[i]);
+		
+		TCoordinate c;
+		iTrack->GetPoint(c, i);
+		p = iMapView->GeoCoordsToScreenCoords(c);
+		points->AppendL(p);
+		}
+	points->Compress();
+	
+	// draw polyline
+	
+	aGc.SetPenColor(KRgbRed);
+	aGc.SetPenSize(TSize(5,5));
+	aGc.DrawPolyLine(points);
+	
+	CleanupStack::PopAndDestroy(points);
 	}
 
 void CRouteLayer::Draw(CWindowGc &aGc)
 	{
-	///
+	if (not iTrack or not iTrack->Count())
+		return; // nothing to draw
+	
+	TRAP_IGNORE(DrawL(aGc))
 	}
+
+
+// CTrack
+
+CTrack* CTrack::NewL()
+	{
+	CTrack* self = new (ELeave) CTrack();
+	CleanupStack::PushL(self);
+	self->ConstructL();
+	CleanupStack::Pop(); // self;
+	return self;
+	}
+
+CTrack::CTrack()
+	{
+	}
+
+void CTrack::ConstructL()
+	{
+	const TInt KGranularity = 50;
+	
+	iPoints = RArray<TCoordinate>(KGranularity);
+	}
+
+CTrack::~CTrack()
+	{
+	iPoints.Close();
+	}
+
+void CTrack::AddPointL(const TCoordinate& aCoord)
+	{
+	iPoints.AppendL(aCoord);
+	}
+
+//const TCoordinate& CTrack::operator[](TInt anIndex) const
+//	{
+//	return iPoints[anIndex];
+//	}
+
