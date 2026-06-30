@@ -225,6 +225,18 @@ void CMapView::HandleCommandL(TInt aCommand)
 			break;
 			}
 			
+		case ERouteSetSource:
+			{
+			HandleRouteSetSourceL();
+			break;
+			}
+			
+		case ERouteSetDestination:
+			{
+			HandleRouteSetDestinationL();
+			break;
+			}
+			
 		default:
 			// Let the AppUi handle unknown for view commands
 			AppUi()->HandleCommandL(aCommand);
@@ -918,4 +930,18 @@ void CMapView::OnUpdateCheckFailedL()
 void CMapView::HandleShowSearchResListL()
 	{
 	iSearch->ShowResultDlgL();
+	}
+
+void CMapView::HandleRouteSetSourceL()
+	{
+	TCoordinate coord = MapControl()->GetCenterCoordinate();
+
+	//...
+	}
+
+void CMapView::HandleRouteSetDestinationL()
+	{
+	TCoordinate coord = MapControl()->GetCenterCoordinate();
+
+	//...
 	}

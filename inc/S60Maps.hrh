@@ -40,7 +40,9 @@ enum TS60MapsCommandIds
 	EShowHotkeys,
 	EShowDataLicences,
 	ECheckUpdates,
-	EShowSearchResultList
+	EShowSearchResultList,
+	ERouteSetSource,
+	ERouteSetDestination
 	};
 
 // Controls

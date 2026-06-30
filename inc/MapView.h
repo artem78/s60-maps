@@ -109,6 +109,8 @@ private:
 	void HandleShowDataLicencesL();
 	void HandleCheckUpdatesL();
 	void HandleShowSearchResListL();
+	void HandleRouteSetSourceL();
+	void HandleRouteSetDestinationL();
 	
 	// Others
 	CSearch* iSearch;

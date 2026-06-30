@@ -123,6 +123,12 @@ RESOURCE MENU_PANE r_menu
 				},
 		MENU_ITEM
 				{
+				//command = ;
+				txt = qtn_route;
+				cascade = r_submenu_route;
+				},
+		MENU_ITEM
+				{
 				command = EGoto;
 				txt = qtn_goto;
 				cascade = r_submenu_goto;
@@ -284,6 +290,27 @@ RESOURCE MENU_PANE r_submenu_help
 		}
 	};
 }
+
+
+// Route submenu
+
+RESOURCE MENU_PANE r_submenu_route
+	{
+	items =
+		{
+		MENU_ITEM
+			{
+			command = ERouteSetSource;
+			txt = qtn_from;
+			}
+		,
+		MENU_ITEM
+			{
+			command = ERouteSetDestination;
+			txt = qtn_to;
+			}
+		};
+	}
 
 
 
