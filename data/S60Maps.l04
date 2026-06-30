@@ -127,3 +127,4 @@ CHARACTER_SET UTF8
 #define qtn_from "From"
 #define qtn_to "To"
 #define qtn_clear "Clear"
+#define qtn_routing_failed "Routing failed!"

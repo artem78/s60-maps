@@ -6,7 +6,10 @@
 #include <e32base.h>
 #include <lbsposition.h>
 
+// Forward declarations
+
 class CTrack;
+class MRoutingObserver;
 
 // CLASS DECLARATION
 
@@ -17,11 +20,11 @@ public:
 	// Constructors and destructor
 
 	~CRouting();
-	static CRouting* NewL();
-	static CRouting* NewLC();
+	static CRouting* NewL(MRoutingObserver* aObserver);
+	static CRouting* NewLC(MRoutingObserver* aObserver);
 
 private:
-	CRouting();
+	CRouting(MRoutingObserver* aObserver);
 	void ConstructL();
 	
 	// New members
@@ -29,6 +32,7 @@ private:
 	TBool iIsSrcSet, iIsDstSet;
 	TCoordinate iSrcCoord, iDstCoord;
 	CTrack* iTrack;
+	MRoutingObserver* iObserver; // not owned
 	
 public:
 	void Source(TCoordinate& aSrc);
@@ -72,5 +76,16 @@ public:
 	const TCoordinate& operator[](TInt anIndex) const;
 	
 	};
+
+
+class MRoutingObserver
+	{
+protected:
+	virtual void OnRouteFound() = 0;
+	virtual void OnRouteFailedL() = 0;
+	
+	friend class CRouting;
+	};
+
 
 #endif // ROUTING_H

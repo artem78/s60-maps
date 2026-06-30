@@ -76,7 +76,7 @@ void CMapView::ConstructL()
 	// Initialize search
 	iSearch = CSearch::NewL(this);
 	
-	iRouting = CRouting::NewL();
+	iRouting = CRouting::NewL(this);
 	}
 
 TUid CMapView::Id() const
@@ -964,4 +964,17 @@ void CMapView::HandleRouteSetDestinationL()
 void CMapView::HandleRouteClearL()
 	{
 	iRouting->Reset();
+	}
+
+void CMapView::OnRouteFound()
+	{
+	iMapControl->DrawNow();
+	}
+
+void CMapView::OnRouteFailedL()
+	{
+	HBufC* msg = iEikonEnv->AllocReadResourceLC(R_ROUTING_FAILED);
+	CAknErrorNote* note = new (ELeave) CAknErrorNote;
+	note->ExecuteLD(*msg);
+	CleanupStack::PopAndDestroy(msg);
 	}

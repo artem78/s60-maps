@@ -126,3 +126,4 @@ CHARACTER_SET UTF8
 #define qtn_from "Отсюда"
 #define qtn_to "Сюда"
 #define qtn_clear "Очистить"
+#define qtn_routing_failed "Ошибка построения маршрута!"

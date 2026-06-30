@@ -20,7 +20,8 @@
 
 // Classes
 
-class CMapView : public CAknView, public MSearchObserver, public MUpdateCheckerObserver
+class CMapView : public CAknView, public MSearchObserver,
+		public MUpdateCheckerObserver, public MRoutingObserver
 	{
 	// Constructors / destructors
 public:
@@ -62,6 +63,11 @@ private:
 	virtual void OnUpdateCheckSuccessL(const TVersionEx& aVersion, const /*TTime&*/ TDesC& aDateTime, 
 			const TDesC& aDescription, const TDesC& aDownloadUrl);
 	virtual void OnUpdateCheckFailedL();
+	
+	// From MRoutingObserver
+private:
+	virtual void OnRouteFound();
+	virtual void OnRouteFailedL();
 	
 	
 	// Custom properties and methods

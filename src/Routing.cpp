@@ -9,10 +9,14 @@
  */
 
 #include "Routing.h"
+//////////
+#include <e32math.h>
+/////////
 
-CRouting::CRouting() :
+CRouting::CRouting(MRoutingObserver* aObserver) :
 		iIsSrcSet(EFalse),
-		iIsDstSet(EFalse)
+		iIsDstSet(EFalse),
+		iObserver(aObserver)
 	{
 	}
 
@@ -21,17 +25,17 @@ CRouting::~CRouting()
 	delete iTrack;
 	}
 
-CRouting* CRouting::NewLC()
+CRouting* CRouting::NewLC(MRoutingObserver* aObserver)
 	{
-	CRouting* self = new (ELeave) CRouting();
+	CRouting* self = new (ELeave) CRouting(aObserver);
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	return self;
 	}
 
-CRouting* CRouting::NewL()
+CRouting* CRouting::NewL(MRoutingObserver* aObserver)
 	{
-	CRouting* self = CRouting::NewLC();
+	CRouting* self = CRouting::NewLC(aObserver);
 	CleanupStack::Pop(); // self;
 	return self;
 	}
@@ -48,8 +52,16 @@ void CRouting::FindRoute/*L*/()
 	
 	///////////
 	iTrack->Reset();
-	iTrack->AddPointL(iSrcCoord);
-	iTrack->AddPointL(iDstCoord);
+	if (Math::Random() % 2)
+		{
+		iTrack->AddPointL(iSrcCoord);
+		iTrack->AddPointL(iDstCoord);
+		iObserver->OnRouteFound();
+		}
+	else
+		{
+		iObserver->OnRouteFailedL();
+		}
 	///////
 	}
 
