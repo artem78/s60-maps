@@ -5,16 +5,29 @@
 #include <e32std.h>
 #include <e32base.h>
 #include <lbsposition.h>
+#include "HTTPClient2.h"
 
 // Forward declarations
 
 class CTrack;
 class MRoutingObserver;
+//class MRoutingApiObserver;
+class COrsRoutingApi;
 
 // CLASS DECLARATION
 
+class MRoutingApiObserver
+	{
+protected:
+	virtual void OnRoutePointAddedL(const TCoordinate& aCoord) = 0;
+	virtual void OnFailedL() = 0;
+	
+	friend class COrsRoutingApi;
+	};
+
+
 /* Calculates route from point A to point B */
-class CRouting : public CBase
+class CRouting : public CBase, public MRoutingApiObserver
 	{
 public:
 	// Constructors and destructor
@@ -27,12 +40,18 @@ private:
 	CRouting(MRoutingObserver* aObserver);
 	void ConstructL();
 	
+	// From MRoutingApiObserver
+private:
+	virtual void OnRoutePointAddedL(const TCoordinate& aCoord);
+	virtual void OnFailedL();
+	
 	// New members
 private:
 	TBool iIsSrcSet, iIsDstSet;
 	TCoordinate iSrcCoord, iDstCoord;
 	CTrack* iTrack;
 	MRoutingObserver* iObserver; // not owned
+	COrsRoutingApi* iApi;
 	
 public:
 	void Source(TCoordinate& aSrc);
@@ -86,6 +105,37 @@ protected:
 	
 	friend class CRouting;
 	};
+
+
+/* Retrieves route using api.openrouteservice.org */
+class COrsRoutingApi : public CBase
+	{
+	// Constructor / Destructor
+public:
+	static COrsRoutingApi* NewL(MRoutingApiObserver* aObserver);
+	~COrsRoutingApi();
+
+private:
+	COrsRoutingApi(MRoutingApiObserver* aObserver);
+	void ConstructL();
+
+	// New members
+private:
+	MRoutingApiObserver* iObserver; // not owned
+	//CHTTPClient2* iHttpClient;
+
+public:
+	void SendRequestL(const TCoordinate& aSrc, const TCoordinate& aDst);
+
+	};
+
+//class MRoutingApiObserver
+//	{
+//protected:
+//	virtual void OnRoutePointAddedL(const TCoordinate& aCoord) = 0;
+//	virtual void OnFailedL() = 0;
+//	};
+
 
 
 #endif // ROUTING_H

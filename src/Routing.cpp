@@ -12,6 +12,7 @@
 //////////
 #include <e32math.h>
 /////////
+#include "S60MapsAppUi.h"
 
 CRouting::CRouting(MRoutingObserver* aObserver) :
 		iIsSrcSet(EFalse),
@@ -22,6 +23,7 @@ CRouting::CRouting(MRoutingObserver* aObserver) :
 
 CRouting::~CRouting()
 	{
+	delete iApi;
 	delete iTrack;
 	}
 
@@ -43,6 +45,7 @@ CRouting* CRouting::NewL(MRoutingObserver* aObserver)
 void CRouting::ConstructL()
 	{
 	iTrack = CTrack::NewL();
+	iApi = COrsRoutingApi::NewL(this);
 	}
 
 void CRouting::FindRoute/*L*/()
@@ -50,19 +53,8 @@ void CRouting::FindRoute/*L*/()
 	if (not iIsSrcSet or not iIsDstSet)
 		return;
 	
-	///////////
 	iTrack->Reset();
-	if (Math::Random() % 2)
-		{
-		iTrack->AddPointL(iSrcCoord);
-		iTrack->AddPointL(iDstCoord);
-		iObserver->OnRouteFound();
-		}
-	else
-		{
-		iObserver->OnRouteFailedL();
-		}
-	///////
+	iApi->SendRequestL(iSrcCoord, iDstCoord);
 	}
 
 void CRouting::Reset()
@@ -92,6 +84,15 @@ void CRouting::SetDestination(const TCoordinate& aDst)
 	{
 	iDstCoord.SetCoordinate(aDst.Latitude(), aDst.Longitude());
 	iIsDstSet = ETrue;
+	}
+
+void CRouting::OnRoutePointAddedL(const TCoordinate& aCoord)
+	{
+	iTrack->AddPointL(aCoord);
+	}
+void CRouting::OnFailedL()
+	{
+	iObserver->OnRouteFailedL();
 	}
 
 
@@ -130,4 +131,47 @@ void CTrack::AddPointL(const TCoordinate& aCoord)
 const TCoordinate& CTrack::operator[](TInt anIndex) const
 	{
 	return iPoints[anIndex];
+	}
+
+
+// COrsRoutingApi
+
+COrsRoutingApi* COrsRoutingApi::NewL(MRoutingApiObserver* aObserver)
+	{
+	COrsRoutingApi* self = new (ELeave) COrsRoutingApi(aObserver);
+	CleanupStack::PushL(self);
+	self->ConstructL();
+	CleanupStack::Pop(); // self;
+	return self;
+	}
+
+COrsRoutingApi::COrsRoutingApi(MRoutingApiObserver* aObserver)
+		: iObserver(aObserver)
+	{
+	}
+
+void COrsRoutingApi::ConstructL()
+	{
+	//CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
+	//iHttpClient = CHTTPClient2::NewL(this, appUi->iSockServ, appUi->iConn);
+	}
+
+COrsRoutingApi::~COrsRoutingApi()
+	{
+	//delete iHttpClient;
+	}
+
+void COrsRoutingApi::SendRequestL(const TCoordinate& aSrc, const TCoordinate& aDst)
+	{
+	//////////////
+	if (Math::Random() % 2)
+		{
+		iObserver->OnRoutePointAddedL(aSrc);
+		iObserver->OnRoutePointAddedL(aDst);
+		}
+	else
+		{
+		iObserver->OnFailedL();
+		}
+	////////////////
 	}
