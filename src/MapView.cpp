@@ -968,7 +968,10 @@ void CMapView::HandleRouteClearL()
 
 void CMapView::OnRouteFound()
 	{
-	iMapControl->DrawNow();
+	TBounds bounds;
+	iRouting->Bounds(bounds);
+	MapControl()->SetFollowUser(EFalse);
+	MapControl()->MoveAndZoomToBounds(bounds);
 	}
 
 void CMapView::OnRouteFailedL()

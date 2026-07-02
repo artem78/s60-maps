@@ -7,6 +7,7 @@
 #include <lbsposition.h>
 #include "HTTPClient2.h"
 #include "JsonParser.h"
+#include "Utils.h"
 
 // Forward declarations
 
@@ -21,6 +22,7 @@ class MRoutingApiObserver
 	{
 protected:
 	virtual void OnRoutePointAddedL(const TCoordinate& aCoord) = 0;
+	virtual void OnBoundsUpdated(const TBounds& aBounds) = 0;
 	virtual void OnFailedL() = 0;
 	
 	friend class COrsRoutingApi;
@@ -45,6 +47,7 @@ private:
 private:
 	virtual void OnRoutePointAddedL(const TCoordinate& aCoord);
 	virtual void OnFailedL();
+	virtual void OnBoundsUpdated(const TBounds& aBounds);
 	
 	// New members
 private:
@@ -53,6 +56,7 @@ private:
 	CTrack* iTrack;
 	MRoutingObserver* iObserver; // not owned
 	COrsRoutingApi* iApi;
+	TBounds iBounds;
 	
 public:
 	void Source(TCoordinate& aSrc);
@@ -63,6 +67,8 @@ public:
 	void Reset();
 	inline const CTrack* Track() const
 		{ return iTrack; };
+	inline void Bounds(TBounds& aBounds) const
+		{ aBounds = iBounds; }
 
 	};
 

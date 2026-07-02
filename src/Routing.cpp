@@ -95,6 +95,12 @@ void CRouting::OnFailedL()
 	iObserver->OnRouteFailedL();
 	}
 
+void CRouting::OnBoundsUpdated(const TBounds& aBounds)
+	{
+	iBounds = aBounds;
+	iObserver->OnRouteFound(); // assume OnBoundsUpdated called after all points recieved
+	}
+
 
 // CTrack
 
@@ -270,6 +276,7 @@ void COrsRoutingApi::ProcessApiReponseL()
 	_LIT(KLonPathFmt, "[features][0][geometry][coordinates][%d][0]");
 	_LIT(KLatPathFmt, "[features][0][geometry][coordinates][%d][1]");
 	
+	// read route points
 	TReal64 lat, lon;
 	TBuf<64> path;
 	for (TInt i = 0; i < itemsCount; i++)
@@ -284,8 +291,29 @@ void COrsRoutingApi::ProcessApiReponseL()
 		
 		iObserver->OnRoutePointAddedL(TCoordinate(lat, lon));
 		}
-	
 	// ...->Compress();
+	
+	// read bounds (bbox)
+	enum TBoundsArrIdx {ELon1, ELat1, ELon2, ELat2};
+	_LIT(KBBoxPathFmt, "[features][0][bbox][%d]");
+	TReal64 bBoxLat1, bBoxLat2, bBoxLon1, bBoxLon2;
+	
+	path.Format(KBBoxPathFmt, ELon1);
+	ParseJsonValueL(parser, path, bBoxLon1);
+	
+	path.Format(KBBoxPathFmt, ELat1);
+	ParseJsonValueL(parser, path, bBoxLat1);
+	
+	path.Format(KBBoxPathFmt, ELon2);
+	ParseJsonValueL(parser, path, bBoxLon2);
+	
+	path.Format(KBBoxPathFmt, ELat2);
+	ParseJsonValueL(parser, path, bBoxLat2);
+	
+	TBounds bounds;
+	bounds.SetCoords(bBoxLat1, bBoxLon1, bBoxLat2, bBoxLon2);
+
+	iObserver->OnBoundsUpdated(bounds);
 	
 	CleanupStack::PopAndDestroy(2, parser);
 	}
