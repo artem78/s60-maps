@@ -21,7 +21,7 @@
    git push
    ```
 
-5) Скопировать содержимое `inc/ApiKeys.h.bak` в `inc/ApiKeys.h` (или выполнить команду  `ant restore_api_keys`)
+5) Скопировать содержимое `inc/ApiKeys.h.bak` в `inc/ApiKeys.h` (или запустить `restore_api_keys.bat`)
 
 6) Собрать sis-пакет **для symbian 9.1**
    - Project => Build configurations => Set active => Phone **release** (GCCE) [**S60_3rd**]

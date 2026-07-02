@@ -30,6 +30,7 @@ CMapView::CMapView()
 
 CMapView::~CMapView()
 	{
+	delete iRouting;
 	delete iUpdChecker;
 	delete iSearch;
 	delete iMapControl;
@@ -74,6 +75,8 @@ void CMapView::ConstructL()
 	
 	// Initialize search
 	iSearch = CSearch::NewL(this);
+	
+	iRouting = CRouting::NewL(this);
 	}
 
 TUid CMapView::Id() const
@@ -225,6 +228,24 @@ void CMapView::HandleCommandL(TInt aCommand)
 			break;
 			}
 			
+		case ERouteSetSource:
+			{
+			HandleRouteSetSourceL();
+			break;
+			}
+			
+		case ERouteSetDestination:
+			{
+			HandleRouteSetDestinationL();
+			break;
+			}
+			
+		case ERouteClear:
+			{
+			HandleRouteClearL();
+			break;
+			}
+			
 		default:
 			// Let the AppUi handle unknown for view commands
 			AppUi()->HandleCommandL(aCommand);
@@ -300,6 +321,14 @@ void CMapView::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
 			delete nearestLandmark;
 			aMenuPane->SetItemDimmed(ERenameLandmark, !isDisplayEditOrDeleteLandmark);
 			aMenuPane->SetItemDimmed(EDeleteLandmark, !isDisplayEditOrDeleteLandmark);
+			
+			break;
+			}
+			
+		case R_SUBMENU_ROUTE:
+			{
+			TBool isVisible = Routing()->Track() and Routing()->Track()->Count();
+			aMenuPane->SetItemDimmed(ERouteClear, not isVisible);
 			
 			break;
 			}
@@ -918,4 +947,37 @@ void CMapView::OnUpdateCheckFailedL()
 void CMapView::HandleShowSearchResListL()
 	{
 	iSearch->ShowResultDlgL();
+	}
+
+void CMapView::HandleRouteSetSourceL()
+	{
+	iRouting->SetSource(MapControl()->GetCenterCoordinate());
+	iRouting->FindRoute();
+	}
+
+void CMapView::HandleRouteSetDestinationL()
+	{
+	iRouting->SetDestination(MapControl()->GetCenterCoordinate());
+	iRouting->FindRoute();
+	}
+
+void CMapView::HandleRouteClearL()
+	{
+	iRouting->Reset();
+	}
+
+void CMapView::OnRouteFound()
+	{
+	TBounds bounds;
+	iRouting->Bounds(bounds);
+	MapControl()->SetFollowUser(EFalse);
+	MapControl()->MoveAndZoomToBounds(bounds);
+	}
+
+void CMapView::OnRouteFailedL()
+	{
+	HBufC* msg = iEikonEnv->AllocReadResourceLC(R_ROUTING_FAILED);
+	CAknErrorNote* note = new (ELeave) CAknErrorNote;
+	note->ExecuteLD(*msg);
+	CleanupStack::PopAndDestroy(msg);
 	}

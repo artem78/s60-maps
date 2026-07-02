@@ -15,11 +15,13 @@
 #include "Search.h"
 #include "S60Maps.hrh"
 #include "UpdateChecker.h"
+#include "Routing.h"
 
 
 // Classes
 
-class CMapView : public CAknView, public MSearchObserver, public MUpdateCheckerObserver
+class CMapView : public CAknView, public MSearchObserver,
+		public MUpdateCheckerObserver, public MRoutingObserver
 	{
 	// Constructors / destructors
 public:
@@ -62,6 +64,11 @@ private:
 			const TDesC& aDescription, const TDesC& aDownloadUrl);
 	virtual void OnUpdateCheckFailedL();
 	
+	// From MRoutingObserver
+private:
+	virtual void OnRouteFound();
+	virtual void OnRouteFailedL();
+	
 	
 	// Custom properties and methods
 public:
@@ -70,6 +77,8 @@ public:
 				{ return iMapControl; };
 	inline CSearch* Search()
 				{ return iSearch; };
+	inline CRouting* Routing()
+		{ return iRouting; }
 	
 private:
 	// Constants
@@ -109,10 +118,15 @@ private:
 	void HandleShowDataLicencesL();
 	void HandleCheckUpdatesL();
 	void HandleShowSearchResListL();
+	void HandleRouteSetSourceL();
+	void HandleRouteSetDestinationL();
+	void HandleRouteClearL();
 	
 	// Others
 	CSearch* iSearch;
 	CUpdateChecker* iUpdChecker; // "lazy" initialization
+	CRouting* iRouting;
+	
 
 	};
 

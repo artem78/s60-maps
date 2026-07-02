@@ -123,6 +123,12 @@ RESOURCE MENU_PANE r_menu
 				},
 		MENU_ITEM
 				{
+				//command = ;
+				txt = qtn_route;
+				cascade = r_submenu_route;
+				},
+		MENU_ITEM
+				{
 				command = EGoto;
 				txt = qtn_goto;
 				cascade = r_submenu_goto;
@@ -284,6 +290,33 @@ RESOURCE MENU_PANE r_submenu_help
 		}
 	};
 }
+
+
+// Route submenu
+
+RESOURCE MENU_PANE r_submenu_route
+	{
+	items =
+		{
+		MENU_ITEM
+			{
+			command = ERouteSetSource;
+			txt = qtn_from;
+			}
+		,
+		MENU_ITEM
+			{
+			command = ERouteSetDestination;
+			txt = qtn_to;
+			}
+		,
+		MENU_ITEM
+			{
+			command = ERouteClear;
+			txt = qtn_clear;
+			}
+		};
+	}
 
 
 
@@ -571,6 +604,7 @@ RESOURCE TBUF r_no_updates { buf=qtn_no_updates; }
 RESOURCE TBUF r_update_check_failed { buf=qtn_update_check_failed; }
 RESOURCE TBUF r_update_check_success_msg { buf=qtn_update_check_success_msg; }
 RESOURCE TBUF r_download_confirmation { buf=qtn_download_confirmation; }
+RESOURCE TBUF r_routing_failed { buf=qtn_routing_failed; }
 
 
 // Language names

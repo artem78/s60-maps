@@ -121,6 +121,10 @@ CHARACTER_SET UTF8
 #define qtn_update_check_success_msg "Uusi versio %S julkaistu %S saatavilla! Nykyinen versio on %S."
 #define qtn_download_confirmation "Lataa?"
 
-// Added in version 1.23
+// Added in version X.XX
 
-#define qtn_search_results "Search results"
+#define qtn_route "Route"
+#define qtn_from "From"
+#define qtn_to "To"
+#define qtn_clear "Clear"
+#define qtn_routing_failed "Routing failed!"

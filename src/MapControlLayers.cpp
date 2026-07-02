@@ -1624,3 +1624,78 @@ void CSearchResultsLayer::IconRect(const TSearchResultItem &aSearchResult, TRect
 	aRect = TRect(resultPoint, iconSize);
 	aRect.Move(-iconSize.iWidth / 2, -iconSize.iHeight);
 	}
+
+
+// CRouteLayer
+
+CRouteLayer::CRouteLayer(CMapControl* aMapView):
+		CMapLayerBase(aMapView)
+	{
+	}
+
+CRouteLayer::~CRouteLayer()
+	{
+	}
+
+CRouteLayer* CRouteLayer::NewLC(CMapControl* aMapView)
+	{
+	CRouteLayer* self = new (ELeave) CRouteLayer(aMapView);
+	CleanupStack::PushL(self);
+	self->ConstructL();
+	return self;
+	}
+
+CRouteLayer* CRouteLayer::NewL(CMapControl* aMapView)
+	{
+	CRouteLayer* self = CRouteLayer::NewLC(aMapView);
+	CleanupStack::Pop(); // self;
+	return self;
+	}
+
+void CRouteLayer::ConstructL()
+	{
+
+	}
+
+void CRouteLayer::DrawL(CWindowGc &aGc)
+	{
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CEikonEnv::Static()->AppUi());
+	const CTrack* track = appUi->MapView()->Routing()->Track();
+	
+	// prepare array of route points
+	
+	const TInt KGranularity = 50;
+	CArrayFix<TPoint>* points = new (ELeave) CArrayFixFlat<TPoint>(KGranularity);
+	CleanupStack::PushL(points);
+	
+	TPoint p;
+	for (TInt i = 0; i < track->Count(); i++)
+		{
+		p = iMapView->GeoCoordsToScreenCoords((*track)[i]);
+		points->AppendL(p);
+		}
+	points->Compress();
+	
+	// draw polyline
+	
+	aGc.SetPenColor(KRgbRed);
+	aGc.SetPenSize(TSize(5,5));
+	aGc.DrawPolyLine(points);
+	
+	CleanupStack::PopAndDestroy(points);
+	}
+
+void CRouteLayer::Draw(CWindowGc &aGc)
+	{
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CEikonEnv::Static()->AppUi());
+	const CTrack* track = appUi->MapView()->Routing()->Track();
+	
+	if (not track or not track->Count())
+		return; // nothing to draw
+	
+	TRAP_IGNORE(DrawL(aGc))
+	}
+
+
+
+

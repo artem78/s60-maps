@@ -28,6 +28,7 @@ Map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wiki/Symb
 - Map tiles caching (you can see previously viewed area without network connection)
 - Display and edit landmarks
 - Search
+- Routing from one place to another
 - Multilanguage (**[we need help with translations!](/docs/CONTRIBUTING.md#localization)**):
   - English
   - Castilian/Spanish (Spain)
@@ -92,6 +93,7 @@ Map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wiki/Symb
 ![](images/settings.png "Settings window")
 ![](images/search.gif "Search")
 ![](images/search_details.png "Search results on the map")
+![](images/routing.png "Route planning")
 
 ![](images/from_vyacheslav/Screenshot0004.jpg)
 ![](images/from_vyacheslav/Screenshot0005.jpg)

@@ -120,6 +120,10 @@ CHARACTER_SET UTF8
 #define qtn_update_check_success_msg "Доступно обновление %S от %S! Установленная версия: %S."
 #define qtn_download_confirmation "Загрузить?"
 
-// Added in version 1.23
+// Added in version X.XX
 
-#define qtn_search_results "Результаты поиска"
+#define qtn_route "Маршрут"
+#define qtn_from "Отсюда"
+#define qtn_to "Сюда"
+#define qtn_clear "Очистить"
+#define qtn_routing_failed "Ошибка построения маршрута!"
