@@ -6,6 +6,7 @@
 #include <e32base.h>
 #include <lbsposition.h>
 #include "HTTPClient2.h"
+#include "JsonParser.h"
 
 // Forward declarations
 
@@ -108,7 +109,7 @@ protected:
 
 
 /* Retrieves route using api.openrouteservice.org */
-class COrsRoutingApi : public CBase
+class COrsRoutingApi : public CBase, public MHTTPClientObserver
 	{
 	// Constructor / Destructor
 public:
@@ -118,11 +119,24 @@ public:
 private:
 	COrsRoutingApi(MRoutingApiObserver* aObserver);
 	void ConstructL();
+	
+	// From MHTTPClientObserver
+private:
+	virtual void OnHTTPResponseDataChunkRecieved(const RHTTPTransaction aTransaction,
+			const TDesC8 &aDataChunk, TInt anOverallDataSize, TBool anIsLastChunk);
+	virtual void OnHTTPResponse(const RHTTPTransaction aTransaction);
+	virtual void OnHTTPError(TInt aError, const RHTTPTransaction aTransaction);
+	virtual void OnHTTPHeadersRecieved(const RHTTPTransaction aTransaction);
 
 	// New members
 private:
 	MRoutingApiObserver* iObserver; // not owned
-	//CHTTPClient2* iHttpClient;
+	CHTTPClient2* iHttpClient;
+	HBufC8* iResponseBuff;
+	
+	static void CoordToDes8(const TCoordinate& aCoord, TDes8& aDes, TInt aPrecision = 6);
+	void ProcessApiReponseL();
+	void ParseJsonValueL(CJsonParser* aParser, const TDesC &aParam, TReal64 &aVal);
 
 public:
 	void SendRequestL(const TCoordinate& aSrc, const TCoordinate& aDst);
