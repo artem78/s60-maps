@@ -1,4 +1,10 @@
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/artem78/s60-maps?style=plastic)](https://github.com/artem78/s60-maps/releases/latest)&nbsp;&nbsp;&nbsp;[![GitHub license](https://img.shields.io/github/license/artem78/s60-maps?style=plastic)](https://github.com/artem78/s60-maps/blob/master/LICENSE.txt)&nbsp;&nbsp;&nbsp;![GitHub All Releases](https://img.shields.io/github/downloads/artem78/s60-maps/total?style=plastic)&nbsp;&nbsp;&nbsp;![GitHub last commit](https://img.shields.io/github/last-commit/artem78/s60-maps?style=plastic)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/artem78/s60-maps?style=plastic)](https://github.com/artem78/s60-maps/releases/latest)
+&nbsp;
+[![GitHub license](https://img.shields.io/github/license/artem78/s60-maps?style=plastic)](https://github.com/artem78/s60-maps/blob/master/LICENSE.txt)
+&nbsp;
+![GitHub All Releases](https://img.shields.io/github/downloads/artem78/s60-maps/total?style=plastic)
+&nbsp;
+![GitHub last commit](https://img.shields.io/github/last-commit/artem78/s60-maps?style=plastic)
 
 ![icon](images/program_logo.png)
 # S60Maps
@@ -78,11 +84,21 @@ Map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wiki/Symb
 
 ## Screenshots
 
-![](images/demo_video.gif "Demo") ![](images/layers.gif "Different map layers") ![](images/position_and_landmarks.png "Main view with landmarks") ![](images/menu.png "Main menu") ![](images/landmarks_list.png "List of landmarks with filter") ![](images/settings.png "Settings window") ![](images/search.gif "Search") ![](images/search_details.png "Search results on the map")
+![](images/demo_video.gif "Demo")
+![](images/layers.gif "Different map layers")
+![](images/position_and_landmarks.png "Main view with landmarks")
+![](images/menu.png "Main menu")
+![](images/landmarks_list.png "List of landmarks with filter")
+![](images/settings.png "Settings window")
+![](images/search.gif "Search")
+![](images/search_details.png "Search results on the map")
 
-![](images/from_vyacheslav/Screenshot0004.jpg) ![](images/from_vyacheslav/Screenshot0005.jpg) ![](images/from_vyacheslav/Screenshot0007.jpg)
+![](images/from_vyacheslav/Screenshot0004.jpg)
+![](images/from_vyacheslav/Screenshot0005.jpg)
+![](images/from_vyacheslav/Screenshot0007.jpg)
 
-[<img src="images/s60v30_emulator.png" alt="Running in emulator for S60v3.0 in Windows" height="300">](images/s60v30_emulator.png) [<img src="images/s60v5_emulator.png" alt="Running in emulator for S60v5 in Windows" height="300">](images/s60v5_emulator.png)
+[<img src="images/s60v30_emulator.png" alt="Running in emulator for S60v3.0 in Windows" height="300">](images/s60v30_emulator.png)
+[<img src="images/s60v5_emulator.png" alt="Running in emulator for S60v5 in Windows" height="300">](images/s60v5_emulator.png)
 
 ## Supported devices
 
