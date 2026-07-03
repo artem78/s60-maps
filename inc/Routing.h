@@ -142,7 +142,6 @@ private:
 	
 	static void CoordToDes8(const TCoordinate& aCoord, TDes8& aDes, TInt aPrecision = 6);
 	void ProcessApiReponseL();
-	void ParseJsonValueL(CJsonParser* aParser, const TDesC &aParam, TReal64 &aVal);
 
 public:
 	void SendRequestL(const TCoordinate& aSrc, const TCoordinate& aDst);

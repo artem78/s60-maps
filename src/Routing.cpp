@@ -283,11 +283,11 @@ void COrsRoutingApi::ProcessApiReponseL()
 		{
 		// read longitude
 		path.Format(KLonPathFmt, i);
-		ParseJsonValueL(parser, path, lon);
+		parser->GetParameterValueL(path, lon);
 		
 		// read latitude
 		path.Format(KLatPathFmt, i);
-		ParseJsonValueL(parser, path, lat);
+		parser->GetParameterValueL(path, lat);
 		
 		iObserver->OnRoutePointAddedL(TCoordinate(lat, lon));
 		}
@@ -299,16 +299,16 @@ void COrsRoutingApi::ProcessApiReponseL()
 	TReal64 bBoxLat1, bBoxLat2, bBoxLon1, bBoxLon2;
 	
 	path.Format(KBBoxPathFmt, ELon1);
-	ParseJsonValueL(parser, path, bBoxLon1);
+	parser->GetParameterValueL(path, bBoxLon1);
 	
 	path.Format(KBBoxPathFmt, ELat1);
-	ParseJsonValueL(parser, path, bBoxLat1);
+	parser->GetParameterValueL(path, bBoxLat1);
 	
 	path.Format(KBBoxPathFmt, ELon2);
-	ParseJsonValueL(parser, path, bBoxLon2);
+	parser->GetParameterValueL(path, bBoxLon2);
 	
 	path.Format(KBBoxPathFmt, ELat2);
-	ParseJsonValueL(parser, path, bBoxLat2);
+	parser->GetParameterValueL(path, bBoxLat2);
 	
 	TBounds bounds;
 	bounds.SetCoords(bBoxLat1, bBoxLon1, bBoxLat2, bBoxLon2);
@@ -318,16 +318,4 @@ void COrsRoutingApi::ProcessApiReponseL()
 	CleanupStack::PopAndDestroy(2, parser);
 	}
 
-// todo: fix duplicates - https://github.com/search?q=repo%3Aartem78%2Fs60-maps%20ParseJsonValueL&type=code 
-void COrsRoutingApi::ParseJsonValueL(CJsonParser* aParser, const TDesC &aParam, TReal64 &aVal)
-	{
-	TLex lex;
-	TBuf<32> buff /*= KNullDesC*/;
-	buff.Zero();
-	aVal = KNaN;
-	
-	if (!aParser->GetParameterValue(aParam, &buff))
-		User::Leave(KErrNotFound);
-	lex.Assign(buff);
-	User::LeaveIfError(lex.Val(aVal, '.'));
-	}
+

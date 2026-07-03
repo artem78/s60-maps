@@ -121,7 +121,7 @@ void CUpdateChecker::ProcessResponseL()
 	_LIT(KFallbackUrl, "https://github.com/artem78/s60-maps/releases/latest");
 	
 	TBuf<16> tagName;
-	ParseJsonValueL(parser, KTagNamePath, tagName);
+	parser->GetParameterValueL(KTagNamePath, tagName);
 	
 	TVersionEx ver;
 	ver.ParseL(tagName);
@@ -130,12 +130,12 @@ void CUpdateChecker::ProcessResponseL()
 #endif
 	
 	TBuf<32> dt;
-	ParseJsonValueL(parser, KDatePath, dt);
+	parser->GetParameterValueL(KDatePath, dt);
 	
 	RBuf descr;
 	descr.CreateL(2048);
 	CleanupClosePushL(descr);
-	ParseJsonValueL(parser, KDescrPath, descr);
+	parser->GetParameterValueL(KDescrPath, descr);
 	
 	TPtrC downloadUrl(KNullDesC);
 	RBuf assetUrl;
@@ -148,11 +148,11 @@ void CUpdateChecker::ProcessResponseL()
 		TBuf<48> path;
 		path.Format(KContTypePathFmt, i);
 		TBuf<64> contType;
-		ParseJsonValueL(parser, path, contType);
+		parser->GetParameterValueL(path, contType);
 		if (contType == KSisContType) // skip possible other files except SIS
 			{
 			path.Format(KAssetUrlFmt, i);
-			ParseJsonValueL(parser, path, assetUrl);
+			parser->GetParameterValueL(path, assetUrl);
 			if (StrUtils::Contains(assetUrl, KSearchStr, ETrue)) // filter by symbian version
 				{
 				downloadUrl.Set(assetUrl);
@@ -194,10 +194,3 @@ void CUpdateChecker::ProcessResponseL()
 	CleanupStack::PopAndDestroy(4, parser);
 	}
 
-void CUpdateChecker::ParseJsonValueL(CJsonParser* aParser, const TDesC &aParam, TDes &aVal)
-	{
-	aVal = KNullDesC;
-	
-	if (!aParser->GetParameterValue(aParam, &aVal))
-		User::Leave(KErrNotFound);
-	}

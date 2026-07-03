@@ -160,30 +160,30 @@ void CSearch::ParseApiResponseL()
 		{
 		// Parse name
 		path.Format(KNamePathFmt, i);
-		ParseJsonValueL(parser, path, result.iName);
+		parser->GetParameterValueL(path, result.iName);
 		result.iName.Insert(0, KTab);
 		
 		// Parse coordinates
 		path.Format(KLatPathFmt, i);
-		ParseJsonValueL(parser, path, lat);
+		parser->GetParameterValueL(path, lat);
 
 		path.Format(KLonPathFmt, i);
-		ParseJsonValueL(parser, path, lon);
+		parser->GetParameterValueL(path, lon);
 
 		result.iCoord.SetCoordinate(lat, lon);
 		
 		// Parse bounds
 		path.Format(KBBoxPathFmt, i, ELat1);
-		ParseJsonValueL(parser, path, bLat1);
+		parser->GetParameterValueL(path, bLat1);
 		
 		path.Format(KBBoxPathFmt, i, ELat2);
-		ParseJsonValueL(parser, path, bLat2);
+		parser->GetParameterValueL(path, bLat2);
 		
 		path.Format(KBBoxPathFmt, i, ELon1);
-		ParseJsonValueL(parser, path, bLon1);
+		parser->GetParameterValueL(path, bLon1);
 		
 		path.Format(KBBoxPathFmt, i, ELon2);
-		ParseJsonValueL(parser, path, bLon2);
+		parser->GetParameterValueL(path, bLon2);
 		
 		result.iBounds.SetCoords(bLat1, bLon1, bLat2, bLon2);
 		
@@ -197,26 +197,6 @@ void CSearch::ParseApiResponseL()
 	DEBUG(_L("end"));
 	}
 
-void CSearch::ParseJsonValueL(CJsonParser* aParser, const TDesC &aParam, TDes &aVal)
-	{
-	aVal = KNullDesC;
-	
-	if (!aParser->GetParameterValue(aParam, &aVal))
-		User::Leave(KErrNotFound);
-	}
-
-void CSearch::ParseJsonValueL(CJsonParser* aParser, const TDesC &aParam, TReal64 &aVal)
-	{
-	TLex lex;
-	TBuf<32> buff /*= KNullDesC*/;
-	buff.Zero();
-	aVal = KNaN;
-	
-	if (!aParser->GetParameterValue(aParam, &buff))
-		User::Leave(KErrNotFound);
-	lex.Assign(buff);
-	User::LeaveIfError(lex.Val(aVal, '.'));
-	}
 
 void CSearch::RunApiReqestL()
 	{

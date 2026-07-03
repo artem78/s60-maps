@@ -93,8 +93,6 @@ private:
 	/*TBool*/ void ProcessApiResponseAndShowResultDlgL();
 	void ParseApiResponseL();
 	void RunApiReqestL();
-	static void ParseJsonValueL(CJsonParser* aParser, const TDesC &aParam, TDes &aVal);
-	static void ParseJsonValueL(CJsonParser* aParser, const TDesC &aParam, TReal64 &aVal);
 	
 public:
 	TBool StartNewSearchL();

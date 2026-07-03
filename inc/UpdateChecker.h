@@ -77,7 +77,6 @@ private:
 	MUpdateCheckerObserver* iObserver; // NOT owned
 	
 	void ProcessResponseL();
-	void ParseJsonValueL(CJsonParser* aParser, const TDesC &aParam, TDes &aVal);
 	
 public:
 	void LoadDataL();
