@@ -451,7 +451,7 @@ void CUserPositionLayer::DrawAccuracyCircle(CWindowGc &aGc, const TPoint &aScree
 void CUserPositionLayer::DrawDirectionMarkL(CWindowGc &aGc, const TPoint &aScreenPos, TReal aRotation)
 	{
 	// Points
-	CArrayFix<TPoint>* points = new CArrayFixFlat<TPoint>(3);
+	CArrayFix<TPoint>* points = new (ELeave) CArrayFixFlat<TPoint>(3);
 	CleanupStack::PushL(points);
 	
 	points->AppendL(TPoint(-6, -5));
