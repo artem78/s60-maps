@@ -505,47 +505,77 @@ void CMapView::HandleShowDataLicencesL()
 	{
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(AppUi());
 	
-	RBuf msg;
-	msg.CreateL(4 * 1024); // should be enough
-	msg.CleanupClosePushL();
-	
 	HBufC* dataLicences = iEikonEnv->AllocReadResourceLC(R_DATA_LICENCES);
 	HBufC* layerFmt = iEikonEnv->AllocReadResourceLC(R_LAYER_FMT);
 	HBufC* searchApi = iEikonEnv->AllocReadResourceLC(R_SEARCH_API);
 	HBufC* routingApi = iEikonEnv->AllocReadResourceLC(R_ROUTING_API);
-	_LIT(KCopyrightLineFmt, " \u2014 (c) %S\r\n<AknMessageQuery Link>%S</AknMessageQuery Link>\r\n\r\n");
-	RBuf copyrightLineFmt;
-	copyrightLineFmt.CreateL(layerFmt->Length() + KCopyrightLineFmt().Length());
-	CleanupClosePushL(copyrightLineFmt);
-	copyrightLineFmt.Append(*layerFmt);
-	//copyrightLineFmt.Capitalize();
-	copyrightLineFmt.Append(KCopyrightLineFmt);
+	
+	_LIT(KCopyrightLineFmt, "%S \u2014 (c) %S\r\n<AknMessageQuery Link>%S</AknMessageQuery Link>");
+	
+	const TInt KGranularity = 10;
+	CDesCArray* lines = new (ELeave) CDesCArrayFlat(KGranularity);
+	CleanupStack::PushL(lines);
+	
+	RBuf line;
+	line.CreateL(512);
+	CleanupClosePushL(line);
+
+	
+	// Tile providers (map layers)
 	for (TInt i = 0; i < appUi->AvailableTileProviders().Count(); i++)
 		{
 		TTileProvider* provider = appUi->AvailableTileProviders()[i];
-		msg.AppendFormat(copyrightLineFmt, &provider->iTitle,
+		TBuf<64> layerName;
+		layerName.Format(*layerFmt, &provider->iTitle);
+		line.Format(KCopyrightLineFmt, &layerName,
 				&provider->iCopyrightText, &provider->iCopyrightUrl);
+		lines->AppendL(line);
 		}
 	
-	_LIT(KCopyrightLineSearchFmt, "%S \u2014 (c) Nominatim\r\n<AknMessageQuery Link>https://nominatim.openstreetmap.org</AknMessageQuery Link>\r\n\r\n");
-	msg.AppendFormat(KCopyrightLineSearchFmt, &(*searchApi));
 	
-	_LIT(KCopyrightLineRoutingFmt, "%S \u2014 (c) Openrouteservice\r\n<AknMessageQuery Link>https://openrouteservice.org/</AknMessageQuery Link>");
-	msg.AppendFormat(KCopyrightLineRoutingFmt, &(*routingApi));
+	// Search
+	_LIT(KNominatim, "Nominatim");
+	_LIT(KNominatimUrl, "https://nominatim.openstreetmap.org");
+	line.Format(KCopyrightLineFmt, &(*searchApi), &KNominatim, &KNominatimUrl);
+	lines->AppendL(line);
 	
-	CleanupStack::PopAndDestroy(5, dataLicences);
 	
-	HBufC* title = iEikonEnv->AllocReadResourceLC(R_DATA_LICENCES);
+	// Routing
+	_LIT(KOrs, "Openrouteservice");
+	_LIT(KOrsUrl, "https://openrouteservice.org/");
+	line.Format(KCopyrightLineFmt, &(*routingApi), &KOrs, &KOrsUrl);
+	lines->AppendL(line);
 	
+	
+	RBuf msg;
+	msg.CreateL(8 * 1024); // should be enough
+	msg.CleanupClosePushL();
+	
+	_LIT(KEmptyLine, "\r\n\r\n");
+	for (TInt i = 0; i < lines->Count(); i++)
+		{
+		const TBool isLastLine = i == (lines->Count() - 1);
+		
+		msg.Append((*lines)[i]);
+		
+		if (not isLastLine)
+			{
+			msg.Append(KEmptyLine);
+			}
+		}
+	
+	
+	// Prepare and show dialog
 	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
 	CleanupStack::PushL(dlg);
 	dlg->PrepareLC(R_QUERY_DIALOG);
-	dlg->QueryHeading()->SetTextL(*title);
+	dlg->QueryHeading()->SetTextL(*dataLicences);
 	dlg->SetMessageTextL(msg);
 	CleanupStack::Pop(dlg);
 	dlg->RunLD();
 	
-	CleanupStack::PopAndDestroy(2, &msg);
+
+	CleanupStack::PopAndDestroy(7, dataLicences);
 	}
 	
 void CMapView::HandleToggleLandmarksVisibility()
