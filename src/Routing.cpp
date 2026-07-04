@@ -142,6 +142,9 @@ const TCoordinate& CTrack::operator[](TInt anIndex) const
 
 // COrsRoutingApi
 
+// API Documentation:
+//		https://openrouteservice.org/dev/#/api-docs/v2/directions/{profile}/get
+
 COrsRoutingApi* COrsRoutingApi::NewL(MRoutingApiObserver* aObserver)
 	{
 	COrsRoutingApi* self = new (ELeave) COrsRoutingApi(aObserver);
