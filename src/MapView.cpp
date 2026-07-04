@@ -506,12 +506,13 @@ void CMapView::HandleShowDataLicencesL()
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(AppUi());
 	
 	RBuf msg;
-	msg.CreateL(2048);
+	msg.CreateL(4 * 1024); // should be enough
 	msg.CleanupClosePushL();
 	
 	HBufC* dataLicences = iEikonEnv->AllocReadResourceLC(R_DATA_LICENCES);
 	HBufC* layerFmt = iEikonEnv->AllocReadResourceLC(R_LAYER_FMT);
 	HBufC* searchApi = iEikonEnv->AllocReadResourceLC(R_SEARCH_API);
+	HBufC* routingApi = iEikonEnv->AllocReadResourceLC(R_ROUTING_API);
 	_LIT(KCopyrightLineFmt, " \u2014 (c) %S\r\n<AknMessageQuery Link>%S</AknMessageQuery Link>\r\n\r\n");
 	RBuf copyrightLineFmt;
 	copyrightLineFmt.CreateL(layerFmt->Length() + KCopyrightLineFmt().Length());
@@ -526,9 +527,13 @@ void CMapView::HandleShowDataLicencesL()
 				&provider->iCopyrightText, &provider->iCopyrightUrl);
 		}
 	
-	_LIT(KCopyrightLineSearchFmt, "%S \u2014 (c) Nominatim\r\n<AknMessageQuery Link>https://nominatim.openstreetmap.org</AknMessageQuery Link>");
+	_LIT(KCopyrightLineSearchFmt, "%S \u2014 (c) Nominatim\r\n<AknMessageQuery Link>https://nominatim.openstreetmap.org</AknMessageQuery Link>\r\n\r\n");
 	msg.AppendFormat(KCopyrightLineSearchFmt, &(*searchApi));
-	CleanupStack::PopAndDestroy(4, dataLicences);
+	
+	_LIT(KCopyrightLineRoutingFmt, "%S \u2014 (c) Openrouteservice\r\n<AknMessageQuery Link>https://openrouteservice.org/</AknMessageQuery Link>");
+	msg.AppendFormat(KCopyrightLineRoutingFmt, &(*routingApi));
+	
+	CleanupStack::PopAndDestroy(5, dataLicences);
 	
 	HBufC* title = iEikonEnv->AllocReadResourceLC(R_DATA_LICENCES);
 	

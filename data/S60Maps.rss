@@ -605,6 +605,7 @@ RESOURCE TBUF r_update_check_failed { buf=qtn_update_check_failed; }
 RESOURCE TBUF r_update_check_success_msg { buf=qtn_update_check_success_msg; }
 RESOURCE TBUF r_download_confirmation { buf=qtn_download_confirmation; }
 RESOURCE TBUF r_routing_failed { buf=qtn_routing_failed; }
+RESOURCE TBUF r_routing_api { buf=qtn_routing_api; }
 
 
 // Language names

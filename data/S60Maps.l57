@@ -130,3 +130,7 @@ CHARACTER_SET UTF8
 #define qtn_to "To"
 #define qtn_clear "Clear"
 #define qtn_routing_failed "Routing failed!"
+
+// Added in version X.XX
+
+#define qtn_routing_api "Routing API"
