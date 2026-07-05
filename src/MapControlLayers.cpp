@@ -1635,6 +1635,8 @@ CRouteLayer::CRouteLayer(CMapControl* aMapView):
 
 CRouteLayer::~CRouteLayer()
 	{
+	delete iDstIcon;
+	delete iSrcIcon;
 	}
 
 CRouteLayer* CRouteLayer::NewLC(CMapControl* aMapView)
@@ -1654,10 +1656,14 @@ CRouteLayer* CRouteLayer::NewL(CMapControl* aMapView)
 
 void CRouteLayer::ConstructL()
 	{
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
+	CS60MapsApplication* app = static_cast<CS60MapsApplication*>(appUi->Application());
 
+	iSrcIcon = app->LoadIconL(EMbmIconsSource_mark,			EMbmIconsLocation_mask);
+	iDstIcon = app->LoadIconL(EMbmIconsDestination_mark,	EMbmIconsLocation_mask);
 	}
 
-void CRouteLayer::DrawL(CWindowGc &aGc)
+void CRouteLayer::DrawTrackL(CWindowGc &aGc)
 	{
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CEikonEnv::Static()->AppUi());
 	const CTrack* track = appUi->MapView()->Routing()->Track();
@@ -1687,15 +1693,62 @@ void CRouteLayer::DrawL(CWindowGc &aGc)
 
 void CRouteLayer::Draw(CWindowGc &aGc)
 	{
+	//const CTrack* track = iMapView->Routing()->Track();
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CEikonEnv::Static()->AppUi());
 	const CTrack* track = appUi->MapView()->Routing()->Track();
 	
-	if (not track or not track->Count())
-		return; // nothing to draw
-	
-	TRAP_IGNORE(DrawL(aGc))
+	if (track and track->Count())
+		TRAP_IGNORE(DrawTrackL(aGc))
+		
+	DrawIcons(aGc);
 	}
 
+void CRouteLayer::DrawIcons(CWindowGc &aGc)
+	{
+	//const CRouting* routing = iMapView->Routing();
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CEikonEnv::Static()->AppUi());
+	const CRouting* routing = appUi->MapView()->Routing();
+	
+	// Source icon
+	if (routing->HasSource())
+		{
+		// Calculate icon position on the screen
+		TCoordinate coord;
+		routing->Source(coord);
+		TRect dstRect;
+		IconRect(coord, dstRect);
+		
+		TRect srcRect(TPoint(0, 0), dstRect.Size());
+		
+		// Draw icon
+		aGc.DrawBitmapMasked(dstRect, iSrcIcon->Bitmap(), srcRect, iSrcIcon->Mask(), 0);
+		}
+	
+	// Destination icon
+	if (routing->HasDestination())
+		{
+		// Calculate icon position on the screen
+		TCoordinate coord;
+		routing->Destination(coord);
+		TRect dstRect;
+		IconRect(coord, dstRect);
+		
+		TRect srcRect(TPoint(0, 0), dstRect.Size());
+		
+		// Draw icon
+		aGc.DrawBitmapMasked(dstRect, iDstIcon->Bitmap(), srcRect, iDstIcon->Mask(), 0);
+		}
+	}
 
-
-
+// TODO: duplicate
+// https://github.com/search?q=repo%3Aartem78%2Fs60-maps%20IconRect&type=code
+void CRouteLayer::IconRect(const TCoordinate &aCoord, TRect &aRect)
+	{
+	//const CAknIcon* icon = /*aSelected ? iIconSelected :*/ iIcon; // Assume both icons have the same size in pixels!
+	
+	// Calculate icon position on the screen
+	TPoint resultPoint = iMapView->GeoCoordsToScreenCoords(aCoord);
+	TSize iconSize = iSrcIcon->Bitmap()->SizeInPixels();
+	aRect = TRect(resultPoint, iconSize);
+	aRect.Move(-iconSize.iWidth / 2, -iconSize.iHeight);
+	}

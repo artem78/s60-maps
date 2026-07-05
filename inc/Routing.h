@@ -59,9 +59,9 @@ private:
 	TBounds iBounds;
 	
 public:
-	void Source(TCoordinate& aSrc);
+	void Source(TCoordinate& aSrc) const;
 	void SetSource(const TCoordinate& aSrc);
-	void Destination(TCoordinate& aDst);
+	void Destination(TCoordinate& aDst) const;
 	void SetDestination(const TCoordinate& aDst);
 	void FindRoute/*L*/();
 	void Reset();
@@ -69,6 +69,10 @@ public:
 		{ return iTrack; };
 	inline void Bounds(TBounds& aBounds) const
 		{ aBounds = iBounds; }
+	inline TBool HasSource() const
+		{ return iIsSrcSet; }
+	inline TBool HasDestination() const
+		{ return iIsDstSet; }
 
 	};
 

@@ -322,7 +322,12 @@ public:
 	
 	// New members
 private:
-	void DrawL(CWindowGc &aGc);
+	CAknIcon* iSrcIcon;
+	CAknIcon* iDstIcon;
+	
+	void DrawTrackL(CWindowGc &aGc);
+	void DrawIcons(CWindowGc &aGc);
+	void IconRect(const TCoordinate &aCoord, TRect &aRect);
 	};
 
 

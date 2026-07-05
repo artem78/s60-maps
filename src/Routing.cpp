@@ -64,7 +64,7 @@ void CRouting::Reset()
 	iTrack->Reset();
 	}
 
-void CRouting::Source(TCoordinate& aSrc)
+void CRouting::Source(TCoordinate& aSrc) const
 	{
 	aSrc.SetCoordinate(iSrcCoord.Latitude(), iSrcCoord.Longitude());
 	}
@@ -75,7 +75,7 @@ void CRouting::SetSource(const TCoordinate& aSrc)
 	iIsSrcSet = ETrue;
 	}
 
-void CRouting::Destination(TCoordinate& aDst)
+void CRouting::Destination(TCoordinate& aDst) const
 	{
 	aDst.SetCoordinate(iDstCoord.Latitude(), iDstCoord.Longitude());
 	}
