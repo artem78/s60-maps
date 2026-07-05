@@ -810,6 +810,13 @@ void MiscUtils::LanguageToIso639Code(TLanguage aLang, /*TDes*/ TBuf</*3*/2> &aCo
 			break;
 			}
 			
+		case ELangArabic:
+			{
+			aCode.Append('a');
+			aCode.Append('r');
+			break;
+			}
+			
 		default:
 			{} // supress compiller warnings
 		}

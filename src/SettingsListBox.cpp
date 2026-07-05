@@ -281,6 +281,12 @@ void CLanguageListSettingItem::LoadLanguageListL()
 				break;
 				}
 				
+			case ELangArabic:
+				{
+				resourceId = R_LANG_ARABIC_NAME;
+				break;
+				}
+				
 			default:
 				{} // supress compiller warnings
 			}

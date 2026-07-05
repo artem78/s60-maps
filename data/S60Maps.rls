@@ -30,5 +30,6 @@ CHARACTER_SET UTF8
 #define qtn_lang_catalan_name "Catalan"
 #define qtn_lang_italian_name "Italiano"
 #define qtn_lang_finnish_name "Suomi" // Finnish
+#define qtn_lang_arabic_name "Arabic"
 
 // End of File

@@ -1,0 +1,135 @@
+/*
+========================================================================
+ Name        : S60Maps.l37
+ Author      : ZAIOOD999
+ Copyright   : 
+ Description : 
+========================================================================
+*/
+// localized strings for language: Arabic (37)
+
+CHARACTER_SET UTF8
+
+#define qtn_find_me "موقعي"
+#define qtn_about "حول"
+#define qtn_exit "خروج"
+#define qtn_tile_providers_title "طبقة الخريطة"
+#define qtn_service_title "الخدمة"
+#define qtn_tiles_cache_stats "Map cache statistics"
+#define qtn_reset_tiles_cache "Clear map cache"
+#define qtn_confirm_reset_tiles_cache_dialog_text "سيتم حذف بيانات الخريطة. تأكيد؟"
+#define qtn_about_dialog_title "حول"
+#define qtn_about_dialog_text "S60Maps اصدار %S\nالاصدار: " __DATE__ " " __TIME__ "\nGit: %S\nالناشر: %S\nالويب: %S\nشكرا ل: %S واخرون"
+#define qtn_confirm_exit_dialog_text "هل تريد الخروج؟"
+#define qtn_done "تم!"
+#define qtn_stats_line "%S: %d files, %S"
+#define qtn_stats_total "Total: %d files, %S"
+
+// Added in version 1.4.0:
+
+#define qtn_positioning_unavailable "تحديد الموقع غير متاح!"
+#define qtn_wait "Please wait..."
+#define qtn_meters_unit_short "م"
+#define qtn_kilometers_unit_short "كم"
+
+// Added in version 1.5.0:
+
+#define qtn_landmarks "العلامات"
+#define qtn_display "اظهار"
+#define qtn_create "انشاء"
+#define qtn_rename "اعادة التسمية"
+#define qtn_delete "حذف"
+#define qtn_confirm_landmark_deletion "مسح العلامة \"%S\"؟"
+
+// Added in version 1.6:
+
+#define qtn_goto "الذهاب الى..."
+#define qtn_landmark "علامة"
+#define qtn_coordinate "Coordinate"
+#define qtn_latitude "Latitude"
+#define qtn_longitude "Longitude"
+
+// Added in version 1.7:
+
+#define qtn_settings "الضبط"
+#define qtn_language "اللغة"
+
+// Added in version 1.8:
+
+#define qtn_reload_visible_area "اعادة تحميل المنطقة"
+#define qtn_show "اظهار"
+#define qtn_hide "اخفاء"
+#define qtn_signal_indicator "GPS مؤشر قوية اشارة"
+#define qtn_scale_bar "Scale bar"
+
+// Added in version 1.10:
+
+#define qtn_signal_indicator_type "نوع مؤشر الاشارة"
+#define qtn_signal_indicator_general_type "عام"
+#define qtn_signal_indicator_per_satellite_type "القمر الصناعي"
+
+// Added in version 1.12
+
+#define qtn_use_https_proxy "HTTPS بروكسي"
+#define qtn_enabled "تفعيل"
+#define qtn_disabled "ايقاف"
+#define qtn_https_proxy_url "HTTPS proxy url"
+#define qtn_use_disk_cache "البيانات على القرص"
+
+// Added in version 1.13
+
+#define qtn_search "البحث"
+#define qtn_search_results "نتائج البحث"
+
+// Added in version 1.14
+
+#define qtn_data_licences "صلاحيات البيانات"
+#define qtn_layer_fmt "\"%S\" الطبقة"
+#define qtn_search_api "Search API"
+#define qtn_osm_contributors "OpenStreetMap مساهمين"
+#define qtn_map_data "بيانات الخريطة"
+#define qtn_map_style "شكل الخريطة"
+#define qtn_positioning "تحديد الموقع"
+
+// Added in version 1.15
+
+#define qtn_no_results "لم يتم العثور على نتائج!"
+
+// Added in version 1.16
+
+#define qtn_create_landmark_dlg_title "علامة جديدة"
+#define qtn_edit_landmark_dlg_title "اعادة تسمية العلامة"
+#define qtn_search_failed_fmt "فشل البحث! (%S)"
+#define qtn_traffic_counter "عداد البيانات"
+#define qtn_traffic_counter_dlg_msg_fmt "الجلسة:\n   تم الاستلام %S\n   تم الارسال %S\n\nالاجمالي:\n   تم الاستلام %S\n   تم الارسال %S"
+
+// Added in version 1.17
+
+#define qtn_clear_search_results "مسح نتائج البحث"
+
+
+// Added in version 1.20
+
+#define qtn_controls "التحكمات"
+#define qtn_controls_dlg_text "المفاتيح:\n  التحرك — مفاتيح الانتقال or 2/4/6/8\n  تكبير — رفع الصوت او 3\n  تصغير —  خفض الصوت او 1\n  انشاء/اعادة تسمية علامة — 5\n  مسح العلامة — C (مفتاح المسح)\n  البحث — 0\n\nشاشة اللمس:\n  التحرك — touch side of the screen\n  تصغيرt/it — swipe left/right\n  Show/hide softkeys — swipe up/down"
+
+// Added in version 1.21
+
+#define qtn_help "Help"
+#define qtn_check_for_updates "البحث عن التحديثات"
+#define qtn_no_updates "لم يتم العثور على تحديثات."
+#define qtn_update_check_failed "فشل البحث عن التحديثات!"
+#define qtn_update_check_success_msg "تحديث جديد %S تم نشره %S متوفر! الحالي is %S."
+#define qtn_download_confirmation "تحميل؟"
+
+// Added in version 1.24
+
+#define qtn_route "Route"
+#define qtn_from "From"
+#define qtn_to "To"
+#define qtn_clear "Clear"
+#define qtn_routing_failed "Routing failed!"
+
+// Added in version X.XX
+
+#define qtn_routing_api "Routing API"
