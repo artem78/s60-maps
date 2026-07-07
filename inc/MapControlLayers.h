@@ -264,7 +264,8 @@ private:
 	
 	void DrawBarsV1(CWindowGc &aGc, TSignalStrength aBarsCount);
 	TRect DrawBarsV2(CWindowGc &aGc, const TPoint &aTopRight, const TPositionSatelliteInfo &aSatInfo);
-	void DrawSatelliteIcon(CWindowGc &aGc, const TPoint &aPos);
+	inline void DrawSatelliteIcon(CWindowGc &aGc, const TPoint &aPos)
+		{ static_cast<CWindowGcEx*>(&aGc)->DrawIcon(iSatelliteIcon, aPos); };
 	
 	/* Converts signal strength value to real number in range [0,1], where 0 = no signal and 1 = maximum signal */
 	static TReal32 SignalStrengthToReal(TInt aSignalStrength);
@@ -327,7 +328,6 @@ private:
 	
 	void DrawTrackL(CWindowGc &aGc);
 	void DrawIcons(CWindowGc &aGc);
-	void IconRect(const TCoordinate &aCoord, TRect &aRect);
 	};
 
 

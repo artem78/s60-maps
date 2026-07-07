@@ -975,4 +975,12 @@ void CMapControl::MoveAndZoomToBounds(const TBounds &aBounds)
 	Move(center, zoom);
 	}
 
+void CMapControl::DrawIcon(const CAknIcon* aIcon, const TCoordinate &aCoord,
+		CGraphicsContext::TTextAlign aOriginH, CWindowGcEx::TVertAlign aOriginV)
+	{
+	CWindowGc& gc = SystemGc();
+	TPoint point = GeoCoordsToScreenCoords(aCoord);
+	static_cast<CWindowGcEx*>(&gc)->DrawIcon(aIcon, point, aOriginH, aOriginV);
+	}
+
 // End of File

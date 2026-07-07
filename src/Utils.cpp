@@ -951,6 +951,49 @@ void CWindowGcEx::DrawOutlinedText(const TDesC &aBuf,const TRect &aBox,TInt aBas
 	DrawText(aBuf, aBox, aBaselineOffset, aHoriz, aLeftMrg);
 	}
 
+void CWindowGcEx::DrawIcon(const CAknIcon* aIcon, const TPoint &aPos,
+		TTextAlign aOriginH, TVertAlign aOriginV)
+	{
+	// calculations
+	TSize iconSize = aIcon->Bitmap()->SizeInPixels();
+	TRect srcRect(TPoint(0, 0), iconSize);
+	TRect dstRect(aPos, iconSize);
+	TInt dx = 0;
+	TInt dy = 0;
+	switch (aOriginH)
+		{
+		case ECenter:
+			{
+			dx = -iconSize.iWidth / 2;
+			break;
+			}
+		
+		case ERight:
+			{
+			dx = -iconSize.iWidth;
+			break;
+			}
+		}
+	switch (aOriginV)
+		{
+		case EMiddle:
+			{
+			dy = -iconSize.iHeight / 2;
+			break;
+			}
+			
+		case EBottom:
+			{
+			dy = -iconSize.iHeight;
+			}
+		}
+	dstRect.Move(dx, dy);
+	
+	
+	// drawing
+	DrawBitmapMasked(dstRect, aIcon->Bitmap(), srcRect, aIcon->Mask(), EFalse);
+	}
+
 
 // TVersionEx
 

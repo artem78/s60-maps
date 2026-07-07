@@ -248,6 +248,8 @@ public:
 		{ return iSmallFont; };
 	void NotifyLandmarksUpdated();
 	/*inline*/ TPoint ScreenCoordsToProjectionCoords(const TPoint &aPoint) const;
+	void DrawIcon(const CAknIcon* aIcon, const TCoordinate &aCoord,
+			CGraphicsContext::TTextAlign aOriginH, CWindowGcEx::TVertAlign aOriginV);
 	
 private:
 	TZoom PreferredZoomForBounds(const TBounds &aBounds) const;

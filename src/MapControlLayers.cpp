@@ -1032,7 +1032,9 @@ void CLandmarksLayer::DrawLandmarkIcon(CWindowGc &aGc, const CPosLandmark* aLand
 	if (iMapView->Rect().Intersects(dstRect))
 		{ // Draw landmark icon only if it intersects with control
 		TRect srcRect(TPoint(0, 0), iconSize);
-		aGc.DrawBitmapMasked(dstRect, iIcon->Bitmap(), srcRect, iIcon->Mask(), 0);
+		//aGc.DrawBitmapMasked(dstRect, iIcon->Bitmap(), srcRect, iIcon->Mask(), 0);
+		iMapView->DrawIcon(iIcon, landmarkPos,
+				CGraphicsContext::ECenter, CWindowGcEx::EMiddle);
 #ifdef __WINSCW__
 		iVisibleIconsCount++;
 #endif
@@ -1397,13 +1399,13 @@ TRect CSignalIndicatorLayer::DrawBarsV2(CWindowGc &aGc, const TPoint &aTopRight,
 	return TRect(barMaxRect.iTl, TPoint(aTopRight.iX, barMaxRect.iBr.iY));
 	}
 
-void CSignalIndicatorLayer::DrawSatelliteIcon(CWindowGc &aGc, const TPoint &aPos)
-	{
-	TSize iconSize = iSatelliteIcon->Bitmap()->SizeInPixels();
-	TRect dstRect(aPos, iconSize);
-	TRect srcRect(TPoint(0, 0), iconSize);
-	aGc.DrawBitmapMasked(dstRect, iSatelliteIcon->Bitmap(), srcRect, iSatelliteIcon->Mask(), 0);
-	}
+//void CSignalIndicatorLayer::DrawSatelliteIcon(CWindowGc &aGc, const TPoint &aPos)
+//	{
+//	TSize iconSize = iSatelliteIcon->Bitmap()->SizeInPixels();
+//	TRect dstRect(aPos, iconSize);
+//	TRect srcRect(TPoint(0, 0), iconSize);
+//	aGc.DrawBitmapMasked(dstRect, iSatelliteIcon->Bitmap(), srcRect, iSatelliteIcon->Mask(), 0);
+//	}
 
 TReal32 CSignalIndicatorLayer::SignalStrengthToReal(TInt aSignalStrength)
 	{
@@ -1703,7 +1705,7 @@ void CRouteLayer::Draw(CWindowGc &aGc)
 	DrawIcons(aGc);
 	}
 
-void CRouteLayer::DrawIcons(CWindowGc &aGc)
+void CRouteLayer::DrawIcons(CWindowGc &/*aGc*/)
 	{
 	//const CRouting* routing = iMapView->Routing();
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CEikonEnv::Static()->AppUi());
@@ -1712,43 +1714,16 @@ void CRouteLayer::DrawIcons(CWindowGc &aGc)
 	// Source icon
 	if (routing->HasSource())
 		{
-		// Calculate icon position on the screen
 		TCoordinate coord;
 		routing->Source(coord);
-		TRect dstRect;
-		IconRect(coord, dstRect);
-		
-		TRect srcRect(TPoint(0, 0), dstRect.Size());
-		
-		// Draw icon
-		aGc.DrawBitmapMasked(dstRect, iSrcIcon->Bitmap(), srcRect, iSrcIcon->Mask(), 0);
+		iMapView->DrawIcon(iSrcIcon, coord, CGraphicsContext::ECenter, CWindowGcEx::EBottom);
 		}
 	
 	// Destination icon
 	if (routing->HasDestination())
 		{
-		// Calculate icon position on the screen
 		TCoordinate coord;
 		routing->Destination(coord);
-		TRect dstRect;
-		IconRect(coord, dstRect);
-		
-		TRect srcRect(TPoint(0, 0), dstRect.Size());
-		
-		// Draw icon
-		aGc.DrawBitmapMasked(dstRect, iDstIcon->Bitmap(), srcRect, iDstIcon->Mask(), 0);
+		iMapView->DrawIcon(iDstIcon, coord, CGraphicsContext::ECenter, CWindowGcEx::EBottom);
 		}
-	}
-
-// TODO: duplicate
-// https://github.com/search?q=repo%3Aartem78%2Fs60-maps%20IconRect&type=code
-void CRouteLayer::IconRect(const TCoordinate &aCoord, TRect &aRect)
-	{
-	//const CAknIcon* icon = /*aSelected ? iIconSelected :*/ iIcon; // Assume both icons have the same size in pixels!
-	
-	// Calculate icon position on the screen
-	TPoint resultPoint = iMapView->GeoCoordsToScreenCoords(aCoord);
-	TSize iconSize = iSrcIcon->Bitmap()->SizeInPixels();
-	aRect = TRect(resultPoint, iconSize);
-	aRect.Move(-iconSize.iWidth / 2, -iconSize.iHeight);
 	}

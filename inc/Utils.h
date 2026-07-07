@@ -15,6 +15,7 @@
 #include <w32std.h>
 #include <eikenv.h>
 #include <eikinfo.h>
+#include <akniconutils.h> // for CAknIcon
 
 // Constants
 
@@ -149,6 +150,16 @@ public:
 			TTextAlign aHoriz=ELeft,TInt aLeftMrg=0, const TRgb &aTextColor = KRgbBlack,
 			const TRgb &aOutlineColor = KRgbWhite,
 			TBool aHighQuality = EFalse);
+	
+	enum TVertAlign
+		{
+		ETop,
+		EMiddle,
+		EBottom
+		};
+	
+	void DrawIcon(const CAknIcon* aIcon, const TPoint &aPos,
+			TTextAlign aOriginH = ELeft, TVertAlign aOriginV = ETop);
 	};
 
 
