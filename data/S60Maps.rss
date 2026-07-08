@@ -708,6 +708,13 @@ RESOURCE AVKON_SETTING_ITEM_LIST r_setting_item_list
 			setting_page_resource = r_use_positioning_setting_page;
 			associated_resource = r_popup_setting_use_positioning_texts;
 			name = qtn_positioning;
+			},
+		AVKON_SETTING_ITEM
+			{
+			identifier = ESettingRouteProfile;
+			setting_page_resource = r_route_profile_setting_page;
+			associated_resource = r_popup_setting_route_profile_texts;
+			name = qtn_route_profile;
 			}
 		};
 	}
@@ -917,6 +924,38 @@ RESOURCE ARRAY r_use_positioning_texts
         AVKON_ENUMERATED_TEXT { value=0; text = qtn_disabled; }
         };
     }
+
+
+// Show route profile setting
+
+RESOURCE AVKON_SETTING_PAGE r_route_profile_setting_page
+	{
+	//number = 0;  EAknSettingPageNoOrdinalDisplayed
+	label = qtn_route_profile;
+	type = EAknCtPopupSettingList;
+	editor_resource_id = r_route_profile_popup_setting_list;
+	}
+
+RESOURCE POPUP_SETTING_LIST r_route_profile_popup_setting_list
+	{
+	flags = 0;
+	}
+
+RESOURCE AVKON_POPUP_SETTING_TEXTS r_popup_setting_route_profile_texts
+	{
+	setting_texts_resource = r_route_profile_texts;
+	}
+
+RESOURCE ARRAY r_route_profile_texts
+	{
+	items =
+		{
+		AVKON_ENUMERATED_TEXT {value = 0; text = qtn_route_profile_car;},
+		AVKON_ENUMERATED_TEXT {value = 1; text = qtn_route_profile_bicycle;},
+		AVKON_ENUMERATED_TEXT {value = 2; text = qtn_route_profile_foot;}
+		};
+	}
+
 
 
 

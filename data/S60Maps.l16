@@ -131,3 +131,7 @@ CHARACTER_SET UTF8
 // Added in version X.XX
 
 #define qtn_routing_api "API маршрутов"
+#define qtn_route_profile "Профиль маршрута"
+#define qtn_route_profile_car "На машине"
+#define qtn_route_profile_bicycle "На велосипеде"
+#define qtn_route_profile_foot "Пешком"

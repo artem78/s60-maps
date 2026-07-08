@@ -48,13 +48,13 @@ void CRouting::ConstructL()
 	iApi = COrsRoutingApi::NewL(this);
 	}
 
-void CRouting::FindRoute/*L*/()
+void CRouting::FindRoute/*L*/(TRouteProfile aProfile)
 	{
 	if (not iIsSrcSet or not iIsDstSet)
 		return;
 	
 	iTrack->Reset();
-	iApi->SendRequestL(iSrcCoord, iDstCoord);
+	iApi->SendRequestL(iSrcCoord, iDstCoord, aProfile);
 	}
 
 void CRouting::Reset()
@@ -170,7 +170,7 @@ COrsRoutingApi::~COrsRoutingApi()
 	delete iHttpClient;
 	}
 
-void COrsRoutingApi::SendRequestL(const TCoordinate& aSrcCoord, const TCoordinate& aDstCoord)
+void COrsRoutingApi::SendRequestL(const TCoordinate& aSrcCoord, const TCoordinate& aDstCoord, TRouteProfile aProfile)
 	{
 	TBuf8<32> srcDes, dstDes;
 	
@@ -185,12 +185,38 @@ void COrsRoutingApi::SendRequestL(const TCoordinate& aSrcCoord, const TCoordinat
 	HBufC8* encodedApiKey = EscapeUtils::EscapeEncodeL(KORSApiKey, EscapeUtils::EEscapeUrlEncoded);
 	CleanupStack::PushL(encodedApiKey);
 	
-	_LIT8(KApiUrlFmt, "https://api.openrouteservice.org/v2/directions/driving-car?api_key=%S&start=%S&end=%S");
+	// Profile
+	_LIT8(KCarProfile, "driving-car");
+	_LIT8(KBicycleProfile, "cycling-regular");
+	//_LIT8(KBicycleProfile, "cycling-road"); // what the difference?
+	_LIT8(KFootProfile, "foot-walking");
+	//_LIT8(KFootProfile, "foot-hiking"); // what the difference?
+	TPtrC8 profile;
+	switch (aProfile)
+		{
+		case ECar:
+			profile.Set(KCarProfile);
+			break;
+			
+		case EBicycle:
+			profile.Set(KBicycleProfile);
+			break;
+			
+		case EFoot:
+			profile.Set(KFootProfile);
+			break;
+			
+		default:
+			profile.Set(KNullDesC8);
+		};
+	
+	_LIT8(KApiUrlFmt, "https://api.openrouteservice.org/v2/directions/%S?api_key=%S&start=%S&end=%S");
 	RBuf8 apiUrl;
-	apiUrl.CreateL(KApiUrlFmt().Length() + encodedApiKey->Length() + encodedSrc->Length() + encodedDst->Length());
+	apiUrl.CreateL(KApiUrlFmt().Length() + encodedApiKey->Length() + encodedSrc->Length()
+			+ encodedDst->Length() + profile.Length());
 	CleanupClosePushL(apiUrl);
 	
-	apiUrl.Format(KApiUrlFmt, &*encodedApiKey, &*encodedSrc, &*encodedDst);
+	apiUrl.Format(KApiUrlFmt, &profile, &*encodedApiKey, &*encodedSrc, &*encodedDst);
 	///
 	/*TInt lmax = apiUrl.MaxLength();
 	TInt l = apiUrl.Length();*/

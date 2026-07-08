@@ -102,6 +102,13 @@ CAknSettingItem* CSettingsListBox::CreateSettingItemL(TInt aSettingId)
 			}
 			break;
 			
+		case ESettingRouteProfile:
+			{
+			TInt* ptr = (TInt*)(&appUi->Settings()->iRouteProfile); // TRouteProfile& --> TInt&
+			settingItem = new (ELeave) CAknEnumeratedTextPopupSettingItem(aSettingId, *ptr);
+			}
+			break;
+			
 		}
 	
 	return settingItem;

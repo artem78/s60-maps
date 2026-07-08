@@ -986,14 +986,20 @@ void CMapView::HandleShowSearchResListL()
 
 void CMapView::HandleRouteSetSourceL()
 	{
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(AppUi());
+	const CSettings* settings = appUi->Settings();
+	
 	iRouting->SetSource(MapControl()->GetCenterCoordinate());
-	iRouting->FindRoute();
+	iRouting->FindRoute(settings->iRouteProfile);
 	}
 
 void CMapView::HandleRouteSetDestinationL()
 	{
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(AppUi());
+	const CSettings* settings = appUi->Settings();
+	
 	iRouting->SetDestination(MapControl()->GetCenterCoordinate());
-	iRouting->FindRoute();
+	iRouting->FindRoute(settings->iRouteProfile);
 	}
 
 void CMapView::HandleRouteClearL()

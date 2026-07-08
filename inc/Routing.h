@@ -9,6 +9,17 @@
 #include "JsonParser.h"
 #include "Utils.h"
 
+
+// Constants/types
+
+enum TRouteProfile // mode of transportation
+	{
+	ECar,
+	EBicycle,
+	EFoot
+	};
+
+
 // Forward declarations
 
 class CTrack;
@@ -63,7 +74,7 @@ public:
 	void SetSource(const TCoordinate& aSrc);
 	void Destination(TCoordinate& aDst) const;
 	void SetDestination(const TCoordinate& aDst);
-	void FindRoute/*L*/();
+	void FindRoute/*L*/(TRouteProfile aProfile);
 	void Reset();
 	inline const CTrack* Track() const
 		{ return iTrack; };
@@ -147,8 +158,8 @@ private:
 	static void CoordToDes8(const TCoordinate& aCoord, TDes8& aDes, TInt aPrecision = 6);
 	void ProcessApiReponseL();
 
-public:
-	void SendRequestL(const TCoordinate& aSrc, const TCoordinate& aDst);
+public:	
+	void SendRequestL(const TCoordinate& aSrc, const TCoordinate& aDst, TRouteProfile aProfile);
 
 	};
 

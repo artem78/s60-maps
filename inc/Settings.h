@@ -18,6 +18,7 @@
 #include "Defs.h"
 #include <s32strm.h>
 #include "Map.h"
+#include "Routing.h" // for TRouteProfile
 
 // Types
 
@@ -93,6 +94,7 @@ public:
 	TBool iPositioningEnabled;
 	TBytesCount iTotalBytesRecieved;
 	TBytesCount iTotalBytesSent;
+	TRouteProfile iRouteProfile;
 	
 public:
 	CSettings();

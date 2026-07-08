@@ -134,3 +134,7 @@ CHARACTER_SET UTF8
 // Added in version X.XX
 
 #define qtn_routing_api "Routing API"
+#define qtn_route_profile "Route profile"
+#define qtn_route_profile_car "Driving"
+#define qtn_route_profile_bicycle "Cycling"
+#define qtn_route_profile_foot "Walking"

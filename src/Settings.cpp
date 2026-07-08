@@ -53,7 +53,8 @@ CSettings::CSettings() :
 		iUseHttpsProxy(ETrue),
 		iHttpsProxyUrl(KDefaultHttpsProxyUrl),
 		iUseDiskCache(ETrue),
-		iPositioningEnabled(ETrue)
+		iPositioningEnabled(ETrue),
+		iRouteProfile(ECar)
 	{
 	}
 
@@ -145,6 +146,11 @@ void CSettings::DoExternalizeL(RWriteStream& aStream) const
 	// Added in version 1.16
 	MiscUtils::WriteTUint64ToStreamL(aStream, iTotalBytesRecieved);
 	MiscUtils::WriteTUint64ToStreamL(aStream, iTotalBytesSent);
+	
+	// Added in version X.XX
+	aStream << static_cast<TInt8>(iRouteProfile);
+	
+	// ... place new parameters here ...
 	
 	/* Do not forget to increment KConfigFileVersion value
 	   in inc/Defs.h after new setting was added !!! */
@@ -241,7 +247,13 @@ void CSettings::DoInternalizeL(RReadStream& aStream, TBool aLegacy, TUint16 aDat
 	//if (aStream.Source()->TellL(MStreamBuf::ERead) >= dataEndPos) return;
 	if (aConfigFileVersion <= 15) return;
 	
-	// ...
+	// Added in version X.XX
+	aStream >> int8Val;
+	iRouteProfile = static_cast<TRouteProfile>(int8Val);
+	
+	if (aConfigFileVersion <= 16) return;
+	
+	// ... place new parameters here ...
 	
 	}
 
