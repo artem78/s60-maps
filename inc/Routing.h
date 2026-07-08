@@ -19,6 +19,12 @@ enum TRouteProfile // mode of transportation
 	EFoot
 	};
 
+class TRouteDetails
+	{
+public:
+	TBounds iBounds;
+	};
+
 
 // Forward declarations
 
@@ -33,7 +39,7 @@ class MRoutingApiObserver
 	{
 protected:
 	virtual void OnRoutePointAddedL(const TCoordinate& aCoord) = 0;
-	virtual void OnBoundsUpdated(const TBounds& aBounds) = 0;
+	virtual void OnRouteDetailsRecieved(const TRouteDetails& aRtDetails) = 0;
 	virtual void OnFailedL() = 0;
 	
 	friend class COrsRoutingApi;
@@ -58,7 +64,7 @@ private:
 private:
 	virtual void OnRoutePointAddedL(const TCoordinate& aCoord);
 	virtual void OnFailedL();
-	virtual void OnBoundsUpdated(const TBounds& aBounds);
+	virtual void OnRouteDetailsRecieved(const TRouteDetails& aRtDetails);
 	
 	// New members
 private:

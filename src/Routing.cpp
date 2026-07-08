@@ -95,10 +95,10 @@ void CRouting::OnFailedL()
 	iObserver->OnRouteFailedL();
 	}
 
-void CRouting::OnBoundsUpdated(const TBounds& aBounds)
+void CRouting::OnRouteDetailsRecieved(const TRouteDetails& aRtDetails)
 	{
-	iBounds = aBounds;
-	iObserver->OnRouteFound(); // assume OnBoundsUpdated called after all points recieved
+	iBounds = aRtDetails.iBounds;
+	iObserver->OnRouteFound(); // assume OnRouteDetailsRecieved called after all points recieved
 	}
 
 
@@ -339,10 +339,10 @@ void COrsRoutingApi::ProcessApiReponseL()
 	path.Format(KBBoxPathFmt, ELat2);
 	parser->GetParameterValueL(path, bBoxLat2);
 	
-	TBounds bounds;
-	bounds.SetCoords(bBoxLat1, bBoxLon1, bBoxLat2, bBoxLon2);
+	TRouteDetails rtDetails;
+	rtDetails.iBounds.SetCoords(bBoxLat1, bBoxLon1, bBoxLat2, bBoxLon2);
 
-	iObserver->OnBoundsUpdated(bounds);
+	iObserver->OnRouteDetailsRecieved(rtDetails);
 	
 	CleanupStack::PopAndDestroy(2, parser);
 	}
