@@ -1531,14 +1531,15 @@ void CSearchResultsLayer::DrawIcon(CWindowGc &aGc, const TSearchResultItem &aSea
 	{
 	const CAknIcon* icon = aSelected ? iIconSelected : iIcon;
 	
-	// Calculate icon position on the screen
+	/*// Calculate icon position on the screen
 	TRect dstRect;
 	IconRect(aSearchResult, dstRect);
 	
 	TRect srcRect(TPoint(0, 0), dstRect.Size());
 	
 	// Draw icon
-	aGc.DrawBitmapMasked(dstRect, icon->Bitmap(), srcRect, icon->Mask(), 0);
+	aGc.DrawBitmapMasked(dstRect, icon->Bitmap(), srcRect, icon->Mask(), 0);*/
+	iMapView->DrawIcon(icon, aSearchResult.iCoord, CGraphicsContext::ECenter, CWindowGcEx::EBottom);
 	}
 
 void CSearchResultsLayer::DrawTextWithBackgroundL(CWindowGc &aGc,
@@ -1614,17 +1615,6 @@ void CSearchResultsLayer::DrawMultiLineText(CWindowGc &aGc, CArrayFix<TPtrC>* aL
 		lineRect.Move(0, aLineHeight);
 		}
 	aGc.DiscardFont();
-	}
-
-void CSearchResultsLayer::IconRect(const TSearchResultItem &aSearchResult, TRect &aRect)
-	{
-	const CAknIcon* icon = /*aSelected ? iIconSelected :*/ iIcon; // Assume both icons have the same size in pixels!
-	
-	// Calculate icon position on the screen
-	TPoint resultPoint = iMapView->GeoCoordsToScreenCoords(aSearchResult.iCoord);
-	TSize iconSize = icon->Bitmap()->SizeInPixels();
-	aRect = TRect(resultPoint, iconSize);
-	aRect.Move(-iconSize.iWidth / 2, -iconSize.iHeight);
 	}
 
 

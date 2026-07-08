@@ -299,7 +299,6 @@ private:
 	void DrawBackgroundBoxL(CWindowGc &aGc, const TRect &aRect, const TPoint &aArrowTopPoint);
 	void DrawMultiLineText(CWindowGc &aGc, CArrayFix<TPtrC>* aLines, const CFont* aFont,
 			TInt aLineHeight, const TRect &aFirstLineRect); // With horizontal alignment centered
-	void IconRect(const TSearchResultItem &aSearchResult, TRect &aRect);
 	};
 
 
