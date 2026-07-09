@@ -10,6 +10,8 @@
 #include <aknglobalnote.h>
 #include <APGCLI.H> // for RApaLsSession
 #include <APGTASK.H> // for TApaTaskList
+#include <stringloader.h>
+#include "S60Maps_0xED689B88.RSG"
 
 TInt MathUtils::Digits(TInt aNum)
 	{
@@ -880,14 +882,18 @@ void MiscUtils::OpenUrlInDefaultWebBrowserL(const TDesC& aUrl)
     CleanupStack::PopAndDestroy(2, &appArcSession);
 	}
 
-void MiscUtils::MetersToDes(/*TReal*/ TInt aDistance, TDes& aDes)
+void MiscUtils::MetersToDesL(/*TReal*/ TInt aDistance, TDes& aDes)
 	{
 	aDes.Zero();
 	if (aDistance < 1000)
 		{
 		aDes.Num(aDistance);
 		aDes.Append(' ');
-		aDes.Append('m');
+		//aDes.Append('m');
+		
+		HBufC* m = StringLoader::LoadL(R_METERS_UNIT_SHORT);
+		aDes.Append(*m);
+		delete m;
 		}
 	else
 		{
@@ -898,21 +904,29 @@ void MiscUtils::MetersToDes(/*TReal*/ TInt aDistance, TDes& aDes)
 		realFmt.iTriLen = 0;
 		aDes.Num(aDistance / 1000.0, realFmt);
 		aDes.Append(' ');
-		aDes.Append('k');
-		aDes.Append('m');
+		//aDes.Append('k');
+		//aDes.Append('m');
+		
+		HBufC* km = StringLoader::LoadL(R_KILOMETERS_UNIT_SHORT);
+		aDes.Append(*km);
+		delete km;
 		}
 	}
 
-void MiscUtils::SecondsToDes(/*TReal*/ TInt aSeconds, TDes& aDes)
+void MiscUtils::SecondsToDesL(/*TReal*/ TInt aSeconds, TDes& aDes)
 	{
 	const TInt KOneMinute = 60;
 	const TInt KOneHour = KOneMinute * 60;
-	_LIT(KLessThanMinute, "< 1 min");
+	//_LIT(KLessThanMinute, "< 1 min");
 	
 	aDes.Zero();
 	if (aSeconds < KOneMinute)
 		{
-		aDes.Append(KLessThanMinute);
+		// aDes.Append(KLessThanMinute);
+		
+		HBufC* lessThanMinute = StringLoader::LoadL(R_LESS_THAN_A_MINUTE);
+		aDes.Append(*lessThanMinute);
+		delete lessThanMinute;
 		}
 	else
 		{

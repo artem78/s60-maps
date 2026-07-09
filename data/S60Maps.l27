@@ -136,3 +136,5 @@ CHARACTER_SET UTF8
 #define qtn_route_profile_bicycle "Cycling"
 #define qtn_route_profile_foot "Walking"
 #define qtn_details "Details"
+#define qtn_route_details_fmt "Distance: %S\nTime: %S"
+#define qtn_less_than_a_minute "< 1 min"

@@ -136,3 +136,5 @@ CHARACTER_SET UTF8
 #define qtn_route_profile_bicycle "На велосипеде"
 #define qtn_route_profile_foot "Пешком"
 #define qtn_details "Подробности"
+#define qtn_route_details_fmt "Расстояние: %S\nВремя: %S"
+#define qtn_less_than_a_minute "меньше минуты"

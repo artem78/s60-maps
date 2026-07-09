@@ -1037,9 +1037,10 @@ void CMapView::HandleRouteShowDetailsL()
 	TRouteDetails rtDetails;
 	iRouting->Details(rtDetails);
 	TBuf<32> distDes, timeDes;
-	MiscUtils::MetersToDes(rtDetails.iDistanceInMeters, distDes);
-	MiscUtils::SecondsToDes(rtDetails.iDurationInSecs, timeDes);
-	msg.Format(_L("Distance: %S\nTime: %S"), &distDes, &timeDes);
+	MiscUtils::MetersToDesL(rtDetails.iDistanceInMeters, distDes);
+	MiscUtils::SecondsToDesL(rtDetails.iDurationInSecs, timeDes);
+	HBufC* msgFmt = iEikonEnv->AllocReadResourceLC(R_ROUTE_DETAILS_FMT);
+	msg.Format(*msgFmt, &distDes, &timeDes);
 	
 	/*DEBUG(_L("%.1f m => %S"), rtDetails.iDistanceInMeters, &distDes);
 	DEBUG(_L("%.1f s => %S"), rtDetails.iDurationInSecs, &timeDes);*/
@@ -1050,4 +1051,6 @@ void CMapView::HandleRouteShowDetailsL()
 	dlg->SetMessageTextL(msg);
 	CleanupStack::Pop(dlg);
 	dlg->RunLD();
+	
+	CleanupStack::PopAndDestroy(msgFmt);
 	}
