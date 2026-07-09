@@ -268,7 +268,8 @@ void TBounds::SetCoords(const TCoordinate &aTlCoord, const TCoordinate &aBrCoord
 	iBrCoord = aBrCoord;
 	}
 
-void TBounds::SetCoords(TReal64 &aLat1, TReal64 &aLon1, TReal64 &aLat2, TReal64 &aLon2)
+void TBounds::SetCoords(const TReal64 &aLat1, const TReal64 &aLon1,
+		const TReal64 &aLat2, const TReal64 &aLon2)
 	{
 	iTlCoord.SetCoordinate(Max(aLat1, aLat2), Min(aLon1, aLon2));
 	iBrCoord.SetCoordinate(Min(aLat1, aLat2), Max(aLon1, aLon2));

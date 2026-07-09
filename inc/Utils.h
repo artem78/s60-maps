@@ -160,7 +160,8 @@ public:
 	TCoordinate iTlCoord, iBrCoord;
 	
 	void SetCoords(const TCoordinate &aTlCoord, const TCoordinate &aBrCoord);
-	void SetCoords(TReal64 &aLat1, TReal64 &aLon1, TReal64 &aLat2, TReal64 &aLon2);
+	void SetCoords(const TReal64 &aLat1, const TReal64 &aLon1,
+			const TReal64 &aLat2, const TReal64 &aLon2);
 	
 	// Returns ETrue if given rect completely located inside this rect
 	TBool Contains(const TBounds &aCoordRect) const;

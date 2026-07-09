@@ -327,7 +327,7 @@ void CMapView::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
 			
 		case R_SUBMENU_ROUTE:
 			{
-			TBool isVisible = Routing()->Track() and Routing()->Track()->Count();
+			TBool isVisible = Routing()->IsRouteBuilt();
 			aMenuPane->SetItemDimmed(ERouteClear, not isVisible);
 			
 			break;
@@ -1009,10 +1009,10 @@ void CMapView::HandleRouteClearL()
 
 void CMapView::OnRouteFound()
 	{
-	TBounds bounds;
-	iRouting->Bounds(bounds);
+	TRouteDetails details;
+	iRouting->Details(details);
 	MapControl()->SetFollowUser(EFalse);
-	MapControl()->MoveAndZoomToBounds(bounds);
+	MapControl()->MoveAndZoomToBounds(details.iBounds);
 	}
 
 void CMapView::OnRouteFailedL()

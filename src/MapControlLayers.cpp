@@ -1693,13 +1693,12 @@ void CRouteLayer::DrawTrackL(CWindowGc &aGc)
 
 void CRouteLayer::Draw(CWindowGc &aGc)
 	{
-	//const CTrack* track = iMapView->Routing()->Track();
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CEikonEnv::Static()->AppUi());
-	const CTrack* track = appUi->MapView()->Routing()->Track();
+	if (appUi->MapView()->Routing()->IsRouteBuilt())
+		{
+		TRAP_IGNORE(DrawTrackL(aGc));
+		}
 	
-	if (track and track->Count())
-		TRAP_IGNORE(DrawTrackL(aGc))
-		
 	DrawIcons(aGc);
 	}
 

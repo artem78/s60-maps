@@ -73,7 +73,7 @@ private:
 	CTrack* iTrack;
 	MRoutingObserver* iObserver; // not owned
 	COrsRoutingApi* iApi;
-	TBounds iBounds;
+	TRouteDetails iDetails;
 	
 public:
 	void Source(TCoordinate& aSrc) const;
@@ -84,12 +84,13 @@ public:
 	void Reset();
 	inline const CTrack* Track() const
 		{ return iTrack; };
-	inline void Bounds(TBounds& aBounds) const
-		{ aBounds = iBounds; }
+	inline void Details(TRouteDetails& aDetails) const
+		{ aDetails = iDetails; }
 	inline TBool HasSource() const
 		{ return iIsSrcSet; }
 	inline TBool HasDestination() const
 		{ return iIsDstSet; }
+	/*inline*/ TBool IsRouteBuilt() const;
 
 	};
 

@@ -62,6 +62,7 @@ void CRouting::Reset()
 	iIsSrcSet = EFalse;
 	iIsDstSet = EFalse;
 	iTrack->Reset();
+	iDetails.iBounds.SetCoords(0, 0, 0, 0);
 	}
 
 void CRouting::Source(TCoordinate& aSrc) const
@@ -97,8 +98,13 @@ void CRouting::OnFailedL()
 
 void CRouting::OnRouteDetailsRecieved(const TRouteDetails& aRtDetails)
 	{
-	iBounds = aRtDetails.iBounds;
+	iDetails = aRtDetails;
 	iObserver->OnRouteFound(); // assume OnRouteDetailsRecieved called after all points recieved
+	}
+
+/*inline*/ TBool CRouting::IsRouteBuilt() const
+	{
+	return iTrack and iTrack->Count() > 0;
 	}
 
 
