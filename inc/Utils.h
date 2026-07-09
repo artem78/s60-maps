@@ -110,6 +110,9 @@ public:
 	
 	static void LanguageToIso639Code(TLanguage aLang, /*TDes*/ TBuf</*3*/2> &aCode);
 	static void OpenUrlInDefaultWebBrowserL(const TDesC& aUrl);
+	
+	static void MetersToDes(/*TReal*/ TInt aDistance, TDes& aDes);
+	static void SecondsToDes(/*TReal*/ TInt aSeconds, TDes& aDes);
 	};
 
 

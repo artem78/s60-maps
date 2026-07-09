@@ -880,6 +880,52 @@ void MiscUtils::OpenUrlInDefaultWebBrowserL(const TDesC& aUrl)
     CleanupStack::PopAndDestroy(2, &appArcSession);
 	}
 
+void MiscUtils::MetersToDes(/*TReal*/ TInt aDistance, TDes& aDes)
+	{
+	aDes.Zero();
+	if (aDistance < 1000)
+		{
+		aDes.Num(aDistance);
+		aDes.Append(' ');
+		aDes.Append('m');
+		}
+	else
+		{
+		TRealFormat realFmt = TRealFormat();
+		realFmt.iType = KRealFormatFixed;
+		realFmt.iPlaces = 1;
+		//realFmt.iPoint = '.';
+		realFmt.iTriLen = 0;
+		aDes.Num(aDistance / 1000.0, realFmt);
+		aDes.Append(' ');
+		aDes.Append('k');
+		aDes.Append('m');
+		}
+	}
+
+void MiscUtils::SecondsToDes(/*TReal*/ TInt aSeconds, TDes& aDes)
+	{
+	const TInt KOneMinute = 60;
+	const TInt KOneHour = KOneMinute * 60;
+	_LIT(KLessThanMinute, "< 1 min");
+	
+	aDes.Zero();
+	if (aSeconds < KOneMinute)
+		{
+		aDes.Append(KLessThanMinute);
+		}
+	else
+		{
+		TInt min = static_cast<TInt>(aSeconds % KOneHour / static_cast<TReal>(KOneMinute) + 0.5);
+		TInt hour = aSeconds / KOneHour;
+		
+		//aDes.AppendNumFixedWidth(hour, EDecimal, 2);
+		aDes.AppendNum(hour);
+		aDes.Append(':');
+		aDes.AppendNumFixedWidth(min, EDecimal, 2);
+		}
+	}
+
 
 // CWindowGcEx
 

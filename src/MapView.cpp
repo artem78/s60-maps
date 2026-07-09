@@ -1036,7 +1036,13 @@ void CMapView::HandleRouteShowDetailsL()
 	
 	TRouteDetails rtDetails;
 	iRouting->Details(rtDetails);
-	msg.Format(_L("distance: %f m\nduration: %f s"), rtDetails.iDistanceInMeters, rtDetails.iDurationInSecs);
+	TBuf<32> distDes, timeDes;
+	MiscUtils::MetersToDes(rtDetails.iDistanceInMeters, distDes);
+	MiscUtils::SecondsToDes(rtDetails.iDurationInSecs, timeDes);
+	msg.Format(_L("Distance: %S\nTime: %S"), &distDes, &timeDes);
+	
+	/*DEBUG(_L("%.1f m => %S"), rtDetails.iDistanceInMeters, &distDes);
+	DEBUG(_L("%.1f s => %S"), rtDetails.iDurationInSecs, &timeDes);*/
 	
 	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
 	CleanupStack::PushL(dlg);
