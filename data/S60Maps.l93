@@ -135,3 +135,4 @@ CHARACTER_SET UTF8
 #define qtn_route_profile_car "На машине"
 #define qtn_route_profile_bicycle "На велосипеде"
 #define qtn_route_profile_foot "Пешком"
+#define qtn_details "Подробности"

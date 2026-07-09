@@ -136,3 +136,4 @@ CHARACTER_SET UTF8
 #define qtn_route_profile_car "Driving"
 #define qtn_route_profile_bicycle "Cycling"
 #define qtn_route_profile_foot "Walking"
+#define qtn_details "Details"

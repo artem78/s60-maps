@@ -246,6 +246,12 @@ void CMapView::HandleCommandL(TInt aCommand)
 			break;
 			}
 			
+		case ERouteShowDetails:
+			{
+			HandleRouteShowDetailsL();
+			break;
+			}
+			
 		default:
 			// Let the AppUi handle unknown for view commands
 			AppUi()->HandleCommandL(aCommand);
@@ -329,6 +335,7 @@ void CMapView::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
 			{
 			TBool isVisible = Routing()->IsRouteBuilt();
 			aMenuPane->SetItemDimmed(ERouteClear, not isVisible);
+			aMenuPane->SetItemDimmed(ERouteShowDetails, not isVisible);
 			
 			break;
 			}
@@ -1021,4 +1028,20 @@ void CMapView::OnRouteFailedL()
 	CAknErrorNote* note = new (ELeave) CAknErrorNote;
 	note->ExecuteLD(*msg);
 	CleanupStack::PopAndDestroy(msg);
+	}
+
+void CMapView::HandleRouteShowDetailsL()
+	{
+	TBuf<128> msg;
+	
+	TRouteDetails rtDetails;
+	iRouting->Details(rtDetails);
+	msg.Format(_L("distance: %f m\nduration: %f s"), rtDetails.iDistanceInMeters, rtDetails.iDurationInSecs);
+	
+	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
+	CleanupStack::PushL(dlg);
+	dlg->PrepareLC(R_QUERY_DIALOG);
+	dlg->SetMessageTextL(msg);
+	CleanupStack::Pop(dlg);
+	dlg->RunLD();
 	}

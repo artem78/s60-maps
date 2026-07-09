@@ -23,6 +23,8 @@ class TRouteDetails
 	{
 public:
 	TBounds iBounds;
+	TReal iDistanceInMeters;
+	TReal iDurationInSecs;
 	};
 
 

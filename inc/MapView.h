@@ -121,6 +121,7 @@ private:
 	void HandleRouteSetSourceL();
 	void HandleRouteSetDestinationL();
 	void HandleRouteClearL();
+	void HandleRouteShowDetailsL();
 	
 	// Others
 	CSearch* iSearch;

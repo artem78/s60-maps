@@ -63,6 +63,8 @@ void CRouting::Reset()
 	iIsDstSet = EFalse;
 	iTrack->Reset();
 	iDetails.iBounds.SetCoords(0, 0, 0, 0);
+	iDetails.iDistanceInMeters = 0;
+	iDetails.iDurationInSecs = 0;
 	}
 
 void CRouting::Source(TCoordinate& aSrc) const
@@ -347,7 +349,15 @@ void COrsRoutingApi::ProcessApiReponseL()
 	
 	TRouteDetails rtDetails;
 	rtDetails.iBounds.SetCoords(bBoxLat1, bBoxLon1, bBoxLat2, bBoxLon2);
-
+	
+	// read total distance
+	_LIT(KDistPath, "[features][0][properties][summary][distance]");
+	parser->GetParameterValueL(KDistPath, rtDetails.iDistanceInMeters);
+	
+	// read duration
+	_LIT(KDurPath, "[features][0][properties][summary][duration]");
+	parser->GetParameterValueL(KDurPath, rtDetails.iDurationInSecs);
+	
 	iObserver->OnRouteDetailsRecieved(rtDetails);
 	
 	CleanupStack::PopAndDestroy(2, parser);
