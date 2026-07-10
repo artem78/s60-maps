@@ -52,3 +52,7 @@
 #ifdef LANGUAGE_37
 #include "S60Maps.l37"
 #endif
+
+#ifdef LANGUAGE_31
+#include "S60Maps.l31"
+#endif

@@ -294,6 +294,12 @@ void CLanguageListSettingItem::LoadLanguageListL()
 				break;
 				}
 				
+			case ELangPrcChinese:
+				{
+				resourceId = R_LANG_CHINESE_NAME;
+				break;
+				}
+				
 			default:
 				{} // supress compiller warnings
 			}

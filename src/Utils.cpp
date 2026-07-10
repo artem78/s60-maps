@@ -820,6 +820,13 @@ void MiscUtils::LanguageToIso639Code(TLanguage aLang, /*TDes*/ TBuf</*3*/2> &aCo
 			break;
 			}
 			
+		case ELangPrcChinese:
+			{
+			aCode.Append('z');
+			aCode.Append('h');
+			break;
+			}
+			
 		default:
 			{} // supress compiller warnings
 		}
