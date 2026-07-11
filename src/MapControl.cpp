@@ -161,9 +161,9 @@ void CMapControl::ConstructL(const TRect& aRect, const TCoordinate &aInitialPosi
 #ifdef DEBUG_SHOW_TILE_BORDER_AND_XYZ
 	iLayers.Append(new (ELeave) CTileBorderAndXYZLayer(this));
 #endif
+	iLayers.Append(CRouteLayer::NewL(this));
 	iLayers.Append(CLandmarksLayer::NewL(this, appUi->LandmarkDb()));
 	iLayers.Append(CSearchResultsLayer::NewL(this));
-	iLayers.Append(CRouteLayer::NewL(this));
 	iLayers.Append(new (ELeave) CUserPositionLayer(this));
 	iLayers.Append(CScaleBarLayer::NewL(this));
 #ifdef DEBUG_SHOW_ADDITIONAL_INFO
