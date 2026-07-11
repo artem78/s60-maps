@@ -19,7 +19,7 @@
 #define qtn_reset_tiles_cache "Clear map cache"
 #define qtn_confirm_reset_tiles_cache_dialog_text "This action will delete all of your maps cache. Are you sure?"
 #define qtn_about_dialog_title "About"
-#define qtn_about_dialog_text "S60Maps Version %S\nBuild: " __DATE__ " " __TIME__ "\nGit: %S\nAuthor: %S\nWeb: %S\nThanks to: %S and others"
+#define qtn_about_dialog_text "S60Maps Version %S\nBuild at: %S\nGit: %S\nAuthor: %S\nWeb: %S\nThanks to: %S and others"
 #define qtn_confirm_exit_dialog_text "Are you sure to exit?"
 #define qtn_done "Done!"
 #define qtn_stats_line "%S: %d files, %S"

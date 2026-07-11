@@ -18,7 +18,7 @@ CHARACTER_SET UTF8
 #define qtn_reset_tiles_cache "Tyhjennä kartan välimuisti"
 #define qtn_confirm_reset_tiles_cache_dialog_text "Oletko varma, että haluat tyhjentää kartan välimuistin kokonaan?"
 #define qtn_about_dialog_title "Tietoa"
-#define qtn_about_dialog_text "S60Maps Versio %S\nBuild: " __DATE__ " " __TIME__ "\nGit: %S\nTekijä: %S\nWeb: %S\nKiitos: %S ja muut"
+#define qtn_about_dialog_text "S60Maps Versio %S\nBuild: %S\nGit: %S\nTekijä: %S\nWeb: %S\nKiitos: %S ja muut"
 #define qtn_confirm_exit_dialog_text "Haluatko varmasti poistua?"
 #define qtn_done "Valmis!"
 #define qtn_stats_line "%S: %d tiedostoa, %S"

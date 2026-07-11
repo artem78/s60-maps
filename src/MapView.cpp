@@ -500,7 +500,11 @@ void CMapView::HandleAboutL()
 	TBuf<64> gitInfo;
 	_LIT(KFmt,"%S (%S)");
 	gitInfo.Format(KFmt, &KGITLongVersion, &KGITBranch);
-	iEikonEnv->Format128/*256*/(msg, R_ABOUT_DIALOG_TEXT, &version,
+	
+	// Build date and time
+	_LIT(KBuildDateTime, ""__DATE__"  "__TIME__);
+	
+	iEikonEnv->Format128/*256*/(msg, R_ABOUT_DIALOG_TEXT, &version, &KBuildDateTime,
 			&gitInfo, &KAuthor, &KWebSite, &KThanksTo);	
 	
 	dlg->SetMessageTextL(msg);

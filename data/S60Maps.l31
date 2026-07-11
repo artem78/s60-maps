@@ -19,7 +19,7 @@ CHARACTER_SET UTF8
 #define qtn_reset_tiles_cache "清除地图缓存数据"
 #define qtn_confirm_reset_tiles_cache_dialog_text "该操作将删除所有地图缓存数据. 确定要继续吗?"
 #define qtn_about_dialog_title "关于"
-#define qtn_about_dialog_text "S60Maps v%S\n构建时间: "__DATE__" "__TIME__"\nGit: %S\n作者: %S\n网站: %S\n鸣谢: %S 及其他人士"
+#define qtn_about_dialog_text "S60Maps v%S\n构建时间: %S\nGit: %S\n作者: %S\n网站: %S\n鸣谢: %S 及其他人士"
 #define qtn_confirm_exit_dialog_text "确定要退出吗?"
 #define qtn_done "完成!"
 #define qtn_stats_line "%S: %d 个文件, %S"

@@ -19,7 +19,7 @@ CHARACTER_SET UTF8
 #define qtn_reset_tiles_cache "Clear map cache"
 #define qtn_confirm_reset_tiles_cache_dialog_text "سيتم حذف بيانات الخريطة. تأكيد؟"
 #define qtn_about_dialog_title "حول"
-#define qtn_about_dialog_text "S60Maps اصدار %S\nالاصدار: " __DATE__ " " __TIME__ "\nGit: %S\nالناشر: %S\nالويب: %S\nشكرا ل: %S واخرون"
+#define qtn_about_dialog_text "S60Maps اصدار %S\nالاصدار: %S\nGit: %S\nالناشر: %S\nالويب: %S\nشكرا ل: %S واخرون"
 #define qtn_confirm_exit_dialog_text "هل تريد الخروج؟"
 #define qtn_done "تم!"
 #define qtn_stats_line "%S: %d files, %S"
