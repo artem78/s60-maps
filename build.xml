@@ -187,7 +187,7 @@
 		
 		<!-- replace in *.lxx -->
 		<!-- todo: ломается файл S60Maps.l57 (иврит). проверить с аттр. encoding="UTF-8" -->
-		<replaceregexp flags="i" encoding="UTF-8">
+		<replaceregexp flags="ig" encoding="UTF-8">
 			<fileset dir="${basedir}">
 				<include name="data/S60Maps.l??*"/>
 				<include name="src/Settings.cpp"/>
