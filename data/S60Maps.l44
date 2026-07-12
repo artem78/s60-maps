@@ -130,7 +130,7 @@
 #define qtn_clear "Clear"
 #define qtn_routing_failed "Routing failed!"
 
-// Added in version X.XX
+// Added in version 1.25
 
 #define qtn_routing_api "Routing API"
 #define qtn_route_profile "Route profile"

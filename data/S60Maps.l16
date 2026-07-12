@@ -128,7 +128,7 @@ CHARACTER_SET UTF8
 #define qtn_clear "Очистить"
 #define qtn_routing_failed "Ошибка построения маршрута!"
 
-// Added in version X.XX
+// Added in version 1.25
 
 #define qtn_routing_api "API маршрутов"
 #define qtn_route_profile "Профиль маршрута"

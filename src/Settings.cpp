@@ -147,7 +147,7 @@ void CSettings::DoExternalizeL(RWriteStream& aStream) const
 	MiscUtils::WriteTUint64ToStreamL(aStream, iTotalBytesRecieved);
 	MiscUtils::WriteTUint64ToStreamL(aStream, iTotalBytesSent);
 	
-	// Added in version X.XX
+	// Added in version 1.25
 	aStream << static_cast<TInt8>(iRouteProfile);
 	
 	// ... place new parameters here ...
@@ -247,7 +247,7 @@ void CSettings::DoInternalizeL(RReadStream& aStream, TBool aLegacy, TUint16 aDat
 	//if (aStream.Source()->TellL(MStreamBuf::ERead) >= dataEndPos) return;
 	if (aConfigFileVersion <= 15) return;
 	
-	// Added in version X.XX
+	// Added in version 1.25
 	aStream >> int8Val;
 	iRouteProfile = static_cast<TRouteProfile>(int8Val);
 	

@@ -130,7 +130,7 @@ CHARACTER_SET UTF8
 #define qtn_clear "清除"
 #define qtn_routing_failed "寻路失败!"
 
-// Added in version X.XX
+// Added in version 1.25
 
 #define qtn_routing_api "寻路 API"
 #define qtn_route_profile "路线概况"
