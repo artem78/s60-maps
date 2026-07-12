@@ -124,7 +124,7 @@ CHARACTER_SET UTF8
 
 // Added in version 1.24
 
-#define qtn_route "路径"
+#define qtn_route "路线"
 #define qtn_from "起点"
 #define qtn_to "终点"
 #define qtn_clear "清除"
@@ -133,10 +133,10 @@ CHARACTER_SET UTF8
 // Added in version X.XX
 
 #define qtn_routing_api "寻路 API"
-#define qtn_route_profile "Route profile"
-#define qtn_route_profile_car "Driving"
-#define qtn_route_profile_bicycle "Cycling"
-#define qtn_route_profile_foot "Walking"
-#define qtn_details "Details"
-#define qtn_route_details_fmt "Distance: %S\nTime: %S"
-#define qtn_less_than_a_minute "< 1 min"
+#define qtn_route_profile "路线概况"
+#define qtn_route_profile_car "驾车"
+#define qtn_route_profile_bicycle "骑行"
+#define qtn_route_profile_foot "步行"
+#define qtn_details "详情"
+#define qtn_route_details_fmt "距离:%S\n用时:%S"
+#define qtn_less_than_a_minute "小于 1 分钟"
