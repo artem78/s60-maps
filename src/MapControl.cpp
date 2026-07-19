@@ -139,9 +139,10 @@ void CMapControl::ConstructL(const TRect& aRect, const TCoordinate &aInitialPosi
 //	SetTileProviderL(aTileProvider);
 	
 	// Prepare default font
-	_LIT(KFontName, /*"OpenSans"*/ "Series 60 Sans");
+//	_LIT(KFontName, /*"OpenSans"*/ "Series 60 Sans"); // displays squares instead of chinese symbols
 	const TInt KFontHeightInTwips = /*9*/ 10 * 12; // Twip = 1/12 point
-	TFontSpec fontSpec(KFontName, KFontHeightInTwips);
+	TFontSpec fontSpec(iEikonEnv->NormalFont()->FontSpecInTwips());
+	fontSpec.iHeight = KFontHeightInTwips;
 	fontSpec.iTypeface.SetIsSerif(EFalse);
 	fontSpec.iFontStyle.SetStrokeWeight(EStrokeWeightBold);
 	CGraphicsDevice* screenDevice = CCoeEnv::Static()->ScreenDevice();
@@ -149,10 +150,12 @@ void CMapControl::ConstructL(const TRect& aRect, const TCoordinate &aInitialPosi
 	User::LeaveIfError(r);
 	
 	// Prepare secondary (small) font
-	fontSpec = TFontSpec(KFontName, 8 * 12);
-	fontSpec.iTypeface.SetIsSerif(EFalse);
-	fontSpec.iFontStyle.SetStrokeWeight(EStrokeWeightNormal);
-	r = screenDevice->GetNearestFontInTwips(iSmallFont, fontSpec);
+	const TInt KSmallFontHeightInTwips = 8 * 12;
+	TFontSpec smallFontSpec(iEikonEnv->/*NormalFont()*/AnnotationFont()->FontSpecInTwips());
+	smallFontSpec.iHeight = KSmallFontHeightInTwips;
+	smallFontSpec.iTypeface.SetIsSerif(EFalse);
+	smallFontSpec.iFontStyle.SetStrokeWeight(EStrokeWeightNormal);
+	r = screenDevice->GetNearestFontInTwips(iSmallFont, smallFontSpec);
 	User::LeaveIfError(r);
 	
 	// Create layers
