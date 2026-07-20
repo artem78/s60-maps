@@ -28,10 +28,10 @@ enum TMapLayerId
 	ETiledMapLayerId,
 #ifdef DEBUG_SHOW_TILE_BORDER_AND_XYZ	
 	ETileBorderAndXYZLayerId,
-#endif	
+#endif
+	ERouteLayerId,
 	ELandmarksLayerId,
 	ESearchResultLayerId,
-	ERouteLayerId,
 	EUserPositionLayerId,
 	EScaleBarLayerId,
 #ifdef DEBUG_SHOW_ADDITIONAL_INFO
@@ -159,6 +159,7 @@ void CMapControl::ConstructL(const TRect& aRect, const TCoordinate &aInitialPosi
 	User::LeaveIfError(r);
 	
 	// Create layers
+	// !! Creation order should be the same as defined in TMapLayerId enum !!
 	iLayers = RPointerArray<CMapLayerBase>(10);
 	iLayers.Append(CTiledMapLayer::NewL(this, aTileProvider));
 #ifdef DEBUG_SHOW_TILE_BORDER_AND_XYZ
