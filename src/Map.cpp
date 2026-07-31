@@ -689,14 +689,17 @@ void CTileBitmapManager::OnHTTPError(TInt aError,
 
 	ERROR(_L("Failed to download tile %S, error: %d"), &iLoadingTile.AsDes(), aError);
 	
-	if (iState != EError)
+	/*if (iState != EError)
 		{
-		iState = EError;
+		iState = EError;*/
+	if (iState == EError)
+		{
 		_LIT(KHttpErrMsg,"HTTP error");
 		SetErrorForProcessingTile(KHttpErrMsg, aError);
 		}
 	else
 		{
+		iState = EError;
 		switch (aError)
 			{
 			case KErrCancel:
