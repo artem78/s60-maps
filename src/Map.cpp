@@ -436,31 +436,27 @@ void CTileBitmapManager::AddToLoading(const TTile &aTile, TBool aForce)
 	// Add new one
 	CTileBitmapMemCacheItem* item = iBmpMemCache->Append(aTile);
 	
-	if (iState == EIdle)
+	// Try to find on disk first (if disk cache enabled)
+	if (appUi->Settings()->iUseDiskCache && iDiskCache->IsTileFileExists(aTile))
 		{
-		// Try to find on disk first
-		if (appUi->Settings()->iUseDiskCache && iDiskCache->IsTileFileExists(aTile))
+		item->CreateBitmapIfNotExistL();
+		TRAPD(r, iDiskCache->LoadBitmapL(aTile, item->Bitmap()));
+		if (r == KErrNone)
 			{
-			item->CreateBitmapIfNotExistL();
-			TRAPD(r, iDiskCache->LoadBitmapL(aTile, item->Bitmap()));
-			if (r == KErrNone)
-				{
-				item->SetReady();
-				}
-			else // If read error, try to download
-				{
-				ERROR(_L("Error while reading %S from file (code: %d)"),
-						&aTile.AsDes(), r);
-				
-				StartDownloadTileL(aTile);
-				}
+			item->SetReady();
+			return;
 			}
 		else
 			{
-			DEBUG(_L("Tile %S not found in cache dir"), &aTile.AsDes());
-			// Start download now
-			StartDownloadTileL(aTile);
+			ERROR(_L("Error while reading %S from file (code: %d)"),
+					&aTile.AsDes(), r);
 			}
+		}
+	
+	// If read error or tile doesn't exists, try to download/add to download queue	
+	if (iState == EIdle)
+		{
+		StartDownloadTileL(aTile);
 		}
 	else
 		{
@@ -504,7 +500,7 @@ void CTileBitmapManager::DoCancel()
 	iImgDecoder->Cancel();
 	}
 
-// вызывается после завершения декодирования (успешного или нет)
+// РІС‹Р·С‹РІР°РµС‚СЃСЏ РїРѕСЃР»Рµ Р·Р°РІРµСЂС€РµРЅРёСЏ РґРµРєРѕРґРёСЂРѕРІР°РЅРёСЏ (СѓСЃРїРµС€РЅРѕРіРѕ РёР»Рё РЅРµС‚)
 void CTileBitmapManager::RunL()
 	{
 	// todo...
@@ -513,7 +509,7 @@ void CTileBitmapManager::RunL()
 	DEBUG(_L("iStatus.Int() = %d"), iStatus.Int());
 	
 	if (iStatus.Int() == KErrNone)
-		{ // тайл успешно загружен и декодирован
+		{ // С‚Р°Р№Р» СѓСЃРїРµС€РЅРѕ Р·Р°РіСЂСѓР¶РµРЅ Рё РґРµРєРѕРґРёСЂРѕРІР°РЅ
 //		/*CFbsBitmap* bitmap;
 //		TInt r = GetTileBitmap(iLoadingTile, bitmap);
 //		__ASSERT_DEBUG(r == KErrNone, User::Leave(KErrNotFound));
@@ -529,11 +525,11 @@ void CTileBitmapManager::RunL()
 		iObserver->OnTileLoaded();
 		}
 	/*else if (iStatus.Int() == KErrUnderflow)
-		{ // ещё получено недостаточно данных для завершения декодирования
+		{ // РµС‰С‘ РїРѕР»СѓС‡РµРЅРѕ РЅРµРґРѕСЃС‚Р°С‚РѕС‡РЅРѕ РґР°РЅРЅС‹С… РґР»СЏ Р·Р°РІРµСЂС€РµРЅРёСЏ РґРµРєРѕРґРёСЂРѕРІР°РЅРёСЏ
 		// ...
 		}*/
 	else
-		{ // ошибка декодирования
+		{ // РѕС€РёР±РєР° РґРµРєРѕРґРёСЂРѕРІР°РЅРёСЏ
 		//ERROR(_L("Image decoding error: %d"), iStatus.Int());
 		_LIT(KErrMsg,"Image decoding error");
 		SetErrorForProcessingTile(KErrMsg, iStatus.Int());
@@ -560,7 +556,7 @@ void CTileBitmapManager::RunL()
 	DEBUG(_L("CTileBitmapManager::RunL end"));
 	}
 
-// вызывается, если в RunL() произошёл сброс
+// РІС‹Р·С‹РІР°РµС‚СЃСЏ, РµСЃР»Рё РІ RunL() РїСЂРѕРёР·РѕС€С‘Р» СЃР±СЂРѕСЃ
 TInt CTileBitmapManager::RunError(TInt aError)
 	{
 	//DEBUG(_L("CTileBitmapManager::RunL leaved with error=%d"), aError);
@@ -626,8 +622,8 @@ void CTileBitmapManager::OnHTTPResponseDataChunkRecieved(
 		}
 	}
 
-// HTTP-запрос успешно завершён
-// (вызывается после успешного получения последней части данных HTTP ответа)
+// HTTP-Р·Р°РїСЂРѕСЃ СѓСЃРїРµС€РЅРѕ Р·Р°РІРµСЂС€С‘РЅ
+// (РІС‹Р·С‹РІР°РµС‚СЃСЏ РїРѕСЃР»Рµ СѓСЃРїРµС€РЅРѕРіРѕ РїРѕР»СѓС‡РµРЅРёСЏ РїРѕСЃР»РµРґРЅРµР№ С‡Р°СЃС‚Рё РґР°РЅРЅС‹С… HTTP РѕС‚РІРµС‚Р°)
 void CTileBitmapManager::OnHTTPResponseL(const RHTTPTransaction /*aTransaction*/)
 	{
 	DEBUG(_L("CTileBitmapManager::OnHTTPResponseL begin"));
@@ -681,7 +677,7 @@ void CTileBitmapManager::OnHTTPResponse(const RHTTPTransaction aTransaction)
 		}
 	}
 
-// HTTP-запрос завершён с ошибкой
+// HTTP-Р·Р°РїСЂРѕСЃ Р·Р°РІРµСЂС€С‘РЅ СЃ РѕС€РёР±РєРѕР№
 void CTileBitmapManager::OnHTTPError(TInt aError,
 		const RHTTPTransaction /*aTransaction*/)
 	{
