@@ -611,6 +611,7 @@ void CS60MapsAppUi::OnPositionUpdated()
 		}
 	coord.SetHorAccuracy(pos.HorizontalAccuracy());
 	iMapView->MapControl()->SetUserPosition(coord);
+	iMapView->MapControl()->DrawNow(); // force refresh needed for low zoom levels
 	}
 
 void CS60MapsAppUi::OnPositionPartialUpdated()
