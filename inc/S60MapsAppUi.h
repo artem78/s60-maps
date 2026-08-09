@@ -150,7 +150,7 @@ public:
 	void /*SetActiveTileProvider*/ SetTileProvider(TTileProvider* aTileProvider)
 			{ iActiveTileProvider = aTileProvider; };
 	
-	void ClearTilesCacheL();
+	void ClearTilesCacheL(CArrayFix<TTileProvider> *tileProviders);
 	void SaveAndExitL();
 	void SendAppToBackground(); // Hide application window
 	CPosLandmark* GetNearestLandmarkL(const TCoordinate &aCoord, TBool aPartial = ETrue,
@@ -159,7 +159,7 @@ public:
 	TBool IsLanguageExists(TLanguage aLang);
 	void AvailableLanguagesL(RArray<TLanguage> &aLangArr);
 	
-	void ShowStatusPaneAndHideMapControlL(TInt aPaneTitleResourceId);
+	void ShowStatusPaneAndHideMapControlL(TInt aPaneTitleResourceId = NULL);
 	void HideStatusPaneAndShowMapControlL();
 	
 	TBool LandmarkDbIsNotEmptyL();

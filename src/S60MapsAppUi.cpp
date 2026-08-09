@@ -537,13 +537,36 @@ MFileManObserver::TControl CS60MapsAppUi::NotifyFileManEnded()
 	return MFileManObserver::EContinue;
 	}
 
-void CS60MapsAppUi::ClearTilesCacheL()
+void CS60MapsAppUi::ClearTilesCacheL(CArrayFix<TTileProvider> *tileProviders)
 	{
 	TFileName cacheDir;
 	static_cast<CS60MapsApplication *>(Application())->CacheDir(cacheDir);
 	
+	const TInt KGranularity = 10;
+	CDesCArrayFlat* dirs = new (ELeave) CDesCArrayFlat(KGranularity);
+	CleanupStack::PushL(dirs);
+	
+	for (TInt idx = 0; idx < tileProviders->Count(); idx++)
+		{
+		//DEBUG(_L("%S"), &tileProviders->At(idx).iId);
+		TFileName cacheSubDir;
+		cacheSubDir.Copy(cacheDir);
+		//cacheSubDir.Append('\\');
+		cacheSubDir.Append(tileProviders->At(idx).iId);
+		cacheSubDir.Append('\\');
+		/*DEBUG(_L("delete recursively %S"), &cacheSubDir);
+		TInt r = iFileMan->Delete(cacheSubDir, CFileMan::ERecurse);
+		DEBUG(_L("ret=%d"), r);*/
+		
+		dirs->AppendL(cacheSubDir);
+		}
+	
 	INFO(_L("Start cleaning of cache directory"));
-	iFileMan->Delete(cacheDir, CFileMan::ERecurse);
+	iFileMan->Delete(dirs, CFileMan::ERecurse);
+	
+	CleanupStack::PopAndDestroy(dirs);
+	
+	
 	
 	/*// Prepare and show progress dialog
 	iCacheResetProgressDialog = new (ELeave) CAknProgressDialog(
@@ -985,9 +1008,16 @@ void CS60MapsAppUi::ShowStatusPaneAndHideMapControlL(TInt aTitleResourceId)
 	// Save original pane title
 	iOriginalPaneTitle = titlePane->Text()->AllocL();
 	
-	// Set new pane title
-	HBufC* title = iEikonEnv->AllocReadResourceL(aTitleResourceId);
-	titlePane->SetText(title);
+	if (aTitleResourceId)
+		{
+		// Set new pane title
+		HBufC* title = iEikonEnv->AllocReadResourceL(aTitleResourceId);
+		titlePane->SetText(title);
+		}
+	else
+		{
+		titlePane->SetTextL(KNullDesC);
+		}
 	
 	// Toggle visibility
 	MapView()->MapControl()->MakeVisible(EFalse);

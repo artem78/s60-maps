@@ -454,7 +454,9 @@ void CMapView::HandleTilesCacheStatsL()
 
 void CMapView::HandleTilesCacheResetL()
 	{
-	CAknQueryDialog* dlg = CAknQueryDialog::NewL();
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(AppUi());
+	
+	/*CAknQueryDialog* dlg = CAknQueryDialog::NewL();
 	dlg->PrepareLC(R_CONFIRM_DIALOG);
 	HBufC* msg = iEikonEnv->AllocReadResourceLC(R_CONFIRM_RESET_TILES_CACHE_DIALOG_TEXT);
 	dlg->SetPromptL(*msg);
@@ -464,7 +466,49 @@ void CMapView::HandleTilesCacheResetL()
 		{
 		CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(AppUi());
 		appUi->ClearTilesCacheL();
+		}*/
+
+	
+	const TInt KGranularity = 10;
+	
+	TInt openedItem = 0;
+	CDesCArrayFlat* arrayOfItems = new (ELeave) CDesCArrayFlat(KGranularity);
+	CleanupStack::PushL(arrayOfItems);
+	
+	CArrayFix<TInt> *selectedItems = new (ELeave) CArrayFixFlat<TInt>(KGranularity);
+	CleanupStack::PushL(selectedItems);
+	
+	for (TInt providerIdx = 0; providerIdx < appUi->AvailableTileProviders().Count(); providerIdx++)
+		{
+		TBuf<64> buf;
+		buf.Append('\t');
+		buf.Append(appUi->AvailableTileProviders()[providerIdx]->iTitle);
+		arrayOfItems->AppendL(buf);
+		
+		//selectedItems->AppendL(providerIdx); // not works
+		// todo: mark all items when dialog shown
 		}
+	
+	CAknMarkableListDialog *dialog = CAknMarkableListDialog::NewL(openedItem, selectedItems, arrayOfItems,
+			R_PROVIDER_MULTISELECT_DIALOG_MENUBAR);
+	
+	appUi->ShowStatusPaneAndHideMapControlL(/*R_TILE_PROVIDERS_TITLE*/);
+	TInt result = dialog->ExecuteLD(R_PROVIDER_MULTISELECT_DIALOG);
+	appUi->HideStatusPaneAndShowMapControlL();
+	if (result and selectedItems->Count())
+		{
+		CArrayFix<TTileProvider>* selectedTileProviders = new (ELeave) CArrayFixFlat<TTileProvider>(KGranularity);
+		CleanupStack::PushL(selectedTileProviders);
+		for (TInt i = 0; i < selectedItems->Count(); i++)
+			{
+			TInt selIdx = selectedItems->At(i);
+			selectedTileProviders->AppendL(*appUi->AvailableTileProviders()[selIdx]);
+			}
+		appUi->ClearTilesCacheL(selectedTileProviders);
+		CleanupStack::PopAndDestroy(selectedTileProviders);
+		}
+
+	CleanupStack::PopAndDestroy(2, arrayOfItems);
 	}
 
 #ifdef _HELP_AVAILABLE_
