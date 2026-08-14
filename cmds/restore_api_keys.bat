@@ -1,3 +1,4 @@
+cd ..
 REM xcopy /s /Y inc/ApiKeys.h.bak inc/ApiKeys.h
 REM copy /Y inc/ApiKeys.h.bak inc/ApiKeys.h
 REM copy inc/ApiKeys.h.bak inc/ApiKeys.h /b/v/y

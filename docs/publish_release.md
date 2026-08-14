@@ -33,13 +33,13 @@
 7) Собрать sis-пакет **для symbian 9.2 и выше**
    - Всё аналогично, только нужно выбрать Phone **release** (GCCE) [**S60_3rd_fp1**]
 
-8) Переместить файлы и добавить номер версии (или выполнить команду  `ant rename_sis`):
+8) Переместить файлы и добавить номер версии (или выполнить `cmds/rename_sis.bat`):
    - `sis/S60Maps_symbian9.1.sis` => `sis/releases/S60Maps_symbian9.1_vX_XX_X.sis`
    - `sis/S60Maps_symbian9.2-9.4.sis` => `sis/releases/S60Maps_symbian9.2-9.4_vX_XX_X.sis`
 
 9) Собрать архив с полными исходниками (перед выполнением не забываем сделать `git push`)
    ```
-   ant source_zip
+   cmds/source_zip.bat
    ```
    Ждём сообщения `BUILD SUCCESSFUL`, в папке `sources` получаем файл `S60Maps_full_sources_vX.XX.X.zip`
 
