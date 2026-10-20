@@ -1659,8 +1659,8 @@ void CRouteLayer::ConstructL()
 	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(CCoeEnv::Static()->AppUi());
 	CS60MapsApplication* app = static_cast<CS60MapsApplication*>(appUi->Application());
 
-	iSrcIcon = app->LoadIconL(EMbmIconsSource_mark,			EMbmIconsLocation_mask);
-	iDstIcon = app->LoadIconL(EMbmIconsDestination_mark,	EMbmIconsLocation_mask);
+	iSrcIcon = app->LoadIconL(EMbmIconsSource_mark,			EMbmIconsSource_mark_mask);
+	iDstIcon = app->LoadIconL(EMbmIconsDestination_mark,	EMbmIconsDestination_mark_mask);
 	}
 
 void CRouteLayer::DrawTrackL(CWindowGc &aGc)
@@ -1749,5 +1749,5 @@ void CRouteLayer::IconRect(const TCoordinate &aCoord, TRect &aRect)
 	TPoint resultPoint = iMapView->GeoCoordsToScreenCoords(aCoord);
 	TSize iconSize = iSrcIcon->Bitmap()->SizeInPixels();
 	aRect = TRect(resultPoint, iconSize);
-	aRect.Move(-iconSize.iWidth / 2, -iconSize.iHeight);
+	aRect.Move(-2, -iconSize.iHeight);
 	}
