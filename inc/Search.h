@@ -110,7 +110,8 @@ public:
 	/*
 	 * Clears result array and prepare CSearch for new request
 	 */
-	void Reset();
+	//void Reset();
+	void ClearResults();
 	
 	inline void SetPreferredBounds(const TBounds &aBounds)
 		{ iPreferredBounds.SetCoords(aBounds.iTlCoord, aBounds.iBrCoord); };

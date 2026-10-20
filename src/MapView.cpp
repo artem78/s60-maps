@@ -875,7 +875,7 @@ void CMapView::HandleSearchL()
 	DEBUG(_L("begin"));
 	
 	//Reset search object if previously used
-	iSearch->Reset();
+	iSearch->ClearResults();
 	
 	TBounds bounds;
 	iMapControl->Bounds(bounds);
@@ -941,7 +941,7 @@ void CMapView::HandleTrafficCounterL()
 
 void CMapView::HandleClearSearchResultsL()
 	{
-	iSearch->Reset();
+	iSearch->ClearResults();
 	}
 
 void CMapView::HandleShowControlsDlgL()

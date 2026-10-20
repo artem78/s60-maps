@@ -318,13 +318,19 @@ TBool CSearch::AllResultsBounds(TBounds &aBounds)
 	return ETrue;
 	}
 
-void CSearch::Reset()
+/*void CSearch::Reset()
 	{
 	iResultsArr->Reset();
 	iQuery.Zero();
 	//iPreferredBounds ...
 	
 	DEBUG(_L("Reset"));
+	}*/
+
+void CSearch::ClearResults()
+	{
+	iResultsArr->Reset();
+	DEBUG(_L("ClearResults"));
 	}
 
 void CSearch::ShowResultDlgL()
