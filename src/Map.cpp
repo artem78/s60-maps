@@ -1294,8 +1294,15 @@ void CTileDiskCache::TileFileName(const TTile &aTile, TFileName &aFileName,
 void CTileDiskCache::DeleteTileFile(const TTile &aTile)
 	{
 	TFileName tileFileName;
-	TileFileName(aTile, tileFileName);
+	// try to delete with all possible extensions
+	TileFileName(aTile, tileFileName, EImgFmtMbm);
 	/*TInt r =*/ iFs.Delete(tileFileName);
+	TileFileName(aTile, tileFileName, EImgFmtPng);
+	/*TInt r =*/ iFs.Delete(tileFileName);
+	TileFileName(aTile, tileFileName, EImgFmtJpeg);
+	/*TInt r =*/ iFs.Delete(tileFileName);
+	/*DEBUG(_L("file = %S"), &tileFileName);
+	DEBUG(_L("r = %d"), r);*/
 	/*if (r != KErrNone)
 		{
 		
