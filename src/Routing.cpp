@@ -109,6 +109,21 @@ void CRouting::OnRouteDetailsRecieved(const TRouteDetails& aRtDetails)
 	return iTrack and iTrack->Count() > 0;
 	}
 
+void CRouting::Reverse()
+	{
+	if (not(HasSource() and HasDestination()))
+		{
+		return;
+		}
+	
+	// swap
+	TCoordinate coord1, coord2;
+	Source(coord1);
+	Destination(coord2);
+	SetSource(coord2);
+	SetDestination(coord1);
+	}
+
 
 // CTrack
 

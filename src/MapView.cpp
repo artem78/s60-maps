@@ -252,6 +252,12 @@ void CMapView::HandleCommandL(TInt aCommand)
 			break;
 			}
 			
+		case ERouteReverse:
+			{
+			HandleRouteReverseL();
+			break;
+			}
+			
 		default:
 			// Let the AppUi handle unknown for view commands
 			AppUi()->HandleCommandL(aCommand);
@@ -336,6 +342,9 @@ void CMapView::DynInitMenuPaneL(TInt aMenuID, CEikMenuPane* aMenuPane)
 			TBool isVisible = Routing()->IsRouteBuilt();
 			aMenuPane->SetItemDimmed(ERouteClear, not isVisible);
 			aMenuPane->SetItemDimmed(ERouteShowDetails, not isVisible);
+			
+			isVisible = Routing()->HasSource() and Routing()->HasDestination();
+			aMenuPane->SetItemDimmed(ERouteReverse, not isVisible);
 			
 			break;
 			}
@@ -1101,4 +1110,13 @@ void CMapView::HandleRouteShowDetailsL()
 	dlg->RunLD();
 	
 	CleanupStack::PopAndDestroy(msgFmt);
+	}
+
+void CMapView::HandleRouteReverseL()
+	{
+	CS60MapsAppUi* appUi = static_cast<CS60MapsAppUi*>(AppUi());
+	const CSettings* settings = appUi->Settings();
+	
+	iRouting->Reverse();
+	iRouting->FindRoute(settings->iRouteProfile);
 	}

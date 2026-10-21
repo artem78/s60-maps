@@ -140,3 +140,7 @@ CHARACTER_SET UTF8
 #define qtn_details "详情"
 #define qtn_route_details_fmt "距离:%S\n用时:%S"
 #define qtn_less_than_a_minute "小于 1 分钟"
+
+// Added in version X.XX
+
+#define qtn_reverse_route "Reverse"

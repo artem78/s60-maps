@@ -44,7 +44,8 @@ enum TS60MapsCommandIds
 	ERouteSetSource,
 	ERouteSetDestination,
 	ERouteClear,
-	ERouteShowDetails
+	ERouteShowDetails,
+	ERouteReverse
 	};
 
 // Controls

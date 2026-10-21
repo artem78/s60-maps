@@ -93,6 +93,7 @@ public:
 	inline TBool HasDestination() const
 		{ return iIsDstSet; }
 	/*inline*/ TBool IsRouteBuilt() const;
+	void Reverse();
 
 	};
 
