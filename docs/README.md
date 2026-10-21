@@ -95,7 +95,7 @@ Map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wiki/Symb
 ![](images/settings.png "Settings window")
 ![](images/search.gif "Search")
 ![](images/search_details.png "Search results on the map")
-![](images/routing.png "Route planning")
+![](images/routing.gif "Route planning")
 
 ![](images/from_vyacheslav/Screenshot0004.jpg)
 ![](images/from_vyacheslav/Screenshot0005.jpg)
