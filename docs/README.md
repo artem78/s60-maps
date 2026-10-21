@@ -28,7 +28,7 @@ Map and navigation app for [*Symbian OS 9.x*](https://en.wikipedia.org/wiki/Symb
 - Map tiles caching (you can see previously viewed area without network connection)
 - Display and edit landmarks
 - Search
-- Routing from one place to another
+- Routing from one place to another (walking/driving/cycling)
 - Multilanguage (**[we need help with translations!](/docs/CONTRIBUTING.md#localization)**):
   - English
   - Castilian/Spanish (Spain)
