@@ -258,6 +258,12 @@ void CMapView::HandleCommandL(TInt aCommand)
 			break;
 			}
 			
+		case EGetElevation:
+			{
+			HandleGetElevationL();
+			break;
+			}
+			
 		default:
 			// Let the AppUi handle unknown for view commands
 			AppUi()->HandleCommandL(aCommand);
@@ -1119,4 +1125,9 @@ void CMapView::HandleRouteReverseL()
 	
 	iRouting->Reverse();
 	iRouting->FindRoute(settings->iRouteProfile);
+	}
+
+void CMapView::HandleGetElevationL()
+	{
+	MiscUtils::DbgMsg(_L("123m"));
 	}

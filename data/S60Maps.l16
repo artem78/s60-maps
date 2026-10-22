@@ -142,3 +142,4 @@ CHARACTER_SET UTF8
 // Added in version X.XX
 
 #define qtn_reverse_route "В обратную сторону"
+#define qtn_elevation "Высота"
