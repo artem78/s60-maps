@@ -536,9 +536,7 @@ void CMapView::HandleAboutL()
 	
 	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
 	dlg->PrepareLC(R_QUERY_DIALOG);
-	HBufC* title = iEikonEnv->AllocReadResourceLC(R_ABOUT_DIALOG_TITLE);
-	dlg->QueryHeading()->SetTextL(*title);
-	CleanupStack::PopAndDestroy(); //title
+	dlg->QueryHeading()->SetTextL(KProgramName());
 	
 	RBuf msg;
 	msg.CreateL(2048);
