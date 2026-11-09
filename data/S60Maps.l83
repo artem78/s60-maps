@@ -110,7 +110,7 @@ CHARACTER_SET UTF8
 // Added in version 1.20
 
 #define qtn_controls "Ayuda"
-#define qtn_controls_dlg_text "Teclado:\n  Mover - Navi o 2/4/6/8\n  Acercar - aumentar volumen o 3\n  Alejar - disminuir volumen o 1 \n  Agregar/renombrar favorito - 5\n  Eliminar favorito - C (Tecla borrar)\n  Buscar - 0\n\nPantalla táctil:\n  Mover - pulse las esquinas\n  Acercar/alejar - desliza izquierda/derecha\n  Mostrar/ocultar barra - desliza arriba/abajo"
+#define qtn_controls_dlg_text "Teclado:\n  Mover - Navi o 2/4/6/8\n  Acercar - aumentar volumen o 3\n  Alejar - disminuir volumen o 1 \n  Agregar/renombrar favorito - 5\n  Eliminar favorito - C (Tecla borrar)\n  Buscar - 0\n\nPantalla táctil:\n  Mover - pulse las esquinas\n  Acercar/alejar - desliza izq./dcha.\n  Mostrar/ocultar barra - desliza arriba/abajo"
 
 // Added in version 1.21
 
@@ -123,21 +123,21 @@ CHARACTER_SET UTF8
 
 // Added in version 1.24
 
-#define qtn_route "Route"
-#define qtn_from "From"
-#define qtn_to "To"
-#define qtn_clear "Clear"
-#define qtn_routing_failed "Routing failed!"
+#define qtn_route "Ruta"
+#define qtn_from "Desde"
+#define qtn_to "Hasta"
+#define qtn_clear "Eliminar"
+#define qtn_routing_failed "¡Error al trazar la ruta!"
 
 // Added in version 1.25
 
-#define qtn_routing_api "Routing API"
-#define qtn_route_profile "Route profile"
-#define qtn_route_profile_car "Driving"
-#define qtn_route_profile_bicycle "Cycling"
-#define qtn_route_profile_foot "Walking"
-#define qtn_details "Details"
-#define qtn_route_details_fmt "Distance: %S\nTime: %S"
+#define qtn_routing_api "API de rutas"
+#define qtn_route_profile "Config. de ruta"
+#define qtn_route_profile_car "Conducción"
+#define qtn_route_profile_bicycle "Bicicleta"
+#define qtn_route_profile_foot "Caminar"
+#define qtn_details "Detalles"
+#define qtn_route_details_fmt "Distancia: %S\nTiempo: %S"
 #define qtn_less_than_a_minute "< 1 min"
 
 // Added in version X.XX
