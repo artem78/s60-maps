@@ -1129,5 +1129,20 @@ void CMapView::HandleRouteReverseL()
 
 void CMapView::HandleGetElevationL()
 	{
-	MiscUtils::DbgMsg(_L("123m"));
+	TBuf<32> msg;	
+	_LIT(KMsgFmt, "%.1f %S");
+	TReal elev = 123.4567;
+	HBufC* m = iEikonEnv->AllocReadResourceLC(R_METERS_UNIT_SHORT);
+	HBufC* ele = iEikonEnv->AllocReadResourceLC(R_ELEVATION);
+	msg.Format(KMsgFmt, elev, &*m);
+	
+	CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
+	CleanupStack::PushL(dlg);
+	dlg->PrepareLC(R_QUERY_DIALOG);
+	dlg->QueryHeading()->SetTextL(*ele);
+	dlg->SetMessageTextL(msg);
+	CleanupStack::Pop(dlg);
+	dlg->RunLD();
+	
+	CleanupStack::PopAndDestroy(2,m);
 	}
